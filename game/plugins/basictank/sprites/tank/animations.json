@@ -1,0 +1,16 @@
+{
+    "module": "basictank",
+    "spritesheet": "tankspritesheet",
+    "animations": [
+        {
+            "name": "name_goes_here",
+            "frames": [
+                "example_sprite_name_1.png",
+                "example_sprite_name_2.png",
+                "example_sprite_name_3.png",
+                "example_sprite_name_4.png"
+            ],
+            "loopcount": 12
+        }
+    ]
+}

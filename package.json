@@ -1,0 +1,18 @@
+{
+  "main": "game/index.html",
+  "name": "MPTanks-MK3",
+  "description": "MPTanks NodeJS edition",
+  "version": "0.0.1",
+  "keywords": [ "mptanks", "zsbgames" ],
+  "window": {
+    "title": "MPTanks-MK3",
+    "icon": "link.png",
+    "toolbar": true,
+    "frame": true,
+    "position": "mouse"
+  },
+  "webkit": {
+  },
+  "dependencies": {
+  }
+}

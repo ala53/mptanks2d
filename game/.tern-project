@@ -1,0 +1,20 @@
+{
+  "libs": [
+    "jquery"
+  ],
+  "loadEagerly": [
+    "code/*.js",
+    "code/*/*.js",
+    "code/*/*/*.js",
+    "code/*/*/*/*.js",
+    "globals/*.js",
+    "globals/*/*.js",
+    "plugins/*.js",
+    "plugins/*/*.js",
+    "thirdparty/*.js",
+    "thirdparty/*/*.js",
+    "ui/*/*.js"
+  ],
+  "plugins": {
+  }
+}

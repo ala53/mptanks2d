@@ -1,0 +1,80 @@
+[
+	{
+		"name": "Sandbox Module",
+		"version": "1",
+		"files": ["tooling/sandbox.js"]
+	},
+	{
+		"name": "Threading Module",
+		"version": "FIXME-BROKEN",
+		"files": ["tooling/sandbox.js"]
+	},
+	{
+		"name": "Core structures",
+		"version": "1",
+		"files": [
+			"tooling/timing.js",
+			"tooling/colors.js"
+		]
+	},
+	{
+		"name": "Input State Classes",
+		"version": "1",
+		"files": ["input/inputstate.js"]
+	},
+	{
+		"name": "Keyboard and Mouse input handler",
+		"version": "1",
+		"files": ["input/handlers/keyboardmouse.js"]
+	},
+	{
+		"name": "Gamepad input handler",
+		"version": "1",
+		"files": ["input/handlers/gamepad.js"]
+	},
+	{
+		"name": "Unified input wrapper",
+		"version": "1",
+		"files": ["input/input.js"]
+	},
+	{
+		"name": "Renderable component",
+		"version": "1",
+		"files": ["rendering/renderableComponent.js"]
+	},
+	{
+		"name": "Renderer (wrapper)",
+		"version": "1",
+		"files": ["rendering/renderer.js"]
+	},
+	{
+		"name": "Sprite sheets",
+		"version": "1",
+		"files": ["rendering/sprites/spritesheet.js"]
+	},
+	{
+		"name": "Sprite collections",
+		"version": "1",
+		"files": ["rendering/sprites/spritecollection.js"]
+	},
+	{
+		"name": "Sprites",
+		"version": "1",
+		"files": ["rendering/sprites/sprite.js"]
+	},
+	{
+		"name": "Sprite animations",
+		"version": "1",
+		"files": ["rendering/sprites/animation.js"]
+	},
+	{
+		"name": "Sprite loader",
+		"version": "1",
+		"files": ["rendering/sprites/spriteloader.js"]
+	},
+	{
+		"name": "Engine initialization code",
+		"version": "1",
+		"files": ["game.js"]
+	}
+]
