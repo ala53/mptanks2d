@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Sandbox Module",
+		"name": "Sandboxing Module",
 		"version": "1",
 		"files": ["tooling/sandbox.js"]
 	},
@@ -18,63 +18,45 @@
 		]
 	},
 	{
-		"name": "Input State Classes",
+		"name": "Input Engine",
 		"version": "1",
-		"files": ["input/inputstate.js"]
+		"files": [
+			"input/inputstate.js",
+			"input/handlers/keyboardmouse.js",
+			"input/handlers/gamepad.js",
+			"input/input.js"]
 	},
 	{
-		"name": "Keyboard and Mouse input handler",
+		"name": "Renderer",
 		"version": "1",
-		"files": ["input/handlers/keyboardmouse.js"]
+		"files": [
+			"rendering/renderer.js",
+			"rendering/renderableComponent.js"
+		]
 	},
 	{
-		"name": "Gamepad input handler",
+		"name": "Sprite Management",
 		"version": "1",
-		"files": ["input/handlers/gamepad.js"]
-	},
-	{
-		"name": "Unified input wrapper",
-		"version": "1",
-		"files": ["input/input.js"]
-	},
-	{
-		"name": "Renderable component",
-		"version": "1",
-		"files": ["rendering/renderableComponent.js"]
-	},
-	{
-		"name": "Renderer (wrapper)",
-		"version": "1",
-		"files": ["rendering/renderer.js"]
-	},
-	{
-		"name": "Sprite sheets",
-		"version": "1",
-		"files": ["rendering/sprites/spritesheet.js"]
-	},
-	{
-		"name": "Sprite collections",
-		"version": "1",
-		"files": ["rendering/sprites/spritecollection.js"]
-	},
-	{
-		"name": "Sprites",
-		"version": "1",
-		"files": ["rendering/sprites/sprite.js"]
-	},
-	{
-		"name": "Sprite animations",
-		"version": "1",
-		"files": ["rendering/sprites/animation.js"]
-	},
-	{
-		"name": "Sprite loader",
-		"version": "1",
-		"files": ["rendering/sprites/spriteloader.js"]
+		"files": [
+			"rendering/sprites/spritesheet.js",
+			"rendering/sprites/spritecollection.js",
+			"rendering/sprites/sprite.js",
+			"rendering/sprites/animation.js",
+			"rendering/sprites/spriteloader.js"
+		]
 	},
 	{
 		"name": "Engine initialization code",
 		"version": "1",
 		"files": ["game.js"]
+	},
+	{
+		"name": "Networking engine",
+		"version": "1",
+		"files": [
+			"networking/base.js",
+			"networking/server.js",
+			"networking/client.js"
+			]
 	}
 ]

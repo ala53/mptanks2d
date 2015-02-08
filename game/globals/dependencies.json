@@ -79,5 +79,14 @@
         ],
         "license": "MIT License",
         "link": "https://stuk.github.io/jszip/"
+    },
+    {
+        "name": "Keyboard",
+        "version": "0.4.1",
+        "files": [
+            "keyboard.js"
+        ],
+        "license": "BSD License",
+        "link": "https://raw.github.com/RobertWHurst/KeyboardJS"
     }
 ]

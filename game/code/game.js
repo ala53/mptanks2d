@@ -11,6 +11,9 @@ game.startTime = performance.now()
 
 game.lastFrame = performance.now()
 
+game.settings = JSON.parse(
+	filesystem.installDir.files["settings.json"].readString())
+
 game.initialize = function (sandboxedModules) {
 	game.running = true
 	requestAnimationFrame(game.updateLoop) //start somewhere

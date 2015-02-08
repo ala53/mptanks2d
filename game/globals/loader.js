@@ -8,6 +8,9 @@
 var fs = require('fs')
 var vm = require('vm')
 
+//And the global for whether we're a server or a client
+var client = true, server = true
+
 var gameDef = require('./globals/game.json')
 var dependenciesDef = require('./globals/dependencies.json')
 var sandboxedDef = require('./globals/plugins.json')
@@ -36,7 +39,7 @@ function initializeGame () {
 }
 
 function loadScripts () {
-	for (var id in dependenciesDef) \{
+	for (var id in dependenciesDef) {
 		var dependency = dependenciesDef[id]
 		console.log("[Dependency] Loading " + dependency.name + " (" +
 			dependency.version + ") - " + dependency.license)
