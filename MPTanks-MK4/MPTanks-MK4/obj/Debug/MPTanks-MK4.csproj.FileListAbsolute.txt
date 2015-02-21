@@ -24,3 +24,6 @@ c:\users\alastair\documents\visual studio 2013\Projects\MPTanks-MK4\MPTanks-MK4\
 c:\users\alastair\documents\visual studio 2013\Projects\MPTanks-MK4\MPTanks-MK4\bin\Debug\ClearScript.pdb
 c:\users\alastair\documents\visual studio 2013\Projects\MPTanks-MK4\MPTanks-MK4\bin\Debug\ClearScript.xml
 c:\users\alastair\documents\visual studio 2013\Projects\MPTanks-MK4\MPTanks-MK4\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Alastair\Documents\GitHub\mptanks-nw\MPTanks-MK4\MPTanks-MK4\bin\Debug\MPTanks-MK4.exe.config
+C:\Users\Alastair\Documents\GitHub\mptanks-nw\MPTanks-MK4\MPTanks-MK4\obj\Debug\MPTanks-MK4.exe
+C:\Users\Alastair\Documents\GitHub\mptanks-nw\MPTanks-MK4\MPTanks-MK4\obj\Debug\MPTanks-MK4.pdb

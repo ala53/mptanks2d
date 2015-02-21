@@ -9,40 +9,76 @@ namespace MPTanks_MK4.Rendering.Sprites
     class Animation
     {
         public SpriteSheet Sheet;
-        public int[] SpriteSequence;
+        public string Name;
+        public Keyframe[] Frames;
         public int LoopCount;
 
-        public AnimationState Play()
+        public double LengthMs
         {
-            return new AnimationState(this);
+            get
+            {
+                double ms = 0;
+                foreach (var kf in Frames) ms += kf.LengthMs;
+                return ms;
+            }
         }
 
-        public class AnimationState
+        public class Keyframe
         {
-            public AnimationState(Animation anim)
+            public Sprite Sprite;
+            public float LengthMs;
+            public bool FadeIn;
+            public float FadeInTimeMs;
+        }
+
+        public State Play()
+        {
+            return new State(this);
+        }
+
+        public class State
+        {
+            public State(Animation anim)
             {
                 Animation = anim;
                 IsPlaying = true;
             }
             public Animation Animation { get; private set; }
-            public int FrameNumber { get; private set; }
             public bool IsPlaying { get; private set; }
-            public Sprite CurrentFrame { get; private set; }
+            public Image CurrentFrame { get; private set; }
 
-            public Sprite GetNextFrame()
+            private double totalMillisecondsIntoAnimation;
+
+            /// <summary>
+            /// Gets the next frame for the current animation
+            /// </summary>
+            /// <param name="ms">The number of milliseconds either in total or since the last frame.</param>
+            /// <param name="isDeltaTime">If set to true, the previous parameter is interpreted 
+            /// as a delta between frames. If false, it is assumed to be the whole time since 
+            /// application start.</param>
+            /// <returns></returns>
+            public Sprite GetCurrentFrame(double ms, bool isDeltaTime = true)
             {
-                //If the animation is finished...
-                if (((float)FrameNumber / Animation.SpriteSequence.Length) >= Animation.LoopCount)
+                if (isDeltaTime)
+                    totalMillisecondsIntoAnimation += ms;
+                else
+                    totalMillisecondsIntoAnimation = ms;
+
+                double msPrevFrames = 0;
+
+                foreach (var kf in Animation.Frames)
                 {
-                    IsPlaying = false;
-                    return Animation.Sheet.DefaultSprite;
+                    //if (current time in animation) < (frame position in animation)
+                    //then this is the right frame to display
+                    if (totalMillisecondsIntoAnimation < msPrevFrames + kf.LengthMs)
+                        return kf.Sprite;
+
+                    msPrevFrames += kf.LengthMs;
                 }
 
-                //Calculate the frame number accounting for loops in the animation
-                var frame = FrameNumber++ % Animation.SpriteSequence.Length;
-
-                CurrentFrame = Animation.Sheet.Sprites[Animation.SpriteSequence[frame]];
-                return CurrentFrame;
+                //If we finished the animation
+                IsPlaying = false;
+                return Animation.Sheet.DefaultSprite;
             }
 
             public void Stop()

@@ -11,12 +11,11 @@ namespace MPTanks_MK4
 {
     class Window : GameWindow
     {
+        private Rendering.GameWorldRenderer renderer;
+
         protected override void OnLoad(EventArgs e)
         {
-            FMOD.System system;
-            FMOD.Factory.System_Create(out system);
-
-            system.init(5, FMOD.INITFLAGS.NORMAL, IntPtr.Zero);
+            renderer = new Rendering.GameWorldRenderer();
             base.OnLoad(e);
             GL.ClearColor(Color4.Red);
         }

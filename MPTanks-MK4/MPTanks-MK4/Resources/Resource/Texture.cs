@@ -13,6 +13,8 @@ namespace MPTanks_MK4.Resources.Resource
     /// </summary>
     class Texture
     {
+        public int Width { get; set; }
+        public int Height { get; set; }
         public int GLTextureId { get; set; }
         public Texture(int textureId)
         {

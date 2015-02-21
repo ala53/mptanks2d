@@ -11,8 +11,8 @@ namespace MPTanks_MK4.Rendering
 {
     class RenderableComponent
     {
-        public Sprites.Sprite CurrentSprite;
-        public Sprites.Animation.AnimationState CurrentAnimationState;
+        public Sprites.Image CurrentSprite;
+        public Sprites.Animation.State CurrentAnimationState;
         public Matrix4 Offset;
         public Color4 Mask;
         public Rectangle Size;

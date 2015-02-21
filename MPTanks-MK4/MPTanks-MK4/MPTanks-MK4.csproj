@@ -74,10 +74,14 @@
     <Compile Include="Javascript\ScriptEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\FrameRenderer.cs" />
+    <Compile Include="Rendering\GameWorldRenderer.cs" />
+    <Compile Include="Rendering\Shader.cs" />
+    <Compile Include="Rendering\Shaders\PixelShader.cs" />
+    <Compile Include="Rendering\Shaders\Shader.cs" />
+    <Compile Include="Rendering\Shaders\VertexShader.cs" />
     <Compile Include="Rendering\Sprites\Animation.cs" />
+    <Compile Include="Rendering\Sprites\Image.cs" />
     <Compile Include="Rendering\Sprites\Sprite.cs" />
-    <Compile Include="Rendering\Sprites\SpriteCollection.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Rendering\Sprites\SpriteSheet.cs" />
     <Compile Include="Resources\MapLoader.cs" />
@@ -104,6 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="assets\shaders\fadeshader.glsl" />
+    <None Include="assets\shaders\vertex.glsl" />
     <None Include="fmod\fmod64_vc.lib">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -126,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="GameObjects\Maps\" />
+    <Folder Include="Networking\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fmod\fmod.dll">

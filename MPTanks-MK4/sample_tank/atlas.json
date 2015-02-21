@@ -1,0 +1,99 @@
+{
+	"name": "tank_atlas",
+	"defaultSprite": "default",
+	"damageLevels": 3,
+	"frames": [
+		{
+			"name": "default.png",
+			"x": 0,
+			"y": 0,
+			"width": 60,
+			"height" 100
+		},
+		{
+			"name": "default_dmg_1.png",
+			"x": 60,
+			"y": 0,
+			"width": 60,
+			"height" 100
+		},
+		{
+			"name": "default_dmg_2.png",
+			"x": 120,
+			"y": 0,
+			"width": 60,
+			"height" 100
+		},
+		{
+			"name": "firing.png",
+			"x": 0,
+			"y": 100,
+			"width": 60,
+			"height" 100
+		},
+		{
+			"name": "firing_dmg_1.png",
+			"x": 60,
+			"y": 100,
+			"width": 60,
+			"height" 100
+		},
+		{
+			"name": "firing_dmg_2.png",
+			"x": 120,
+			"y": 100,
+			"width": 60,
+			"height" 100
+		},
+	],
+	"sprites": [
+		{
+			"name": "default",
+			"frames": [
+				"default.png",
+				"default_dmg_1.png",
+				"default_dmg_2.png"
+			]
+		},
+		{
+			"name": "firing",
+			"frames": [
+				"firing.png",
+				"firing_dmg_1.png",
+				"firing_dmg_2.png"
+			]
+		}
+	],
+	"animations": [
+		{
+			"name": "firing_main_gun",
+			"loopCount": 2,
+			"keyframes": [
+				{
+					"sprite": "firing",
+					"msToDisplay": 250,
+					"fadeIn": false,
+					"blendTimeMs": 0
+				},
+				{
+					"sprite": "default",
+					"msToDisplay": 350,
+					"fadeIn": true,
+					"blendTimeMs": 50
+				},
+				{
+					"sprite": "firing",
+					"msToDisplay": 500,
+					"fadeIn": true,
+					"blendTimeMs": 120
+				},
+				{
+					"sprite": "default",
+					"msToDisplay": 500,
+					"fadeIn": false,
+					"blendTimeMs": 50
+				}
+			]
+		}
+	]
+}
