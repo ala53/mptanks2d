@@ -1,7 +1,4 @@
 ﻿using MPTanks_MK4.Helpers;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,0 +1,14 @@
+﻿{
+    "name": "Test map",
+    "author": "Author Name Here",
+    "size": { "x": 5000, "y": 5000 },
+    "background": "[animation]0,fuzzyPixelsAnim,assets/maps/testmapbackground.png,true",
+    "objects": [
+        {
+            "type": "house_small",
+            "rotation": 0.233,
+            "position": { "x": 30, "y": 43 },
+            "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+        }
+    ]
+}

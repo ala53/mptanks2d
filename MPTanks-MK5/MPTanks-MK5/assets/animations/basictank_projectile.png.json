@@ -1,0 +1,140 @@
+{
+    "name": "Basic Tank Main Gun Projectile",
+    "sprites": [
+        {
+            "name": "frame_0_0",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_0_1",
+            "x": 0,
+            "y": 32,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_0_2",
+            "x": 0,
+            "y": 64,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_0_3",
+            "x": 0,
+            "y": 96,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_1_0",
+            "x": 32,
+            "y": 0,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_1_1",
+            "x": 32,
+            "y": 32,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_1_2",
+            "x": 32,
+            "y": 64,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_1_3",
+            "x": 32,
+            "y": 96,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_2_0",
+            "x": 64,
+            "y": 0,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_2_1",
+            "x": 64,
+            "y": 32,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_2_2",
+            "x": 64,
+            "y": 64,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_2_3",
+            "x": 64,
+            "y": 96,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_3_0",
+            "x": 96,
+            "y": 0,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_3_1",
+            "x": 96,
+            "y": 32,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_3_2",
+            "x": 96,
+            "y": 64,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "name": "frame_3_3",
+            "x": 96,
+            "y": 96,
+            "width": 32,
+            "height": 32
+        }
+    ],
+    "animations": [{
+        "name": "projectileAnim",
+        "friendly": "Main gun projectile animation",
+        "frameRate": 20,
+        "frames": [
+            "frame_0_0",
+            "frame_1_0",
+            "frame_2_0",
+            "frame_3_0",
+            "frame_0_1",
+            "frame_1_1",
+            "frame_2_1",
+            "frame_3_1",
+            "frame_0_2",
+            "frame_1_2",
+            "frame_2_2",
+            "frame_3_2",
+            "frame_0_3",
+            "frame_1_3",
+            "frame_2_3",
+            "frame_3_3"
+        ]
+    }]
+}

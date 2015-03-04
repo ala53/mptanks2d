@@ -44,9 +44,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -62,8 +59,13 @@
     <Compile Include="fmod\DSP.cs" />
     <Compile Include="fmod\Errors.cs" />
     <Compile Include="fmod\FMod.cs" />
+    <Compile Include="Game1.cs" />
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\Tanks\AITank.cs" />
+    <Compile Include="GameObjects\Tanks\Pilots\AIPilot.cs" />
+    <Compile Include="GameObjects\Tanks\Pilots\Pilot.cs" />
+    <Compile Include="GameObjects\Tanks\Pilots\RemoteControlledPilot.cs" />
+    <Compile Include="GameObjects\Tanks\Pilots\UserPilot.cs" />
     <Compile Include="GameObjects\Tanks\Projectile\FiredProjectile.cs" />
     <Compile Include="GameObjects\Tanks\Projectile\HitscanProjectile.cs" />
     <Compile Include="GameObjects\Tanks\Projectile\PlacedProjectile.cs" />
@@ -108,8 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="assets\shaders\fadeshader.glsl" />
-    <None Include="assets\shaders\vertex.glsl" />
     <None Include="fmod\fmod64_vc.lib">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -131,6 +131,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="assets\" />
     <Folder Include="GameObjects\Maps\" />
     <Folder Include="Networking\" />
   </ItemGroup>
@@ -147,6 +148,13 @@
     <Content Include="fmod\fmodL64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SDL.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{b9a84747-17a0-45d7-a1c1-82c2825f4354}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MonoGame.Binaries.3.2.0\build\net40\MonoGame.Binaries.targets" Condition="Exists('..\packages\MonoGame.Binaries.3.2.0\build\net40\MonoGame.Binaries.targets')" />
