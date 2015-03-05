@@ -21,14 +21,16 @@ namespace Engine.Rendering
         public string SpriteSheetName { get; private set; }
         public float PositionInAnimationMs { get; set; }
         public Action<Animation> CompletionCallback { get; private set; }
+        public float LoopCount { get; private set; }
 
-        public Animation(string name, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null)
+        public Animation(string name, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null, float loopCount = 1)
         {
             Position = center;
             AnimationName = name;
             SpriteSheetName = sheetName;
             Size = size;
             CompletionCallback = callback;
+            LoopCount = loopCount;
         }
 
         /// <summary>

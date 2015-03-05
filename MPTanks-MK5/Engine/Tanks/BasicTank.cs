@@ -16,16 +16,6 @@ namespace Engine.Tanks
             AddComponents();
             SetUpBody();
         }
-
-        public BasicTank(Guid playerId, GameCore game, byte[] savedState)
-            : base(playerId, game)
-        {
-
-
-            AddComponents();
-            SetUpBody();
-            //TODO rebuild the state here
-        }
         private void SetUpBody()
         {
             //        Body.LinearDamping = 10;
@@ -45,8 +35,8 @@ namespace Engine.Tanks
                 Size = new Vector2(3f, 0.25f),
                 Mask = new Color(Color.DarkGreen, 200),
                 Offset = new Vector2(0, 0),
-                AssetName = "grillmask",
-                SpriteSheetName = "assets/tanks/basictank2d.png",
+                AssetName = Assets.BasicTank.GrillMask.SpriteName,
+                SpriteSheetName = Assets.BasicTank.GrillMask.SheetName,
                 Rotation = 0
             });
             Components.Add("turret", new Rendering.RenderableComponent()
@@ -63,8 +53,8 @@ namespace Engine.Tanks
                 Mask = new Color(Color.Green, 200),
                 Offset = new Vector2(0.5f, 1.5f),
                 RotationOrigin = new Vector2(1f, 1f),
-                AssetName = "turretbase",
-                SpriteSheetName = "assets/tanks/basictank2d.png",
+                AssetName = Assets.BasicTank.TurretBase.SpriteName,
+                SpriteSheetName = Assets.BasicTank.TurretBase.SheetName,
                 Rotation = 0
             });
             Components.Add("turretDoor", new Rendering.RenderableComponent()
@@ -113,8 +103,10 @@ namespace Engine.Tanks
 
         protected override void TankKilled(GameObject obj)
         {
+            var si = Assets.AssetHelper.GetRandomExplosionAnimation();
             var anim = new Rendering.Animation(
-                "explosionAnim", Position, new Vector2(10), "assets/animations/explosion.png");
+                     si.AnimationName, Position, new Vector2(10), si.SheetName);
+
             Game.Animations.AddAnimation(anim);
 
             Game.TimerFactory.CreateReccuringTimer((Action<Timer>)((timer) =>
@@ -126,11 +118,6 @@ namespace Engine.Tanks
             }), 1);
 
             Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, obj), 500);
-        }
-
-        public override byte[] GetData()
-        {
-            return null;
         }
 
         public override Vector2 Size

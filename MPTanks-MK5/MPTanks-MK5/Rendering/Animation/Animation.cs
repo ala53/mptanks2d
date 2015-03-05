@@ -16,7 +16,8 @@ namespace MPTanks_MK5.Rendering.Animation
             set
             {
                 if (_sheet != null)
-                    throw new Exception("Cannot change spritesheet after init"); _sheet = value;
+                    throw new Exception("Cannot change spritesheet after init");
+                _sheet = value;
             }
         }
         public string[] FrameNames { get; private set; }
@@ -99,7 +100,7 @@ namespace MPTanks_MK5.Rendering.Animation
             return anim.GetFrame((int)(positionMs / (1000 / anim.FramesPerSecond)));
         }
 
-        public static bool Ended(string animName, Dictionary<string, Animation> animations, float positionMs)
+        public static bool Ended(string animName, Dictionary<string, Animation> animations, float positionMs, float loopCount = 1)
         {
             if (!animations.ContainsKey(animName))
             {
@@ -107,19 +108,18 @@ namespace MPTanks_MK5.Rendering.Animation
                 return true;
             }
             var anim = animations[animName];
-            var frameNum = (int)(positionMs / (1000 / anim.FramesPerSecond));
-            return (frameNum >= anim.FrameNames.Length - 1);
+            return ((positionMs / loopCount) >= anim.LengthMs);
         }
 
         private Sprites.Sprite GetFrame(int frameNumber)
         {
-            if (frameNumber >= FrameNames.Length || frameNumber < 0)
+            if (frameNumber < 0)
             {
                 Logger.Error("Out of bounds frame requested for animation " + Name +
                     ". Requested " + frameNumber + ", have " + FrameNames.Length);
                 return Sheet.Sprites[FrameNames[0]];
             }
-            return Sheet.Sprites[FrameNames[frameNumber]];
+            return Sheet.Sprites[FrameNames[frameNumber % FrameNames.Length]];
         }
     }
 }

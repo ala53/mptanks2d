@@ -104,19 +104,21 @@ namespace MPTanks_MK5.Rendering
             return anim;
         }
 
-        public bool AnimEnded(string animName, float positionMs, string sheetName = null)
+        public bool AnimEnded(string animName, float positionMs, string sheetName = null, float loopCount = 1)
         {
             if (sheetName != null && sheetName != "" && !spriteSheets.ContainsKey(sheetName))
                 LoadSpriteSheet(sheetName);
-            return Animation.Animation.Ended(animName, animations, positionMs);
+            return Animation.Animation.Ended(animName, animations, positionMs, loopCount);
         }
 
         private void LoadSpriteSheet(string sheetName)
         {
-            if (spriteSheets.ContainsKey(sheetName))
-                return;
+            try
+            {
+                if (spriteSheets.ContainsKey(sheetName))
+                    return;
 
-            FileStream fStream = null;
+                FileStream fStream = null;
                 fStream = System.IO.File.OpenRead(sheetName);
                 var texture = Texture2D.FromStream(game.GraphicsDevice, fStream);
 
@@ -148,6 +150,11 @@ namespace MPTanks_MK5.Rendering
                 spriteSheets.Add(sheetName, spriteSheet);
 
                 fStream.Dispose();
+            }
+            catch
+            {
+                Logger.Error("Texture Load Failed! File: " + sheetName);
+            }
         }
 
         public void Dispose()

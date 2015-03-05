@@ -21,6 +21,16 @@ namespace Engine
         /// The animations that are currently playing (sprite sheet animations)
         /// </summary>
         public AnimationEngine Animations { get; private set; }
+
+        /// <summary>
+        /// The internally accessible random number generator, for determinism
+        /// </summary>
+        internal Random RandomGenerator { get; private set; }
+
+        /// <summary>
+        /// The manager which spawns in game powerups over time
+        /// </summary>
+        public Powerups.PowerupManager PowerupManager { get; private set; }
         /// <summary>
         /// The Logger to use for logging important events
         /// </summary>
@@ -52,6 +62,7 @@ namespace Engine
         {
             Logger = logger;
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
+            RandomGenerator = new Random();
             TimerFactory = new Timer.Factory();
             Animations = new AnimationEngine();
             Logger.Log("Game started");

@@ -39,7 +39,9 @@ namespace Engine.Rendering
         public void Update(GameTime gameTime)
         {
             foreach (var animation in animations)
+            {
                 animation.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
         }
     }
 }

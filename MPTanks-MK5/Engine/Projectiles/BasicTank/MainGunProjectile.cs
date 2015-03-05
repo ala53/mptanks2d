@@ -24,16 +24,14 @@ namespace Engine.Projectiles.BasicTank
         {
             Components.Add("bullet", new Rendering.RenderableComponent()
             {
-                SpriteSheetName = "assets/tanks/basictank2d.png",
-                AssetName = Animation.AnimationAsString("projectileAnim", "assets/animations/basictank_projectile.png", 0, true),
+                SpriteSheetName = Assets.BasicTank.MainProjectile.SheetName,
+                AssetName = Assets.AssetHelper.AnimationToString(Assets.BasicTank.MainProjectile, 0, true),
                 Size = new Vector2(0.5f),
                 Rotation = MathHelper.ToRadians(45),
                 RotationOrigin = new Vector2(0.25f),
                 Offset = new Vector2(-0.125f),
                 Mask = new Color(Color.Red, 0.8f)
             });
-
-            Body.IsSensor = true;
 
             //Add a timer for so we don't exist forever
             Game.TimerFactory.CreateTimer((timer) => Destroy(), 5000);

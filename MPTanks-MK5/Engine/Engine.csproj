@@ -52,13 +52,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="assets\AssetHelper.cs" />
+    <Compile Include="assets\Assets.cs" />
     <Compile Include="Core\Timing\Timer.cs" />
     <Compile Include="GameCore.cs" />
+    <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
+    <Compile Include="Gamemodes\Gamemode.cs" />
+    <Compile Include="Gamemodes\Platoon.cs" />
+    <Compile Include="Gamemodes\Team.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapObjects\Building.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
+    <Compile Include="Powerups\HealthPowerup.cs" />
+    <Compile Include="Powerups\Powerup.cs" />
+    <Compile Include="Powerups\PowerupManager.cs" />
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

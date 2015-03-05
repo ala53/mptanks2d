@@ -27,8 +27,6 @@ namespace MPTanks_MK5
         private Engine.GameCore game;
         private float zoom = 2f;
         private SpriteFont font;
-        private bool mouseLook = false;
-        private float tRotation = 0;
 
         public GameClient()
             : base()
@@ -107,11 +105,6 @@ namespace MPTanks_MK5
             var iState = new InputState();
             iState.LookDirection = tank.InputState.LookDirection;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                mouseLook = true;
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
-                mouseLook = false;
-
             if (Keyboard.GetState().IsKeyDown(Keys.W))
                 iState.YMovementState = 1;
             if (Keyboard.GetState().IsKeyDown(Keys.S))
@@ -120,36 +113,20 @@ namespace MPTanks_MK5
                 iState.XMovementState = -1;
             if (Keyboard.GetState().IsKeyDown(Keys.D))
                 iState.XMovementState = 1;
-            if (mouseLook)
-            {
-                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                    iState.FireState = true;
 
-                //Complicated look state calcuation below
-                var screenCenter = new Vector2(GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
-                    GraphicsDevice.Viewport.Bounds.Height / 2);
-                var mousePos = new Vector2(Mouse.GetState().Position.X,  //point a
-                    Mouse.GetState().Position.Y);
 
-                var ctr = screenCenter - mousePos;
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                iState.FireState = true;
 
-                iState.LookDirection = (float)-Math.Atan2(ctr.X, ctr.Y);
-            }
-            else
-            {
-                const float rotationAmount = 0.06f;
-                if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                    iState.FireState = true;
-                if (Keyboard.GetState().IsKeyDown(Keys.Q))
-                {
-                    tRotation -= rotationAmount * ((float)gameTime.ElapsedGameTime.TotalMilliseconds / Engine.Settings.MSPerFrame);
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.E))
-                {
-                    tRotation += rotationAmount * ((float)gameTime.ElapsedGameTime.TotalMilliseconds / Engine.Settings.MSPerFrame);
-                }
-                iState.LookDirection = tank.Rotation + tRotation;
-            }
+            //Complicated look state calcuation below
+            var screenCenter = new Vector2(GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
+                GraphicsDevice.Viewport.Bounds.Height / 2);
+            var mousePos = new Vector2(Mouse.GetState().Position.X,  //point a
+                Mouse.GetState().Position.Y);
+
+            var ctr = screenCenter - mousePos;
+            iState.LookDirection = (float)-Math.Atan2(ctr.X, ctr.Y);
+
             LockCursor();
 
             if (Keyboard.GetState().IsKeyDown(Keys.X))

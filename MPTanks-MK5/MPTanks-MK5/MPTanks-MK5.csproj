@@ -78,6 +78,12 @@
     <Content Include="assets\animations\explosion.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\animations\explosion2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\animations\explosion3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\tanks\basictank2d.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -90,6 +96,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\animations\explosion.png.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\animations\explosion2.png.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\animations\explosion3.png.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\tanks\basictank2d.png.json">

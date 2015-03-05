@@ -120,8 +120,10 @@ namespace MPTanks_MK5.Rendering
             if (_animEngine != null)
                 foreach (var anim in _animEngine.Animations)
                 {
-                    //Check if the animation is done
-                    if (_cache.AnimEnded(anim.AnimationName, anim.PositionInAnimationMs, anim.SpriteSheetName))
+                    //Check if the animation will be done by next frame (approximately)
+                    if (_cache.AnimEnded(anim.AnimationName, 
+                        anim.PositionInAnimationMs + (float)gameTime.ElapsedGameTime.TotalMilliseconds,
+                        anim.SpriteSheetName, anim.LoopCount))
                         endedAnimations.Add(anim);
                     //cull if invisible
                     if (!IsVisible(Scale(anim.Position - (anim.Size / 2)), Scale(anim.Size), viewRect))

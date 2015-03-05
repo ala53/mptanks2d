@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Engine.Gamemodes;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,10 @@ namespace Engine.Tanks
 
     public abstract class Tank : GameObject
     {
+        public List<Powerups.Powerup> Powerups { get; private set; }
         public Guid PlayerId { get; private set; }
+        public Team Team { get; internal set; }
+        public Platoon Platoon { get; set; }
 
         public InputState InputState { get; private set; }
 
@@ -88,8 +92,6 @@ namespace Engine.Tanks
             Body.AngularVelocity = 0;
             Body.Rotation += (float)rotationAmount;
         }
-
-        abstract public byte[] GetData();
 
         public override string ToString()
         {
