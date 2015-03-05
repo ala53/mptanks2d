@@ -31,7 +31,7 @@ namespace Pipeline.Spritesheets.Animator
 
             if (fod.FileName != null && fod.FileName != "")
             {
-                if (sourceBmp != null) 
+                if (sourceBmp != null)
                     sourceBmp.Dispose();
 
                 if (sourceMs != null)
@@ -70,20 +70,26 @@ namespace Pipeline.Spritesheets.Animator
                     if (fr != null) fr.Dispose();
                 animFrames = null;
             }
+            if (sourceBmp.Width < 300)
+                bmp = new Bitmap(sourceBmp.Width * 4, sourceBmp.Height * 4);
+            else
+                bmp = new Bitmap(sourceBmp);
             var width = (int)spritesWideSelector.Value;
             var height = (int)spritesTallSelector.Value;
-            var blockX = sourceBmp.Width / width;
-            var blockY = sourceBmp.Height / height;
+            var blockX = bmp.Width / width;
+            var blockY = bmp.Height / height;
             animFrames = new Bitmap[width * height];
-
-            bmp = new Bitmap(sourceBmp);
             var grp = Graphics.FromImage(bmp);
             grp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             grp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            if (sourceBmp.Width < 300)
+                grp.DrawImage(sourceBmp, 0, 0, bmp.Width, bmp.Height);
 
-            var fSize = blockX / 4;
+            var fSize = blockX / 2;
 
             var frameNum = 1;
+            var scaledBm = new Bitmap(sourceBmp); //Keep a cached copy of the scaled but not watermarked
+
             if (!checkBox1.Checked)
                 for (var y = 0; y < height; y++)
                     for (var x = 0; x < width; x++)
@@ -110,7 +116,7 @@ namespace Pipeline.Spritesheets.Animator
                     {
                         var bm = new Bitmap(blockX, blockY);
                         var gr = Graphics.FromImage(bm);
-                        gr.DrawImage(sourceBmp, new Rectangle(0, 0, blockX, blockY),
+                        gr.DrawImage(scaledBm, new Rectangle(0, 0, blockX, blockY),
                             new Rectangle(x * blockX, y * blockY, blockX, blockY), GraphicsUnit.Pixel);
                         gr.Dispose();
                         animFrames[frameNum] = bm;
@@ -122,12 +128,14 @@ namespace Pipeline.Spritesheets.Animator
                     {
                         var bm = new Bitmap(blockX, blockY);
                         var gr = Graphics.FromImage(bm);
-                        gr.DrawImage(sourceBmp, new Rectangle(0, 0, blockX, blockY),
+                        gr.DrawImage(scaledBm, new Rectangle(0, 0, blockX, blockY),
                             new Rectangle(x * blockX, y * blockY, blockX, blockY), GraphicsUnit.Pixel);
                         gr.Dispose();
                         animFrames[frameNum] = bm;
                         frameNum++;
                     }
+
+            scaledBm.Dispose();
         }
 
         private void DrawStr(int number, Point pt, Graphics gr, float size = 14)
@@ -247,12 +255,13 @@ namespace Pipeline.Spritesheets.Animator
 
                 obj.sprites = sprites;
 
-                obj.animations= new Animation[1];
+                obj.animations = new Animation[1];
 
-                obj.animations[0] = new Animation() {
-                frameRate =(int) frameRateSelector.Value,
-                name = textBox2.Text,
-                friendly = textBox3.Text
+                obj.animations[0] = new Animation()
+                {
+                    frameRate = (int)frameRateSelector.Value,
+                    name = textBox2.Text,
+                    friendly = textBox3.Text
                 };
                 var animFrames = new List<string>();
                 foreach (var spr in sprites)
