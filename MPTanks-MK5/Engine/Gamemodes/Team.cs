@@ -9,6 +9,8 @@ namespace Engine.Gamemodes
 {
     public class Team
     {
+        private static Team _null = new Team();
+        public static Team Null { get { return _null; } }
         public Tanks.Tank[] Tanks { get; internal set; }
         public string TeamName { get; internal set; }
         public Color TeamColor { get; internal set; }

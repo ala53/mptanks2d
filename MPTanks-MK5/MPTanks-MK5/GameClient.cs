@@ -61,7 +61,7 @@ namespace MPTanks_MK5
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            game = new Engine.GameCore(new EngineInterface.FileLogger());
+            game = new Engine.GameCore(new EngineInterface.FileLogger(), new Engine.Gamemodes.TeamDeathMatchGamemode());
             renderer = new GameWorldRenderer(this);
             renderer.SetAnimations(game.Animations);
 

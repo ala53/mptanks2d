@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Engine.Tanks
+{
+    public abstract class SuperTank : Tank
+    {
+        public SuperTank(Guid playerId, GameCore game)
+            : base(playerId, game)
+        {
+
+        }
+    }
+}

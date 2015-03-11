@@ -35,6 +35,10 @@ namespace Engine
         /// The Logger to use for logging important events
         /// </summary>
         public ILogger Logger { get; private set; }
+        /// <summary>
+        /// The game mode that dictates the rules for this instance.
+        /// </summary>
+        public Gamemodes.Gamemode Gamemode { get; private set; }
 
         #region World Management
         /// <summary>
@@ -58,9 +62,12 @@ namespace Engine
         public bool IsDirty { get { return _isDirty; } }
         #endregion
 
-        public GameCore(ILogger logger)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode)
         {
             Logger = logger;
+            Gamemode = Gamemode;
+            Gamemode.SetGame(this);
+
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             RandomGenerator = new Random();
             TimerFactory = new Timer.Factory();

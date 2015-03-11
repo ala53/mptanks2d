@@ -6,32 +6,38 @@ using System.Threading.Tasks;
 
 namespace Engine.Gamemodes
 {
-     public class TeamDeathMatchGamemode : Gamemode
+    public class TeamDeathMatchGamemode : Gamemode
     {
         public override bool GameEnded
         {
             get { throw new NotImplementedException(); }
         }
-
+        private Team _winner = Team.Null;
         public override Team WinningTeam
         {
-            get { throw new NotImplementedException(); }
+            get { return _winner; }
         }
-
+        private Team[] _teams;
         public override Team[] Teams
         {
-            get { throw new NotImplementedException(); }
+            get { return _teams; }
         }
 
-        public override bool HasValidPlayerCount(int count)
+        public TeamDeathMatchGamemode()
+        {
+
+        }
+        public override bool HasValidPlayerCount(int tanksCount, int superTanksCount)
         {
             //Make sure we have players and that the number of them is even
-            return (count > 0 && count % 2 == 0);
+            return (tanksCount > 0 && tanksCount % 2 == 0
+                && superTanksCount % 2 == 0);
         }
 
-        public override void MakeTeams(Tanks.Tank[] tanks)
+        public override void MakeTeams(Tanks.Tank[] tanks, Tanks.SuperTank[] superTanks)
         {
-            throw new NotImplementedException();
+            if (!HasValidPlayerCount(tanks.Length, superTanks.Length))
+                throw new ArgumentException("number of tanks invalid");
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
