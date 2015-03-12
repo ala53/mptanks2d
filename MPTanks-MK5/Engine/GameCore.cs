@@ -126,6 +126,7 @@ namespace Engine
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
             AnimationEngine = new Rendering.Animations.AnimationEngine();
+            ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
             Logger.Log("Game started");
         }
@@ -214,6 +215,8 @@ namespace Engine
             TimerFactory.Update(gameTime);
             //Process animations
             AnimationEngine.Update(gameTime);
+            //Move Particles
+            ParticleEngine.Update(gameTime);
             //Process individual objects
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);

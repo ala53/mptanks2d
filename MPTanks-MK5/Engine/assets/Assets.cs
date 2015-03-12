@@ -12,6 +12,7 @@ namespace Engine.Assets
         const string projectileAsset = "assets/animations/basictank_projectile.png";
         public static readonly SpriteInfo TurretBase = new SpriteInfo("turretbase", asset);
         public static readonly SpriteInfo GrillMask = new SpriteInfo("grillmask", asset);
+        public static readonly SpriteInfo MainGunSparks = new SpriteInfo("gunsparks", asset);
         public static readonly SpriteAnimationInfo MainProjectile = new SpriteAnimationInfo("projectileAnim", projectileAsset); 
     }
 

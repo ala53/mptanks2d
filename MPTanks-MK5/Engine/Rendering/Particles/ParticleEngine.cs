@@ -12,6 +12,7 @@ namespace Engine.Rendering.Particles
         public Particle[] Particles { get; private set; }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
+        public int LivingParticlesCount { get; private set; }
         public ParticleEngine(GameCore game)
         {
             Game = game;
@@ -47,6 +48,7 @@ namespace Engine.Rendering.Particles
         }
         private void ProcessParticles(float deltaMs)
         {
+            var aliveParticles = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
             for (int i = 0; i < Particles.Length; i++)
             {
@@ -54,6 +56,8 @@ namespace Engine.Rendering.Particles
                 if (!part.Alive) //Skip dead particles for performance
                     continue;
 
+                //Statistical tracking
+                aliveParticles++;
                 //Update the lifespan's time
                 part.TotalTimeAlreadyAlive += deltaMs; //Increase the alive time for the particle
                 //If the particle has outlived it's lifespan, we remove it
@@ -69,6 +73,8 @@ namespace Engine.Rendering.Particles
 
                 Particles[i] = part; //And write the updates back to the engine
             }
+
+            LivingParticlesCount = aliveParticles;
         }
     }
 }

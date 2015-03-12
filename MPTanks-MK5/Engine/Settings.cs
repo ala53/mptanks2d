@@ -45,6 +45,6 @@ namespace Engine
         /// <summary>
         /// The maximum number of particles to allow in game
         /// </summary>
-        public const int ParticleLimit = 10000;
+        public const int ParticleLimit = 100000;
     }
 }

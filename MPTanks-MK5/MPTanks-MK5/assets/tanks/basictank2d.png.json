@@ -35,6 +35,13 @@
 			"y": 21,
 			"width": 30,
 			"height": 36
+		},
+		{
+			"name": "gunsparks",
+			"x": 121,
+			"y": 74,
+			"width": 5,
+			"height": 13
 		}
 	]
 }

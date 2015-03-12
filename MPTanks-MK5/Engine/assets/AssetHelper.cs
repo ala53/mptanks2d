@@ -19,7 +19,8 @@ namespace Engine.Assets
 
         public static string AnimationToString(SpriteAnimationInfo info, float positionMs = 0, bool loop = false)
         {
-            return Animation.AnimationAsString(info.AnimationName, info.SheetName, positionMs, loop);
+            return Engine.Rendering.Animations.Animation.
+                AnimationAsString(info.AnimationName, info.SheetName, positionMs, loop);
         }
 
         private static SpriteAnimationInfo ChooseRandom(SpriteAnimationInfo[] options)

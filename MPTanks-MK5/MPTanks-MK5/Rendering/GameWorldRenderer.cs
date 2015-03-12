@@ -11,6 +11,7 @@ namespace MPTanks_MK5.Rendering
         public GameClient Game { get; private set; }
         private GameObject[] _objects;
         private Engine.Rendering.Animations.AnimationEngine _animEngine;
+        private Engine.Rendering.Particles.Particle[] _particles;
 
         private BasicEffect _effect;
         private AssetCache _cache;
@@ -32,6 +33,10 @@ namespace MPTanks_MK5.Rendering
         public void SetAnimations(Engine.Rendering.Animations.AnimationEngine engine)
         {
             _animEngine = engine;
+        }
+        public void SetParticles(Engine.Rendering.Particles.Particle[] particles)
+        {
+            _particles = particles;
         }
         public void Render(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, RectangleF viewRect, GameTime gameTime)
         {
@@ -59,8 +64,10 @@ namespace MPTanks_MK5.Rendering
 
             //Draw game objects
             DrawObjects(_boundsRect, gameTime, sb);
-           //And animations
+            //And animations
             DrawAnimations(_boundsRect, gameTime, sb);
+            //And particles
+            DrawParticles(_boundsRect, gameTime, sb);
         }
 
         private void DrawObjects(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
@@ -99,10 +106,10 @@ namespace MPTanks_MK5.Rendering
                         //Upload the transformation matrix for the object
                         _effect.World = cmpMatrix;
                         //This is here because the effect requires manual alpha blending for some reason
-                        _effect.Alpha = mask.A / 255f;
+                        //_effect.Alpha = mask.A / 255f;
 
                         //Start the spritebatch for the component
-                        sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend,
+                        sb.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied,
                             SamplerState.AnisotropicClamp, DepthStencilState.Default,
                             RasterizerState.CullNone, _effect);
                         //Build a correctly sized rectangle to draw the asset on
@@ -112,7 +119,7 @@ namespace MPTanks_MK5.Rendering
                             ScaleForRendering(component.Size.X),
                             ScaleForRendering(component.Size.Y));
                         //Get the cached asset
-                        var asset = _cache.GetArtAsset(component, gameTime);
+                        var asset = _cache.GetArtAsset(component.SpriteSheetName, component.AssetName, gameTime);
                         //And draw
                         sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, new Color(mask, 255));
 
@@ -150,7 +157,7 @@ namespace MPTanks_MK5.Rendering
                     //upload the model matrix
                     _effect.World = animMatrix;
                     //Begin the draw call
-                    sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend,
+                    sb.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied,
                         SamplerState.AnisotropicClamp, DepthStencilState.Default,
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet
@@ -176,7 +183,35 @@ namespace MPTanks_MK5.Rendering
 
         private void DrawParticles(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
+            if (_particles == null)
+                return;
 
+            _effect.World = Matrix.Identity;
+            _effect.Alpha = 1;
+
+            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap,
+                DepthStencilState.Default, RasterizerState.CullNone, _effect);
+
+            foreach (var particle in _particles)
+            {
+                //ignore dead particles
+                if (!particle.Alive) continue;
+
+                var pos = Scale(particle.Position);
+                var size = Scale(particle.Size);
+                //And ignore off screen particles
+                if (!IsVisible(pos, size, boundsRect)) continue;
+
+                // var tfMatrix =
+                //   Matrix.CreateTranslation(new Vector3(-size / 2, 0)) *
+                // Matrix.CreateRotationZ(particle.Rotation) *
+                //Matrix.CreateTranslation(new Vector3((size / 2) + pos, 0));
+                var asset = _cache.GetArtAsset(particle.SheetName, particle.AssetName, gameTime);
+                sb.Draw(asset.SpriteSheet.Texture, new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y),
+                    asset.Bounds, particle.ColorMask,particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
+            }
+
+            sb.End();
         }
 
         #region Scaling helpers

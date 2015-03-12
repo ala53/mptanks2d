@@ -70,6 +70,8 @@ namespace Engine.Gamemodes
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
+            if (_teams == null) return;
+
             var tanks = new HashSet<Tanks.Tank>(Game.AllTanks);
             bool blueAlive = false;
             bool redAlive = false;

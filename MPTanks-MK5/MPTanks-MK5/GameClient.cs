@@ -135,6 +135,24 @@ namespace MPTanks_MK5
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
 
+            if (Keyboard.GetState().IsKeyDown(Keys.V))
+            {
+                for (var i = 0; i < 1; i++)
+                    game.ParticleEngine.AddParticle(new Engine.Rendering.Particles.Particle()
+                    {
+                        SheetName = Engine.Assets.BasicTank.MainGunSparks.SheetName,
+                        AssetName = Engine.Assets.BasicTank.MainGunSparks.SpriteName,
+                        LifespanMs = 10000,
+                        Acceleration = new Vector2(-0.3f, 1.2f),
+                        Velocity = new Vector2(-3f, 0.2f),
+                        ColorMask = Color.Yellow,
+                        Rotation = 0.03f,
+                        RotationVelocity = 0.75f,
+                        Position = tank.Position,
+                        Size = new Vector2(0.5f, 1.25f)
+                    });
+            }
+
             tank.Input(iState);
 
             game.Update(gameTime);
@@ -142,6 +160,8 @@ namespace MPTanks_MK5
             //Update the render list if the game has added or removed objects
             if (game.IsDirty)
                 renderer.SetObjects(game.GameObjects);
+
+            renderer.SetParticles(game.ParticleEngine.Particles);
             sw.Stop();
 
             physicsMs = (float)sw.Elapsed.TotalMilliseconds;
@@ -211,7 +231,8 @@ namespace MPTanks_MK5
                 + ", Update: " + physicsMs.ToString("N2") + ", \nRender: " + renderMs.ToString("N2") +
             ", Mouse: " + Mouse.GetState().Position.ToString() + ", Tank: " + tank.Position.ToString() + ",\n" +
             "Active timers: " + game.TimerFactory.ActiveTimersCount + ", Animation layers: " +
-            game.AnimationEngine.Animations.Count, new Vector2(10, 10), Color.Red);
+            game.AnimationEngine.Animations.Count + ",\nParticles: " + 
+            game.ParticleEngine.LivingParticlesCount, new Vector2(10, 10), Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);

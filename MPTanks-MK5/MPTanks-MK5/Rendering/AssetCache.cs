@@ -49,40 +49,41 @@ namespace MPTanks_MK5.Rendering
             new Dictionary<string, Sprites.SpriteSheet>();
         private Dictionary<string, Animation.Animation> animations =
             new Dictionary<string, Animation.Animation>();
-        public Sprite GetArtAsset(RenderableComponent component, GameTime gameTime)
+        public Sprite GetArtAsset(string sheetName, string assetName, GameTime gameTime)
         {
 
-            if (component.SpriteSheetName == null) //Untextured, return white box
+            if (assetName == null && sheetName == null) //Untextured, return white box
                 return blankSpriteSheet.Sprites["1px_blank"];
 
+            if (sheetName == null) sheetName = "";
+
             //Special path for animations.
-            if (component.AssetName.StartsWith("[animation]"))
-                return GetAnimation(component, gameTime);
+            if (assetName.StartsWith("[animation]"))
+                return GetAnimation(assetName, gameTime);
 
-            if (!spriteSheets.ContainsKey(component.SpriteSheetName))
-                LoadSpriteSheet(component.SpriteSheetName);
+            if (!spriteSheets.ContainsKey(sheetName))
+                LoadSpriteSheet(sheetName);
 
-            if (spriteSheets.ContainsKey(component.SpriteSheetName))
-                if (spriteSheets[component.SpriteSheetName].Sprites.ContainsKey(component.AssetName))
-                    return spriteSheets[component.SpriteSheetName].Sprites[component.AssetName];
+            if (spriteSheets.ContainsKey(sheetName))
+                if (spriteSheets[sheetName].Sprites.ContainsKey(assetName))
+                    return spriteSheets[sheetName].Sprites[assetName];
 
             Logger.Error("Missing texture: " +
-                component.SpriteSheetName + "/" + component.AssetName);
+                sheetName + "/" + assetName);
             //Texture missing, return MISSING_Texture texture
             return blankSpriteSheet.Sprites["missing_texture"];
         }
 
-        private Sprite GetAnimation(RenderableComponent component, GameTime gameTime)
+        private Sprite GetAnimation(string assetName, GameTime gameTime)
         {
-            LoadSpriteSheet(Animation.Animation.GetSheetName(component.AssetName));
-            component.AssetName = Animation.Animation.AdvanceAnimation(
-                component.AssetName, (float)gameTime.ElapsedGameTime.TotalMilliseconds, animations);
-            var anim = Animation.Animation.GetFrame(component.AssetName, animations);
+            LoadSpriteSheet(Animation.Animation.GetSheetName(assetName));
+            assetName = Animation.Animation.AdvanceAnimation(
+                assetName, (float)gameTime.ElapsedGameTime.TotalMilliseconds, animations);
+            var anim = Animation.Animation.GetFrame(assetName, animations);
 
             if (anim == null)
             {
-                Logger.Error("Missing texture for animation: " +
-                    component.SpriteSheetName + "/" + component.AssetName);
+                Logger.Error("Missing texture for animation: " + assetName);
                 //Texture missing, return MISSING_Texture texture
                 return blankSpriteSheet.Sprites["missing_texture"];
             }
