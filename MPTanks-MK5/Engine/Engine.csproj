@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Engine</RootNamespace>
+    <AssemblyName>Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FarseerPhysics.Portable">
+      <HintPath>..\packages\FarseerPhysics.Portable.3.5.1\lib\portable-net4+sl4+wp8+win8\FarseerPhysics.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.3.2.0.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="assets\AssetHelper.cs" />
+    <Compile Include="assets\Assets.cs" />
+    <Compile Include="Core\Timing\Timer.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Powerups\PickedUp.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Projectiles\HitTank.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Projectiles\DestroyedTimeout.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Tanks\FiredProjectile.cs" />
+    <Compile Include="Core\Events\Types\Game\Ended.cs" />
+    <Compile Include="Core\Events\Types\Game\Tick.cs" />
+    <Compile Include="Core\Events\Types\Game\Started.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Tanks\Created.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Destroyed.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Tanks\InputChanged.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Tanks\Killed.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Powerups\Created.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Projectiles\Created.cs" />
+    <Compile Include="GameCore.cs" />
+    <Compile Include="Core\Events\EventEngine.cs" />
+    <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
+    <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
+    <Compile Include="Gamemodes\Gamemode.cs" />
+    <Compile Include="Gamemodes\Platoon.cs" />
+    <Compile Include="Gamemodes\Team.cs" />
+    <Compile Include="GameObject.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Maps\Map.cs" />
+    <Compile Include="Maps\MapObjects\Building.cs" />
+    <Compile Include="Maps\MapObjects\MapObject.cs" />
+    <Compile Include="Powerups\HealthPowerup.cs" />
+    <Compile Include="Powerups\Powerup.cs" />
+    <Compile Include="Powerups\PowerupManager.cs" />
+    <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
+    <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
+    <Compile Include="Projectiles\Projectile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Animations\Animation.cs" />
+    <Compile Include="Rendering\Animations\AnimationEngine.cs" />
+    <Compile Include="Rendering\Particles\Particle.cs" />
+    <Compile Include="Rendering\Particles\ParticleEngine.cs" />
+    <Compile Include="Rendering\RenderableComponent.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Tanks\BasicTank.cs" />
+    <Compile Include="Tanks\InputState.cs" />
+    <Compile Include="Tanks\SuperTank.cs" />
+    <Compile Include="Tanks\Tank.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\maps\testmap.json" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

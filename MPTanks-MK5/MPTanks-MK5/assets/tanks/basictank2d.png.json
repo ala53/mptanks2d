@@ -1,0 +1,40 @@
+{
+	"name": "Basic Tank (2D) SpriteSheet",
+	"sprites": [
+		{
+			"name": "base",
+			"x": 1,
+			"y": 1,
+			"width": 61,
+			"height": 101
+		},
+		{
+			"name": "turret",
+			"x": 63,
+			"y": 1,
+			"width": 33,
+			"height": 89
+		},
+		{
+			"name": "mainprojectile",
+			"x": 76,
+			"y": 94,
+			"width": 4,
+			"height": 4
+		},
+		{
+			"name": "grillmask",
+			"x": 66,
+			"y": 97,
+			"width": 2,
+			"height": 3
+		},
+		{
+			"name": "turretbase",
+			"x": 127,
+			"y": 21,
+			"width": 30,
+			"height": 36
+		}
+	]
+}
