@@ -13,9 +13,9 @@ namespace Engine.Projectiles
 
         public Tanks.Tank Owner { get; private set; }
 
-        public Projectile(Tanks.Tank owner, GameCore game, float density = 1,
+        public Projectile(Tanks.Tank owner, GameCore game, bool authorized, float density = 1,
             float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0)
-            : base(game, density, bounciness, position, rotation)
+            : base(game, authorized, density, bounciness, position, rotation)
         {
             Owner = owner;
             Body.IsBullet = true;

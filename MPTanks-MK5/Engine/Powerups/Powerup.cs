@@ -16,8 +16,8 @@ namespace Engine.Powerups
         /// </summary>
         /// <param name="game"></param>
         /// <param name="position"></param>
-        public Powerup(GameCore game, Vector2 position)
-            : base(game, 100000, 0, position, 0)
+        public Powerup(GameCore game, bool authorized, Vector2 position)
+            : base(game, authorized, 100000, 0, position, 0)
         {
             //Powerups don't need to collide with things...
             Body.IsSensor = true;

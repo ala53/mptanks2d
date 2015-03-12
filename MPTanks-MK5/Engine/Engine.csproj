@@ -56,6 +56,7 @@
     <Compile Include="assets\Assets.cs" />
     <Compile Include="Core\Timing\Timer.cs" />
     <Compile Include="GameCore.cs" />
+    <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Platoon.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Powerups\PowerupManager.cs" />
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
+    <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animation.cs" />

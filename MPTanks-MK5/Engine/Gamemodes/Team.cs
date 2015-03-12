@@ -11,6 +11,11 @@ namespace Engine.Gamemodes
     {
         private static Team _null = new Team();
         public static Team Null { get { return _null; } }
+        private static Team _tied = new Team();
+        /// <summary>
+        /// The team to flag as a tie or when no one wins.
+        /// </summary>
+        public static Team Indeterminate { get { return _tied; } }
         public Tanks.Tank[] Tanks { get; internal set; }
         public string TeamName { get; internal set; }
         public Color TeamColor { get; internal set; }

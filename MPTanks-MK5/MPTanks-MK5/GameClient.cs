@@ -62,19 +62,20 @@ namespace MPTanks_MK5
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             game = new Engine.GameCore(new EngineInterface.FileLogger(), new Engine.Gamemodes.TeamDeathMatchGamemode());
+            game.Authoritative = true;
             renderer = new GameWorldRenderer(this);
             renderer.SetAnimations(game.Animations);
 
             font = Content.Load<SpriteFont>("font");
 
-            for (var i = 1; i < 30; i++)
+            for (var i = 1; i < 100; i++)
                 game.AddGameObject(new BasicTank(Guid.NewGuid(), game) { Position = new Vector2(i * 3.5f, 5) });
-            for (var i = 0; i < 30; i++)
+            for (var i = 0; i < 100; i++)
                 game.AddGameObject(new BasicTank(Guid.NewGuid(), game) { Position = new Vector2(i * 3.5f, 40) });
-            for (var i = 0; i < 30; i++)
+            for (var i = 0; i < 100; i++)
                 game.AddGameObject(new BasicTank(Guid.NewGuid(), game) { Position = new Vector2(5, i * 3.5f) });
 
-            game.AddGameObject(new Engine.Maps.MapObjects.Building(game, new Vector2(50, 50), 33));
+            game.AddGameObject(new Engine.Maps.MapObjects.Building(game, false, new Vector2(50, 50), 33));
 
             tank = new BasicTank(Guid.NewGuid(), game) { Position = new Vector2(15, 20) };
             game.AddGameObject(tank);

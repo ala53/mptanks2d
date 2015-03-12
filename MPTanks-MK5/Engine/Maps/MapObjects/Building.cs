@@ -9,8 +9,8 @@ namespace Engine.Maps.MapObjects
 {
     public class Building : MapObject
     {
-        public Building(GameCore game, Vector2 position = default(Vector2), float rotation = 0)
-            : base(game, position, rotation)
+        public Building(GameCore game, bool authorized = false, Vector2 position = default(Vector2), float rotation = 0)
+            : base(game, authorized, position, rotation)
         {
             Components.Add("building", new Rendering.RenderableComponent()
             {
@@ -39,7 +39,7 @@ namespace Engine.Maps.MapObjects
             {
                 Mask = new Color(Color.Green, 255),
                 Offset = new Vector2(1, 2),
-                Size = new Vector2(2,1),
+                Size = new Vector2(2, 1),
                 Rotation = 0.24f
             });
         }

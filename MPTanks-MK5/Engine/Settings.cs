@@ -35,5 +35,11 @@ namespace Engine
         public const float PhysicsCompensationForRendering = 0.085f;
 
         public const float TankDensity = 15;
+
+        /// <summary>
+        /// Wait 10 sec after initialization to start the game because we want all of
+        /// the setup to be done.
+        /// </summary>
+        public const float TimeToWaitBeforeStartingGame = 10000;
     }
 }

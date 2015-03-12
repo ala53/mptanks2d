@@ -18,9 +18,10 @@ namespace Engine.Projectiles.BasicTank
             get { return 60; }
         }
 
-        public MainGunProjectile(Tanks.Tank owner, GameCore game,
+        private Core.Timing.Timer _timeoutTimer;
+        public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
-            : base(owner, game, 1, 0f, position, rotation)
+            : base(owner, game, authorized, 1, 0f, position, rotation)
         {
             Components.Add("bullet", new Rendering.RenderableComponent()
             {
@@ -34,7 +35,7 @@ namespace Engine.Projectiles.BasicTank
             });
 
             //Add a timer for so we don't exist forever
-            Game.TimerFactory.CreateTimer((timer) => Destroy(), 5000);
+            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Destroy(), 5000);
         }
 
         public override void CollidedWithTank(Tanks.Tank tank)
@@ -44,6 +45,7 @@ namespace Engine.Projectiles.BasicTank
 
         private void Destroy(GameObject destroyer = null)
         {
+            Game.TimerFactory.RemoveTimer(_timeoutTimer);
             Game.RemoveGameObject(this, destroyer);
         }
 

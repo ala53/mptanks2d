@@ -9,8 +9,8 @@ namespace Engine.Powerups
 {
     public class HealthPowerup : Powerup
     {
-        public HealthPowerup(GameCore game, Vector2 position)
-            :base(game, position)
+        public HealthPowerup(GameCore game, Vector2 position, bool authorized = false)
+            : base(game, authorized, position)
         {
 
         }

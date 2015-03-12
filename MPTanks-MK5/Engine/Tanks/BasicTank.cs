@@ -10,16 +10,14 @@ namespace Engine.Tanks
 {
     public class BasicTank : Tank
     {
-        public BasicTank(Guid playerId, GameCore game)
-            : base(playerId, game)
+        public BasicTank(Guid playerId, GameCore game, bool authorized = false)
+            : base(playerId, game, authorized)
         {
             AddComponents();
             SetUpBody();
         }
         private void SetUpBody()
         {
-            //        Body.LinearDamping = 10;
-            //      Body.AngularDamping = 10;
             Health = 150;
         }
 
@@ -76,29 +74,55 @@ namespace Engine.Tanks
             Components["turretDoor"].Rotation = InputState.LookDirection - Rotation;
 
 
-            if (InputState.FireState && InputState.WeaponNumber == 0 && canFirePrimary)
-            {
+            if (InputState.FireState && InputState.WeaponNumber == 0)
                 FirePrimary();
-                //Mark the primary as fired are reload
-                canFirePrimary = false;
-                Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
-            }
+            if (InputState.FireState && InputState.WeaponNumber == 1)
+                FireSecondary();
+
             base.Update(time);
         }
 
         private void FirePrimary()
         {
+            if (!canFirePrimary)
+                return;
             var rotation = InputState.LookDirection;
+            //Spawn a projectile
+            var projectile = new Projectiles.BasicTank.MainGunProjectile(
+                this, Game, false,
+                TransformPoint(new Vector2(1.5f, -0f), rotation, true), rotation);
+            //Fire it in the barrel direction
             const float velocity = 0.2f;
             var x = velocity * (float)Math.Sin(rotation);
             var y = velocity * -(float)Math.Cos(rotation);
+            projectile.Body.ApplyForce(new Vector2(x, y));
+            //Add to the game world
+            Game.AddGameObject(projectile, this);
+
+            //Reload timer
+            canFirePrimary = false;
+            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
+        }
+        private void FireSecondary()
+        {
+            if (!canFirePrimary)
+                return;
+            var rotation = InputState.LookDirection;
             //Spawn a projectile
             var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                this, Game,
+                this, Game, false,
                 TransformPoint(new Vector2(1.5f, -0f), rotation, true), rotation);
+            //Fire it in the barrel direction
+            const float velocity = 0.2f;
+            var x = velocity * (float)Math.Sin(rotation);
+            var y = velocity * -(float)Math.Cos(rotation);
             projectile.Body.ApplyForce(new Vector2(x, y));
-
+            //Add to the game world
             Game.AddGameObject(projectile, this);
+
+            //Reload timer
+            canFirePrimary = false;
+            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
         }
 
         protected override void TankKilled(GameObject obj)

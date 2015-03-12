@@ -23,8 +23,8 @@ namespace Engine.Tanks
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
 
-        public Tank(Guid playerId, GameCore game)
-            : base(game, Settings.TankDensity, 0, default(Vector2), 0)
+        public Tank(Guid playerId, GameCore game, bool authorized)
+            : base(game, authorized, Settings.TankDensity, 0, default(Vector2), 0)
         {
             PlayerId = playerId;
         }

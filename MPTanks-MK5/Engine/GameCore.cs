@@ -10,23 +10,18 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
-    public class GameCore
+    public partial class GameCore
     {
+        #region Properties
         /// <summary>
-        /// Whether this instance is just another client or it is the server.
+        /// Gets or sets whether this instance is just another client or it is the server.
         /// Helps with deciding when to play death sequences, etc.
         /// </summary>
-        public bool Authoritative { get; private set; }
+        public bool Authoritative { get; set; }
         /// <summary>
-        /// The animations that are currently playing (sprite sheet animations)
+        /// The animations that are currently playing (sprite sheet animation descriptions)
         /// </summary>
         public AnimationEngine Animations { get; private set; }
-
-        /// <summary>
-        /// The internally accessible random number generator, for determinism
-        /// </summary>
-        internal Random RandomGenerator { get; private set; }
-
         /// <summary>
         /// The manager which spawns in game powerups over time
         /// </summary>
@@ -45,6 +40,9 @@ namespace Engine
         /// The timer manager which lets game objects create timers for their own use
         /// </summary>
         public Timer.Factory TimerFactory { get; private set; }
+        /// <summary>
+        /// The physics world that the game runs in.
+        /// </summary>
         internal FarseerPhysics.Dynamics.World World { get; private set; }
         private int _nextObjectId = 0;
         /// <summary>
@@ -53,7 +51,54 @@ namespace Engine
         internal int NextObjectId { get { return _nextObjectId++; } }
 
         private List<GameObject> _gameObjects = new List<GameObject>();
+        /// <summary>
+        /// All GameObjects currently in game.
+        /// </summary>
         public GameObject[] GameObjects { get { return _gameObjects.ToArray(); } }
+
+        public Core.Events.EventEngine EventEngine { get; private set; }
+
+        #region Tanks (collections by type)
+        /// <summary>
+        /// The tanks alive in the game, excluding SuperTanks
+        /// </summary>
+        public IEnumerable<Tanks.Tank> Tanks
+        {
+            get
+            {
+                foreach (var obj in GameObjects)
+                    if (obj.GetType().IsSubclassOf(typeof(Tanks.Tank)) &&
+                        !obj.GetType().IsSubclassOf(typeof(Tanks.SuperTank)))
+                        yield return (Tanks.Tank)obj;
+            }
+        }
+
+        /// <summary>
+        /// The SuperTanks alive in the game
+        /// </summary>
+        public IEnumerable<Tanks.SuperTank> SuperTanks
+        {
+            get
+            {
+                foreach (var obj in GameObjects)
+                    if (obj.GetType().IsSubclassOf(typeof(Tanks.SuperTank)))
+                        yield return (Tanks.SuperTank)obj;
+            }
+        }
+
+        /// <summary>
+        /// All tanks alive in the game, both normal and super.
+        /// </summary>
+        public IEnumerable<Tanks.Tank> AllTanks
+        {
+            get
+            {
+                foreach (var obj in GameObjects)
+                    if (obj.GetType().IsSubclassOf(typeof(Tanks.Tank)))
+                        yield return (Tanks.Tank)obj;
+            }
+        }
+        #endregion
 
         private bool _isDirty = false;
         /// <summary>
@@ -61,17 +106,20 @@ namespace Engine
         /// </summary>
         public bool IsDirty { get { return _isDirty; } }
         #endregion
-
+        #endregion
         public GameCore(ILogger logger, Gamemodes.Gamemode gameMode)
         {
-            Logger = logger;
-            Gamemode = Gamemode;
+            Logger = logger; 
+
+            //Set up the game mode internally
+            Gamemode = gameMode;
             Gamemode.SetGame(this);
 
+            //Initialize game
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
-            RandomGenerator = new Random();
             TimerFactory = new Timer.Factory();
             Animations = new AnimationEngine();
+            EventEngine = new Core.Events.EventEngine();
             Logger.Log("Game started");
         }
 
@@ -85,14 +133,14 @@ namespace Engine
             Logger.LogObjectCreated(obj, creator);
             obj.Alive = true;
 
-            if (_inUpdateLoop)
+            if (_inUpdateLoop) //In update loop, wait a frame.
             {
                 _addQueue.Add(obj);
             }
             else
             {
                 _gameObjects.Add(obj);
-                _isDirty = true;
+                _isDirty = true; //Mark dirty flag
             }
         }
 
@@ -106,11 +154,11 @@ namespace Engine
             if (obj.Body.IsDisposed && found)
                 Logger.Warning("Body already disposed, Trace:\n" + Environment.StackTrace);
 
-            if (_inUpdateLoop)
-            {
-                if (!found)
-                    return; //It doesn't exist - probably was already deleted by a previous object
+            if (!found)
+                return; //It doesn't exist - probably was already deleted by a previous object
 
+            if (_inUpdateLoop) //We're in the for loop so wait a frame
+            {
                 if (_addQueue.Contains(obj))
                     _addQueue.Remove(obj);
                 else
@@ -119,10 +167,10 @@ namespace Engine
             else
             {
                 if (!obj.Body.IsDisposed)
-                    obj.Body.Dispose();
-                obj.Destroy();
+                    obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
+                obj.Destroy(); //Call destructor
                 _gameObjects.Remove(obj);
-                _isDirty = true;
+                _isDirty = true; //Mark the dirty flag
             }
         }
 
@@ -131,15 +179,18 @@ namespace Engine
         /// </summary>
         private void ProcessQueue()
         {
-            foreach (var obj in _addQueue)
-                _gameObjects.Add(obj);
+            foreach (var obj in _addQueue) { 
+                _gameObjects.Add(obj); 
+                _isDirty = true; //Mark the dirty flag
+            }
 
             foreach (var obj in _removeQueue)
             {
                 if (!obj.Body.IsDisposed)
-                    obj.Body.Dispose();
-                obj.Destroy();
+                    obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
+                obj.Destroy(); //Call the destructor
                 _gameObjects.Remove(obj);
+                _isDirty = true; //Mark the dirty flag
             }
 
             _addQueue.Clear();
@@ -148,19 +199,23 @@ namespace Engine
 
         public void Update(GameTime gameTime)
         {
-            ProcessQueue();
+            //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
-
+            //Remove objects that were supposed to be removed last frame (foreach loop issues)
+            ProcessQueue();
             //Process timers
             TimerFactory.Update(gameTime);
-
             //Process animations
             Animations.Update(gameTime);
-
+            //Process individual objects
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);
-
+            //Tick physics
             World.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
+            //Let the gamemode do it's calculations
+            Gamemode.Update(gameTime);
+            //And notify that we exited the update loop
+            _inUpdateLoop = false;
         }
     }
 }

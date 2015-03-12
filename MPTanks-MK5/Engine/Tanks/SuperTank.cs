@@ -8,8 +8,8 @@ namespace Engine.Tanks
 {
     public abstract class SuperTank : Tank
     {
-        public SuperTank(Guid playerId, GameCore game)
-            : base(playerId, game)
+        public SuperTank(Guid playerId, GameCore game, bool authorized)
+            : base(playerId, game, authorized)
         {
 
         }

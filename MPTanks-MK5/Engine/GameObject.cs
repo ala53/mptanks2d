@@ -46,19 +46,27 @@ namespace Engine
 
         public abstract Vector2 Size { get; }
 
-        public GameObject(GameCore game, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0)
+        public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, int id = -1)
         {
+            if (id == -1)
+                ObjectId = game.NextObjectId;
+            else
+                ObjectId = id;
+            Game = game;
+            if (!game.Authoritative && !authorized)
+#if DEBUG
+                throw new Exception("Creation Disallowed");
+#else
+                game.Logger.Error("Object Created without authorization. Type: " + this.GetType.ToString() + ", ID: " + ObjectID);
+#endif
+            //Create the body in physics space, which is smaller than world space, which is smaller than render space
             Body = BodyFactory.CreateRectangle(game.World, Size.X * Settings.PhysicsScale,
                  Size.Y * Settings.PhysicsScale, density, position, rotation,
                  FarseerPhysics.Dynamics.BodyType.Dynamic, this);
             Body.Restitution = bounciness;
-
             Body.OnCollision += Body_OnCollision;
-
+            //And initialize the object
             Alive = true;
-            ObjectId = game.NextObjectId;
-
-            Game = game;
             Rotation = rotation;
             Position = position;
             ColorMask = Color.White;
@@ -75,7 +83,6 @@ namespace Engine
         {
             return true;
         }
-
 
         /// <summary>
         /// Transforms a point that is relative to the top left of the physics object,
@@ -109,10 +116,13 @@ namespace Engine
 
         abstract public void Update(GameTime time);
 
-        public void Destroy()
+        public void Destroy(bool authorized = false)
         {
-            Alive = false;
-            DestroyInternal();
+            if (authorized || Game.Authoritative)
+            {
+                Alive = false;
+                DestroyInternal();
+            }
         }
 
         protected virtual void DestroyInternal()
