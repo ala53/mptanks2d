@@ -37,9 +37,14 @@ namespace Engine
         public const float TankDensity = 15;
 
         /// <summary>
-        /// Wait 10 sec after initialization to start the game because we want all of
-        /// the setup to be done.
+        /// Number of milliseconds after GameCore initialization to wait before starting
+        /// the game because we want all of the setup to be done and for people to be connected.
         /// </summary>
         public const float TimeToWaitBeforeStartingGame = 10000;
+
+        /// <summary>
+        /// The maximum number of particles to allow in game
+        /// </summary>
+        public const int ParticleLimit = 10000;
     }
 }

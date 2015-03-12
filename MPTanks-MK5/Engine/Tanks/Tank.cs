@@ -78,10 +78,10 @@ namespace Engine.Tanks
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
-            var velocity = InputState.YMovementState *
+            var velocity = InputState.MovementSpeed *
                 MovementSpeed * (time.ElapsedGameTime.TotalMilliseconds / Settings.MSPerFrame);
 
-            var rotationAmount = InputState.XMovementState *
+            var rotationAmount = InputState.RotationSpeed *
                 RotationSpeed * (time.ElapsedGameTime.TotalMilliseconds / Settings.MSPerFrame);
 
             //calculate the actual movement by axis

@@ -10,7 +10,7 @@ namespace MPTanks_MK5.Rendering
     {
         public GameClient Game { get; private set; }
         private GameObject[] _objects;
-        private Engine.Rendering.AnimationEngine _animEngine;
+        private Engine.Rendering.Animations.AnimationEngine _animEngine;
 
         private BasicEffect _effect;
         private AssetCache _cache;
@@ -29,7 +29,7 @@ namespace MPTanks_MK5.Rendering
         {
             _objects = objects;
         }
-        public void SetAnimations(Engine.Rendering.AnimationEngine engine)
+        public void SetAnimations(Engine.Rendering.Animations.AnimationEngine engine)
         {
             _animEngine = engine;
         }
@@ -124,7 +124,7 @@ namespace MPTanks_MK5.Rendering
 
         private void DrawAnimations(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
-            var endedAnimations = new List<Engine.Rendering.Animation>();
+            var endedAnimations = new List<Engine.Rendering.Animations.Animation>();
             //And render the animations
             if (_animEngine != null)
                 foreach (var anim in _animEngine.Animations)
@@ -172,6 +172,11 @@ namespace MPTanks_MK5.Rendering
                 //Remove all the animations which are ended by now
                 _animEngine.MarkAnimationCompleted(anim);
             }
+        }
+
+        private void DrawParticles(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
+        {
+
         }
 
         #region Scaling helpers

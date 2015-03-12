@@ -74,9 +74,9 @@ namespace Engine.Tanks
             Components["turretDoor"].Rotation = InputState.LookDirection - Rotation;
 
 
-            if (InputState.FireState && InputState.WeaponNumber == 0)
+            if (InputState.FirePressed && InputState.WeaponNumber == 0)
                 FirePrimary();
-            if (InputState.FireState && InputState.WeaponNumber == 1)
+            if (InputState.FirePressed && InputState.WeaponNumber == 1)
                 FireSecondary();
 
             base.Update(time);
@@ -128,10 +128,10 @@ namespace Engine.Tanks
         protected override void TankKilled(GameObject obj)
         {
             var si = Assets.AssetHelper.GetRandomExplosionAnimation();
-            var anim = new Rendering.Animation(
+            var anim = new Rendering.Animations.Animation(
                      si.AnimationName, Position, new Vector2(10), si.SheetName);
 
-            Game.Animations.AddAnimation(anim);
+            Game.AnimationEngine.AddAnimation(anim);
 
             Game.TimerFactory.CreateReccuringTimer((Action<Timer>)((timer) =>
             {

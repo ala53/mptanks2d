@@ -32,12 +32,6 @@ namespace MPTanks_MK5.Rendering.Animation
             FramesPerSecond = fps;
         }
 
-        public void Begin(Engine.Rendering.RenderableComponent component, int frameNumber = 0)
-        {
-            var msIntoAnim = frameNumber * (1000 / FramesPerSecond);
-            component.AssetName = Engine.Rendering.Animation.AnimationAsString(Name, Sheet.Name, msIntoAnim);
-        }
-
         public static Sprites.Sprite GetFrame(string animationDescription, Dictionary<string, Animation> animations)
         {
             var animInfo = animationDescription.Substring(11);

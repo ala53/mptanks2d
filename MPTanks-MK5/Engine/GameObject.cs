@@ -54,11 +54,8 @@ namespace Engine
                 ObjectId = id;
             Game = game;
             if (!game.Authoritative && !authorized)
-#if DEBUG
-                throw new Exception("Creation Disallowed");
-#else
                 game.Logger.Error("Object Created without authorization. Type: " + this.GetType.ToString() + ", ID: " + ObjectID);
-#endif
+
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
             Body = BodyFactory.CreateRectangle(game.World, Size.X * Settings.PhysicsScale,
                  Size.Y * Settings.PhysicsScale, density, position, rotation,

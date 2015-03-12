@@ -8,17 +8,17 @@ namespace Engine.Tanks
 {
     public struct InputState
     {
-        public float XMovementState;
-        public float YMovementState;
+        public float RotationSpeed;
+        public float MovementSpeed;
         public float LookDirection;
-        public bool FireState;
+        public bool FirePressed;
         public int WeaponNumber;
 
         public static bool operator ==(InputState i1, InputState i2)
         {
-            return (i1.XMovementState == i2.XMovementState) &&
-                (i1.YMovementState == i2.YMovementState) &&
-                (i1.FireState == i2.FireState) &&
+            return (i1.RotationSpeed == i2.RotationSpeed) &&
+                (i1.MovementSpeed == i2.MovementSpeed) &&
+                (i1.FirePressed == i2.FirePressed) &&
                 (i1.WeaponNumber == i2.WeaponNumber)&&
                 (i1.LookDirection == i2.LookDirection);
         }

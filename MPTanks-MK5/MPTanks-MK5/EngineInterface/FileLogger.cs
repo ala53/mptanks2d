@@ -21,12 +21,20 @@ namespace MPTanks_MK5.EngineInterface
 
         public void Error(string err)
         {
+#if DEBUG
+            throw new Exception(err);
+#else
             Logger.Error(err);
+#endif
         }
 
         public void Fatal(string message)
         {
+#if DEBUG
+            throw new Exception(message);
+#else
             Logger.Fatal(message);
+#endif
         }
 
         public void LogObjectCreated(Engine.GameObject obj, Engine.GameObject creator = null, string additionalData = "")

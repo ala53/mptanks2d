@@ -64,7 +64,7 @@ namespace MPTanks_MK5
             game = new Engine.GameCore(new EngineInterface.FileLogger(), new Engine.Gamemodes.TeamDeathMatchGamemode());
             game.Authoritative = true;
             renderer = new GameWorldRenderer(this);
-            renderer.SetAnimations(game.Animations);
+            renderer.SetAnimations(game.AnimationEngine);
 
             font = Content.Load<SpriteFont>("font");
 
@@ -107,17 +107,17 @@ namespace MPTanks_MK5
             iState.LookDirection = tank.InputState.LookDirection;
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
-                iState.YMovementState = 1;
+                iState.MovementSpeed = 1;
             if (Keyboard.GetState().IsKeyDown(Keys.S))
-                iState.YMovementState = -1;
+                iState.MovementSpeed = -1;
             if (Keyboard.GetState().IsKeyDown(Keys.A))
-                iState.XMovementState = -1;
+                iState.RotationSpeed = -1;
             if (Keyboard.GetState().IsKeyDown(Keys.D))
-                iState.XMovementState = 1;
+                iState.RotationSpeed = 1;
 
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                iState.FireState = true;
+                iState.FirePressed = true;
 
             //Complicated look state calcuation below
             var screenCenter = new Vector2(GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
@@ -211,7 +211,7 @@ namespace MPTanks_MK5
                 + ", Update: " + physicsMs.ToString("N2") + ", \nRender: " + renderMs.ToString("N2") +
             ", Mouse: " + Mouse.GetState().Position.ToString() + ", Tank: " + tank.Position.ToString() + ",\n" +
             "Active timers: " + game.TimerFactory.ActiveTimersCount + ", Animation layers: " +
-            game.Animations.Animations.Count, new Vector2(10, 10), Color.Red);
+            game.AnimationEngine.Animations.Count, new Vector2(10, 10), Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);

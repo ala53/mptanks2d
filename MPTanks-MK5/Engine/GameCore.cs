@@ -19,9 +19,16 @@ namespace Engine
         /// </summary>
         public bool Authoritative { get; set; }
         /// <summary>
-        /// The animations that are currently playing (sprite sheet animation descriptions)
+        /// The animations that are currently playing (sprite sheet animation descriptions).
+        /// Note: animations are long running, controllable objects with a significant overhead
+        /// while particles are small simplistic objects that can't be controlled well.
         /// </summary>
-        public AnimationEngine Animations { get; private set; }
+        public Rendering.Animations.AnimationEngine AnimationEngine { get; private set; }
+        /// <summary>
+        /// The particle system for the game. Use this for short lived objects that
+        /// do not need fine grain control. Once created, you have no control over the particle.
+        /// </summary>
+        public Rendering.Particles.ParticleEngine ParticleEngine { get; private set; }
         /// <summary>
         /// The manager which spawns in game powerups over time
         /// </summary>
@@ -118,8 +125,8 @@ namespace Engine
             //Initialize game
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
-            Animations = new AnimationEngine();
-            EventEngine = new Core.Events.EventEngine();
+            AnimationEngine = new Rendering.Animations.AnimationEngine();
+            EventEngine = new Core.Events.EventEngine(this);
             Logger.Log("Game started");
         }
 
@@ -206,7 +213,7 @@ namespace Engine
             //Process timers
             TimerFactory.Update(gameTime);
             //Process animations
-            Animations.Update(gameTime);
+            AnimationEngine.Update(gameTime);
             //Process individual objects
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);
