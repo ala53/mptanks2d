@@ -23,7 +23,7 @@ namespace Engine.Rendering.Particles
         {
             //Compute the position with wraparound - if we're over the limit,
             //we remove the oldest particles first
-            _addPosition = _addPosition % (Settings.ParticleLimit - 1);
+            _addPosition = _addPosition % (Settings.ParticleLimit);
 
             //Sanity checks
             if (particle.LifespanMs <= 0)
@@ -48,7 +48,7 @@ namespace Engine.Rendering.Particles
         }
         private void ProcessParticles(float deltaMs)
         {
-            var aliveParticles = 0;
+            LivingParticlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
             for (int i = 0; i < Particles.Length; i++)
             {
@@ -57,13 +57,15 @@ namespace Engine.Rendering.Particles
                     continue;
 
                 //Statistical tracking
-                aliveParticles++;
+                LivingParticlesCount++;
                 //Update the lifespan's time
                 part.TotalTimeAlreadyAlive += deltaMs; //Increase the alive time for the particle
                 //If the particle has outlived it's lifespan, we remove it
                 if (part.LifespanMs <= part.TotalTimeAlreadyAlive)
                 {
-                    part.Alive = false; //Kill old particles
+                    part.Alive = false; //Mark the particle as dead
+                    Particles[i] = part; //And write the updates back to the engine
+                    continue;
                 }
 
                 part.Position += (part.Velocity * deltaScale); //And move it in world space
@@ -73,8 +75,6 @@ namespace Engine.Rendering.Particles
 
                 Particles[i] = part; //And write the updates back to the engine
             }
-
-            LivingParticlesCount = aliveParticles;
         }
     }
 }

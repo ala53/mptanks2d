@@ -135,20 +135,22 @@ namespace MPTanks_MK5
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
 
+            Random r = new Random();
             if (Keyboard.GetState().IsKeyDown(Keys.V))
             {
-                for (var i = 0; i < 1; i++)
+                for (var i = 0; i < 1000; i++)
                     game.ParticleEngine.AddParticle(new Engine.Rendering.Particles.Particle()
                     {
                         SheetName = Engine.Assets.BasicTank.MainGunSparks.SheetName,
                         AssetName = Engine.Assets.BasicTank.MainGunSparks.SpriteName,
-                        LifespanMs = 10000,
-                        Acceleration = new Vector2(-0.3f, 1.2f),
+                        LifespanMs = r.Next(5000, 20000),
+                        Acceleration = new Vector2((float)r.NextDouble() - 0.5f, (float)r.NextDouble() - 0.5f),
                         Velocity = new Vector2(-3f, 0.2f),
-                        ColorMask = Color.Yellow,
+                        ColorMask = new Color(Color.Yellow, 0.5f),
                         Rotation = 0.03f,
-                        RotationVelocity = 0.75f,
-                        Position = tank.Position,
+                        RotationVelocity = (float)r.NextDouble() * 2 - 1,
+                        Position = new Vector2(tank.Position.X + (float)(r.NextDouble() * 8 - 4),
+                            tank.Position.Y + (float)(r.NextDouble() * 8 - 4)),
                         Size = new Vector2(0.5f, 1.25f)
                     });
             }
@@ -226,18 +228,45 @@ namespace MPTanks_MK5
                 if (obj.GetType().IsSubclassOf(typeof(Engine.Projectiles.Projectile)))
                     projCount++;
             }
-
+            var fps = calcfps((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
             spriteBatch.DrawString(font, "Tanks: " + tanksCount + ", Projectiles: " + projCount
                 + ", Update: " + physicsMs.ToString("N2") + ", \nRender: " + renderMs.ToString("N2") +
             ", Mouse: " + Mouse.GetState().Position.ToString() + ", Tank: " + tank.Position.ToString() + ",\n" +
             "Active timers: " + game.TimerFactory.ActiveTimersCount + ", Animation layers: " +
-            game.AnimationEngine.Animations.Count + ",\nParticles: " + 
-            game.ParticleEngine.LivingParticlesCount, new Vector2(10, 10), Color.Red);
+            game.AnimationEngine.Animations.Count + ",\nParticles: " +
+            game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps
+            , new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
 
             base.Draw(gameTime);
             sw.Stop();
             renderMs = (float)sw.Elapsed.TotalMilliseconds;
+        }
+
+        private float[] fps;
+
+        private float calcfps(float deltaMs)
+        {
+            if (fps == null)
+            {
+                fps = new float[30];
+                for (int i = 0; i < fps.Length; i++)
+                    fps[i] = 16.666666f;
+            }
+
+            for (int i = 0; i < fps.Length - 1; i++)
+                fps[i] = fps[i + 1];
+
+            fps[fps.Length-1] = deltaMs;
+
+            return 1000 / avg();
+        }
+        private float avg()
+        {
+            float tot = 0;
+            foreach (var f in fps)
+                tot += f;
+            return tot / fps.Length;
         }
     }
 }

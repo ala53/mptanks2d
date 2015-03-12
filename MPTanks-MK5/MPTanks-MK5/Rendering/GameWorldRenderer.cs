@@ -157,7 +157,7 @@ namespace MPTanks_MK5.Rendering
                     //upload the model matrix
                     _effect.World = animMatrix;
                     //Begin the draw call
-                    sb.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied,
+                    sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                         SamplerState.AnisotropicClamp, DepthStencilState.Default,
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet
@@ -189,7 +189,7 @@ namespace MPTanks_MK5.Rendering
             _effect.World = Matrix.Identity;
             _effect.Alpha = 1;
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap,
+            sb.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
             foreach (var particle in _particles)
@@ -201,12 +201,13 @@ namespace MPTanks_MK5.Rendering
                 var size = Scale(particle.Size);
                 //And ignore off screen particles
                 if (!IsVisible(pos, size, boundsRect)) continue;
-
-                // var tfMatrix =
-                //   Matrix.CreateTranslation(new Vector3(-size / 2, 0)) *
-                // Matrix.CreateRotationZ(particle.Rotation) *
-                //Matrix.CreateTranslation(new Vector3((size / 2) + pos, 0));
+                
+                //Get the cached asset
                 var asset = _cache.GetArtAsset(particle.SheetName, particle.AssetName, gameTime);
+                // A note to future me:
+                // I'm aware that the rotation is incorrectly drawn, but to do it correctly requires
+                // generating a matrix on the CPU which will be quite processor intensive. For now,
+                // this looks good enough and is a bit faster.
                 sb.Draw(asset.SpriteSheet.Texture, new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y),
                     asset.Bounds, particle.ColorMask,particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
             }
