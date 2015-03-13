@@ -45,6 +45,27 @@ namespace Engine.Projectiles.BasicTank
 
         private void Destroy(GameObject destroyer = null)
         {
+
+            for (var i = 0; i < 50; i++)
+            {
+                var dir = (float)(Game.SharedRandom.NextDouble() - 0.5f) * 2 - Rotation;
+                var vx = (float)Math.Sin(dir) * (float)(Game.SharedRandom.NextDouble() * 2);
+                var vy = (float)-Math.Cos(dir) * (float)(Game.SharedRandom.NextDouble() * 2);
+                var particle = new Rendering.Particles.Particle()
+                {
+                    Acceleration = Vector2.Zero,
+                    LifespanMs = Game.SharedRandom.Next(15, 150),
+                    Velocity = new Vector2(vx, vy),
+                    Size = new Vector2(0.25f, 0.25f),
+                    Rotation = dir,
+                    RotationVelocity = (float)(Game.SharedRandom.NextDouble() / 2),
+                    ColorMask = new Color(Color.Yellow, 0.5f),
+                    AssetName = Assets.BasicTank.MainGunSparks.SpriteName,
+                    SheetName = Assets.BasicTank.MainGunSparks.SheetName,
+                    Position = Position + new Vector2(vx, vy)
+                };
+                Game.ParticleEngine.AddParticle(particle);
+            }
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
             Game.RemoveGameObject(this, destroyer);
         }

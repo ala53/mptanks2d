@@ -47,6 +47,7 @@ namespace Engine
         /// The timer manager which lets game objects create timers for their own use
         /// </summary>
         public Timer.Factory TimerFactory { get; private set; }
+        public Random SharedRandom { get; private set; }
         /// <summary>
         /// The physics world that the game runs in.
         /// </summary>
@@ -128,6 +129,7 @@ namespace Engine
             AnimationEngine = new Rendering.Animations.AnimationEngine();
             ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
+            SharedRandom = new Random();
             Logger.Log("Game started");
         }
 
