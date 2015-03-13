@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="assets\AssetHelper.cs" />
     <Compile Include="assets\Assets.cs" />
+    <Compile Include="Core\RectangleF.cs" />
     <Compile Include="Core\Timing\Timer.cs" />
     <Compile Include="Core\Events\Types\GameObjects\Powerups\PickedUp.cs" />
     <Compile Include="Core\Events\Types\GameObjects\Projectiles\HitTank.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Rendering\Animations\Animation.cs" />
     <Compile Include="Rendering\Animations\AnimationEngine.cs" />
     <Compile Include="Rendering\Particles\Particle.cs" />
+    <Compile Include="Rendering\Particles\ParticleEmitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Settings.cs" />

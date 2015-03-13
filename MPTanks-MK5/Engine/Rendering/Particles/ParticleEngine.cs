@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Engine.Rendering.Particles
 {
-    public class ParticleEngine
+    public partial class ParticleEngine
     {
+        private List<Emitter> _emitters = new List<Emitter>();
+        public IReadOnlyList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
         public Particle[] Particles { get; private set; }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
@@ -23,9 +25,9 @@ namespace Engine.Rendering.Particles
         {
             //Compute the position with wraparound - if we're over the limit,
             //we remove the oldest particles first
-            _addPosition = _addPosition % (Settings.ParticleLimit);
+            _addPosition = _addPosition % Settings.ParticleLimit;
 
-            //Sanity checks
+            //Sanity check
             if (particle.LifespanMs <= 0)
             {
                 Game.Logger.Error("Particles cannot have a negative lifespan!");
@@ -34,6 +36,7 @@ namespace Engine.Rendering.Particles
             //Ignore unset color masks
             if (particle.ColorMask == default(Color)) particle.ColorMask = Color.White;
 
+            particle.TotalTimeAlreadyAlive = 0;
             particle.Alive = true;
             particle.Alpha = particle.ColorMask.A / 255f;
             //And overwrite it in the array
@@ -45,6 +48,9 @@ namespace Engine.Rendering.Particles
 
         public void Update(GameTime gameTime)
         {
+            //Update emitters
+            ProcessEmitters(gameTime);
+
             ProcessParticles((float)gameTime.ElapsedGameTime.TotalMilliseconds);
         }
         private void ProcessParticles(float deltaMs)
@@ -62,17 +68,25 @@ namespace Engine.Rendering.Particles
                 //Update the lifespan's time
                 part.TotalTimeAlreadyAlive += deltaMs; //Increase the alive time for the particle
                 //If the particle has outlived it's lifespan, we remove it
-                if (part.LifespanMs + part.FadeOutMs <= part.TotalTimeAlreadyAlive)
+                if (part.LifespanMs <= part.TotalTimeAlreadyAlive)
                 {
                     part.Alive = false; //Mark the particle as dead
                     Particles[i] = part; //And write the updates back to the engine
                     continue;
                 }
-                if (part.LifespanMs <= part.TotalTimeAlreadyAlive)
+                //If the particle has started it's fade out...
+                if (part.LifespanMs - part.FadeOutMs <= part.TotalTimeAlreadyAlive)
                 {
-                    var percentFadedOut = (part.FadeOutMs - (part.TotalTimeAlreadyAlive - part.LifespanMs)) / part.FadeOutMs;
+                    var percentFadedOut = 
+                        ((part.LifespanMs - part.TotalTimeAlreadyAlive)) / part.FadeOutMs;
                     //Fade out
                     part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedOut);
+                }
+                //If the particle is still fading in
+                if (part.FadeInMs > part.TotalTimeAlreadyAlive && part.FadeInMs > 0)
+                {
+                    var percentFadedIn = part.TotalTimeAlreadyAlive / part.FadeInMs;
+                    part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedIn);
                 }
 
                 part.Position += (part.Velocity * deltaScale); //And move it in world space

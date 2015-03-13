@@ -90,7 +90,7 @@ namespace Engine.Tanks
             //Spawn a projectile
             var projectile = new Projectiles.BasicTank.MainGunProjectile(
                 this, Game, false,
-                TransformPoint(new Vector2(1.5f, -0f), rotation, true), rotation);
+                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
             //Fire it in the barrel direction
             const float velocity = 0.2f;
             var x = velocity * (float)Math.Sin(rotation);
@@ -111,7 +111,7 @@ namespace Engine.Tanks
             //Spawn a projectile
             var projectile = new Projectiles.BasicTank.MainGunProjectile(
                 this, Game, false,
-                TransformPoint(new Vector2(1.5f, -0f), rotation, true), rotation);
+                TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
             //Fire it in the barrel direction
             const float velocity = 0.2f;
             var x = velocity * (float)Math.Sin(rotation);

@@ -11,6 +11,7 @@ using MPTanks_MK5.Rendering;
 using Engine.Tanks;
 using Engine;
 using System.Diagnostics;
+using System.Runtime;
 #endregion
 
 namespace MPTanks_MK5
@@ -33,6 +34,7 @@ namespace MPTanks_MK5
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
             //  graphics.SynchronizeWithVerticalRetrace = false;
@@ -234,7 +236,9 @@ namespace MPTanks_MK5
             ", Mouse: " + Mouse.GetState().Position.ToString() + ", Tank: " + tank.Position.ToString() + ",\n" +
             "Active timers: " + game.TimerFactory.ActiveTimersCount + ", Animation layers: " +
             game.AnimationEngine.Animations.Count + ",\nParticles: " +
-            game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps
+            game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps + ", GC (gen 0, 1, 2): " +
+            GC.CollectionCount(0) + ", " + GC.CollectionCount(1) + ", " + GC.CollectionCount(2) + ",\n" +
+            "Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB"
             , new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
 
@@ -257,7 +261,7 @@ namespace MPTanks_MK5
             for (int i = 0; i < fps.Length - 1; i++)
                 fps[i] = fps[i + 1];
 
-            fps[fps.Length-1] = deltaMs;
+            fps[fps.Length - 1] = deltaMs;
 
             return 1000 / avg();
         }

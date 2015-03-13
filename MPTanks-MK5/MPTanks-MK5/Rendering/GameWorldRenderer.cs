@@ -11,7 +11,7 @@ namespace MPTanks_MK5.Rendering
         public GameClient Game { get; private set; }
         private GameObject[] _objects;
         private Engine.Rendering.Animations.AnimationEngine _animEngine;
-        private Engine.Rendering.Particles.Particle[] _particles;
+        private IEnumerable<Engine.Rendering.Particles.Particle> _particles;
 
         private BasicEffect _effect;
         private AssetCache _cache;
@@ -34,7 +34,7 @@ namespace MPTanks_MK5.Rendering
         {
             _animEngine = engine;
         }
-        public void SetParticles(Engine.Rendering.Particles.Particle[] particles)
+        public void SetParticles(IEnumerable<Engine.Rendering.Particles.Particle> particles)
         {
             _particles = particles;
         }

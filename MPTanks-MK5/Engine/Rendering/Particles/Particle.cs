@@ -12,9 +12,9 @@ namespace Engine.Rendering.Particles
     /// </summary>
     public struct Particle
     {
-        public float TotalTimeAlreadyAlive;
         public float LifespanMs;
         public float FadeOutMs;
+        public float FadeInMs;
         public Vector2 Velocity;
         public Vector2 Acceleration;
         public Vector2 Position;
@@ -24,6 +24,10 @@ namespace Engine.Rendering.Particles
         public Color ColorMask;
         public float Rotation;
         public float RotationVelocity;
+        /// <summary>
+        /// Do not use. Private to particle engine.
+        /// </summary>
+        public float TotalTimeAlreadyAlive;
         /// <summary>
         /// Do not use. Private to particle engine.
         /// </summary>
