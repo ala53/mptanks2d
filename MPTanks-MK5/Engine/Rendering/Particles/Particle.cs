@@ -31,10 +31,6 @@ namespace Engine.Rendering.Particles
         /// <summary>
         /// Do not use. Private to particle engine.
         /// </summary>
-        public bool Alive;
-        /// <summary>
-        /// Do not use. Private to particle engine.
-        /// </summary>
         public float Alpha;
     }
 }

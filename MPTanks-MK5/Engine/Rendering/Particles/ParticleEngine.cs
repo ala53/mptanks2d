@@ -11,14 +11,14 @@ namespace Engine.Rendering.Particles
     {
         private List<Emitter> _emitters = new List<Emitter>();
         public IReadOnlyList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
-        public Particle[] Particles { get; private set; }
+        public LinkedList<Particle> Particles { get; private set; }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
         public int LivingParticlesCount { get; private set; }
         public ParticleEngine(GameCore game)
         {
             Game = game;
-            Particles = new Particle[Settings.ParticleLimit];
+            Particles = new LinkedList<Particle>();
         }
 
         public void AddParticle(Particle particle)
@@ -37,10 +37,9 @@ namespace Engine.Rendering.Particles
             if (particle.ColorMask == default(Color)) particle.ColorMask = Color.White;
 
             particle.TotalTimeAlreadyAlive = 0;
-            particle.Alive = true;
             particle.Alpha = particle.ColorMask.A / 255f;
             //And overwrite it in the array
-            Particles[_addPosition] = particle;
+            Particles.AddLast(particle);
 
             //And increment the add counter
             _addPosition++;
@@ -57,27 +56,26 @@ namespace Engine.Rendering.Particles
         {
             LivingParticlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
-            for (int i = 0; i < Particles.Length; i++)
+            var node = Particles.First;
+            while (node != null)
             {
-                var part = Particles[i]; //Get the particle from the array 
-                if (!part.Alive) //Skip dead particles for performance
-                    continue;
-
-                //Statistical tracking
-                LivingParticlesCount++;
-                //Update the lifespan's time
-                part.TotalTimeAlreadyAlive += deltaMs; //Increase the alive time for the particle
-                //If the particle has outlived it's lifespan, we remove it
-                if (part.LifespanMs <= part.TotalTimeAlreadyAlive)
+                var part = node.Value;
+                part.TotalTimeAlreadyAlive += deltaMs;
+                if (part.LifespanMs <= part.TotalTimeAlreadyAlive) //Kill dead particles
                 {
-                    part.Alive = false; //Mark the particle as dead
-                    Particles[i] = part; //And write the updates back to the engine
+                    var _node = node;
+                    node = node.Next;
+                    Particles.Remove(_node);
                     continue;
                 }
+                //But if they're alive:
+                
+                //Statistical tracking
+                LivingParticlesCount++;
                 //If the particle has started it's fade out...
                 if (part.LifespanMs - part.FadeOutMs <= part.TotalTimeAlreadyAlive)
                 {
-                    var percentFadedOut = 
+                    var percentFadedOut =
                         ((part.LifespanMs - part.TotalTimeAlreadyAlive)) / part.FadeOutMs;
                     //Fade out
                     part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedOut);
@@ -94,7 +92,8 @@ namespace Engine.Rendering.Particles
                 //And update it's velocity so the next iteration can have a different velocity
                 part.Velocity += (part.Acceleration * deltaScale);
 
-                Particles[i] = part; //And write the updates back to the engine
+                node.Value = part;
+                node = node.Next;
             }
         }
     }

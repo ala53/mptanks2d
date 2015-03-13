@@ -194,9 +194,6 @@ namespace MPTanks_MK5.Rendering
 
             foreach (var particle in _particles)
             {
-                //ignore dead particles
-                if (!particle.Alive) continue;
-
                 var pos = Scale(particle.Position);
                 var size = Scale(particle.Size);
                 //And ignore off screen particles
