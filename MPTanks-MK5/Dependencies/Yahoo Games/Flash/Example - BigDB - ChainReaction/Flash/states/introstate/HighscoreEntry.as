@@ -1,0 +1,1 @@
+﻿package states.introstate {	import flash.display.MovieClip;		public class HighscoreEntry extends MovieClip{		public function HighscoreEntry(pos:int, name:String, level:int) {			tPos.text = pos.toString()			tName.text = name			tLevel.text = level.toString()		}	}	}

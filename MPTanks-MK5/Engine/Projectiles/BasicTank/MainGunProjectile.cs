@@ -21,7 +21,7 @@ namespace Engine.Projectiles.BasicTank
         private Core.Timing.Timer _timeoutTimer;
         public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
-            : base(owner, game, authorized, 1, 0f, position, rotation)
+            : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
             Components.Add("bullet", new Rendering.RenderableComponent()
             {
@@ -35,26 +35,30 @@ namespace Engine.Projectiles.BasicTank
             });
 
             //Add a timer for so we don't exist forever
-            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Destroy(), 5000);
+            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Destroy(), 2000);
         }
+
+        private int totalHits = 0;
 
         public override void CollidedWithTank(Tanks.Tank tank)
         {
-            Destroy(tank);
+            totalHits++;
+            if (totalHits >= 2) Destroy(tank);
         }
 
         private void Destroy(GameObject destroyer = null)
         {
-
+            //Spawn the destruction sparks - a bit chaotic and random, much like their source code
             for (var i = 0; i < 50; i++)
             {
-                var dir = (float)(Game.SharedRandom.NextDouble() - 0.5f) * 2 - Rotation;
-                var vx = (float)Math.Sin(dir) * (float)(Game.SharedRandom.NextDouble() * 2);
-                var vy = (float)-Math.Cos(dir) * (float)(Game.SharedRandom.NextDouble() * 2);
+                var dir = (float)(Game.SharedRandom.NextDouble() * 2 * Math.PI);
+                var vx = (float)Math.Sin(dir) * (float)(Game.SharedRandom.NextDouble() * 4);
+                var vy = (float)-Math.Cos(dir) * (float)(Game.SharedRandom.NextDouble() * 4);
                 var particle = new Rendering.Particles.Particle()
                 {
                     Acceleration = Vector2.Zero,
-                    LifespanMs = Game.SharedRandom.Next(15, 150),
+                    LifespanMs = Game.SharedRandom.Next(15, 350),
+                    FadeOutMs = (float)Game.SharedRandom.NextDouble() * 75,
                     Velocity = new Vector2(vx, vy),
                     Size = new Vector2(0.25f, 0.25f),
                     Rotation = dir,
@@ -62,7 +66,7 @@ namespace Engine.Projectiles.BasicTank
                     ColorMask = new Color(Color.Yellow, 0.5f),
                     AssetName = Assets.BasicTank.MainGunSparks.SpriteName,
                     SheetName = Assets.BasicTank.MainGunSparks.SheetName,
-                    Position = Position + new Vector2(vx, vy)
+                    Position = Position + new Vector2(vx, vy) - new Vector2(vx, vy)
                 };
                 Game.ParticleEngine.AddParticle(particle);
             }
@@ -77,6 +81,24 @@ namespace Engine.Projectiles.BasicTank
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
+            var linVel = Body.LinearVelocity / Settings.PhysicsScale;
+            //Each tick, we create a small particle trail
+            for (var i = 0; i < 3; i++)
+            {
+                var particle = new Rendering.Particles.Particle()
+                    {
+                        AssetName = Assets.BasicTank.MainGunSparks.SpriteName,
+                        SheetName = Assets.BasicTank.MainGunSparks.SheetName,
+                        RotationVelocity = 0.15f,
+                        LifespanMs = 10,
+                        FadeOutMs = 500,
+                        ColorMask = Color.Red,
+                        Position = Position + ((linVel / i) * (float)time.ElapsedGameTime.TotalSeconds),
+                        Size = new Vector2(0.25f),
+
+                    };
+                Game.ParticleEngine.AddParticle(particle);
+            }
         }
     }
 }

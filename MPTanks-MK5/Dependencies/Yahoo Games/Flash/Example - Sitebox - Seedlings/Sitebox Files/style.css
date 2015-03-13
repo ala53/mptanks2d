@@ -1,0 +1,43 @@
+*{margin:0px;padding:0px;}
+body{font-size:12px;font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size: 11px;}
+body{overflow:hidden;} /* required to not show iframe scrollbars  */
+a{color:#28abec;}
+
+/* Topprogress */
+#topprogress{background-image:url(img/topprogress.gif);height:179px;position:relative;margin-bottom:20px;margin-top:20px;}
+.step{width:145px;height:80px;position:absolute;top:82px;text-align:center;}
+.step h3{display:block;font-size:13px;color:white;font-weight:bold;margin-bottom:5px;}
+.step b{display:block;font-size:12px;color:black;margin-bottom:10px;}
+.step .done{display:block;font-size:12px;color:#696969;font-weight:bold;display:none;line-height:22px;}
+.step .missing{display:block;display:none;}
+#topprogressbar{position:absolute;width:686px;height:29px;top:33px;left:37px;background-image:url(img/topprogress.gif);}
+
+#step1{left:55px}
+#step2{left:225px}
+#step3{left:390px}
+#step4{left:560px}
+#fb-bookmark-button,#fb-permission-button,#fb-email-button{width:100px;height:22px;background:url(img/topprogress.gif) -232px -295px;line-height:22px;margin-left:15px;padding-left:16px;cursor:pointer;font-weight:bold;}
+#fb-permission-button{background-position:-116px -295px;}
+#fb-email-button{background-position:-0px -295px;}
+
+/* Tabs */
+#tabs{border-bottom:1px solid #898989;padding-left:20px;height:19px;}
+#tabs a{position:relative;z-index:1;display:block;float:left;height:18px;line-height:18px;padding:0px 10px 0px 10px;margin-right:-1px;text-align:center;background-color:#e8e8e8;border:1px solid #898989;color:#333333;font-weight:bold;text-decoration:none;}
+#tabs a.active{border-color:#37538e;background-color:#687eac;color:white;z-index:2;}
+
+/* Game */
+#game{margin-top:10px;}
+
+/* Help Page */
+.help{margin:10px 20px 20px 20px;}
+.help p{margin-bottom:1em}
+.help h3{margin:1.5em 0px 0.2em 0px;}
+
+/* Invite Page */
+#waiting{text-align:center;padding:10px;font-size:15px;font-style:italic;}
+#thanks,#nothanks{text-align:center;padding:30px;font-size:20px;color:#6ca813;font-weight:bold;}
+
+/* Footer */
+#footer{margin-top:30px;font-size:11px;color:#555555;text-align:center;padding:0px 100px 0px 100px;}
+#footer a{color:#28abec;}
+#footer div{color:black;font-weight:bold;margin-bottom:3px;font-size:12px;}

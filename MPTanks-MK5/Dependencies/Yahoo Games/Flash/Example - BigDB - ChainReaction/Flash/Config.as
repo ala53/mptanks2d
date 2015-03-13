@@ -1,0 +1,1 @@
+﻿package  {	public class Config {		public static const connectionId:String = "public"		public static const gameId:String = "Insert your game id here"	}}

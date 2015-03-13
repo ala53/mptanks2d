@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:fb="http://www.facebook.com/2008/fbml">
+	<head>
+		{% require_session %}
+		<link rel="stylesheet" href="{% url 'style.css' %}" />
+		<script type="text/javascript" language="javascript"> 
+			// this array will contain a list of functions that will be
+			// called when facebook is fully loaded and user is logged in.
+			var onFacebookAvailable = []
+
+			// will execute all queued up methods.
+			function runOnFacebookAvailable() {
+				for (var i = 0; i != onFacebookAvailable.length; i++) {
+					var cb = onFacebookAvailable[i];
+					cb();
+				}
+			}
+		</script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+	</head>
+	<body>
+
+		<div id="topprogress" style="display:none">
+			<div id="topprogressbar"></div>
+			<div class="step" id="step1">
+				<h3>Step 1</h3>
+				<b>Install Seedlings</b>
+				<div class="done">Done, Awesome!</div>
+				<div class="missing"></div>
+			</div>	
+			<div class="step" id="step2">
+				<h3>Step 2</h3>
+				<b>Find your way back</b>
+				<div class="done">Great!</div>
+				<div class="missing">
+					<div id="fb-bookmark-button">Bookmark Us</div>
+				</div>
+			</div>
+			<div class="step" id="step3">
+				<h3>Step 3</h3>
+				<b>Publish Faster</b>
+				<div class="done">You're Awesome!</div>
+				<div class="missing">
+					<div id="fb-permission-button">Upgrade Publish</div>
+				</div>
+			</div>
+			<div class="step" id="step4">
+				<h3>Step 4</h3>
+				<b>Get E-mail Updates</b>
+				<div class="done">Sweet!</div>
+				<div class="missing">
+					<div id="fb-email-button">Get Email</div>
+				</div>
+			</div>
+			<script type="text/javascript" language="javascript">
+				// hookup click events on the buttons
+				document.getElementById('fb-bookmark-button').onclick = function(){
+					FB.ui({method: "bookmark.add"}, refreshTopprogress)
+				}
+				document.getElementById('fb-permission-button').onclick = function(){
+					FB.login(function(response){
+						refreshTopprogress(); 
+					},{perms:'publish_stream'})
+				}
+				document.getElementById('fb-email-button').onclick = function(){
+					FB.login(function(response){
+						refreshTopprogress(); 
+					},{perms:'email'})
+				}
+				
+				// run when the Facebook Javascript SDK is fully loaded
+				onFacebookAvailable[onFacebookAvailable.length] = refreshTopprogress;
+
+				// this method will query facebook to get the current permissions
+				// given by the user and update the topprogress bar accordingly
+				function refreshTopprogress(){
+					FB.Data.query('select bookmarked, email, publish_stream from permissions where uid = me()' ).wait(function(rows) {
+						// find out which sub-tasks the player has completed.
+						var row = rows[0]
+						var has = {installed:true, email:row.email=="1", bookmarked:row.bookmarked=="1", publish_stream:(row.publish_stream=="1")}
+						
+						// figure out how much progress that is on the bar.
+						var completedSteps = 1;
+						if( has.bookmarked ){
+							completedSteps++;
+							if( has.publish_stream){
+								completedSteps++;
+								if( has.email ){
+									completedSteps++;
+								}	
+							}
+						}
+						
+						// switch the contents of the steps depending
+						// on whether they're completed or not
+						switchdisplay("step1", has.installed)
+						switchdisplay("step2", has.bookmarked)
+						switchdisplay("step3", has.publish_stream)
+						switchdisplay("step4", has.email)
+						
+						// display the correct progressbar
+						document.getElementById('topprogressbar').style.backgroundPosition = "0px -"+(179+((completedSteps-1)*29))+"px";
+						
+						// display the topprogress element if the player has not completed
+						// all the sub tasks
+						document.getElementById("topprogress").style.display = completedSteps == 4 ? "none" : "block";
+					}, function(error){alert("error:" + error)})
+				}
+			
+				function switchdisplay(id,done){
+					var container = document.getElementById(id);
+					FB.Array.forEach(container.getElementsByTagName('div'), function(el){
+						var c = el.getAttribute('class')
+						if(c == 'done') el.style.display = done ? 'block' : 'none'
+						if(c == 'missing') el.style.display = !done ? 'block' : 'none'
+					})
+				} 
+			</script>
+		</div>
+
+		<div id="tabs">
+			<a href="{{ fb_app_root }}" 		target="_top" class="{% if sitebox_page_path is '/' %}active{% end %}">Play</a>
+			<a href="{{ fb_app_root }}invite" 	target="_top" class="{% if sitebox_page_path is '/invite' %}active{% end %}">Invite Friends</a>
+			<a href="{{ fb_app_root }}help"  	target="_top" class="{% if sitebox_page_path is '/help' %}active{% end %}">Help</a>
+			<a href="{{ fb_app_root }}coins"  	target="_top" class="{% if sitebox_page_path is '/coins' %}active{% end %}">Buy Coins</a>
+		</div>
+
+		<div id="content">
+			{% block content %}{% end %}
+		</div>
+
+		<div id="footer">
+			<div>
+				Player.IO: 
+				<a target="pio" href="https://playerio.com/features/">Features</a> | 
+				<a target="pio" href="https://playerio.com/pricing/">Pricing</a> | 
+				<a target="pio" href="https://playerio.com/documentation/">Documentation</a> | 
+				<a target="pio" href="https://playerio.com/forum/">Forum</a> | 
+				<a target="pio" href="https://playerio.com/download/">Download</a>
+			</div>
+			Player.IO makes it much easier to build scalable, profitable web games. If you´ve got a great game idea, our services makes it easy to implement and grow. It´s like Amazon´s Web Services for game developers.
+		</div>
+
+		<div id="variables">
+			<br /><br /><br /><br />
+			<b>Debug Info</b>
+			<p>Below you'll find all the variables passed to the template in order to render this page.</p>
+			<p>You should remove this section from master.html before going live</p>
+			{% print_variables %}
+		</div>
+
+		<div id="fb-root"></div>
+		<script type="text/javascript" language="javascript">
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId: '{{fb_application_id}}',
+					status: true, // check login status
+					cookie: true, // enable cookies to allow the server to access the session
+					xfbml: true  // parse XFBML
+				});
+
+				FB.getLoginStatus(function(response) {
+					if (response.authResponse) {
+						runOnFacebookAvailable()
+					} else {
+						FB.Event.subscribe('auth.login', runOnFacebookAvailable);
+					}
+				});
+
+				FB.Canvas.setAutoResize();
+			};
+			(function() {
+				var e = document.createElement('script');
+				e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+				e.async = true;
+				document.getElementById('fb-root').appendChild(e);
+			} ());
+		</script>
+	</body>
+</html>

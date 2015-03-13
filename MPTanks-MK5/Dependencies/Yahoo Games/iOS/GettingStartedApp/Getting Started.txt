@@ -1,0 +1,13 @@
+===== Getting Started =====
+
+1. Download the Develpement Package from gamesnet.yahoo.net/download
+2. Unarchive the package
+3. Under the "Build Phases" expand the "Link Binary With Libraries" and add the PlayerIOClient.framework which can be found under the iOS folder.
+4. You would also need to add: 
+	MessageUI.framework
+	SystemConfiguration.framework
+	AdSupport.framework
+	libSqlite3.dylib 
+since they are dependencies for PlayerIOClient.framework
+5. You can now import PlayerIOClient/PlayerIO.h classes as follows:
+#import <PlayerIOClient/PlayerIO.h>

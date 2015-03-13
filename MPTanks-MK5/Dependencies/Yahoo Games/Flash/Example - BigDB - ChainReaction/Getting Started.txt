@@ -1,0 +1,22 @@
+Getting started
+===============	
+	
+To launch the client .swf file do the following
+	
+	a) Create a new game called ChainReaction in your Player.IO admin pannel
+
+	b) In the left menu, under ChainReaction click settings and press the Edit button for the connection public.
+	
+	c) Find the section called Rights and check the checkbox "Load By Indexes" and save your changes.
+
+	d) In the left menu click BigDB, then press the Edit Table button for the table PlayerObjects
+
+	e) Create a new index called Level and configure it as shown in by the "Getting Started Index.png" found in the same folder as this text file
+
+	f) Open the ChainReaction.fla file from the Flash folder using Flash CS5
+
+	g) Put your gameid into the Flash/Config.as file where it says "[Enter your game id here]"
+		
+	h) Press ctrl-enter inside flash to launch the client .swf file.
+
+If all goes well, the game should now allow you to login by typing a name and pressing the login button.

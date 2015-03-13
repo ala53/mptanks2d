@@ -29,17 +29,6 @@ namespace Engine.Tanks
             PlayerId = playerId;
         }
 
-        private static Dictionary<int, Type> _tankTypes =
-            new Dictionary<int, Type>();
-        protected static void AddTankType(int id, Type t)
-        {
-            _tankTypes.Add(id, t);
-        }
-        public static Tank GetInstanceFromId(int id, Guid playerId, byte[] data)
-        {
-            return (Tank)Activator.CreateInstance(_tankTypes[id], playerId, data);
-        }
-
         private bool _killed = false;
         protected override bool CollideInternal(GameObject other, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {

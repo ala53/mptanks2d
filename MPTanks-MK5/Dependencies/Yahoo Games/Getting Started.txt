@@ -1,0 +1,54 @@
+Welcome to Yahoo Games Network
+
+This package contains tools and example projects
+that will help you get up and running quickly in
+your favorite development environment.
+
+Online documentation can be found at
+  http://gamesnet.yahoo.com/documentation/
+
+
+== Flash ====
+This folder contains the ActionScript 3 client library,
+as well as ActionScript 3 starter and sample projects
+
+    * DrawPad: A sample game where everybody draws
+               on a shared canvas.
+
+    * FridgeMagnets: A sample game where everybody
+                     can move around virtual fridge 
+                     magnets on a shared surfaceH
+
+    * TicTacToe: A sample tic tac toe game
+
+    * ChainReaction: A sample game showing basic
+                     BigDB usage
+
+    * Seedlings: The example game files for the Seedlings
+                 Facebook App.
+
+    * NewGame: Bare-bones game template. Copy this
+               folder for a sample starting point
+               for your game.
+
+
+
+== DotNet Client ====
+This folder contains the .NET client library 
+and a sample project.
+
+    * Example: A simple project that shows how easy
+               it is to connect to Yahoo Games Network with
+               the .NET client and do some BigDB
+               and multiplayer operations.
+
+
+
+== Unity3D ==
+This folder contains the Unity3D client library
+and a sample project.
+
+    * Mushrooms: A simple 3D game that shows
+                 how you can use the multiplayer
+                 capabilities of Yahoo Games Network together
+                 with Unity3D.

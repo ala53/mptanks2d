@@ -49,7 +49,6 @@ namespace Engine.Rendering.Particles
         }
         private void ProcessParticles(float deltaMs)
         {
-            const float fadeOutMs = 75;
             LivingParticlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
             for (int i = 0; i < Particles.Length; i++)
@@ -63,7 +62,7 @@ namespace Engine.Rendering.Particles
                 //Update the lifespan's time
                 part.TotalTimeAlreadyAlive += deltaMs; //Increase the alive time for the particle
                 //If the particle has outlived it's lifespan, we remove it
-                if (part.LifespanMs + fadeOutMs <= part.TotalTimeAlreadyAlive)
+                if (part.LifespanMs + part.FadeOutMs <= part.TotalTimeAlreadyAlive)
                 {
                     part.Alive = false; //Mark the particle as dead
                     Particles[i] = part; //And write the updates back to the engine
@@ -71,9 +70,9 @@ namespace Engine.Rendering.Particles
                 }
                 if (part.LifespanMs <= part.TotalTimeAlreadyAlive)
                 {
-                    var percentToFadeOut = (part.TotalTimeAlreadyAlive - part.LifespanMs) / fadeOutMs;
+                    var percentFadedOut = (part.FadeOutMs - (part.TotalTimeAlreadyAlive - part.LifespanMs)) / part.FadeOutMs;
                     //Fade out
-                    part.ColorMask = new Color(part.ColorMask, part.Alpha * percentToFadeOut);
+                    part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedOut);
                 }
 
                 part.Position += (part.Velocity * deltaScale); //And move it in world space

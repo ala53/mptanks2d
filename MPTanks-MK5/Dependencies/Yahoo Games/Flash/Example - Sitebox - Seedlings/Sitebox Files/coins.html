@@ -1,0 +1,12 @@
+{% extends 'master.html' %}
+{% block content %}
+
+<div class="help">
+	<h2>Get more Coins for Seedlings</h2>
+	<p>This is a sample page that shows offers to get more coins for the Seedlings game.</p>
+	<p>Note: You can complete these offers, but there is nothing you can *do* with coins in the game. This is just a page to showcase the easy integration that <a href="https://playerio.com/features/payvault">PayVault</a> offers.</p>
+</div>
+
+{% payvault provider="superrewards" height="1100" n_offers=10 scrolling="no" %}
+
+{% end %}

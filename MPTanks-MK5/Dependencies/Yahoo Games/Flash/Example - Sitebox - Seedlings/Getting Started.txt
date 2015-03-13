@@ -1,0 +1,22 @@
+Getting started
+===============
+	
+The Sitebox Files folder contains all the Sitebox Templates,
+stylesheets, images and other files that are
+automatically uploaded into GameFS when you create a
+Facebook App on Sitebox. 
+
+To open the Seedlings game locally do the following:
+
+	a) Install the debussy.ttf font
+	
+	b) Open the seedlings.fla file from the Flash folder
+	
+	c) Put your gameid into the Flash/Game.as file where it says "[Enter your game id here]"
+		If you don't have a gameid, simply login into the player.io admin dashboard
+		and click "create game".
+
+	d) Put your Facebook Application Id into the Flash/Game.as file where it says "[Enter your facebook application id here]"
+		If you don't have a Facebook Application Id, you'll have to create an application on Facebook first.
+		
+	e) Press ctrl-enter inside flash to launch the client .swf file.

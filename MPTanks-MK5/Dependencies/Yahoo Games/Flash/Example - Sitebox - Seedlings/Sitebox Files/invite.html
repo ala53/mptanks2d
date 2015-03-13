@@ -1,0 +1,119 @@
+{% extends 'master.html' %}
+{% block content %}
+
+	{% if querystring_done is '1' and post_ids != null %}
+		
+		<!-- we're on the done page, and we got posted ids, we'll use the game swf to 
+		handle giving us more energy -->	
+		
+		<div id="loading" style="display:none">
+			<!-- this DIV will be shown initially, while we wait for the game.swf file
+			to finish loading and call the showThanks() method -->
+			Loading
+		</div>
+		
+		<div id="thanks" style="display:none">
+			<!-- This DIV will be displayed when the game.swf file calls showThanks() -->
+			Your friends has been invited!<br />
+			<br />
+			<a href="{{ fb_app_root }}" target="_top">Play Seedlings!</a>
+		</div>
+		
+		<!-- We're using the same game file to give us energy (it will examine the
+		post_ids variable) and call showThanks() -->
+		{% swf src='swf/game.swf' width=1 height=1 id='game' %}
+		
+		<script>
+			function showThanks() {
+				document.getElementById('loading').style.display = 'none'
+				document.getElementById('thanks').style.display = 'block'
+			}
+		</script>
+		
+	{% else querystring_done is '1' and post_ids is null  %}
+		
+		<!-- we're on the done page, but with no posted ids, so the user probably just clicked skip. -->	
+		<div id="nothanks">
+			You choose not to invite any friends.<br />
+			<br />
+			<a href="{{ fb_app_root }}" target="_top">Play Seedlings!</a>
+		</div>
+		
+	{% else %}
+	
+		<!-- We're not on the done page, so let's show the invitation box -->
+		<div id="waiting">
+			<!-- This DIV is initially visible, untill either the #thanks or #invites DIV is displayed -->
+			Please wait... 
+		</div>
+
+		<div id="invites" style="display:none">
+			<!-- We'll use this DIV to display the Facebook Request Form for the invites -->
+		</div>
+
+		<script type="text/javascript">
+			// When the Facebook Javascript SDK is fully loaded, the following method will
+			// be called. Look in the bottom of master.html to see where the method is being called.
+			// 
+			// The metod will use FBML to output a request-box where friends can
+			// be invited to the game.
+			onFacebookAvailable[onFacebookAvailable.length] = function() {
+				// retrieve array of friends who've already authorized the app
+				FB.Data.query('SELECT uid FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND is_app_user = 1').wait(function(rows) {
+					var friendsUsingGame = ''
+					if (rows.length) {
+						for (var i = 0; i != rows.length; i++) {
+							friendsUsingGame += (friendsUsingGame == '' ? '' : ',') + rows[i].uid
+						}
+					}
+
+					// The contents of the invitation to be sent, that will appear to the receving user
+					var content = "<fb:name uid='{{ fb_user_id}}' firstnameonly='true' shownetwork='false'/> has started using <a href='{{ fb_app_root }}'>Seedlings</a> and thought it´s so cool even you should try it out!"
+					content += "<fb:req-choice url='{{ fb_app_root }}' label='Play Seedlings' />"
+
+					// The header of the request box
+					var actiontext = "Here are your friends who aren't playing Seedlings yet. Invite whoever you want -- it's free!"
+
+					// this is the request form displayed to the playing user
+					var xbml = '<fb:request-form method="POST" '
+					xbml += 'action="{{ sitebox_app_root }}invite?done=1" ' // The place where a user gets redirected after submitting the form through the fb:request-form-submit button or when they click Skip this Step. By default the user is directed to http://apps.facebook.com/yourapp/null. ''Note: This default behavior may not be preserved.''
+					xbml += 'type="online game" ' //The type of request or invitation to generate. This corresponds to the word that is displayed on the home page. For example, "event."
+					xbml += 'invite="true" ' // Set this to true if you want to send an invitation or false if you want to send a request. The difference between them is in the content that the user sees. Default value is false
+					xbml += 'content="' + safe(content) + '" ' // The contents of the request or invitation to be sent. It should use FBML formatting that contains only links and the special tag <fb:req-choice url="" label="" /> to specify the buttons to be included in the request. Make sure that you properly encode this attribute. For example, use the PHP "htmlentities" function.
+					xbml += '>'
+					xbml += '	<fb:multi-friend-selector '
+					xbml += '		exclude_ids="' + friendsUsingGame + '" ' // A comma-separated list of user IDs to exclude from the multi-friend-selector.
+					xbml += '		actiontext="' + safe(actiontext) + '" ' // An instructional message to display to users at the top of the multi-friend-selector.
+					xbml += '		rows="5" ' // The number of rows of friends to show in the multi-friend-selector. Default value is 5 and the value must be between 3 and 10
+					xbml += '		showborder="true" ' // Indicates whether you want a border around the outside of the multi-friend-selector.
+					xbml += '		max="20" ' // The maximum number of users that can be selected. This value ranges from 1 to 35, and is capped at the number of friend requests the user has remaining under their limit. This attribute is ignored if it is greater than the number of requests your application is able to send.
+					xbml += '		bypass="skip" ' // The version of the Bypass button you want to use. Set this attribute to "step", "cancel", or "skip", which results in Skip This Step, Cancel, or Skip, respectively. Default value is skip
+					xbml += '		email_invite="true" ' //Indicates whether you want to display an email invite section in the multi-friend-selector.
+					xbml += '		import_external_friends="true" ' // Indicates whether you want to enable an email contact importer, which allows users to send invites/requests to their non-Facebook friends. Default: true
+					xbml += '	/>'
+					xbml += '</fb:request-form>'
+
+					// put the xbml into the #invites div, and replace it
+					var invites = document.getElementById("invites")
+					invites.innerHTML = '<fb:serverFbml width="758"><scr' + 'ipt type="text/fbml"><fb:fbml>' + xbml + '</fb:fbml></sc' + 'ript></fb:serverFbml>'
+					invites.style.display = 'block'
+					FB.XFBML.parse(invites); // make the Facebook Javascript SDK parse the FBML
+
+					// hide the old waiting, show the request block
+					document.getElementById('waiting').style.display = 'none'
+
+					// this method will convert the input into something that
+					// is safe to put into an attribute inside another element.
+					function safe(str) {
+						var div = document.createElement('div');
+						var text = document.createTextNode(str);
+						div.appendChild(text);
+						return div.innerHTML;
+					};
+				}, function(error) { alert(error) })
+			}
+		</script>
+		
+	{% end %}
+
+{% end %}
