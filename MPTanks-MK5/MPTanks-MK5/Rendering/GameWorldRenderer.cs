@@ -43,10 +43,10 @@ namespace MPTanks_MK5.Rendering
             const float overdraw = 0.15f;
 
             var _boundsRect = new RectangleF( //Compute the bounds for visibility checks which have overdraw for simplicity
-                ScaleF(viewRect.X - (viewRect.Width * overdraw)),
-                ScaleF(viewRect.Y - (viewRect.Height * overdraw)),
-                ScaleF(viewRect.Width * (1 + 2 * overdraw)),
-                ScaleF(viewRect.Height * (1 + 2 * overdraw)));
+                viewRect.X - (viewRect.Width * overdraw),
+                viewRect.Y - (viewRect.Height * overdraw),
+                viewRect.Width * (1 + 2 * overdraw),
+                viewRect.Height * (1 + 2 * overdraw));
 
             viewRect = new RectangleF( //Scale the view rectangle to world space (for now, 100x)
                 ScaleF(viewRect.X),
@@ -80,7 +80,7 @@ namespace MPTanks_MK5.Rendering
                     var objSize = Scale(obj.Size);
 
                     //View culling
-                    if (!IsVisible(objPos, objSize, boundsRect))
+                    if (!IsVisible(obj.Position, obj.Size, boundsRect))
                         continue;
 
                     //Compute the global model matrix - the object's position in the world
@@ -142,7 +142,7 @@ namespace MPTanks_MK5.Rendering
                         anim.SpriteSheetName, anim.LoopCount))
                         endedAnimations.Add(anim);
                     //cull if invisible
-                    if (!IsVisible(Scale(anim.Position - (anim.Size / 2)), Scale(anim.Size), boundsRect))
+                    if (!IsVisible(anim.Position - (anim.Size / 2), anim.Size, boundsRect))
                         continue;
 
                     //Calculate the model's position in the world
@@ -194,11 +194,11 @@ namespace MPTanks_MK5.Rendering
 
             foreach (var particle in _particles)
             {
+                //And ignore off screen particles
+                if (!IsVisible(particle.Position, particle.Size, boundsRect)) continue;
                 var pos = Scale(particle.Position);
                 var size = Scale(particle.Size);
-                //And ignore off screen particles
-                if (!IsVisible(pos, size, boundsRect)) continue;
-                
+
                 //Get the cached asset
                 var asset = _cache.GetArtAsset(particle.SheetName, particle.AssetName, gameTime);
                 // A note to future me:
@@ -206,7 +206,7 @@ namespace MPTanks_MK5.Rendering
                 // generating a matrix on the CPU which will be quite processor intensive. For now,
                 // this looks good enough and is a bit faster.
                 sb.Draw(asset.SpriteSheet.Texture, new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y),
-                    asset.Bounds, particle.ColorMask,particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
+                    asset.Bounds, particle.ColorMask, particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
             }
 
             sb.End();
