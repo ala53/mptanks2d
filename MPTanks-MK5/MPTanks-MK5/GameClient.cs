@@ -24,8 +24,8 @@ namespace MPTanks_MK5
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         private GameWorldRenderer renderer;
-        private Guid tank;
-        private Guid tank2;
+        private Guid player1Id;
+        private Guid player2Id;
         private Engine.GameCore game;
         private float zoom = 6.5f;
         private SpriteFont font;
@@ -72,15 +72,18 @@ namespace MPTanks_MK5
         {
             game = new Engine.GameCore(new EngineInterface.FileLogger(), new Engine.Gamemodes.TeamDeathMatchGamemode(), "");
             game.Authoritative = true;
+            //game.FriendlyFireEnabled = true;
 
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(30, 80), 33), null, true);
 
-            tank = Guid.NewGuid();
-            tank2 = Guid.NewGuid();
-            game.AddPlayer(tank);
-            game.AddPlayer(tank2);
+            player1Id = Guid.NewGuid();
+            player2Id = Guid.NewGuid();
+            game.AddPlayer(player1Id);
+            game.AddPlayer(player2Id);
+            for (var i = 0; i < 1; i++)
+                game.AddPlayer(Guid.NewGuid());
             renderer.SetAnimations(game.AnimationEngine);
         }
 
@@ -112,7 +115,7 @@ namespace MPTanks_MK5
             if (game.IsGameRunning)
             {
                 var iState = new InputState();
-                iState.LookDirection = game.Players[tank].Rotation;
+                iState.LookDirection = game.Players[player1Id].Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.W))
                     iState.MovementSpeed = 1;
@@ -126,10 +129,10 @@ namespace MPTanks_MK5
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     iState.FirePressed = true;
 
-                game.InjectPlayerInput(tank, iState);
+                game.InjectPlayerInput(player1Id, iState);
 
                 var iState2 = new InputState();
-                iState2.LookDirection = game.Players[tank2].Rotation;
+                iState2.LookDirection = game.Players[player2Id].Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Up))
                     iState2.MovementSpeed = 1;
@@ -143,7 +146,7 @@ namespace MPTanks_MK5
                 if (Keyboard.GetState().IsKeyDown(Keys.M))
                     iState2.FirePressed = true;
 
-                game.InjectPlayerInput(tank2, iState2);
+                game.InjectPlayerInput(player2Id, iState2);
 
                 //Complicated look state calcuation below
                 //var screenCenter = new Vector2(GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
@@ -243,12 +246,12 @@ namespace MPTanks_MK5
             }
             var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
             spriteBatch.DrawString(font, "Tanks: " + tanksCount + ", Projectiles: " + projCount.ToString() +
-                ", Zoom: " + zoom.ToString("N2") + 
+                ", Zoom: " + zoom.ToString("N2") +
                 ", Update: " + physicsMs.ToString("N2") + ", Render: " + renderMs.ToString("N2") +
             ",\nMouse: " + Mouse.GetState().Position.ToString() + ", Tank: " +
-            (game.Players.ContainsKey(tank) ?
-                game.Players[tank].Position.X.ToString("N1") + ", " +
-                game.Players[tank].Position.Y.ToString("N1") : "not spawned") + 
+            (game.Players.ContainsKey(player1Id) ?
+                game.Players[player1Id].Position.X.ToString("N1") + ", " +
+                game.Players[player1Id].Position.Y.ToString("N1") : "not spawned") +
             ", Active timers: " + game.TimerFactory.ActiveTimersCount + ", \nAnimation layers: " +
             game.AnimationEngine.Animations.Count + ", Particles: " +
             game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps + " avg, " +
@@ -259,8 +262,8 @@ namespace MPTanks_MK5
             ", Status: " + (game.IsWaitingForPlayers ? "waiting for players" : "") +
             (game.IsGameRunning ? "running" : "") +
             (game.Gamemode.GameEnded ? game.IsGameRunning ? ", game ended" : "game ended" : "") +
-            (game.IsCountingDownToStart ? game.RemainingCountdownSeconds.ToString("N1") + "s remaining to start" : "") + 
-            (game.Gamemode.WinningTeam == Engine.Gamemodes.Team.Null ? "" : ",\nWinner:" + game.Gamemode.WinningTeam.TeamName)
+            (game.IsCountingDownToStart ? game.RemainingCountdownSeconds.ToString("N1") + "s remaining to start" : "") +
+            (game.Gamemode.WinningTeam == Engine.Gamemodes.Team.Null ? "" : ",\nWinner: " + game.Gamemode.WinningTeam.TeamName)
             , new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
         }

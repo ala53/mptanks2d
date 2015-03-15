@@ -34,7 +34,7 @@ namespace Engine.Tanks
             {
                 var o = (Projectiles.Projectile)other;
 
-                if (o.Owner == this)
+                if (!IsDamageAllowed(o.Owner))
                     return true;
 
                 Health -= o.DamageAmount;
@@ -50,6 +50,15 @@ namespace Engine.Tanks
             }
 
             return base.CollideInternal(other, contact);
+        }
+
+        private bool IsDamageAllowed(Tank tank)
+        {
+            if (Game.FriendlyFireEnabled)
+                return true;
+            if (tank.Team != Team)
+                return true;
+            return false;
         }
 
 

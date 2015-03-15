@@ -34,6 +34,10 @@ namespace Engine
         /// </summary>
         public Powerups.PowerupManager PowerupManager { get; private set; }
         /// <summary>
+        /// The timer manager which lets game objects create timers for their own use
+        /// </summary>
+        public Timer.Factory TimerFactory { get; private set; }
+        /// <summary>
         /// The Logger to use for logging important events
         /// </summary>
         public ILogger Logger { get; private set; }
@@ -65,10 +69,6 @@ namespace Engine
         public Maps.Map Map { get; private set; }
 
         #region World Management
-        /// <summary>
-        /// The timer manager which lets game objects create timers for their own use
-        /// </summary>
-        public Timer.Factory TimerFactory { get; private set; }
         public Random SharedRandom { get; private set; }
         /// <summary>
         /// The physics world that the game runs in.
@@ -87,6 +87,11 @@ namespace Engine
         public GameObject[] GameObjects { get { return _gameObjects.ToArray(); } }
 
         public Core.Events.EventEngine EventEngine { get; private set; }
+
+        /// <summary>
+        /// Whether the game allows for friendly fire among players
+        /// </summary>
+        public bool FriendlyFireEnabled { get; set; }
 
         #region Tanks (collections by type)
         /// <summary>
@@ -312,7 +317,9 @@ namespace Engine
         private void TickGameStart()
         {
             if (_timeThatGameBeganStarting == DateTime.MinValue)
+            {
                 _timeThatGameBeganStarting = DateTime.Now;
+            }
 
             if ((DateTime.Now - _timeThatGameBeganStarting).TotalMilliseconds > Settings.TimeToWaitBeforeStartingGame)
             {
@@ -330,7 +337,7 @@ namespace Engine
             //Create the player objects (server only)
             SetUpGamePlayers();
             //And load the map / create the map objects
-
+            CreateMapObjects();
         }
 
         /// <summary>
