@@ -227,6 +227,7 @@ namespace Engine
 #endif
             Logger.LogObjectDestroyed(obj, destructor);
             obj.Alive = false;
+            obj.Destroy(destructor); //Call destructor
 
             bool found = _gameObjects.Contains(obj) || _addQueue.Contains(obj);
             //We want to prevent people from disposing of the bodies
@@ -239,20 +240,12 @@ namespace Engine
             if (_inUpdateLoop) //We're in the for loop so wait a frame
             {
                 if (_addQueue.Contains(obj))
-                {
                     _addQueue.Remove(obj);
-                    if (!obj.Body.IsDisposed)
-                        obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
-                    obj.Destroy(); //Call destructor
-                }
                 else
                     _removeQueue.Add(obj);
             }
             else
             {
-                if (!obj.Body.IsDisposed)
-                    obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
-                obj.Destroy(); //Call destructor
                 _gameObjects.Remove(obj);
                 _isDirty = true; //Mark the dirty flag
             }
@@ -271,9 +264,6 @@ namespace Engine
 
             foreach (var obj in _removeQueue)
             {
-                if (!obj.Body.IsDisposed)
-                    obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
-                obj.Destroy(); //Call the destructor
                 _gameObjects.Remove(obj);
                 _isDirty = true; //Mark the dirty flag
             }
@@ -366,7 +356,7 @@ namespace Engine
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);
             //Tick physics
-            World.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
+            World.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             //Let the gamemode do it's calculations
             Gamemode.Update(gameTime);
             //And notify that we exited the update loop

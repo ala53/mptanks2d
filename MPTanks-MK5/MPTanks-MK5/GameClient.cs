@@ -38,7 +38,7 @@ namespace MPTanks_MK5
             Content.RootDirectory = "Content";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
-            // IsFixedTimeStep = false;
+            IsFixedTimeStep = false;
             graphics.SynchronizeWithVerticalRetrace = false;
         }
 
@@ -167,7 +167,7 @@ namespace MPTanks_MK5
 
             if (Keyboard.GetState().IsKeyDown(Keys.V))
             {
-                for (var i = 0; i < 5;i++ )
+                for (var i = 0; i < 5; i++)
                 {
                     game.ParticleEngine.CreateEmitter(0.2f, Engine.Assets.BasicTank.MainGunSparks, Color.Green, new Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
                 }

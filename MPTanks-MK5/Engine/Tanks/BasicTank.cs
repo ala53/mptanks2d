@@ -10,6 +10,20 @@ namespace Engine.Tanks
 {
     public class BasicTank : Tank
     {
+        public override Vector2 Size
+        {
+            get { return new Vector2(3, 5); }
+        }
+
+        protected override float RotationSpeed
+        {
+            get { return 0.05f; }
+        }
+
+        protected override float MovementSpeed
+        {
+            get { return 50; }
+        }
         public BasicTank(Guid playerId, GameCore game, bool authorized = false)
             : base(playerId, game, authorized)
         {
@@ -94,12 +108,12 @@ namespace Engine.Tanks
                 //Spawn a projectile
                 var projectile = new Projectiles.BasicTank.MainGunProjectile(
                     this, Game, ColorMask, false,
-                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation) { ColorMask = ColorMask };
+                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
                 //Fire it in the barrel direction
-                const float velocity = 0.2f;
+                const float velocity = 75f;
                 var x = velocity * (float)Math.Sin(rotation);
                 var y = velocity * -(float)Math.Cos(rotation);
-                projectile.Body.ApplyForce(new Vector2(x, y));
+                projectile.LinearVelocity  = new Vector2(x, y);
                 //Add to the game world
                 Game.AddGameObject(projectile, this);
             }
@@ -121,10 +135,10 @@ namespace Engine.Tanks
                     this, Game, ColorMask, false,
                     TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
                 //Fire it in the barrel direction
-                const float velocity = 0.2f;
+                const float velocity = 7f;
                 var x = velocity * (float)Math.Sin(rotation);
                 var y = velocity * -(float)Math.Cos(rotation);
-                projectile.Body.ApplyForce(new Vector2(x, y));
+                projectile.LinearVelocity = new Vector2((float)x, (float)y);
                 //Add to the game world
                 Game.AddGameObject(projectile, this);
             }
@@ -151,21 +165,6 @@ namespace Engine.Tanks
 
             if (Game.Authoritative)
                 Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, obj), 500);
-        }
-
-        public override Vector2 Size
-        {
-            get { return new Vector2(3, 5); }
-        }
-
-        protected override float RotationSpeed
-        {
-            get { return 0.05f; }
-        }
-
-        protected override float MovementSpeed
-        {
-            get { return 4; }
         }
     }
 }

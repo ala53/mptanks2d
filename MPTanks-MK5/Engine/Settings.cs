@@ -8,9 +8,6 @@ namespace Engine
 {
     public class Settings
     {
-        public const float FPS = 60;
-        public const float MSPerFrame = 1000 / FPS;
-
         /// <summary>
         /// The physics engine runs at 1/10 scale for some idiotic reason.
         /// Basically, that means that a 3x5 tank is 0.3x0.5 blocks because

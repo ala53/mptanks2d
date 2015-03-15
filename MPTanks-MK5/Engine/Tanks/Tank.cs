@@ -76,18 +76,18 @@ namespace Engine.Tanks
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
             var velocity = InputState.MovementSpeed *
-                MovementSpeed * (time.ElapsedGameTime.TotalMilliseconds / Settings.MSPerFrame);
+                MovementSpeed;
 
             var rotationAmount = InputState.RotationSpeed *
-                RotationSpeed * (time.ElapsedGameTime.TotalMilliseconds / Settings.MSPerFrame);
+                RotationSpeed * (time.ElapsedGameTime.TotalMilliseconds / 16.66666);
 
             //calculate the actual movement by axis
-            var x = velocity * Math.Sin(Body.Rotation);
-            var y = velocity * -Math.Cos(Body.Rotation);
+            var x = velocity * Math.Sin(Rotation);
+            var y = velocity * -Math.Cos(Rotation);
 
-            Body.LinearVelocity = new Vector2((float)x, (float)y);
-            Body.AngularVelocity = 0;
-            Body.Rotation += (float)rotationAmount;
+            LinearVelocity = new Vector2((float)x, (float)y);
+            AngularVelocity = 0;
+            Rotation += (float)rotationAmount;
         }
 
         public override string ToString()

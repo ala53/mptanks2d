@@ -44,6 +44,18 @@ namespace Engine
             set { Body.Rotation = value; }
         }
 
+        public Vector2 LinearVelocity
+        {
+            get { return Body.LinearVelocity / Settings.PhysicsScale; }
+            set { Body.LinearVelocity = value * Settings.PhysicsScale; }
+        }
+
+        public float AngularVelocity
+        {
+            get { return Body.AngularVelocity; }
+            set { Body.AngularVelocity = value; }
+        }
+
         public abstract Vector2 Size { get; }
 
         public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, int id = -1)
@@ -113,12 +125,14 @@ namespace Engine
 
         abstract public void Update(GameTime time);
 
-        public void Destroy()
+        public void Destroy(GameObject destructor = null)
         {
-                DestroyInternal();
+            if (Body.IsDisposed)
+                Body.Dispose(); //Kill the physics body
+            DestroyInternal(destructor);
         }
 
-        protected virtual void DestroyInternal()
+        protected virtual void DestroyInternal(GameObject destructor = null)
         {
 
         }

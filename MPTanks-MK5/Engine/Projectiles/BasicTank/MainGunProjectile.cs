@@ -63,8 +63,11 @@ namespace Engine.Projectiles.BasicTank
                 Game.RemoveGameObject(this, tank);
         }
 
-        protected override void DestroyInternal()
+        protected override void DestroyInternal(GameObject destroyer = null)
         {
+            var cMask = ColorMask;
+            if (destroyer != null && destroyer.ColorMask != Color.Black)
+                cMask = destroyer.ColorMask;
             //Make sure to kill the emitter
             _trailEmitter.Kill();
 
@@ -81,8 +84,8 @@ namespace Engine.Projectiles.BasicTank
                 //           Size
                 new Vector2(0.2f), new Vector2(0.3f),
                 //                 Colors
-                new Color(new Color(Color.Yellow, 0.5f).ToVector4() * ColorMask.ToVector4()),
-                new Color(new Color(Color.Orange, 1f).ToVector4() * ColorMask.ToVector4()),
+                new Color(cMask, 0.5f),
+                new Color(cMask.ToVector3() * new Vector3(0.7f, 0.9f, 0.8f)),
                 //    Rotation
                 0, (float)Math.PI * 2,
                 // R Vel      Rate      Emitter life
