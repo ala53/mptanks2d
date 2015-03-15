@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects.Tanks
 {
-    public class FiredProjectile
+    public class FiredProjectile : EventArgs
     {
     }
 }

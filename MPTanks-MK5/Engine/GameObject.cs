@@ -113,13 +113,9 @@ namespace Engine
 
         abstract public void Update(GameTime time);
 
-        public void Destroy(bool authorized = false)
+        public void Destroy()
         {
-            if (authorized || Game.Authoritative)
-            {
-                Alive = false;
                 DestroyInternal();
-            }
         }
 
         protected virtual void DestroyInternal()

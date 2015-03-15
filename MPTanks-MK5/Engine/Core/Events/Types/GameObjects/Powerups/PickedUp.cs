@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects.Powerups
 {
-    public class PickedUp
+    public class PickedUp : EventArgs
     {
     }
 }

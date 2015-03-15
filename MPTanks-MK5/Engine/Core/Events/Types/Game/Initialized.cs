@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events.Types.GameObjects.Tanks
+namespace Engine.Core.Events.Types.Game
 {
-    public class InputChanged : EventArgs
+    public class Initialized : EventArgs
     {
     }
 }

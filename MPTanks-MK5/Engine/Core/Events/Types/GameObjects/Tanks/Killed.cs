@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects.Tanks
 {
-    public class Killed
+    public class Killed : EventArgs
     {
     }
 }

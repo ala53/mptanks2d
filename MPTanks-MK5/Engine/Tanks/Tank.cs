@@ -32,7 +32,7 @@ namespace Engine.Tanks
         private bool _killed = false;
         protected override bool CollideInternal(GameObject other, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {
-            if (other.GetType().IsSubclassOf(typeof(Projectiles.Projectile)))
+            if (other.GetType().IsSubclassOf(typeof(Projectiles.Projectile)) && other.Alive)
             {
                 var o = (Projectiles.Projectile)other;
 
@@ -57,7 +57,8 @@ namespace Engine.Tanks
 
         protected virtual void TankKilled(GameObject destroyer)
         {
-            Game.RemoveGameObject(this, destroyer);
+            if (Game.Authoritative)
+                Game.RemoveGameObject(this, destroyer);
         }
 
         public void Input(InputState state)

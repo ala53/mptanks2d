@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects.Projectiles
 {
-    public class HitTank
+    public class HitTank : EventArgs
     {
     }
 }

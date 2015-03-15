@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects
 {
-    public class Destroyed
+    public class Destroyed : EventArgs
     {
     }
 }

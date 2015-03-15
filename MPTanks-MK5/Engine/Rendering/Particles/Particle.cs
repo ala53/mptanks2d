@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Engine.Rendering.Particles
 {
     /// <summary>
-    /// A single in-engine particle, a 68 byte struct.
+    /// A single in-engine particle, a 80 byte struct.
     /// </summary>
     public struct Particle
     {

@@ -10,15 +10,16 @@ namespace Engine.Rendering.Particles
     public partial class ParticleEngine
     {
         private List<Emitter> _emitters = new List<Emitter>();
-        public IReadOnlyList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
-        public LinkedList<Particle> Particles { get; private set; }
+        public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
+        private LinkedList<Particle> _particles;
+        public IEnumerable<Particle> Particles { get { return _particles; } }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
         public int LivingParticlesCount { get; private set; }
         public ParticleEngine(GameCore game)
         {
             Game = game;
-            Particles = new LinkedList<Particle>();
+            _particles = new LinkedList<Particle>();
         }
 
         public void AddParticle(Particle particle)
@@ -38,11 +39,17 @@ namespace Engine.Rendering.Particles
 
             particle.TotalTimeAlreadyAlive = 0;
             particle.Alpha = particle.ColorMask.A / 255f;
-            //And overwrite it in the array
-            Particles.AddLast(particle);
 
-            //And increment the add counter
-            _addPosition++;
+            //Guard clause: overwrite oldest if we're over the limit
+            if (Settings.ParticleLimit <= _particles.Count)
+            {
+                var node = _particles.First;
+                node.Value = particle;
+                _particles.RemoveFirst();
+                _particles.AddLast(node);
+            }
+            else //Otherwise, add to end
+                _particles.AddLast(particle);
         }
 
         public void Update(GameTime gameTime)
@@ -56,7 +63,7 @@ namespace Engine.Rendering.Particles
         {
             LivingParticlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
-            var node = Particles.First;
+            var node = _particles.First;
             while (node != null)
             {
                 var part = node.Value;
@@ -65,11 +72,11 @@ namespace Engine.Rendering.Particles
                 {
                     var _node = node;
                     node = node.Next;
-                    Particles.Remove(_node);
+                    _particles.Remove(_node);
                     continue;
                 }
                 //But if they're alive:
-                
+
                 //Statistical tracking
                 LivingParticlesCount++;
                 //If the particle has started it's fade out...

@@ -26,12 +26,12 @@ namespace Engine.Tanks
             Components.Add("base", new Rendering.RenderableComponent()
             {
                 Size = new Vector2(3, 5),
-                Mask = new Color(Color.DarkGreen, 200)
+                Mask = new Color(Color.White, 200)
             });
             Components.Add("tankFront", new Rendering.RenderableComponent()
             {
                 Size = new Vector2(3f, 0.25f),
-                Mask = new Color(Color.DarkGreen, 200),
+                Mask = new Color(Color.White, 200),
                 Offset = new Vector2(0, 0),
                 AssetName = Assets.BasicTank.GrillMask.SpriteName,
                 SpriteSheetName = Assets.BasicTank.GrillMask.SheetName,
@@ -40,7 +40,7 @@ namespace Engine.Tanks
             Components.Add("turret", new Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.5f, 2.35f),
-                Mask = new Color(Color.Red, 150),
+                Mask = new Color(255, 150, 150, 150),
                 Offset = new Vector2(1.25f, -1f),
                 RotationOrigin = new Vector2(0.25f, 3.5f),
                 Rotation = 0
@@ -48,7 +48,7 @@ namespace Engine.Tanks
             Components.Add("turretBase", new Rendering.RenderableComponent()
             {
                 Size = new Vector2(2, 2.5f),
-                Mask = new Color(Color.Green, 200),
+                Mask = new Color(Color.White, 200),
                 Offset = new Vector2(0.5f, 1.5f),
                 RotationOrigin = new Vector2(1f, 1f),
                 AssetName = Assets.BasicTank.TurretBase.SpriteName,
@@ -58,7 +58,7 @@ namespace Engine.Tanks
             Components.Add("turretDoor", new Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.65f, 0.65f),
-                Mask = new Color(Color.Yellow, 100),
+                Mask = new Color(Color.Gray, 100),
                 Offset = new Vector2(0.75f, 1.75f),
                 RotationOrigin = new Vector2(0.75f, 0.75f),
                 Rotation = 0
@@ -75,7 +75,9 @@ namespace Engine.Tanks
 
 
             if (InputState.FirePressed && InputState.WeaponNumber == 0)
+            {
                 FirePrimary();
+            }
             if (InputState.FirePressed && InputState.WeaponNumber == 1)
                 FireSecondary();
 
@@ -86,18 +88,21 @@ namespace Engine.Tanks
         {
             if (!canFirePrimary)
                 return;
-            var rotation = InputState.LookDirection;
-            //Spawn a projectile
-            var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                this, Game, false,
-                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
-            //Fire it in the barrel direction
-            const float velocity = 0.2f;
-            var x = velocity * (float)Math.Sin(rotation);
-            var y = velocity * -(float)Math.Cos(rotation);
-            projectile.Body.ApplyForce(new Vector2(x, y));
-            //Add to the game world
-            Game.AddGameObject(projectile, this);
+            if (Game.Authoritative) // If we are able to be create game objects AKA we're authoritative, make the projectile
+            {
+                var rotation = InputState.LookDirection;
+                //Spawn a projectile
+                var projectile = new Projectiles.BasicTank.MainGunProjectile(
+                    this, Game, ColorMask, false,
+                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation) { ColorMask = ColorMask };
+                //Fire it in the barrel direction
+                const float velocity = 0.2f;
+                var x = velocity * (float)Math.Sin(rotation);
+                var y = velocity * -(float)Math.Cos(rotation);
+                projectile.Body.ApplyForce(new Vector2(x, y));
+                //Add to the game world
+                Game.AddGameObject(projectile, this);
+            }
 
             //Reload timer
             canFirePrimary = false;
@@ -107,19 +112,22 @@ namespace Engine.Tanks
         {
             if (!canFirePrimary)
                 return;
-            var rotation = InputState.LookDirection;
-            //Spawn a projectile
-            var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                this, Game, false,
-                TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
-            //Fire it in the barrel direction
-            const float velocity = 0.2f;
-            var x = velocity * (float)Math.Sin(rotation);
-            var y = velocity * -(float)Math.Cos(rotation);
-            projectile.Body.ApplyForce(new Vector2(x, y));
-            //Add to the game world
-            Game.AddGameObject(projectile, this);
 
+            if (Game.Authoritative) //Once again, check that we've got the power
+            {
+                var rotation = InputState.LookDirection;
+                //Spawn a projectile
+                var projectile = new Projectiles.BasicTank.MainGunProjectile(
+                    this, Game, ColorMask, false,
+                    TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
+                //Fire it in the barrel direction
+                const float velocity = 0.2f;
+                var x = velocity * (float)Math.Sin(rotation);
+                var y = velocity * -(float)Math.Cos(rotation);
+                projectile.Body.ApplyForce(new Vector2(x, y));
+                //Add to the game world
+                Game.AddGameObject(projectile, this);
+            }
             //Reload timer
             canFirePrimary = false;
             Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
@@ -141,7 +149,8 @@ namespace Engine.Tanks
                 anim.Position = Position;
             }), 1);
 
-            Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, obj), 500);
+            if (Game.Authoritative)
+                Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, obj), 500);
         }
 
         public override Vector2 Size

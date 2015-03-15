@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.Game
 {
-    public class Ended
+    public class Ended : EventArgs
     {
         public Gamemodes.Team WinningTeam { get; set; }
         public bool GameIsDraw { get; set; }

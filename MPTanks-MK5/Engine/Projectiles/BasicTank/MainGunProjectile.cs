@@ -25,10 +25,12 @@ namespace Engine.Projectiles.BasicTank
 
         private Rendering.Particles.ParticleEngine.Emitter _trailEmitter;
         private Core.Timing.Timer _timeoutTimer;
-        public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,
+        public MainGunProjectile(Tanks.Tank owner, GameCore game, Color colorMask, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
             : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
+            ColorMask = colorMask;
+
             Components.Add("bullet", new Rendering.RenderableComponent()
             {
                 SpriteSheetName = Assets.BasicTank.MainProjectile.SheetName,
@@ -37,24 +39,31 @@ namespace Engine.Projectiles.BasicTank
                 Rotation = MathHelper.ToRadians(45),
                 RotationOrigin = new Vector2(0.25f),
                 Offset = new Vector2(-0.125f),
-                Mask = new Color(Color.Red, 0.8f)
+                Mask = new Color(Color.White, 0.8f)
             });
 
             //Create the trail emitter
-            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.BasicTank.MainGunSparks, Color.Orange,
+            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.BasicTank.MainGunSparks,
+                new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
                 new Core.RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f),
                 new Vector2(0.25f), true, 0, 100, 150, Vector2.Zero, Vector2.Zero, 0, 0.15f, 240, lifespan + 100);
 
             //Add a timer for so we don't exist forever
-            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Destroy(), lifespan);
+            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => TryDestroy(), lifespan);
         }
 
         public override void CollidedWithTank(Tanks.Tank tank)
         {
-            Destroy(tank);
+            TryDestroy(tank);
         }
 
-        private void Destroy(GameObject destroyer = null)
+        private void TryDestroy(GameObject tank = null)
+        {
+            if (Game.Authoritative)
+                Game.RemoveGameObject(this, tank);
+        }
+
+        protected override void DestroyInternal()
         {
             //Make sure to kill the emitter
             _trailEmitter.Kill();
@@ -72,14 +81,14 @@ namespace Engine.Projectiles.BasicTank
                 //           Size
                 new Vector2(0.2f), new Vector2(0.3f),
                 //                 Colors
-                new Color(Color.Yellow, 0.5f), new Color(Color.DarkOrange, 1f),
+                new Color(new Color(Color.Yellow, 0.5f).ToVector4() * ColorMask.ToVector4()),
+                new Color(new Color(Color.Orange, 1f).ToVector4() * ColorMask.ToVector4()),
                 //    Rotation
                 0, (float)Math.PI * 2,
                 // R Vel      Rate      Emitter life
                 0.05f, 0.5f, 75, 150, 200);
 
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
-            Game.RemoveGameObject(this, destroyer);
         }
 
         public override Microsoft.Xna.Framework.Vector2 Size

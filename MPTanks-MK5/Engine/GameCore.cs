@@ -117,7 +117,7 @@ namespace Engine
         #endregion
         public GameCore(ILogger logger, Gamemodes.Gamemode gameMode)
         {
-            Logger = logger; 
+            Logger = logger;
 
             //Set up the game mode internally
             Gamemode = gameMode;
@@ -138,8 +138,18 @@ namespace Engine
             new List<GameObject>();
         private List<GameObject> _removeQueue =
             new List<GameObject>();
-        public void AddGameObject(GameObject obj, GameObject creator = null)
+        public void AddGameObject(GameObject obj, GameObject creator = null, bool authorized = false)
         {
+#if DEBUG
+            if (!authorized && !Authoritative)
+                throw new Exception("Unauthorized addition of object");
+#else
+            if (!authorized && !Authoritative)
+            {
+                Logger.Error("Unauthorized object addition attempted.");
+                return;
+            }
+#endif
             Logger.LogObjectCreated(obj, creator);
             obj.Alive = true;
 
@@ -154,8 +164,18 @@ namespace Engine
             }
         }
 
-        public void RemoveGameObject(GameObject obj, GameObject destructor = null)
+        public void RemoveGameObject(GameObject obj, GameObject destructor = null, bool authorized = false)
         {
+#if DEBUG
+            if (!authorized && !Authoritative)
+                throw new Exception("Unauthorized removal of object");
+#else
+            if (!authorized && !Authoritative)
+            {
+                Logger.Error("Unauthorized object destruction attempted.");
+                return;
+            }
+#endif
             Logger.LogObjectDestroyed(obj, destructor);
             obj.Alive = false;
 
@@ -170,7 +190,12 @@ namespace Engine
             if (_inUpdateLoop) //We're in the for loop so wait a frame
             {
                 if (_addQueue.Contains(obj))
+                {
                     _addQueue.Remove(obj);
+                    if (!obj.Body.IsDisposed)
+                        obj.Body.Dispose(); //In case it isn't disposed, remove the entire body from physics
+                    obj.Destroy(); //Call destructor
+                }
                 else
                     _removeQueue.Add(obj);
             }
@@ -189,8 +214,9 @@ namespace Engine
         /// </summary>
         private void ProcessQueue()
         {
-            foreach (var obj in _addQueue) { 
-                _gameObjects.Add(obj); 
+            foreach (var obj in _addQueue)
+            {
+                _gameObjects.Add(obj);
                 _isDirty = true; //Mark the dirty flag
             }
 

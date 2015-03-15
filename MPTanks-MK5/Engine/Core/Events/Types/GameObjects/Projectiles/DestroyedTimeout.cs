@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.GameObjects.Projectiles
 {
-    public class DestroyedTimeout
+    public class DestroyedTimeout : EventArgs
     {
     }
 }

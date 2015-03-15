@@ -10,7 +10,7 @@ namespace Engine.Rendering.Animations
     public class AnimationEngine
     {
         private List<Animation> animations = new List<Animation>();
-        public IReadOnlyList<Animation> Animations { get { return animations; } }
+        public IList<Animation> Animations { get { return animations; } }
 
         private bool _dirty = false;
         public bool IsDirty { get { var dirty = _dirty; _dirty = false; return dirty; } }

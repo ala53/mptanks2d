@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events.Types.Game
 {
-    public class Started
+    public class Started : EventArgs
     {
         public GameCore Game { get; set; }
         public DateTime StartTime { get; set; }
