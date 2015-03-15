@@ -139,7 +139,15 @@ namespace Engine
         /// <summary>
         /// Tells whether the GameObject collection has changed since the last time IsDirty was checked.
         /// </summary>
-        public bool IsDirty { get { return _isDirty; } }
+        public bool IsDirty
+        {
+            get
+            {
+                var _dirty = _isDirty;
+                _isDirty = false;
+                return _dirty;
+            }
+        }
         #endregion
         #endregion
         private bool _skipInit;

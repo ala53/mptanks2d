@@ -9,6 +9,7 @@ namespace Engine.Rendering.Particles
 {
     public partial class ParticleEngine
     {
+        private List<LinkedListNode<Particle>> _nodePool = new List<LinkedListNode<Particle>>();
         private List<Emitter> _emitters = new List<Emitter>();
         public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
         private LinkedList<Particle> _particles;
@@ -40,16 +41,11 @@ namespace Engine.Rendering.Particles
             particle.TotalTimeAlreadyAlive = 0;
             particle.Alpha = particle.ColorMask.A / 255f;
 
-            //Guard clause: overwrite oldest if we're over the limit
+            //Guard clause: remove the first if we're over the limit
             if (Settings.ParticleLimit <= _particles.Count)
-            {
-                var node = _particles.First;
-                node.Value = particle;
-                _particles.RemoveFirst();
-                _particles.AddLast(node);
-            }
-            else //Otherwise, add to end
-                _particles.AddLast(particle);
+                RemoveNode(_particles.First);
+            //And add the new node
+            _particles.AddLast(GetNode(particle));
         }
 
         public void Update(GameTime gameTime)
@@ -72,7 +68,7 @@ namespace Engine.Rendering.Particles
                 {
                     var _node = node;
                     node = node.Next;
-                    _particles.Remove(_node);
+                    RemoveNode(_node); //Remove and release to cache
                     continue;
                 }
                 //But if they're alive:
@@ -101,6 +97,28 @@ namespace Engine.Rendering.Particles
 
                 node.Value = part;
                 node = node.Next;
+            }
+        }
+
+        private void RemoveNode(LinkedListNode<Particle> node)
+        {
+            _nodePool.Add(node);
+            _particles.Remove(node);
+        }
+        private LinkedListNode<Particle> GetNode(Particle particle)
+        {
+            if (_nodePool.Count > 0)
+            {
+                var node = _nodePool.Last();
+                _nodePool.RemoveAt(_nodePool.Count - 1);
+                node.Value = particle;
+                return node;
+            }
+            else
+            {
+                //Create a new node
+                var node = new LinkedListNode<Particle>(particle);
+                return node;
             }
         }
     }

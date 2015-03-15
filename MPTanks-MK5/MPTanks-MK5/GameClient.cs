@@ -29,6 +29,7 @@ namespace MPTanks_MK5
         private Engine.GameCore game;
         private float zoom = 6.5f;
         private SpriteFont font;
+        private Stopwatch timer = new Stopwatch();
 
         public GameClient()
             : base()
@@ -38,7 +39,7 @@ namespace MPTanks_MK5
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
-            // graphics.SynchronizeWithVerticalRetrace = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
         }
 
         /// <summary>
@@ -82,9 +83,9 @@ namespace MPTanks_MK5
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
             game.AddPlayer(player2Id);
-            for (var i = 0; i < 1; i++)
+            for (var i = 0; i < 5; i++)
                 game.AddPlayer(Guid.NewGuid());
-            renderer.SetAnimations(game.AnimationEngine);
+            renderer.SetAnimationEngine(game.AnimationEngine);
         }
 
         /// <summary>
@@ -105,7 +106,8 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            var sw = Stopwatch.StartNew();
+            timer.Restart();
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -162,6 +164,15 @@ namespace MPTanks_MK5
                 zoom += 0.1f;
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.V))
+            {
+                for (var i = 0; i < 5;i++ )
+                {
+                    game.ParticleEngine.CreateEmitter(0.2f, Engine.Assets.BasicTank.MainGunSparks, Color.Green, new Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
+                }
+            }
+
             game.Update(gameTime);
 
             //Update the render list if the game has added or removed objects
@@ -169,12 +180,10 @@ namespace MPTanks_MK5
                 renderer.SetObjects(game.GameObjects);
 
             renderer.SetParticles(game.ParticleEngine.Particles);
-            sw.Stop();
-
-            physicsMs = (float)sw.Elapsed.TotalMilliseconds;
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
+            timer.Stop();
+            physicsMs = (float)timer.Elapsed.TotalMilliseconds;
         }
 
         private void LockCursor()
@@ -212,7 +221,7 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            var sw = Stopwatch.StartNew();
+            timer.Restart();
             GraphicsDevice.Clear(Color.Black);
 
             RectangleF drawRect;
@@ -222,18 +231,21 @@ namespace MPTanks_MK5
                 30 * zoom,
                 20 * zoom);
 
-            DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
             renderer.Render(spriteBatch, drawRect, gameTime);
+            DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
 
             base.Draw(gameTime);
-            sw.Stop();
-            renderMs = (float)sw.Elapsed.TotalMilliseconds;
+            timer.Stop();
+            renderMs = (float)timer.Elapsed.TotalMilliseconds;
         }
 
-        #region Degug info
-
+        #region Debug info
+        private Process _prc;
         private void DrawDebugInfo(GameTime gameTime)
         {
+            if (_prc == null)
+                _prc = Process.GetCurrentProcess();
+
             spriteBatch.Begin();
             var tanksCount = 0;
             var projCount = 0;
@@ -246,24 +258,25 @@ namespace MPTanks_MK5
             }
             var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
             spriteBatch.DrawString(font, "Tanks: " + tanksCount + ", Projectiles: " + projCount.ToString() +
-                ", Zoom: " + zoom.ToString("N2") +
-                ", Update: " + physicsMs.ToString("N2") + ", Render: " + renderMs.ToString("N2") +
-            ",\nMouse: " + Mouse.GetState().Position.ToString() + ", Tank: " +
-            (game.Players.ContainsKey(player1Id) ?
-                game.Players[player1Id].Position.X.ToString("N1") + ", " +
-                game.Players[player1Id].Position.Y.ToString("N1") : "not spawned") +
-            ", Active timers: " + game.TimerFactory.ActiveTimersCount + ", \nAnimation layers: " +
-            game.AnimationEngine.Animations.Count + ", Particles: " +
-            game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps + " avg, " +
-            (1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1") + " now"
-            + ",\nGC (gen 0, 1, 2): " +
-            GC.CollectionCount(0) + " " + GC.CollectionCount(1) + " " + GC.CollectionCount(2) + "," +
-            " Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB" +
-            ", Status: " + (game.IsWaitingForPlayers ? "waiting for players" : "") +
-            (game.IsGameRunning ? "running" : "") +
-            (game.Gamemode.GameEnded ? game.IsGameRunning ? ", game ended" : "game ended" : "") +
-            (game.IsCountingDownToStart ? game.RemainingCountdownSeconds.ToString("N1") + "s remaining to start" : "") +
-            (game.Gamemode.WinningTeam == Engine.Gamemodes.Team.Null ? "" : ",\nWinner: " + game.Gamemode.WinningTeam.TeamName)
+                    ", Zoom: " + zoom.ToString("N2") +
+                    ", Update: " + physicsMs.ToString("N2") + ", Render: " + renderMs.ToString("N2") +
+                ",\nMouse: " + Mouse.GetState().Position.ToString() + ", Tank: " +
+                (game.Players.ContainsKey(player1Id) ?
+                    "{ " + game.Players[player1Id].Position.X.ToString("N1") + ", " +
+                    game.Players[player1Id].Position.Y.ToString("N1") + " }" : "not spawned") +
+                ", Active timers: " + game.TimerFactory.ActiveTimersCount + ", \nAnimation layers: " +
+                game.AnimationEngine.Animations.Count + ", Particles: " +
+                game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps + " avg, " +
+                (1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1") + " now"
+                + ",\nGC (gen 0, 1, 2): " +
+                GC.CollectionCount(0) + " " + GC.CollectionCount(1) + " " + GC.CollectionCount(2) + "," +
+            " Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB used, " +
+                (_prc.WorkingSet64 / (1024d * 1024)).ToString("N1") + "MB reserved" +
+                ",\nStatus: " + (game.IsWaitingForPlayers ? "waiting for players" : "") +
+                (game.IsGameRunning ? "running" : "") +
+                (game.Gamemode.GameEnded ? game.IsGameRunning ? ", game ended" : "game ended" : "") +
+                (game.IsCountingDownToStart ? game.RemainingCountdownSeconds.ToString("N1") + "s until start" : "") +
+                (game.Gamemode.WinningTeam == Engine.Gamemodes.Team.Null ? "" : ", Winner: " + game.Gamemode.WinningTeam.TeamName)
             , new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
         }

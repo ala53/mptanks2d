@@ -30,7 +30,7 @@ namespace MPTanks_MK5.Rendering
         {
             _objects = objects;
         }
-        public void SetAnimations(Engine.Rendering.Animations.AnimationEngine engine)
+        public void SetAnimationEngine(Engine.Rendering.Animations.AnimationEngine engine)
         {
             _animEngine = engine;
         }
@@ -109,7 +109,7 @@ namespace MPTanks_MK5.Rendering
                         //_effect.Alpha = mask.A / 255f;
 
                         //Start the spritebatch for the component
-                        sb.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied,
+                        sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                             SamplerState.AnisotropicClamp, DepthStencilState.Default,
                             RasterizerState.CullNone, _effect);
                         //Build a correctly sized rectangle to draw the asset on
@@ -129,9 +129,10 @@ namespace MPTanks_MK5.Rendering
 
         }
 
+        private List<Engine.Rendering.Animations.Animation> _endedAnimations =
+            new List<Engine.Rendering.Animations.Animation>();
         private void DrawAnimations(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
-            var endedAnimations = new List<Engine.Rendering.Animations.Animation>();
             //And render the animations
             if (_animEngine != null)
                 foreach (var anim in _animEngine.Animations)
@@ -140,7 +141,7 @@ namespace MPTanks_MK5.Rendering
                     if (_cache.AnimEnded(anim.AnimationName,
                         anim.PositionInAnimationMs + (float)gameTime.ElapsedGameTime.TotalMilliseconds,
                         anim.SpriteSheetName, anim.LoopCount))
-                        endedAnimations.Add(anim);
+                        _endedAnimations.Add(anim);
                     //cull if invisible
                     if (!IsVisible(anim.Position - (anim.Size / 2), anim.Size, boundsRect))
                         continue;
@@ -174,11 +175,13 @@ namespace MPTanks_MK5.Rendering
                     sb.End();
                 }
 
-            foreach (var anim in endedAnimations)
+            foreach (var anim in _endedAnimations)
             {
                 //Remove all the animations which are ended by now
                 _animEngine.MarkAnimationCompleted(anim);
             }
+
+            _endedAnimations.Clear();
         }
 
         private void DrawParticles(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
