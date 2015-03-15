@@ -76,11 +76,11 @@
     <Compile Include="Core\Events\Types\GameObjects\Projectiles\Created.cs" />
     <Compile Include="GameCore.cs" />
     <Compile Include="Core\Events\EventEngine.cs" />
-    <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
+    <Compile Include="GameCore.Maps.cs" />
+    <Compile Include="GameCore.Players.cs" />
     <Compile Include="Gamemodes\EPlayerTankType.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
-    <Compile Include="Gamemodes\Platoon.cs" />
     <Compile Include="Gamemodes\Team.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="Rendering\Animations\Animation.cs" />
     <Compile Include="Rendering\Animations\AnimationEngine.cs" />
     <Compile Include="Rendering\Particles\Particle.cs" />
-    <Compile Include="Rendering\Particles\ParticleEmitter.cs" />
+    <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Settings.cs" />

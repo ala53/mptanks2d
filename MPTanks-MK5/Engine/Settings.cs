@@ -40,11 +40,16 @@ namespace Engine
         /// Number of milliseconds after GameCore initialization to wait before starting
         /// the game because we want all of the setup to be done and for people to be connected.
         /// </summary>
-        public const float TimeToWaitBeforeStartingGame = 10000;
+        public const float TimeToWaitBeforeStartingGame = 5000;
+
+        /// <summary>
+        /// The number of milliseconds after game to continue updating
+        /// </summary>
+        public const float TimePostGameToContinueRunning = 5000;
 
         /// <summary>
         /// The maximum number of particles to allow in game
         /// </summary>
-        public const int ParticleLimit = 10000;
+        public const int ParticleLimit = 100000;
     }
 }

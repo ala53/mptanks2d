@@ -14,94 +14,104 @@ namespace Engine.Gamemodes
         {
             get { return _gameEnded; }
         }
+
+        private Team[] _teams = new Team[2];
+        public override Team[] Teams
+        {
+            get { return _teams.ToArray(); /* Safety: copy array */ }
+        }
+
         private Team _winner = Team.Null;
         public override Team WinningTeam
         {
-            get { return _winner; }
-        }
-        private Team[] _teams;
-        public override Team[] Teams
-        {
-            get { return _teams; }
+            get
+            {
+                return _winner;
+            }
         }
 
-        public TeamDeathMatchGamemode()
+        public override int MinPlayerCount
         {
-
+            get { return 2; }
         }
-        public override bool HasValidPlayerCount(int tanksCount, int superTanksCount)
+        /// <summary>
+        /// The ratio of super tanks to normal tanks in this specific instance
+        /// </summary>
+        public float SuperTankRatio { get; set; }
+        public override void MakeTeams(Guid[] playerIds)
         {
-            //Make sure we have players and that the number of them is even
-            return (tanksCount > 0 && tanksCount % 2 == 0
-                && superTanksCount % 2 == 0);
+            _teams[0] = new Team(); //Blue team
+            _teams[1] = new Team(); //Red team
+
+            _teams[0].Objective = "Kill all members of red team";
+            _teams[1].Objective = "Kill all members of blue team";
+
+            _teams[0].TeamColor = Color.Blue;
+            _teams[1].TeamColor = Color.Red;
+
+            _teams[0].TeamName = "Blue team";
+            _teams[1].TeamName = "Red team";
+
+            var players = new List<Team.Player>();
+            for (var i = 0; i < playerIds.Length / 2; i++)
+                players.Add(new Team.Player() { PlayerId = playerIds[i] });
+
+            _teams[0].Players = players.ToArray(); // blue team
+            players.Clear();
+
+            for (var i = playerIds.Length / 2; i < playerIds.Length; i++)
+                players.Add(new Team.Player() { PlayerId = playerIds[i] });
+
+            _teams[1].Players = players.ToArray(); // red team
         }
-
-        public override void MakeTeams(Tanks.Tank[] tanks, Tanks.SuperTank[] superTanks)
+        public override PlayerTankType GetAssignedTankType(Guid playerId)
         {
-            if (!HasValidPlayerCount(tanks.Length, superTanks.Length))
-                throw new ArgumentException("number of tanks invalid");
-
-            //We add teams like so:
-            //First half of the players are on red team and second half are on team 2
-            var tanksRed = tanks.Take(tanks.Length / 2)
-                .Concat(superTanks.Take(superTanks.Length / 2))
-                .ToArray();
-            var tanksBlue = tanks.Skip(tanks.Length / 2).Take(tanks.Length / 2)
-                .Concat(superTanks.Skip(superTanks.Length / 2).Take(superTanks.Length / 2))
-                .ToArray();
-
-            var redTeam = new Team();
-            redTeam.Objective = "Kill all members of blue team";
-            redTeam.TeamColor = Color.Red;
-            redTeam.TeamName = "Red team";
-            redTeam.Tanks = tanksRed;
-
-            var blueTeam = new Team();
-            redTeam.Objective = "Kill all members of red team";
-            redTeam.TeamColor = Color.Blue;
-            redTeam.TeamName = "Blue team";
-            redTeam.Tanks = tanksBlue;
-
-            //And place the teams in the publicly visible array
-            _teams = new Team[2];
-            _teams[0] = redTeam;
-            _teams[1] = blueTeam;
+            return PlayerTankType.BasicTank;
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
+        public override void StartGame()
         {
-            if (_teams == null) return;
+            //No complex initialization here
+        }
 
-            var tanks = new HashSet<Tanks.Tank>(Game.AllTanks);
-            bool blueAlive = false;
-            bool redAlive = false;
-            foreach (var member in _teams[0].Tanks) //Check if anyone on red team is alive
-                if (tanks.Contains(member))
+        public override void Update(GameTime gameTime)
+        {
+            var blueTeamAlive = false;
+            var redTeamAlive = false;
+            foreach (var player in Teams[0].Players)
+                if (player.Tank.Alive)
                 {
-                    redAlive = true;
+                    blueTeamAlive = true;
+                    break;
+                }
+            foreach (var player in Teams[1].Players)
+                if (player.Tank.Alive)
+                {
+                    redTeamAlive = true;
                     break;
                 }
 
-            foreach (var member in _teams[1].Tanks) //Check if anyone on blue team is alive
-                if (tanks.Contains(member))
-                {
-                    blueAlive = true;
-                    break;
-                }
-
-            //Win condition possibilities
-            if (blueAlive && redAlive)
-                _winner = Team.Null;
-            if (blueAlive && !redAlive)
-                _winner = _teams[0];
-            if (redAlive && !blueAlive)
-                _winner = _teams[1];
-            if (!redAlive && !blueAlive)
-                _winner = Team.Indeterminate;
-
-            //If either team is dead, end the game
-            if (!blueAlive || !redAlive)
+            if (!redTeamAlive && !blueTeamAlive)
+            {
                 _gameEnded = true;
+                _winner = Team.Indeterminate; //A tie
+            }
+            else if (!blueTeamAlive)
+            {
+                _gameEnded = true;
+                _winner = _teams[1]; //Red team won
+                return;
+            }
+            else if (!redTeamAlive)
+            {
+                _gameEnded = true;
+                _winner = _teams[0]; //Blue team won
+            }
+        }
+
+        public override byte[] Networkify()
+        {
+            return null; //TODO
         }
     }
 }

@@ -13,7 +13,9 @@ namespace Engine.Gamemodes
     {
         NormalTank = 1 << 0,
         SuperTank = 1 << 1,
-        BasicTank = 1 << 2,
-        ArmoredSuperTank = 1 << 3
+        BasicTank = 1 << 7,
+        MortarTank = 1 << 8,
+        ArmoredSuperTank = 1 << 55,
+        StealthSuperTank = 1 << 56
     }
 }

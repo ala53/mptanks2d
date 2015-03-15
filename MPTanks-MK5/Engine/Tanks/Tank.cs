@@ -14,8 +14,6 @@ namespace Engine.Tanks
         public List<Powerups.Powerup> Powerups { get; private set; }
         public Guid PlayerId { get; private set; }
         public Team Team { get; internal set; }
-        public Platoon Platoon { get; set; }
-
         public InputState InputState { get; private set; }
 
         public int Health { get; protected set; }

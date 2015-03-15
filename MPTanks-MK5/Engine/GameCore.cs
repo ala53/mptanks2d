@@ -41,6 +41,28 @@ namespace Engine
         /// The game mode that dictates the rules for this instance.
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
+        #region Game Status
+        /// <summary>
+        /// Gets whether the game is waiting for players or if it has started.
+        /// </summary>
+        public bool IsWaitingForPlayers { get { return !HasEnoughPlayersToStart(); } }
+        private bool _gameStarted = false;
+        public bool IsGameRunning
+        {
+            get
+            {
+                bool running = _gameStarted;
+                if (Gamemode.GameEnded)
+                    running = IsStillInPostGamePhysicsPhase();
+                return running;
+            }
+        }
+        public float RemainingCountdownSeconds { get; private set; }
+        public bool IsCountingDownToStart { get { return RemainingCountdownSeconds > 0; } }
+        #endregion
+        private Dictionary<Guid, Tanks.Tank> _players = new Dictionary<Guid, Tanks.Tank>();
+        public IReadOnlyDictionary<Guid, Tanks.Tank> Players { get { return _players; } }
+        public Maps.Map Map { get; private set; }
 
         #region World Management
         /// <summary>
@@ -115,9 +137,22 @@ namespace Engine
         public bool IsDirty { get { return _isDirty; } }
         #endregion
         #endregion
-        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode)
+        private bool _skipInit;
+
+        /// <summary>
+        /// Creates a new GameCore instance.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="gameMode"></param>
+        /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
+        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapName, bool skipInit = false)
         {
             Logger = logger;
+            _skipInit = skipInit;
+            if (skipInit)
+                _gameStarted = true;
+
+            Map = Maps.Map.LoadMap("", this);
 
             //Set up the game mode internally
             Gamemode = gameMode;
@@ -130,9 +165,10 @@ namespace Engine
             ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
-            Logger.Log("Game started");
+            Logger.Log("Game initialized");
         }
 
+        #region Add and Remove GameObjects
         private bool _inUpdateLoop = false;
         private List<GameObject> _addQueue =
             new List<GameObject>();
@@ -232,13 +268,79 @@ namespace Engine
             _addQueue.Clear();
             _removeQueue.Clear();
         }
-
+        #endregion
         public void Update(GameTime gameTime)
+        {
+            if (Gamemode.GameEnded)
+            {
+                //Check if whe should still be updating
+                if (IsStillInPostGamePhysicsPhase())
+                    UpdateInGame(gameTime);
+
+                //Do nothing, cleanup time
+            }
+            else if (IsGameRunning)
+            {
+                //Run the game *cough* like you're supposed to *cough*
+                UpdateInGame(gameTime);
+            }
+            else
+            {
+                if (!IsWaitingForPlayers) //Only tick game start if we have enough players
+                    TickGameStart();
+                else
+                    _timeThatGameBeganStarting = DateTime.MinValue; //Reset the counter if not ready
+            }
+        }
+
+        private DateTime _timeThatGameEnded = DateTime.MinValue;
+        private bool IsStillInPostGamePhysicsPhase()
+        {
+            if (!Gamemode.GameEnded)
+                return true; //We don't have anything to do here
+            if (_timeThatGameEnded == DateTime.MinValue)
+                _timeThatGameEnded = DateTime.Now;
+
+            return (DateTime.Now - _timeThatGameEnded).TotalMilliseconds
+                < Settings.TimePostGameToContinueRunning;
+        }
+
+        private DateTime _timeThatGameBeganStarting = DateTime.MinValue;
+        /// <summary>
+        /// Does a loop to wait before starting the game
+        /// </summary>
+        private void TickGameStart()
+        {
+            if (_timeThatGameBeganStarting == DateTime.MinValue)
+                _timeThatGameBeganStarting = DateTime.Now;
+
+            if ((DateTime.Now - _timeThatGameBeganStarting).TotalMilliseconds > Settings.TimeToWaitBeforeStartingGame)
+            {
+                _gameStarted = true; //Start the game when allowed
+                BeginGame();
+                Logger.Log("Game started");
+            }
+
+            RemainingCountdownSeconds = (Settings.TimeToWaitBeforeStartingGame / 1000)
+                - (float)(DateTime.Now - _timeThatGameBeganStarting).TotalSeconds;
+        }
+
+        private void BeginGame()
+        {
+            //Create the player objects (server only)
+            SetUpGamePlayers();
+            //And load the map / create the map objects
+
+        }
+
+        /// <summary>
+        /// The core update loop of the game
+        /// </summary>
+        /// <param name="gameTime"></param>
+        private void UpdateInGame(GameTime gameTime)
         {
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
-            //Remove objects that were supposed to be removed last frame (foreach loop issues)
-            ProcessQueue();
             //Process timers
             TimerFactory.Update(gameTime);
             //Process animations
@@ -254,6 +356,8 @@ namespace Engine
             Gamemode.Update(gameTime);
             //And notify that we exited the update loop
             _inUpdateLoop = false;
+            //Remove objects that were supposed to be removed last frame (foreach loop issues)
+            ProcessQueue();
         }
     }
 }
