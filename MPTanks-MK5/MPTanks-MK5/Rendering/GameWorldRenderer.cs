@@ -11,7 +11,7 @@ namespace MPTanks_MK5.Rendering
         public GameClient Game { get; private set; }
         private GameObject[] _objects;
         private Engine.Rendering.Animations.AnimationEngine _animEngine;
-        private IEnumerable<Engine.Rendering.Particles.Particle> _particles;
+        private Engine.Rendering.Particles.ParticleEngine _particles;
 
         private BasicEffect _effect;
         private AssetCache _cache;
@@ -34,7 +34,7 @@ namespace MPTanks_MK5.Rendering
         {
             _animEngine = engine;
         }
-        public void SetParticles(IEnumerable<Engine.Rendering.Particles.Particle> particles)
+        public void SetParticles(Engine.Rendering.Particles.ParticleEngine particles)
         {
             _particles = particles;
         }
@@ -189,14 +189,16 @@ namespace MPTanks_MK5.Rendering
             if (_particles == null)
                 return;
 
+            int remainingAllowedParticles = ClientSettings.MaxParticlesToRender;
             _effect.World = Matrix.Identity;
             _effect.Alpha = 1;
 
             sb.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
-            foreach (var particle in _particles)
+            foreach (var particle in _particles.Particles)
             {
+                if (remainingAllowedParticles == 0) break; //Stop drawing if too many particles
                 //And ignore off screen particles
                 if (!IsVisible(particle.Position, particle.Size, boundsRect)) continue;
                 var pos = Scale(particle.Position);
@@ -210,6 +212,8 @@ namespace MPTanks_MK5.Rendering
                 // this looks good enough and is a bit faster.
                 sb.Draw(asset.SpriteSheet.Texture, new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y),
                     asset.Bounds, particle.ColorMask, particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
+
+                remainingAllowedParticles--; //Mark that another particle was drawn
             }
 
             sb.End();

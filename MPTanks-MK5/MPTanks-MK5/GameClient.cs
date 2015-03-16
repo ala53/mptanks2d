@@ -128,7 +128,7 @@ namespace MPTanks_MK5
                 if (Keyboard.GetState().IsKeyDown(Keys.D))
                     iState.RotationSpeed = 1;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+//                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     iState.FirePressed = true;
 
                 game.InjectPlayerInput(player1Id, iState);
@@ -167,7 +167,7 @@ namespace MPTanks_MK5
 
             if (Keyboard.GetState().IsKeyDown(Keys.V))
             {
-                for (var i = 0; i < 5; i++)
+                for (var i = 0; i < 50; i++)
                 {
                     game.ParticleEngine.CreateEmitter(0.2f, Engine.Assets.BasicTank.MainGunSparks, Color.Green, new Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
                 }
@@ -179,7 +179,7 @@ namespace MPTanks_MK5
             if (game.IsDirty)
                 renderer.SetObjects(game.GameObjects);
 
-            renderer.SetParticles(game.ParticleEngine.Particles);
+            renderer.SetParticles(game.ParticleEngine);
 
             base.Update(gameTime);
             timer.Stop();

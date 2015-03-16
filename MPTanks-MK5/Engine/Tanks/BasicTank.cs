@@ -119,8 +119,6 @@ namespace Engine.Tanks
             }
 
             //Reload timer
-            canFirePrimary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
         }
         private void FireSecondary()
         {

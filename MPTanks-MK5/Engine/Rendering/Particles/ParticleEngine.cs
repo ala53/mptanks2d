@@ -25,6 +25,7 @@ namespace Engine.Rendering.Particles
 
         public void AddParticle(Particle particle)
         {
+
             //Compute the position with wraparound - if we're over the limit,
             //we remove the oldest particles first
             _addPosition = _addPosition % Settings.ParticleLimit;
@@ -57,7 +58,8 @@ namespace Engine.Rendering.Particles
         }
         private void ProcessParticles(float deltaMs)
         {
-            LivingParticlesCount = 0;
+            //Make sure to update the matching function in  ParticleEngine.Async.cs
+            int particlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
             var node = _particles.First;
             while (node != null)
@@ -74,7 +76,7 @@ namespace Engine.Rendering.Particles
                 //But if they're alive:
 
                 //Statistical tracking
-                LivingParticlesCount++;
+                particlesCount++;
                 //If the particle has started it's fade out...
                 if (part.LifespanMs - part.FadeOutMs <= part.TotalTimeAlreadyAlive)
                 {
@@ -98,6 +100,7 @@ namespace Engine.Rendering.Particles
                 node.Value = part;
                 node = node.Next;
             }
+            LivingParticlesCount = particlesCount;
         }
 
         private void RemoveNode(LinkedListNode<Particle> node)

@@ -227,13 +227,13 @@ namespace Engine
 #endif
             Logger.LogObjectDestroyed(obj, destructor);
             obj.Alive = false;
-            obj.Destroy(destructor); //Call destructor
 
             bool found = _gameObjects.Contains(obj) || _addQueue.Contains(obj);
             //We want to prevent people from disposing of the bodies
             if (obj.Body.IsDisposed && found)
                 Logger.Warning("Body already disposed, Trace:\n" + Environment.StackTrace);
 
+            obj.Destroy(destructor); //Call destructor
             if (!found)
                 return; //It doesn't exist - probably was already deleted by a previous object
 
@@ -272,6 +272,7 @@ namespace Engine
             _removeQueue.Clear();
         }
         #endregion
+        private bool _hasDoneCleanup;
         public void Update(GameTime gameTime)
         {
             if (Gamemode.GameEnded)
@@ -281,6 +282,11 @@ namespace Engine
                     UpdateInGame(gameTime);
 
                 //Do nothing, cleanup time
+                if (!_hasDoneCleanup)
+                {
+                    _hasDoneCleanup = true;
+                    EndGame();
+                }
             }
             else if (IsGameRunning)
             {
@@ -294,6 +300,10 @@ namespace Engine
                 else
                     _timeThatGameBeganStarting = DateTime.MinValue; //Reset the counter if not ready
             }
+        }
+
+        private void EndGame()
+        {
         }
 
         private DateTime _timeThatGameEnded = DateTime.MinValue;
@@ -350,11 +360,12 @@ namespace Engine
             TimerFactory.Update(gameTime);
             //Process animations
             AnimationEngine.Update(gameTime);
-            //Move Particles
-            ParticleEngine.Update(gameTime);
             //Process individual objects
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);
+            //Run the particles - particles and physics are run on different threads 
+            //for performance. They don't interact so we don't have to worry about issues
+            ParticleEngine.Update(gameTime);
             //Tick physics
             World.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             //Let the gamemode do it's calculations

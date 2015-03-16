@@ -41,7 +41,7 @@ namespace Engine.Rendering.Particles
             float minLifeSpan, float maxLifeSpan,
             RectangleF emissionArea,
             Vector2 minVelocity, Vector2 maxVelocity,
-            Vector2 minAcceleration, Vector2 maxAcceleration, 
+            Vector2 minAcceleration, Vector2 maxAcceleration,
             bool calculateVelocityAndAccelRelativeToRotation,
             Vector2 minSize, Vector2 maxSize,
             Color minColorMask, Color maxColorMask,
@@ -96,6 +96,8 @@ namespace Engine.Rendering.Particles
         }
         private void AddEmitter(Emitter emitter)
         {
+            if (emitter == null)
+                return;
             if (_updating)
                 _addList.Add(emitter);
             else
@@ -117,12 +119,14 @@ namespace Engine.Rendering.Particles
             _removeList.Clear();
         }
 
-        private bool _updating = false;
+        private volatile bool _updating = false;
         private void ProcessEmitters(GameTime gameTime)
         {
             _updating = true;
-            foreach (var em in Emitters)
-                em.Update(gameTime);
+            for (var i = 0; i < _emitters.Count; i++)
+            {
+                _emitters[i].Update(gameTime);
+            }
             _updating = false;
             //And process the remove/add queue 
             ProcessEmitterQueue();

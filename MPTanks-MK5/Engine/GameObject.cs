@@ -127,7 +127,7 @@ namespace Engine
 
         public void Destroy(GameObject destructor = null)
         {
-            if (Body.IsDisposed)
+            if (!Body.IsDisposed)
                 Body.Dispose(); //Kill the physics body
             DestroyInternal(destructor);
         }
