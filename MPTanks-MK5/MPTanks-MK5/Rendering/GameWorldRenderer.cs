@@ -121,7 +121,7 @@ namespace MPTanks_MK5.Rendering
                         //Get the cached asset
                         var asset = _cache.GetArtAsset(component.SpriteSheetName, component.AssetName, gameTime);
                         //And draw
-                        sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, new Color(mask, 255));
+                        sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, mask);
 
                         sb.End();
                     }

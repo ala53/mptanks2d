@@ -42,13 +42,14 @@ namespace Engine.Projectiles.BasicTank
                 Mask = new Color(Color.White, 0.8f)
             });
 
-            //Create the trail emitter
-            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.BasicTank.MainGunSparks,
+            // Create the trail emitter
+            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.SmokePuffs.SmokePuffSprites,
                 new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
-                new Core.RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f),
-                new Vector2(0.25f), true, 0, 100, 150, Vector2.Zero, Vector2.Zero, 0, 0.15f, 240, lifespan + 100);
-
-            //Add a timer for so we don't exist forever
+                new Core.RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
+                new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true);
+            _trailEmitter.MinSize = new Vector2(0.1f);
+            _trailEmitter.MaxSize = new Vector2(0.75f);
+            ////Add a timer for so we don't exist forever
             _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => TryDestroy(), lifespan);
         }
 
@@ -89,7 +90,7 @@ namespace Engine.Projectiles.BasicTank
                 //    Rotation
                 0, (float)Math.PI * 2,
                 // R Vel      Rate      Emitter life
-                0.05f, 0.5f, 75, 150, 200);
+                0.05f, 0.5f, 75, 150, 200, false, false);
 
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
         }

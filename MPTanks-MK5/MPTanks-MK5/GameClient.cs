@@ -38,8 +38,8 @@ namespace MPTanks_MK5
             Content.RootDirectory = "Content";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
-            IsFixedTimeStep = false;
-            graphics.SynchronizeWithVerticalRetrace = false;
+            // IsFixedTimeStep = false;
+            // graphics.SynchronizeWithVerticalRetrace = false;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace MPTanks_MK5
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
             game.AddPlayer(player2Id);
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 0; i++)
                 game.AddPlayer(Guid.NewGuid());
             renderer.SetAnimationEngine(game.AnimationEngine);
         }
@@ -106,6 +106,10 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.Y))
+                game.Timescale = 1 / 32f;
+            else
+                game.Timescale = 1f;
             timer.Restart();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -128,7 +132,7 @@ namespace MPTanks_MK5
                 if (Keyboard.GetState().IsKeyDown(Keys.D))
                     iState.RotationSpeed = 1;
 
-//                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     iState.FirePressed = true;
 
                 game.InjectPlayerInput(player1Id, iState);
@@ -226,10 +230,16 @@ namespace MPTanks_MK5
 
             RectangleF drawRect;
             drawRect = new RectangleF(
-               0, 0,// tank.Position.X - (15 * zoom),
-                //tank.Position.Y - (10 * zoom),
+                0,
+                0,
                 30 * zoom,
                 20 * zoom);
+            if (game.Players.ContainsKey(player1Id))
+                drawRect = new RectangleF(
+                    game.Players[player1Id].Position.X - (15 * zoom),
+                    game.Players[player1Id].Position.Y - (10 * zoom),
+                    30 * zoom,
+                    20 * zoom);
 
             renderer.Render(spriteBatch, drawRect, gameTime);
             DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
@@ -270,8 +280,7 @@ namespace MPTanks_MK5
                 (1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1") + " now"
                 + ",\nGC (gen 0, 1, 2): " +
                 GC.CollectionCount(0) + " " + GC.CollectionCount(1) + " " + GC.CollectionCount(2) + "," +
-            " Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB used, " +
-                (_prc.WorkingSet64 / (1024d * 1024)).ToString("N1") + "MB reserved" +
+                " Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB used" +
                 ",\nStatus: " + (game.IsWaitingForPlayers ? "waiting for players" : "") +
                 (game.IsGameRunning ? "running" : "") +
                 (game.Gamemode.GameEnded ? game.IsGameRunning ? ", game ended" : "game ended" : "") +
@@ -280,26 +289,26 @@ namespace MPTanks_MK5
             , new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
         }
-        private float[] fps;
+        private float[] _fps;
 
         private float CalculateAverageFPS(float deltaMs)
         {
-            if (fps == null)
+            if (_fps == null)
             {
-                fps = new float[30];
-                for (int i = 0; i < fps.Length; i++)
-                    fps[i] = 16.666666f;
+                _fps = new float[30];
+                for (int i = 0; i < _fps.Length; i++)
+                    _fps[i] = 16.666666f;
             }
 
-            for (int i = 0; i < fps.Length - 1; i++)
-                fps[i] = fps[i + 1];
+            for (int i = 0; i < _fps.Length - 1; i++)
+                _fps[i] = _fps[i + 1];
 
-            fps[fps.Length - 1] = deltaMs;
+            _fps[_fps.Length - 1] = deltaMs;
 
             float tot = 0;
-            foreach (var f in fps)
+            foreach (var f in _fps)
                 tot += f;
-            return 1000 / (tot / fps.Length);
+            return 1000 / (tot / _fps.Length);
         }
         #endregion
     }

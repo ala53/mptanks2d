@@ -45,6 +45,8 @@ namespace Engine
         /// The game mode that dictates the rules for this instance.
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
+        private float _timescale = 1;
+        public float Timescale { get; set; }
         #region Game Status
         /// <summary>
         /// Gets whether the game is waiting for players or if it has started.
@@ -277,6 +279,7 @@ namespace Engine
         {
             if (Gamemode.GameEnded)
             {
+                TickGameEnd(gameTime);
                 //Check if whe should still be updating
                 if (IsStillInPostGamePhysicsPhase())
                     UpdateInGame(gameTime);
@@ -296,9 +299,9 @@ namespace Engine
             else
             {
                 if (!IsWaitingForPlayers) //Only tick game start if we have enough players
-                    TickGameStart();
+                    TickGameStart(gameTime);
                 else
-                    _timeThatGameBeganStarting = DateTime.MinValue; //Reset the counter if not ready
+                    _timeSinceGameBeganStarting = 0; //Reset the counter if not ready
             }
         }
 
@@ -306,30 +309,26 @@ namespace Engine
         {
         }
 
-        private DateTime _timeThatGameEnded = DateTime.MinValue;
+        private double _timeSinceGameEnded = 0;
         private bool IsStillInPostGamePhysicsPhase()
         {
-            if (!Gamemode.GameEnded)
-                return true; //We don't have anything to do here
-            if (_timeThatGameEnded == DateTime.MinValue)
-                _timeThatGameEnded = DateTime.Now;
-
-            return (DateTime.Now - _timeThatGameEnded).TotalMilliseconds
+            return _timeSinceGameEnded
                 < Settings.TimePostGameToContinueRunning;
         }
 
-        private DateTime _timeThatGameBeganStarting = DateTime.MinValue;
+        private void TickGameEnd(GameTime gameTime)
+        {
+            _timeSinceGameEnded += gameTime.ElapsedGameTime.TotalMilliseconds;
+        }
+
+        private double _timeSinceGameBeganStarting = 0;
         /// <summary>
         /// Does a loop to wait before starting the game
         /// </summary>
-        private void TickGameStart()
+        private void TickGameStart(GameTime gameTime)
         {
-            if (_timeThatGameBeganStarting == DateTime.MinValue)
-            {
-                _timeThatGameBeganStarting = DateTime.Now;
-            }
-
-            if ((DateTime.Now - _timeThatGameBeganStarting).TotalMilliseconds > Settings.TimeToWaitBeforeStartingGame)
+            _timeSinceGameBeganStarting += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_timeSinceGameBeganStarting > Settings.TimeToWaitBeforeStartingGame)
             {
                 _gameStarted = true; //Start the game when allowed
                 BeginGame();
@@ -337,7 +336,7 @@ namespace Engine
             }
 
             RemainingCountdownSeconds = (Settings.TimeToWaitBeforeStartingGame / 1000)
-                - (float)(DateTime.Now - _timeThatGameBeganStarting).TotalSeconds;
+                - (float)(_timeSinceGameBeganStarting / 1000);
         }
 
         private void BeginGame()
@@ -354,22 +353,29 @@ namespace Engine
         /// <param name="gameTime"></param>
         private void UpdateInGame(GameTime gameTime)
         {
+            if (Timescale != 1)
+            {
+                gameTime = new GameTime(gameTime.TotalGameTime, TimeSpan.FromMilliseconds(
+                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale));
+            }
+
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
             //Process timers
             TimerFactory.Update(gameTime);
+            //start particle engine task
+            var pTask = Task.Run(() => ParticleEngine.Update(gameTime));
             //Process animations
             AnimationEngine.Update(gameTime);
             //Process individual objects
             foreach (var obj in _gameObjects)
                 obj.Update(gameTime);
-            //Run the particles - particles and physics are run on different threads 
-            //for performance. They don't interact so we don't have to worry about issues
-            ParticleEngine.Update(gameTime);
             //Tick physics
             World.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             //Let the gamemode do it's calculations
             Gamemode.Update(gameTime);
+            //Wait for particle engine
+            pTask.Wait();
             //And notify that we exited the update loop
             _inUpdateLoop = false;
             //Remove objects that were supposed to be removed last frame (foreach loop issues)

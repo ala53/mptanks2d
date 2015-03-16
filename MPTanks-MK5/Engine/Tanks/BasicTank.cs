@@ -110,15 +110,17 @@ namespace Engine.Tanks
                     this, Game, ColorMask, false,
                     TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
                 //Fire it in the barrel direction
-                const float velocity = 75f;
+                const float velocity = 25f;
                 var x = velocity * (float)Math.Sin(rotation);
                 var y = velocity * -(float)Math.Cos(rotation);
-                projectile.LinearVelocity  = new Vector2(x, y);
+                projectile.LinearVelocity = new Vector2(x, y);
                 //Add to the game world
                 Game.AddGameObject(projectile, this);
             }
 
             //Reload timer
+            canFirePrimary = false;
+            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
         }
         private void FireSecondary()
         {

@@ -17,13 +17,20 @@ namespace Engine.Rendering.Particles
         public float FadeInMs;
         public Vector2 Velocity;
         public Vector2 Acceleration;
-        public Vector2 Position;
+        public Vector2 Position
+        {
+            get { return NonCenteredPosition - (Size / 2); }
+            set { NonCenteredPosition = value + (Size / 2); }
+        }
+        public Vector2 NonCenteredPosition;
         public Vector2 Size;
         public string AssetName;
         public string SheetName;
         public Color ColorMask;
         public float Rotation;
         public float RotationVelocity;
+        public bool ShinkInsteadOfFade;
+        public Vector2 OriginalSize;
         /// <summary>
         /// Do not use. Private to particle engine.
         /// </summary>

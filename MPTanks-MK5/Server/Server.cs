@@ -9,7 +9,7 @@ namespace Server
 {
     public class Server
     {
-        private Engine.GameCore game = new Engine.GameCore(new Logger(), new Engine.Gamemodes.DeathMatchGamemode());
+        private Engine.GameCore game = new Engine.GameCore(new Logger(), new Engine.Gamemodes.TeamDeathMatchGamemode(), "");
         public void Open()
         {
         }

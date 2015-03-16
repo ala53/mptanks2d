@@ -9,12 +9,15 @@ namespace Engine.Assets
 {
     static class AssetHelper
     {
-        //We have a constant seed here so the game is deterministic across computers
-        //(not quite, but better than a randomly seeded one)
-        private static Random _rand = new Random(733201);
+        private static Random _rand = new Random();
         public static SpriteAnimationInfo GetRandomExplosionAnimation()
         {
             return ChooseRandom(Explosions.ExplosionAnimations);
+        }
+
+        public static SpriteInfo GetRandomSmokePuff()
+        {
+            return ChooseRandom(SmokePuffs.SmokePuffSprites);
         }
 
         public static string AnimationToString(SpriteAnimationInfo info, float positionMs = 0, bool loop = false)

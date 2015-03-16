@@ -12,7 +12,8 @@ namespace Engine
         private List<Guid> _playerIds = new List<Guid>();
         public void AddPlayer(Guid playerId)
         {
-            _playerIds.Add(playerId);
+            if (!_playerIds.Contains(playerId)) //Ignore existing
+                _playerIds.Add(playerId);
         }
         /// <summary>
         /// Kill and remove the player
@@ -21,12 +22,27 @@ namespace Engine
         public void RemovePlayer(Guid playerId)
         {
             _playerIds.Remove(playerId);
+            if (_players.ContainsKey(playerId))
+            {
+                RemoveGameObject(_players[playerId]);
+                _players.Remove(playerId);
+            }
         }
 
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
             if (IsGameRunning)
                 Players[playerId].Input(state);
+        }
+
+        public bool CheckPlayerIsAlive(Guid playerId)
+        {
+            return Players.ContainsKey(playerId) && Players[playerId].Alive;
+        }
+
+        public bool CheckPlayerHasTank(Guid playerId)
+        {
+            return Players.ContainsKey(playerId);
         }
 
         /// <summary>

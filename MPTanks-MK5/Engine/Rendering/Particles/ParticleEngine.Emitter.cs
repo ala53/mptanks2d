@@ -17,7 +17,7 @@ namespace Engine.Rendering.Particles
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
             float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            Action<Emitter> diedCallback = null)
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
             //e.g. fuzziness = 1 should be +- 50%, not +-100%
@@ -32,7 +32,34 @@ namespace Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * min), colorMask.A),
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
-                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, diedCallback
+                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
+                       scaleUniform, diedCallback
+                  );
+        }
+        public Emitter CreateEmitter(float fuzziness, Assets.SpriteInfo[] spriteInfos,
+            Color colorMask, RectangleF emissionArea, Vector2 size,
+            bool calculateVelocityAndAccelRelativeToRotation = false,
+            float fadeInTime = 0, float fadeOutTime = 0, float lifeSpan = 500,
+            Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
+            float rotation = 0,
+            float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, Action<Emitter> diedCallback = null)
+        {
+            //fuzziness / 2 is used because fuzziness should be both directions
+            //e.g. fuzziness = 1 should be +- 50%, not +-100%
+            var min = 1 - fuzziness / 2;
+            var max = 1 + fuzziness / 2;
+
+            return CreateEmitter(spriteInfos,
+                       fadeInTime * min, fadeInTime * max, fadeOutTime * min, fadeOutTime * max,
+                       lifeSpan * min, lifeSpan * max, emissionArea, velocity * min,
+                       velocity * max, acceleration * min, acceleration * max,
+                       calculateVelocityAndAccelRelativeToRotation, size * min, size * max,
+                       new Color(new Color(colorMask.ToVector3() * min), colorMask.A),
+                       new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
+                       rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
+                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
+                       scaleUniform, diedCallback
                   );
         }
         public Emitter CreateEmitter(Assets.SpriteInfo[] spriteInfos,
@@ -48,7 +75,9 @@ namespace Engine.Rendering.Particles
             float minRotation, float maxRotation,
             float minRotationVelocity, float maxRotationVelocity,
             float minParticlesPerSecond, float maxParticlesPerSecond,
-            float emitterLifespan, Action<Emitter> diedCallback = null)
+            float emitterLifespan, bool shrinkInsteadOfFadeOut,
+            bool scaleUniform,
+            Action<Emitter> diedCallback = null)
         {
             var em = new Emitter(this);
             em.Sprites = spriteInfos;
@@ -56,6 +85,8 @@ namespace Engine.Rendering.Particles
             em.MaxFadeInMs = maxFadeInTime;
             em.MinFadeOutMs = minFadeOutTime;
             em.MaxFadeOutMs = maxFadeOutTime;
+            em.ShrinkInsteadOfFadeOut = shrinkInsteadOfFadeOut;
+            em.ScaleUniform = scaleUniform;
             em.MinLifespanMs = minLifeSpan;
             em.MaxLifespanMs = maxLifeSpan;
             em.EmissionArea = emissionArea;
@@ -86,37 +117,45 @@ namespace Engine.Rendering.Particles
         private void RemoveEmitter(Emitter emitter)
         {
             if (_updating)
-                _removeList.Add(emitter);
+                lock (_removeList)
+                    _removeList.Add(emitter);
             else
             {
                 if (emitter.RemovedCallback != null)
                     emitter.RemovedCallback(emitter);
-                _emitters.Remove(emitter);
+                lock (_emitters)
+                    _emitters.Remove(emitter);
             }
         }
         private void AddEmitter(Emitter emitter)
         {
-            if (emitter == null)
-                return;
             if (_updating)
-                _addList.Add(emitter);
+                lock (_addList)
+                    _addList.Add(emitter);
             else
-                _emitters.Add(emitter);
+                lock (_emitters)
+                    _emitters.Add(emitter);
         }
 
         private void ProcessEmitterQueue()
         {
-            foreach (var em in _addList)
-                _emitters.Add(em);
-            foreach (var em in _removeList)
-            {
-                if (em.RemovedCallback != null)
-                    em.RemovedCallback(em);
-                _emitters.Remove(em);
-            }
+            lock (_addList)
+                foreach (var em in _addList)
+                    lock (_emitters)
+                        _emitters.Add(em);
+            lock (_removeList)
+                foreach (var em in _removeList)
+                {
+                    if (em.RemovedCallback != null)
+                        em.RemovedCallback(em);
+                    lock (_emitters)
+                        _emitters.Remove(em);
+                }
 
-            _addList.Clear();
-            _removeList.Clear();
+            lock (_addList)
+                _addList.Clear();
+            lock (_removeList)
+                _removeList.Clear();
         }
 
         private volatile bool _updating = false;
@@ -125,7 +164,8 @@ namespace Engine.Rendering.Particles
             _updating = true;
             for (var i = 0; i < _emitters.Count; i++)
             {
-                _emitters[i].Update(gameTime);
+                lock (_emitters)
+                    _emitters[i].Update(gameTime);
             }
             _updating = false;
             //And process the remove/add queue 
@@ -158,6 +198,8 @@ namespace Engine.Rendering.Particles
             public Vector2 MinAcceleration { get; set; }
             public Vector2 MaxAcceleration { get; set; }
             public bool CalculateVelocityAndAccelerationRelativeToRotation { get; set; }
+            public bool ShrinkInsteadOfFadeOut { get; set; }
+            public bool ScaleUniform { get; set; }
             public Vector2 MinSize { get; set; }
             public Vector2 MaxSize { get; set; }
             public RectangleF EmissionArea { get; set; }
@@ -234,6 +276,15 @@ namespace Engine.Rendering.Particles
                     Vector2 acceleration = GetRandomBetween(MinAcceleration, MaxAcceleration);
                     float rotation = GetRandomBetween(MinRotation, MaxRotation);
 
+                    var size = GetRandomBetween(MinSize, MaxSize);
+                    if (ScaleUniform)
+                    {
+                        var factor = GetRandomBetween(0, 1);
+                        var distX = MaxSize.X - MinSize.X;
+                        var distY = MaxSize.Y - MinSize.Y;
+                        size = new Vector2(distX * factor + MinSize.X, distY * factor + MinSize.Y);
+                    }
+
                     if (CalculateVelocityAndAccelerationRelativeToRotation)
                     {
                         var rotationRel = new Vector2(
@@ -255,8 +306,9 @@ namespace Engine.Rendering.Particles
                         Position = GetRandomPosition(EmissionArea),
                         Rotation = rotation,
                         RotationVelocity = GetRandomBetween(MinRotationVelocity, MaxRotationVelocity),
-                        Size = GetRandomBetween(MinSize, MaxSize),
+                        Size = size,
                         Velocity = velocity,
+                        ShinkInsteadOfFade = ShrinkInsteadOfFadeOut
                     };
                     Container.AddParticle(particle);
                     totalParticlesCreated++; //Note that we created another particle

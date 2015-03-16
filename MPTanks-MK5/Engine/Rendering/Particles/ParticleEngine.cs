@@ -13,7 +13,7 @@ namespace Engine.Rendering.Particles
         private List<Emitter> _emitters = new List<Emitter>();
         public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
         private LinkedList<Particle> _particles;
-        public IEnumerable<Particle> Particles { get { return _particles; } }
+        public LinkedList<Particle> Particles { get { return _particles; } }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
         public int LivingParticlesCount { get; private set; }
@@ -25,7 +25,6 @@ namespace Engine.Rendering.Particles
 
         public void AddParticle(Particle particle)
         {
-
             //Compute the position with wraparound - if we're over the limit,
             //we remove the oldest particles first
             _addPosition = _addPosition % Settings.ParticleLimit;
@@ -41,6 +40,7 @@ namespace Engine.Rendering.Particles
 
             particle.TotalTimeAlreadyAlive = 0;
             particle.Alpha = particle.ColorMask.A / 255f;
+            particle.OriginalSize = particle.Size;
 
             //Guard clause: remove the first if we're over the limit
             if (Settings.ParticleLimit <= _particles.Count)
@@ -82,8 +82,15 @@ namespace Engine.Rendering.Particles
                 {
                     var percentFadedOut =
                         ((part.LifespanMs - part.TotalTimeAlreadyAlive)) / part.FadeOutMs;
-                    //Fade out
-                    part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedOut);
+                    if (part.ShinkInsteadOfFade)
+                    {
+                        part.Size = part.OriginalSize * percentFadedOut;
+                    }
+                    else
+                    {
+                        //Fade out
+                        part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedOut);
+                    }
                 }
                 //If the particle is still fading in
                 if (part.FadeInMs > part.TotalTimeAlreadyAlive && part.FadeInMs > 0)
@@ -92,7 +99,7 @@ namespace Engine.Rendering.Particles
                     part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedIn);
                 }
 
-                part.Position += (part.Velocity * deltaScale); //And move it in world space
+                part.NonCenteredPosition += (part.Velocity * deltaScale); //And move it in world space
                 part.Rotation += (part.RotationVelocity * deltaScale); //And rotate it
                 //And update it's velocity so the next iteration can have a different velocity
                 part.Velocity += (part.Acceleration * deltaScale);

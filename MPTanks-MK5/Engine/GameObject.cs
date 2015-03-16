@@ -136,5 +136,11 @@ namespace Engine
         {
 
         }
+
+        public virtual byte[] CurrentState { get { return new byte[0]; } }
+        public virtual void ReceiveState(byte[] stateData)
+        {
+
+        }
     }
 }
