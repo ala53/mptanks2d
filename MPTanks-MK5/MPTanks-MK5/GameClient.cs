@@ -30,6 +30,9 @@ namespace MPTanks_MK5
         private float zoom = 6.5f;
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
+        private RectangleF drawRect;
+        private bool loading { get { return !loadingScreen.Completed || !loadingScreen.IsSlidingOut; } }
+        private LoadingScreen loadingScreen;
 
         public GameClient()
             : base()
@@ -67,6 +70,7 @@ namespace MPTanks_MK5
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             renderer = new GameWorldRenderer(this);
+            loadingScreen = new LoadingScreen(this);
             SetupGame();
             font = Content.Load<SpriteFont>("font");
         }
@@ -111,8 +115,19 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (game.IsCountingDownToStart)
+            {
+                loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
+                loadingScreen.Maximum = Settings.TimeToWaitBeforeStartingGame / 1000;
+                loadingScreen.Status = game.RemainingCountdownSeconds.ToString("N1") + " seconds remaining";
+                loadingScreen.Billboard = "Setting up...";
+            }
+            else
+            {
+            }
+
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
-                game.Timescale = 1 / 40f;
+                game.Timescale = 1 / 32f;
             else
                 game.Timescale = 1f;
             timer.Restart();
@@ -230,25 +245,31 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            timer.Restart();
+            timer.Restart(); //Stat tracking
             GraphicsDevice.Clear(Color.Black);
 
-            RectangleF drawRect;
-            drawRect = new RectangleF(
-                0,
-                0,
-                30 * zoom,
-                20 * zoom);
-            if (game.Players.ContainsKey(player1Id))
+            if (!loading || loadingScreen.IsSlidingOut)
+            { //in game
                 drawRect = new RectangleF(
-                    game.Players[player1Id].Position.X - (15 * zoom),
-                    game.Players[player1Id].Position.Y - (10 * zoom),
+                    0,
+                    0,
                     30 * zoom,
                     20 * zoom);
+                if (game.Players.ContainsKey(player1Id))
+                    drawRect = new RectangleF(
+                        game.Players[player1Id].Position.X - (15 * zoom),
+                        game.Players[player1Id].Position.Y - (10 * zoom),
+                        30 * zoom,
+                        20 * zoom);
 
-            renderer.Render(spriteBatch, drawRect, gameTime);
-            DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
-
+                renderer.Render(spriteBatch, drawRect, gameTime);
+                DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
+            }
+            //And draw the loading screen last so its over everything
+            if (loading || loadingScreen.IsSlidingOut)
+            {
+                loadingScreen.Render(spriteBatch, gameTime);
+            }
             base.Draw(gameTime);
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;

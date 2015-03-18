@@ -57,6 +57,22 @@ namespace Engine
             set { Body.AngularVelocity = value; }
         }
 
+        public bool IsStatic
+        {
+            get { return Body.IsStatic; }
+            set { Body.IsStatic = value; }
+        }
+        private bool _isSensor;
+        public bool IsSensor
+        {
+            get { return _isSensor; }
+            set
+            {
+                Body.IsSensor = value;
+                _isSensor = value;
+            }
+        }
+
         public abstract Vector2 Size { get; }
 
         public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, int id = -1)

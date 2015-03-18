@@ -20,6 +20,6 @@ namespace MPTanks_MK5
         /// Unfortunately, it does so to the possible detriment of 
         /// framerate.
         /// </summary>
-        public const bool ForceGCEveryFrame = true;
+        public const bool ForceGCEveryFrame = false;
     }
 }
