@@ -39,8 +39,9 @@ namespace MPTanks_MK5
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
-            graphics.SynchronizeWithVerticalRetrace = false;
-            graphics.ApplyChanges();
+            // graphics.SynchronizeWithVerticalRetrace = false;
+            // graphics.ApplyChanges();
+            // TargetElapsedTime = TimeSpan.FromMilliseconds(8);
         }
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace MPTanks_MK5
         protected override void Update(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
-                game.Timescale = 1 / 32f;
+                game.Timescale = 1 / 40f;
             else
                 game.Timescale = 1f;
             timer.Restart();
@@ -251,6 +252,9 @@ namespace MPTanks_MK5
             base.Draw(gameTime);
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;
+
+            if (ClientSettings.ForceGCEveryFrame)
+                GC.Collect(0, GCCollectionMode.Forced, true);
         }
 
         #region Debug info
