@@ -20,6 +20,12 @@ namespace Engine.Rendering
         public Vector2 Size;
         public bool Visible = true;
 
+        /// <summary>
+        /// The layer that the object draws on. Higher layers are drawn last while lower ones are drawn first.
+        /// So, 0 is below 1 which is below 2 which...etc.
+        /// </summary>
+        public int DrawLayer;
+
         //And for rendering, we let the engine know what we want to show
         public string SpriteSheetName;
         public string AssetName;

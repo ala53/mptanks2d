@@ -22,6 +22,7 @@ namespace Engine.Core.Timing
         {
 
         }
+
         public class Factory
         {
             public int ActiveTimersCount { get { return timers.Count; } }

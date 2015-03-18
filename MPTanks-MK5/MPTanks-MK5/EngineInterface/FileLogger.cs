@@ -44,7 +44,7 @@ namespace MPTanks_MK5.EngineInterface
                     (additionalData == "" ? "" : ", " + additionalData));
             else
                 Logger.Log(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ") by " +
-                    creator.GetType().Name + " (ID " + creator.ObjectId + " - " + creator.ToString() + ")" + 
+                    creator.GetType().Name + " (ID " + creator.ObjectId + " - " + creator.ToString() + ")" +
                     (additionalData == "" ? "" : ", " + additionalData));
 
         }
@@ -52,11 +52,11 @@ namespace MPTanks_MK5.EngineInterface
         public void LogObjectDamaged(Engine.GameObject damaged, Engine.GameObject damager = null, string additionalData = "")
         {
             if (damager == null)
-                Logger.Log(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " +  damaged.ToString() +
+                Logger.Log(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " + damaged.ToString() +
                     ") damaged" + (additionalData == "" ? "" : ", " + additionalData));
             else
                 Logger.Log(damaged.GetType().Name + "(ID " + damaged.ObjectId +
-                    ") damaged by " + damager.GetType().Name + " (ID " + 
+                    ") damaged by " + damager.GetType().Name + " (ID " +
                     damager.ObjectId + " - " + damaged.ToString() +
                     (additionalData == "" ? ")" : "), " + additionalData));
         }
@@ -68,7 +68,7 @@ namespace MPTanks_MK5.EngineInterface
                     ") destroyed" + (additionalData == "" ? "" : ", " + additionalData));
             else
                 Logger.Log(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
-                    ") destroyed by " + destroyer.GetType().Name + " (ID " + 
+                    ") destroyed by " + destroyer.GetType().Name + " (ID " +
                     destroyer.ObjectId + " - " + destroyer.ToString() +
                     (additionalData == "" ? ")" : "), " + additionalData));
         }

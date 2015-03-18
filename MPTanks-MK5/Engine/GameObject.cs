@@ -15,6 +15,7 @@ namespace Engine
         public FarseerPhysics.Dynamics.Body Body { get; private set; }
         public GameCore Game { get; private set; }
         public bool Alive { get; set; }
+        public int DrawLayer { get; set; }
 
         private Dictionary<string, Rendering.RenderableComponent> _components;
         public virtual Dictionary<string, Rendering.RenderableComponent>
@@ -137,10 +138,18 @@ namespace Engine
 
         }
 
-        public virtual byte[] CurrentState { get { return new byte[0]; } }
-        public virtual void ReceiveState(byte[] stateData)
-        {
+        public event EventHandler<Core.Events.Types.GameObjects.StateChanged> OnStateChanged;
 
+        public void RaiseStateChangeEvent(byte[] newStateData)
+        {
+            if (OnStateChanged == null || !Game.Authoritative || newStateData == null || newStateData.Length == 0)
+                return;
+
+            OnStateChanged(this, new Core.Events.Types.GameObjects.StateChanged()
+            {
+                GameObject = this,
+                StateData = newStateData
+            });
         }
     }
 }

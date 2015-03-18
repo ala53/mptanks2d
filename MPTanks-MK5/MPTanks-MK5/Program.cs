@@ -34,7 +34,7 @@ namespace MPTanks_MK5
         static void StartGame()
         {
             using (var game = new GameClient())
-                game.Run();
+                game.Run(Microsoft.Xna.Framework.GameRunBehavior.Synchronous);
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

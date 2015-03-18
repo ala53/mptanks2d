@@ -39,7 +39,8 @@ namespace MPTanks_MK5
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
-            // graphics.SynchronizeWithVerticalRetrace = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -75,6 +76,9 @@ namespace MPTanks_MK5
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
 
+            game.AddGameObject(
+                new Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge(
+                    game, true, new Vector2(10, 20), 33), null, true);
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
             game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(30, 80), 33), null, true);
@@ -267,6 +271,8 @@ namespace MPTanks_MK5
                     projCount++;
             }
             var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
+            //Note: The debug screen generates a bunch of garbage so don't try to use it to nail down allocations
+            //Disable it first and then see if there's still a problem
             spriteBatch.DrawString(font, "Tanks: " + tanksCount + ", Projectiles: " + projCount.ToString() +
                     ", Zoom: " + zoom.ToString("N2") +
                     ", Update: " + physicsMs.ToString("N2") + ", Render: " + renderMs.ToString("N2") +
@@ -304,11 +310,23 @@ namespace MPTanks_MK5
                 _fps[i] = _fps[i + 1];
 
             _fps[_fps.Length - 1] = deltaMs;
+            return GetFps();
+        }
+
+        private float GetFps()
+        {
+            if (_fps == null)
+            {
+                _fps = new float[30];
+                for (int i = 0; i < _fps.Length; i++)
+                    _fps[i] = 16.666666f;
+            }
 
             float tot = 0;
             foreach (var f in _fps)
                 tot += f;
             return 1000 / (tot / _fps.Length);
+
         }
         #endregion
     }

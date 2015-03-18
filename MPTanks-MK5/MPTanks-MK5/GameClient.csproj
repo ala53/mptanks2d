@@ -83,6 +83,9 @@
     <Content Include="assets\animations\explosion3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\mapobjects\moving\satellite_dish.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\other\lowresfont.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -107,6 +110,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\animations\explosion3.png.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\mapobjects\moving\satellite_dish.png.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\other\lowresfont.png.json">

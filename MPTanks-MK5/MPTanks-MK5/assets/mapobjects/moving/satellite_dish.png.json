@@ -1,0 +1,19 @@
+{
+  "name": "Satellite dish",
+  "sprites": [
+    {
+      "name": "baseblock",
+      "x": 2,
+      "y": 4,
+      "width": 30,
+      "height": 30
+    },
+    {
+      "name": "dishandrevolver",
+      "x": 34,
+      "y": 4,
+      "width": 58,
+      "height": 34
+    }
+	]
+}

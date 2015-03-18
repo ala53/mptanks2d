@@ -58,7 +58,6 @@ namespace Engine.Rendering.Particles
         }
         private void ProcessParticles(float deltaMs)
         {
-            //Make sure to update the matching function in  ParticleEngine.Async.cs
             int particlesCount = 0;
             var deltaScale = deltaMs / 1000; //Calculate the relative amount of a second this is
             var node = _particles.First;

@@ -58,6 +58,9 @@
   <ItemGroup>
     <Compile Include="assets\AssetHelper.cs" />
     <Compile Include="assets\Assets.cs" />
+    <Compile Include="assets\MapObjects.cs" />
+    <Compile Include="assets\Maps.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\StateChanged.cs" />
     <Compile Include="Core\Events\Types\Game\Initialized.cs" />
     <Compile Include="Core\RectangleF.cs" />
     <Compile Include="Core\Timing\Timer.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapObjects\Building.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
+    <Compile Include="Maps\MapObjects\Static\Animated\SatelliteDishLarge.cs" />
     <Compile Include="Powerups\HealthPowerup.cs" />
     <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Powerups\PowerupManager.cs" />
@@ -110,7 +114,9 @@
     <None Include="assets\maps\testmap.json" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Maps\MapObjects\Dynamic\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

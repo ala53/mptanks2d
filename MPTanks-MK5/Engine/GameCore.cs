@@ -353,10 +353,11 @@ namespace Engine
         /// <param name="gameTime"></param>
         private void UpdateInGame(GameTime gameTime)
         {
+            var elapsed = gameTime.ElapsedGameTime; //Store the time so we can restore it if necessary
             if (Timescale != 1)
             {
-                gameTime = new GameTime(gameTime.TotalGameTime, TimeSpan.FromMilliseconds(
-                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale));
+                gameTime.ElapsedGameTime =  TimeSpan.FromMilliseconds(
+                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale);
             }
 
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
@@ -380,6 +381,9 @@ namespace Engine
             _inUpdateLoop = false;
             //Remove objects that were supposed to be removed last frame (foreach loop issues)
             ProcessQueue();
+
+            //And restore possible change to gametime
+            gameTime.ElapsedGameTime = elapsed;
         }
     }
 }

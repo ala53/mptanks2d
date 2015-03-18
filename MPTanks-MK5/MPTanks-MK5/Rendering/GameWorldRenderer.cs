@@ -69,7 +69,9 @@ namespace MPTanks_MK5.Rendering
             //And particles
             DrawParticles(_boundsRect, gameTime, sb);
         }
-
+        #region Object Rendering
+        private SortedDictionary<int, SortListItem> _renderLayers =
+            new SortedDictionary<int, SortListItem>();
         private void DrawObjects(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
             if (_objects != null)
@@ -103,31 +105,97 @@ namespace MPTanks_MK5.Rendering
                             Matrix.CreateTranslation(
                             new Vector3(Scale(component.RotationOrigin + component.Offset), 0)) *
                             modelMatrix;
-                        //Upload the transformation matrix for the object
-                        _effect.World = cmpMatrix;
-                        //This is here because the effect requires manual alpha blending for some reason
-                        //_effect.Alpha = mask.A / 255f;
 
-                        //Start the spritebatch for the component
-                        sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                            SamplerState.AnisotropicClamp, DepthStencilState.Default,
-                            RasterizerState.CullNone, _effect);
-                        //Build a correctly sized rectangle to draw the asset on
-                        var drawRect = new Rectangle(
-                            -Scale(Settings.PhysicsCompensationForRendering),
-                            -Scale(Settings.PhysicsCompensationForRendering),
-                            ScaleForRendering(component.Size.X),
-                            ScaleForRendering(component.Size.Y));
-                        //Get the cached asset
-                        var asset = _cache.GetArtAsset(component.SpriteSheetName, component.AssetName, gameTime);
-                        //And draw
-                        sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, mask);
-
-                        sb.End();
+                        var cmp = new RComponentInternal()
+                        {
+                            Component = component,
+                            ComputedTransforms = cmpMatrix,
+                            ComputedColor = mask
+                        };
+                        AddComponentToInternalList(cmp);
                     }
                 }
 
+            //And actually draw them
+            var list = SortRenderList();
+            foreach (var item in list)
+                DrawComponent(sb, item, gameTime);
+
+            ClearLists();
         }
+
+        private void AddComponentToInternalList(RComponentInternal component)
+        {
+            if (!_renderLayers.ContainsKey(component.Component.DrawLayer))
+                _renderLayers.Add(component.Component.DrawLayer, new SortListItem());
+
+            _renderLayers[component.Component.DrawLayer].Id = component.Component.DrawLayer;
+            _renderLayers[component.Component.DrawLayer].LastAccessed = DateTime.Now;
+            _renderLayers[component.Component.DrawLayer].List.Add(component);
+        }
+
+        private List<RComponentInternal> _sortedLayers = new List<RComponentInternal>();
+        private IEnumerable<RComponentInternal> SortRenderList()
+        {
+            foreach (var value in _renderLayers.Values)
+                _sortedLayers.AddRange(value.List);
+
+            return _sortedLayers;
+        }
+
+        private List<int> _layerRemoveList = new List<int>();
+        private void ClearLists()
+        {
+            _sortedLayers.Clear();
+            foreach (var layer in _renderLayers)
+            {
+                if ((DateTime.Now - layer.Value.LastAccessed).TotalSeconds > 5)
+                    _layerRemoveList.Add(layer.Key);
+                else //Just clear it
+                    layer.Value.List.Clear();
+            }
+
+            foreach (var layerId in _layerRemoveList)
+                _renderLayers.Remove(layerId);
+
+            _layerRemoveList.Clear();
+        }
+
+        private void DrawComponent(SpriteBatch sb, RComponentInternal component, GameTime gameTime)
+        {
+            _effect.World = component.ComputedTransforms;
+
+            //Start the spritebatch for the component
+            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                SamplerState.PointWrap, DepthStencilState.Default,
+                RasterizerState.CullNone, _effect);
+            //Build a correctly sized rectangle to draw the asset on
+            var drawRect = new Rectangle(
+                -Scale(Settings.PhysicsCompensationForRendering),
+                -Scale(Settings.PhysicsCompensationForRendering),
+                ScaleForRendering(component.Component.Size.X),
+                ScaleForRendering(component.Component.Size.Y));
+            //Get the cached asset
+            var asset = _cache.GetArtAsset(component.Component.SpriteSheetName, component.Component.AssetName, gameTime);
+            //And draw
+            sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, component.ComputedColor);
+
+            sb.End();
+        }
+
+        private struct RComponentInternal
+        {
+            public Matrix ComputedTransforms;
+            public Engine.Rendering.RenderableComponent Component;
+            public Color ComputedColor;
+        }
+        private class SortListItem
+        {
+            public int Id;
+            public List<RComponentInternal> List = new List<RComponentInternal>();
+            public DateTime LastAccessed;
+        }
+        #endregion
 
         private List<Engine.Rendering.Animations.Animation> _endedAnimations =
             new List<Engine.Rendering.Animations.Animation>();
@@ -159,7 +227,7 @@ namespace MPTanks_MK5.Rendering
                     _effect.World = animMatrix;
                     //Begin the draw call
                     sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                        SamplerState.AnisotropicClamp, DepthStencilState.Default,
+                        SamplerState.PointWrap, DepthStencilState.Default,
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet
                     var asset = _cache.GetAnimation(anim.AnimationName, anim.PositionInAnimationMs, anim.SpriteSheetName);
@@ -193,7 +261,7 @@ namespace MPTanks_MK5.Rendering
             _effect.World = Matrix.Identity;
             _effect.Alpha = 1;
 
-            sb.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.AnisotropicWrap,
+            sb.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
             foreach (var particle in _particles.Particles)

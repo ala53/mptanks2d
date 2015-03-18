@@ -18,7 +18,7 @@ namespace Engine.Gamemodes
         private Team[] _teams = new Team[2];
         public override Team[] Teams
         {
-            get { return _teams.ToArray(); /* Safety: copy array */ }
+            get { return _teams; }
         }
 
         private Team _winner = Team.Null;
