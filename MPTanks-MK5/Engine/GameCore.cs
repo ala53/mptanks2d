@@ -281,7 +281,8 @@ namespace Engine
             AnimationEngine.Update(gameTime);
             //Process individual objects
             foreach (var obj in _gameObjects)
-                obj.Update(gameTime);
+                if (obj.Alive) //Make sure it is actually "in game"
+                    obj.Update(gameTime);
             //Tick physics
             World.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             //Let the gamemode do it's calculations

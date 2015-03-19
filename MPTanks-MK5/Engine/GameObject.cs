@@ -15,7 +15,7 @@ namespace Engine
         public int ObjectId { get; private set; }
         public FarseerPhysics.Dynamics.Body Body { get; private set; }
         public GameCore Game { get; private set; }
-        public bool Alive { get; set; }
+        public bool Alive { get; private set; }
         public bool IsDestructionCompleted { get; protected set; }
 
         private Dictionary<string, Rendering.RenderableComponent> _components;
@@ -292,6 +292,7 @@ namespace Engine
             {
                 Game.Logger.Error("Multiple calls to Destroy()");
             }
+            Alive = false;
             _hasBeenDeleted = true;
             var canDeleteRightAway = DestroyInternal(destructor);
             if (!Body.IsDisposed && canDeleteRightAway == false)

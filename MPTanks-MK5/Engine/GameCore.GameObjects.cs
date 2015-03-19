@@ -39,7 +39,6 @@ namespace Engine
             {
                 _gameObjects.Add(obj);
                 obj.Create(); //Call the creator function
-                obj.Alive = true;
                 obj.OnStateChanged += HandleGameObjectStateChangedEvent;
                 _isDirty = true; //Mark dirty flag
             }
@@ -85,7 +84,6 @@ namespace Engine
             {
                 _gameObjects.Add(obj);
                 obj.Create(); //Call the creator function
-                obj.Alive = true;
                 obj.OnStateChanged += HandleGameObjectStateChangedEvent;
                 _isDirty = true; //Mark the dirty flag
             }
@@ -142,7 +140,6 @@ namespace Engine
         {
             //Housekeeping
             obj.OnStateChanged -= HandleGameObjectStateChangedEvent;
-            obj.Alive = false;
 
             if (obj.Destroy(destructor))
             {
