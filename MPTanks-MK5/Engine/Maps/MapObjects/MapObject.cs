@@ -13,7 +13,12 @@ namespace Engine.Maps.MapObjects
             Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, 100, 0, position, rotation)
         {
+        }
+
+        protected override void CreateInternal()
+        {
             Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            base.CreateInternal();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FarseerPhysics.Factories;
+﻿using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Engine
         public FarseerPhysics.Dynamics.Body Body { get; private set; }
         public GameCore Game { get; private set; }
         public bool Alive { get; set; }
-        public int DrawLayer { get; set; }
+        public bool IsDestructionCompleted { get; protected set; }
 
         private Dictionary<string, Rendering.RenderableComponent> _components;
         public virtual Dictionary<string, Rendering.RenderableComponent>
@@ -32,8 +33,20 @@ namespace Engine
 
         public Vector2 Position
         {
-            get { return Body.Position / Settings.PhysicsScale; }
-            set { Body.Position = value * Settings.PhysicsScale; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.Position / Settings.PhysicsScale;
+                else
+                    return _startPosition;
+            }
+            set
+            {
+                if (_hasBeenCreated)
+                    Body.Position = value * Settings.PhysicsScale;
+                else
+                    _startPosition = value;
+            }
         }
 
         /// <summary>
@@ -41,39 +54,107 @@ namespace Engine
         /// </summary>
         public float Rotation
         {
-            get { return Body.Rotation; }
-            set { Body.Rotation = value; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.Rotation;
+                else
+                    return _startRotation;
+            }
+            set
+            {
+                if (_hasBeenCreated)
+                    Body.Rotation = value;
+                else
+                    _startRotation = value;
+            }
         }
 
         public Vector2 LinearVelocity
         {
-            get { return Body.LinearVelocity / Settings.PhysicsScale; }
-            set { Body.LinearVelocity = value * Settings.PhysicsScale; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.LinearVelocity / Settings.PhysicsScale;
+                else
+                    return _startVelocity;
+            }
+            set
+            {
+                if (_hasBeenCreated)
+                    Body.LinearVelocity = value * Settings.PhysicsScale;
+                else
+                    _startVelocity = value;
+            }
         }
 
         public float AngularVelocity
         {
-            get { return Body.AngularVelocity; }
-            set { Body.AngularVelocity = value; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.AngularVelocity;
+                else
+                    return _startAngularVelocity;
+            }
+            set
+            {
+                if (_hasBeenCreated)
+                    Body.AngularVelocity = value;
+                else
+                    _startAngularVelocity = value;
+            }
         }
 
         public bool IsStatic
         {
-            get { return Body.IsStatic; }
-            set { Body.IsStatic = value; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.IsStatic;
+                else
+                    return _startIsStatic;
+            }
+            set
+            {
+                if (_hasBeenCreated)
+                    Body.IsStatic = value;
+                else
+                    _startIsStatic = value;
+            }
         }
         private bool _isSensor;
         public bool IsSensor
         {
-            get { return _isSensor; }
+            get
+            {
+                if (_hasBeenCreated)
+                    return _isSensor;
+                else
+                    return _startIsSensor;
+            }
             set
             {
-                Body.IsSensor = value;
-                _isSensor = value;
+                if (_hasBeenCreated)
+                {
+                    Body.IsSensor = value;
+                    _isSensor = value;
+                }
+                else
+                    _startIsSensor = value;
             }
         }
 
         public abstract Vector2 Size { get; }
+
+        private Vector2 _startPosition;
+        private float _startDensity;
+        private float _startBounciness;
+        private float _startRotation;
+        private Vector2 _startVelocity;
+        private float _startAngularVelocity;
+        private bool _startIsStatic;
+        private bool _startIsSensor;
 
         public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, int id = -1)
         {
@@ -82,20 +163,46 @@ namespace Engine
             else
                 ObjectId = id;
             Game = game;
+
+            ColorMask = Color.White;
+            _startPosition = position;
+            _startRotation = rotation;
+            _startDensity = density;
+            _startBounciness = bounciness;
+
             if (!game.Authoritative && !authorized)
                 game.Logger.Error("Object Created without authorization. Type: " + this.GetType().ToString() + ", ID: " + ObjectId);
+        }
 
+        private bool _hasBeenCreated;
+        internal void Create()
+        {
+            if (_hasBeenCreated)
+            {
+                Game.Logger.Error("Multiple calls to Create()");
+            }
+            _hasBeenCreated = true;
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
-            Body = BodyFactory.CreateRectangle(game.World, Size.X * Settings.PhysicsScale,
-                 Size.Y * Settings.PhysicsScale, density, position, rotation,
+            Body = BodyFactory.CreateRectangle(Game.World, Size.X * Settings.PhysicsScale,
+                 Size.Y * Settings.PhysicsScale, _startDensity, Vector2.Zero, _startRotation,
                  FarseerPhysics.Dynamics.BodyType.Dynamic, this);
-            Body.Restitution = bounciness;
+            Body.Restitution = _startBounciness;
             Body.OnCollision += Body_OnCollision;
             //And initialize the object
             Alive = true;
-            Rotation = rotation;
-            Position = position;
-            ColorMask = Color.White;
+            Position = _startPosition;
+            LinearVelocity = _startVelocity;
+            AngularVelocity = _startAngularVelocity;
+            IsSensor = _startIsSensor;
+            IsStatic = _startIsStatic;
+
+            //And call the internal function
+            CreateInternal();
+        }
+
+        protected virtual void CreateInternal()
+        {
+
         }
 
         private bool Body_OnCollision(FarseerPhysics.Dynamics.Fixture fixtureA,
@@ -142,14 +249,43 @@ namespace Engine
 
         abstract public void Update(GameTime time);
 
-        public void Destroy(GameObject destructor = null)
+        private bool _hasBeenDeleted;
+        internal bool Destroy(GameObject destructor = null)
         {
-            if (!Body.IsDisposed)
-                Body.Dispose(); //Kill the physics body
-            DestroyInternal(destructor);
+            if (_hasBeenDeleted)
+            {
+                Game.Logger.Error("Multiple calls to Destroy()");
+            }
+            _hasBeenDeleted = true;
+            var canDeleteRightAway = DestroyInternal(destructor);
+            if (!Body.IsDisposed && canDeleteRightAway == false)
+                Body.Dispose(); //Kill the physics body if allowed to delete
+
+            return canDeleteRightAway;
+        }
+        /// <summary>
+        /// Does object destruction logic. Return true if you would like to defer destruction until IsDestructionCompleted = true.
+        /// Return false to delete right away
+        /// </summary>
+        /// <param name="destructor"></param>
+        /// <returns></returns>
+        protected virtual bool DestroyInternal(GameObject destructor = null)
+        {
+            return false;
         }
 
-        protected virtual void DestroyInternal(GameObject destructor = null)
+        /// <summary>
+        /// Finalizes destruction logic
+        /// </summary>
+        internal void EndDestruction()
+        {
+            if (!Body.IsDisposed)
+                Body.Dispose(); //Kill the physics body for sure
+            Alive = false;
+            OnRemovedFromGame(); //And call the destructor logic
+        }
+
+        protected virtual void OnRemovedFromGame()
         {
 
         }

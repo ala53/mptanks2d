@@ -51,8 +51,12 @@
     <Compile Include="Rendering\GameWorldRenderer.cs" />
     <Compile Include="Rendering\LoadingScreen.cs" />
     <Compile Include="Rendering\RectangleF.cs" />
+    <Compile Include="Rendering\Renderer.cs" />
     <Compile Include="Rendering\Sprites\Sprite.cs" />
     <Compile Include="Rendering\Sprites\SpriteSheet.cs" />
+    <Compile Include="Screens\Component\DebugRenderer.cs" />
+    <Compile Include="Screens\Component\Dialog.cs" />
+    <Compile Include="Screens\Component\ScreenComponent.cs" />
     <Compile Include="Screens\GameEndedScreen.cs" />
     <Compile Include="Screens\InGameScreen.cs" />
     <Compile Include="Screens\MainMenuScreen.cs" />

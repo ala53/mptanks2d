@@ -79,6 +79,7 @@
     <Compile Include="Core\Events\Types\GameObjects\Projectiles\Created.cs" />
     <Compile Include="GameCore.cs" />
     <Compile Include="Core\Events\EventEngine.cs" />
+    <Compile Include="GameCore.GameObjects.cs" />
     <Compile Include="GameCore.Maps.cs" />
     <Compile Include="GameCore.Players.cs" />
     <Compile Include="Gamemodes\EPlayerTankType.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
+    <Compile Include="ScriptableGameObject.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
     <Compile Include="Tanks\InputState.cs" />

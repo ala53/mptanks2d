@@ -50,21 +50,15 @@ namespace Engine.Projectiles.BasicTank
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
-            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => TryDestroy(), lifespan);
+            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => CollidedWithTank(null), lifespan);
         }
 
         public override void CollidedWithTank(Tanks.Tank tank)
         {
-            TryDestroy(tank);
+            Game.RemoveGameObject(this, tank);
         }
 
-        private void TryDestroy(GameObject tank = null)
-        {
-            if (Game.Authoritative)
-                Game.RemoveGameObject(this, tank);
-        }
-
-        protected override void DestroyInternal(GameObject destroyer = null)
+        protected override bool DestroyInternal(GameObject destroyer = null)
         {
             var cMask = ColorMask;
             if (destroyer != null && destroyer.ColorMask != Color.Black)
@@ -93,6 +87,8 @@ namespace Engine.Projectiles.BasicTank
                 0.05f, 0.5f, 75, 150, 200, false, false);
 
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
+
+            return false;
         }
 
         public override Microsoft.Xna.Framework.Vector2 Size

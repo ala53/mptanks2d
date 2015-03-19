@@ -33,6 +33,7 @@ namespace MPTanks_MK5
         private RectangleF drawRect;
         private bool loading { get { return !loadingScreen.Completed || !loadingScreen.IsSlidingOut; } }
         private LoadingScreen loadingScreen;
+        private Screens.Screen currentScreen;
 
         public GameClient()
             : base()
@@ -68,10 +69,9 @@ namespace MPTanks_MK5
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            renderer = new GameWorldRenderer(this);
-            loadingScreen = new LoadingScreen(this);
+            currentScreen = new Screens.InGameScreen(this);
             SetupGame();
+            loadingScreen = new LoadingScreen(this);
             font = Content.Load<SpriteFont>("font");
         }
 
@@ -94,7 +94,11 @@ namespace MPTanks_MK5
             game.AddPlayer(player2Id);
             for (var i = 0; i < 0; i++)
                 game.AddPlayer(Guid.NewGuid());
-            renderer.SetAnimationEngine(game.AnimationEngine);
+
+            //Set up rendering
+            if (renderer != null)
+                renderer.Destroy();
+            renderer = new GameWorldRenderer(currentScreen, game);
         }
 
         /// <summary>
@@ -199,12 +203,6 @@ namespace MPTanks_MK5
 
             game.Update(gameTime);
 
-            //Update the render list if the game has added or removed objects
-            if (game.IsDirty)
-                renderer.SetObjects(game.GameObjects);
-
-            renderer.SetParticles(game.ParticleEngine);
-
             base.Update(gameTime);
             timer.Stop();
             physicsMs = (float)timer.Elapsed.TotalMilliseconds;
@@ -261,21 +259,20 @@ namespace MPTanks_MK5
                         game.Players[player1Id].Position.Y - (10 * zoom),
                         30 * zoom,
                         20 * zoom);
-
-                renderer.Render(spriteBatch, drawRect, gameTime);
-                DrawDebugInfo(gameTime); //Render the world over the text so it doesn't disrupt gameplay
+                renderer.SetViewport(drawRect);
+                renderer.Render(spriteBatch, gameTime);
             }
             //And draw the loading screen last so its over everything
             if (loading || loadingScreen.IsSlidingOut)
             {
                 loadingScreen.Render(spriteBatch, gameTime);
             }
+            DrawDebugInfo(gameTime);
             base.Draw(gameTime);
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;
 
-            if (ClientSettings.ForceGCEveryFrame)
-                GC.Collect(0, GCCollectionMode.Forced, true);
+            GC.Collect(2, GCCollectionMode.Forced, true);
         }
 
         #region Debug info

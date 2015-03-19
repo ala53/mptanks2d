@@ -43,7 +43,7 @@ namespace Engine.Tanks
 
                 if (Health <= 0 && !_killed)
                 {
-                    TankKilled(o);
+                    Game.RemoveGameObject(this, o);
                     _killed = true;
                 }
                 return true;
@@ -59,13 +59,6 @@ namespace Engine.Tanks
             if (tank.Team != Team)
                 return true;
             return false;
-        }
-
-
-        protected virtual void TankKilled(GameObject destroyer)
-        {
-            if (Game.Authoritative)
-                Game.RemoveGameObject(this, destroyer);
         }
 
         public void Input(InputState state)

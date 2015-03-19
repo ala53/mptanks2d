@@ -8,5 +8,7 @@ namespace Engine.Core.Events.Types.GameObjects
 {
     public class Destroyed : EventArgs
     {
+        public GameObject DeadObject { get; set; }
+        public GameObject Killer { get; set; }
     }
 }

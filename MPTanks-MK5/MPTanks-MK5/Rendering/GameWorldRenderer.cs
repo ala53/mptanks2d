@@ -6,58 +6,52 @@ using System.Collections.Generic;
 
 namespace MPTanks_MK5.Rendering
 {
-    class GameWorldRenderer
+    class GameWorldRenderer : Renderer
     {
-        public GameClient Game { get; private set; }
-        private GameObject[] _objects;
-        private Engine.Rendering.Animations.AnimationEngine _animEngine;
-        private Engine.Rendering.Particles.ParticleEngine _particles;
+        private Engine.GameCore _game;
 
         private BasicEffect _effect;
         private AssetCache _cache;
+        private RectangleF _viewRect;
 
-        public GameWorldRenderer(GameClient game)
+        public GameWorldRenderer(Screens.Screen screen, Engine.GameCore game)
+            :base(screen)
         {
-            Game = game;
-            _cache = new AssetCache(game);
-            _effect = new BasicEffect(game.GraphicsDevice);
+            if (game == null) throw new ArgumentNullException("game");
+
+            _game = game;
+            _cache = new AssetCache(screen.Game);
+            _effect = new BasicEffect(screen.Game.GraphicsDevice);
             _effect.View = Matrix.Identity;
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = true;
         }
 
-        public void SetObjects(params GameObject[] objects)
+        public void SetViewport(RectangleF view)
         {
-            _objects = objects;
+            _viewRect = view;
         }
-        public void SetAnimationEngine(Engine.Rendering.Animations.AnimationEngine engine)
-        {
-            _animEngine = engine;
-        }
-        public void SetParticles(Engine.Rendering.Particles.ParticleEngine particles)
-        {
-            _particles = particles;
-        }
-        public void Render(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, RectangleF viewRect, GameTime gameTime)
+
+        public override void Render(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, GameTime gameTime)
         {
             const float overdraw = 0.15f;
 
             var _boundsRect = new RectangleF( //Compute the bounds for visibility checks which have overdraw for simplicity
-                viewRect.X - (viewRect.Width * overdraw),
-                viewRect.Y - (viewRect.Height * overdraw),
-                viewRect.Width * (1 + 2 * overdraw),
-                viewRect.Height * (1 + 2 * overdraw));
+                _viewRect.X - (_viewRect.Width * overdraw),
+                _viewRect.Y - (_viewRect.Height * overdraw),
+                _viewRect.Width * (1 + 2 * overdraw),
+                _viewRect.Height * (1 + 2 * overdraw));
 
-            viewRect = new RectangleF( //Scale the view rectangle to world space (for now, 100x)
-                ScaleF(viewRect.X),
-                ScaleF(viewRect.Y),
-                ScaleF(viewRect.Width),
-                ScaleF(viewRect.Height));
+            _viewRect = new RectangleF( //Scale the view rectangle to world space (for now, 100x)
+                ScaleF(_viewRect.X),
+                ScaleF(_viewRect.Y),
+                ScaleF(_viewRect.Width),
+                ScaleF(_viewRect.Height));
 
             //compute the projection matrix to offset the screen view
             var projectionMatrix = Matrix.Identity *
-                Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right,
-                viewRect.Bottom, viewRect.Top, -1, 1);
+                Matrix.CreateOrthographicOffCenter(_viewRect.Left, _viewRect.Right,
+                _viewRect.Bottom, _viewRect.Top, -1, 1);
 
             //upload the projection matrix 
             _effect.Projection = projectionMatrix;
@@ -74,8 +68,8 @@ namespace MPTanks_MK5.Rendering
             new SortedDictionary<int, SortListItem>();
         private void DrawObjects(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
-            if (_objects != null)
-                foreach (var obj in _objects)
+            if (_game.GameObjects != null)
+                foreach (var obj in _game.GameObjects)
                 {
                     //Cache position and size for perf reasons
                     var objPos = Scale(obj.Position);
@@ -202,8 +196,8 @@ namespace MPTanks_MK5.Rendering
         private void DrawAnimations(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
             //And render the animations
-            if (_animEngine != null)
-                foreach (var anim in _animEngine.Animations)
+            if (_game.AnimationEngine.Animations != null)
+                foreach (var anim in _game.AnimationEngine.Animations)
                 {
                     //Check if the animation will be done by next frame (approximately)
                     if (_cache.AnimEnded(anim.AnimationName,
@@ -246,7 +240,7 @@ namespace MPTanks_MK5.Rendering
             foreach (var anim in _endedAnimations)
             {
                 //Remove all the animations which are ended by now
-                _animEngine.MarkAnimationCompleted(anim);
+                _game.AnimationEngine.MarkAnimationCompleted(anim);
             }
 
             _endedAnimations.Clear();
@@ -254,7 +248,7 @@ namespace MPTanks_MK5.Rendering
 
         private void DrawParticles(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
-            if (_particles == null)
+            if (_game.ParticleEngine.Particles == null)
                 return;
 
             int remainingAllowedParticles = ClientSettings.MaxParticlesToRender;
@@ -264,7 +258,7 @@ namespace MPTanks_MK5.Rendering
             sb.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
-            foreach (var particle in _particles.Particles)
+            foreach (var particle in _game.ParticleEngine.Particles)
             {
                 if (remainingAllowedParticles == 0) break; //Stop drawing if too many particles
                 //And ignore off screen particles
@@ -317,7 +311,7 @@ namespace MPTanks_MK5.Rendering
         }
 
         #endregion
-        public void Destroy()
+        public override void Destroy()
         {
             _effect.Dispose();
             _cache.Dispose();

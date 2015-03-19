@@ -63,5 +63,33 @@ namespace Engine.Core.Events
         }
 
         #endregion
+
+        #region 'GameObject' Events
+        private event EventHandler<Types.GameObjects.Destroyed> _gameObjectDestroyed;
+        public event EventHandler<Types.GameObjects.Destroyed> OnGameObjectDestroyed
+        {
+            add { _gameObjectDestroyed += value; }
+            remove { _gameObjectDestroyed -= value; }
+        }
+
+        public void RaiseGameObjectDestroyed(Types.GameObjects.Destroyed destroyedEvent)
+        {
+            if (_gameObjectDestroyed != null)
+                _gameObjectDestroyed(destroyedEvent.DeadObject, destroyedEvent);
+        }
+
+        private event EventHandler<Types.GameObjects.StateChanged> _gameObjectStateChanged;
+        public event EventHandler<Types.GameObjects.StateChanged> OnGameObjectStateChanged
+        {
+            add { _gameObjectStateChanged += value; }
+            remove { _gameObjectStateChanged -= value; }
+        }
+
+        public void RaiseGameObjectStateChanged(Types.GameObjects.StateChanged stateChange)
+        {
+            if (_gameObjectStateChanged != null)
+                _gameObjectStateChanged(stateChange.GameObject, stateChange);
+        }
+        #endregion
     }
 }

@@ -89,9 +89,7 @@ namespace Engine.Tanks
 
 
             if (InputState.FirePressed && InputState.WeaponNumber == 0)
-            {
                 FirePrimary();
-            }
             if (InputState.FirePressed && InputState.WeaponNumber == 1)
                 FireSecondary();
 
@@ -147,7 +145,7 @@ namespace Engine.Tanks
             Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
         }
 
-        protected override void TankKilled(GameObject obj)
+        protected override bool DestroyInternal(GameObject destructor = null)
         {
             var si = Assets.AssetHelper.GetRandomExplosionAnimation();
             var anim = new Rendering.Animations.Animation(
@@ -164,7 +162,9 @@ namespace Engine.Tanks
             }), 1);
 
             if (Game.Authoritative)
-                Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, obj), 500);
+                Game.TimerFactory.CreateTimer((timer) => IsDestructionCompleted = true, 500);
+
+            return true;
         }
     }
 }

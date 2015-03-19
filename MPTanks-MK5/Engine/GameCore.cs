@@ -183,100 +183,15 @@ namespace Engine
             Logger.Log("Game initialized");
         }
 
-        #region Add and Remove GameObjects
-        private bool _inUpdateLoop = false;
-        private List<GameObject> _addQueue =
-            new List<GameObject>();
-        private List<GameObject> _removeQueue =
-            new List<GameObject>();
-        public void AddGameObject(GameObject obj, GameObject creator = null, bool authorized = false)
-        {
-#if DEBUG
-            if (!authorized && !Authoritative)
-                throw new Exception("Unauthorized addition of object");
-#else
-            if (!authorized && !Authoritative)
-            {
-                Logger.Error("Unauthorized object addition attempted.");
-                return;
-            }
-#endif
-            Logger.LogObjectCreated(obj, creator);
-            obj.Alive = true;
-
-            if (_inUpdateLoop) //In update loop, wait a frame.
-            {
-                _addQueue.Add(obj);
-            }
-            else
-            {
-                _gameObjects.Add(obj);
-                _isDirty = true; //Mark dirty flag
-            }
-        }
-
-        public void RemoveGameObject(GameObject obj, GameObject destructor = null, bool authorized = false)
-        {
-#if DEBUG
-            if (!authorized && !Authoritative)
-                throw new Exception("Unauthorized removal of object");
-#else
-            if (!authorized && !Authoritative)
-            {
-                Logger.Error("Unauthorized object destruction attempted.");
-                return;
-            }
-#endif
-            Logger.LogObjectDestroyed(obj, destructor);
-            obj.Alive = false;
-
-            bool found = _gameObjects.Contains(obj) || _addQueue.Contains(obj);
-            //We want to prevent people from disposing of the bodies
-            if (obj.Body.IsDisposed && found)
-                Logger.Warning("Body already disposed, Trace:\n" + Environment.StackTrace);
-
-            obj.Destroy(destructor); //Call destructor
-            if (!found)
-                return; //It doesn't exist - probably was already deleted by a previous object
-
-            if (_inUpdateLoop) //We're in the for loop so wait a frame
-            {
-                if (_addQueue.Contains(obj))
-                    _addQueue.Remove(obj);
-                else
-                    _removeQueue.Add(obj);
-            }
-            else
-            {
-                _gameObjects.Remove(obj);
-                _isDirty = true; //Mark the dirty flag
-            }
-        }
-
-        /// <summary>
-        /// Processes the add and remove queue for gameobjects
-        /// </summary>
-        private void ProcessQueue()
-        {
-            foreach (var obj in _addQueue)
-            {
-                _gameObjects.Add(obj);
-                _isDirty = true; //Mark the dirty flag
-            }
-
-            foreach (var obj in _removeQueue)
-            {
-                _gameObjects.Remove(obj);
-                _isDirty = true; //Mark the dirty flag
-            }
-
-            _addQueue.Clear();
-            _removeQueue.Clear();
-        }
-        #endregion
         private bool _hasDoneCleanup;
         public void Update(GameTime gameTime)
         {
+            var elapsed = gameTime.ElapsedGameTime; //Store the time so we can restore it if necessary
+            if (Timescale != 1)
+            {
+                gameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(
+                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale);
+            }
             if (Gamemode.GameEnded)
             {
                 TickGameEnd(gameTime);
@@ -303,6 +218,9 @@ namespace Engine
                 else
                     _timeSinceGameBeganStarting = 0; //Reset the counter if not ready
             }
+
+            //And restore possible change to gametime
+            gameTime.ElapsedGameTime = elapsed;
         }
 
         private void EndGame()
@@ -353,13 +271,6 @@ namespace Engine
         /// <param name="gameTime"></param>
         private void UpdateInGame(GameTime gameTime)
         {
-            var elapsed = gameTime.ElapsedGameTime; //Store the time so we can restore it if necessary
-            if (Timescale != 1)
-            {
-                gameTime.ElapsedGameTime =  TimeSpan.FromMilliseconds(
-                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale);
-            }
-
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
             //Process timers
@@ -380,10 +291,7 @@ namespace Engine
             //And notify that we exited the update loop
             _inUpdateLoop = false;
             //Remove objects that were supposed to be removed last frame (foreach loop issues)
-            ProcessQueue();
-
-            //And restore possible change to gametime
-            gameTime.ElapsedGameTime = elapsed;
+            ProcessGameObjectQueues();
         }
     }
 }

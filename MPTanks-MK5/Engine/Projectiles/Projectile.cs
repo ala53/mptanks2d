@@ -18,7 +18,12 @@ namespace Engine.Projectiles
             : base(game, authorized, density, bounciness, position, rotation)
         {
             Owner = owner;
+        }
+
+        protected override void CreateInternal()
+        {
             Body.IsBullet = true;
+            base.CreateInternal();
         }
 
         abstract public void CollidedWithTank(Tanks.Tank tank);
