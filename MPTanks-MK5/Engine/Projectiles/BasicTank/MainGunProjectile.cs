@@ -30,6 +30,11 @@ namespace Engine.Projectiles.BasicTank
             : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
             ColorMask = colorMask;
+            Size = new Vector2(0.25f);
+        }
+
+        protected override void AddComponents()
+        {
 
             Components.Add("bullet", new Rendering.RenderableComponent()
             {
@@ -89,11 +94,6 @@ namespace Engine.Projectiles.BasicTank
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
 
             return false;
-        }
-
-        public override Microsoft.Xna.Framework.Vector2 Size
-        {
-            get { return new Vector2(0.25f); }
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)

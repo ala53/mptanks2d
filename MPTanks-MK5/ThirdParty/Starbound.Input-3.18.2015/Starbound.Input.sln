@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbound.Input", "Starbound.Input\Starbound.Input.csproj", "{44C828D4-02D6-413C-BFED-3BF72AA9322E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbound.Input.Example", "Starbound.Input.Example\Starbound.Input.Example\Starbound.Input.Example.csproj", "{D3B27236-7D1B-4633-9EEC-018DC864744A}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Starbound.Input.ExampleContent", "Starbound.Input.Example\Starbound.Input.ExampleContent\Starbound.Input.ExampleContent.contentproj", "{0C095187-7106-468B-B7D7-79722E77FFC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|x86.ActiveCfg = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|x86.Build.0 = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|x86.ActiveCfg = Release|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|x86.Build.0 = Release|x86
+		{D3B27236-7D1B-4633-9EEC-018DC864744A}.Debug|x86.ActiveCfg = Debug|x86
+		{D3B27236-7D1B-4633-9EEC-018DC864744A}.Debug|x86.Build.0 = Debug|x86
+		{D3B27236-7D1B-4633-9EEC-018DC864744A}.Release|x86.ActiveCfg = Release|x86
+		{D3B27236-7D1B-4633-9EEC-018DC864744A}.Release|x86.Build.0 = Release|x86
+		{0C095187-7106-468B-B7D7-79722E77FFC6}.Debug|x86.ActiveCfg = Debug|x86
+		{0C095187-7106-468B-B7D7-79722E77FFC6}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

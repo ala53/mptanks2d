@@ -10,11 +10,6 @@ namespace Engine.Tanks
 {
     public class BasicTank : Tank
     {
-        public override Vector2 Size
-        {
-            get { return new Vector2(3, 5); }
-        }
-
         protected override float RotationSpeed
         {
             get { return 0.05f; }
@@ -27,15 +22,11 @@ namespace Engine.Tanks
         public BasicTank(Guid playerId, GameCore game, bool authorized = false)
             : base(playerId, game, authorized)
         {
-            AddComponents();
-            SetUpBody();
-        }
-        private void SetUpBody()
-        {
             Health = 150;
+            Size = new Vector2(3, 5);
         }
 
-        private void AddComponents()
+        protected override void AddComponents()
         {
             Components.Add("base", new Rendering.RenderableComponent()
             {

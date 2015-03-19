@@ -12,10 +12,10 @@ namespace Engine.Maps.MapObjects.Static.Animated
         public SatelliteDishLarge(GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {
-            AddComponents();
+            Size = new Vector2(4);
         }
 
-        private void AddComponents()
+        protected override void AddComponents()
         {
             Components.Add("base", new Rendering.RenderableComponent()
             {
@@ -32,10 +32,6 @@ namespace Engine.Maps.MapObjects.Static.Animated
                 SpriteSheetName = Assets.MapObjects.SatelliteDish.DishAndRevolver.SheetName,
                 DrawLayer = 5 //Dish should always be on top of tanks
             });
-        }
-        public override Microsoft.Xna.Framework.Vector2 Size
-        {
-            get { return new Vector2(4); }
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)

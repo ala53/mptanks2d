@@ -12,6 +12,11 @@ namespace Engine.Maps.MapObjects
         public Building(GameCore game, bool authorized = false, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {
+            Size = new Vector2(8);
+        }
+
+        protected override void AddComponents()
+        {
             Components.Add("building", new Rendering.RenderableComponent()
             {
                 Mask = new Color(Color.Blue, 255),
@@ -42,11 +47,6 @@ namespace Engine.Maps.MapObjects
                 Size = new Vector2(2, 1),
                 Rotation = 0.24f
             });
-        }
-
-        public override Vector2 Size
-        {
-            get { return new Vector2(8, 8); }
         }
 
         public override void Update(GameTime time)

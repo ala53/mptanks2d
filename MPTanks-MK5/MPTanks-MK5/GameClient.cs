@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
 using MPTanks_MK5.Rendering;
 using Engine.Tanks;
 using Engine;
@@ -35,12 +34,20 @@ namespace MPTanks_MK5
         private LoadingScreen loadingScreen;
         private Screens.Screen currentScreen;
 
+        private bool _unlockCursor = false;
+
+        private bool _graphicsDeviceIsDirty = false;
+
         public GameClient()
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+
+            graphics.PreferMultiSampling = true;
+
+            Window.AllowUserResizing = true;
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
             // graphics.SynchronizeWithVerticalRetrace = false;
@@ -59,6 +66,22 @@ namespace MPTanks_MK5
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            //Set up resize handler
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
+
+            //Initialize input driver
+            Components.Add(new Starbound.Input.KeyboardEvents(this));
+            Components.Add(new Starbound.Input.MouseEvents(this));
+            Components.Add(new Starbound.Input.GamePadEvents(PlayerIndex.One, this));
+
+            Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
+        }
+
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+            graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+            _graphicsDeviceIsDirty = true;
         }
 
         /// <summary>
@@ -110,6 +133,24 @@ namespace MPTanks_MK5
             // TODO: Unload any non ContentManager content here
         }
 
+        private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
+        {
+#if DEBUG
+            if (e.Key == Keys.F7)
+                Debugger.Break();
+#endif
+            if (e.Key == Keys.F11)
+            {
+                graphics.ToggleFullScreen();
+            }
+
+            if (e.Key == Keys.RightControl)
+            {
+                _unlockCursor = !_unlockCursor;
+                IsMouseVisible = !IsMouseVisible;
+            }
+        }
+
         private float physicsMs = 0;
         private float renderMs = 0;
         /// <summary>
@@ -126,8 +167,14 @@ namespace MPTanks_MK5
                 loadingScreen.Status = game.RemainingCountdownSeconds.ToString("N1") + " seconds remaining";
                 loadingScreen.Billboard = "Setting up...";
             }
-            else
+
+            //Check for GD changes 
+            //It's done here because applychanges can cause issues
+            //when called repeatedly - Window Resize causes a stack overflow
+            if (_graphicsDeviceIsDirty)
             {
+                graphics.ApplyChanges();
+                _graphicsDeviceIsDirty = false;
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
@@ -186,7 +233,9 @@ namespace MPTanks_MK5
                 //var ctr = screenCenter - mousePos;
                 //iState.LookDirection = (float)-Math.Atan2(ctr.X, ctr.Y);
             }
-            LockCursor();
+
+            if (!_unlockCursor)
+                LockCursor();
 
             if (Keyboard.GetState().IsKeyDown(Keys.X))
                 zoom += 0.1f;
@@ -272,7 +321,8 @@ namespace MPTanks_MK5
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;
 
-            GC.Collect(2, GCCollectionMode.Forced, true);
+            if (ClientSettings.ForceGCEveryFrame)
+                GC.Collect(0, GCCollectionMode.Forced, true);
         }
 
         #region Debug info

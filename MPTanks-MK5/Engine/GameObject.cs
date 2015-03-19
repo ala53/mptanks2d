@@ -25,7 +25,11 @@ namespace Engine
             get
             {
                 if (_components == null)
+                {
                     _components = new Dictionary<string, Rendering.RenderableComponent>();
+                    //This is the first access so we call the component constructor
+                    AddComponents();
+                }
 
                 return _components;
             }
@@ -145,7 +149,33 @@ namespace Engine
             }
         }
 
-        public abstract Vector2 Size { get; }
+        private Vector2 _size;
+        public Vector2 Size
+        {
+            get { return _size; }
+            protected set
+            {
+                if (_hasBeenCreated)
+                {
+                    //Build new shape
+                    var vertices = new FarseerPhysics.Common.Vertices(new[] {
+                        new Vector2(-value.X / 2, -value.Y /2),
+                        new Vector2(value.X / 2, -value.Y /2),
+                        new Vector2(value.X / 2, value.Y /2),
+                        new Vector2(-value.X / 2, value.Y /2)
+                    });
+                    var rect = new FarseerPhysics.Collision.Shapes.PolygonShape(
+                        vertices, Body.FixtureList[0].Shape.Density);
+
+                    //Destroy current fixture
+                    Body.DestroyFixture(Body.FixtureList[0]);
+                    //And add the new one
+                    Body.CreateFixture(rect, this);
+                }
+                //And set the internal note
+                _size = value;
+            }
+        }
 
         private Vector2 _startPosition;
         private float _startDensity;
@@ -199,6 +229,12 @@ namespace Engine
             //And call the internal function
             CreateInternal();
         }
+
+        /// <summary>
+        /// Called when the object is supposed to add the rendering components. Usually 
+        /// on the first access but this is not guaranteed.
+        /// </summary>
+        protected abstract void AddComponents();
 
         protected virtual void CreateInternal()
         {

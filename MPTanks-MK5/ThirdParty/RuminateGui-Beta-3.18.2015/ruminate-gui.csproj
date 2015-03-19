@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{EF8797CB-7BB0-420B-AC25-091F253E1AC6}</ProjectGuid>
+    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RuminateFramework</RootNamespace>
+    <AssemblyName>RuminateGui</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
+    <XnaPlatform>Windows</XnaPlatform>
+    <XnaProfile>Reach</XnaProfile>
+    <XnaCrossPlatformGroupID>7685ac49-1e85-4116-97b2-59fce323284e</XnaCrossPlatformGroupID>
+    <XnaOutputType>Library</XnaOutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x86\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>false</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <XnaCompressContent>true</XnaCompressContent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Avatar, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Net, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Storage, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="mscorlib">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GuiContent\Elements\Button.cs" />
+    <Compile Include="GuiContent\Elements\CheckBox.cs" />
+    <Compile Include="GuiContent\Elements\ComboBox.cs" />
+    <Compile Include="GuiContent\Elements\SingleLineTextBox.cs" />
+    <Compile Include="GuiContent\Elements\Image.cs" />
+    <Compile Include="GuiContent\Elements\Label.cs" />
+    <Compile Include="GuiContent\Elements\Panel.cs" />
+    <Compile Include="GuiContent\Elements\RadioButton.cs" />
+    <Compile Include="GuiContent\Elements\ScrollBars.cs" />
+    <Compile Include="GuiContent\Elements\Slider.cs" />
+    <Compile Include="GuiContent\Elements\TextBox.cs" />
+    <Compile Include="GuiContent\Elements\ToggleButton.cs" />
+    <Compile Include="GuiContent\Renderers\BorderRenderer.cs" />
+    <Compile Include="GuiContent\Renderers\HorizontalSlidingDoorRenderer.cs" />
+    <Compile Include="GuiContent\Renderers\IconRenderer.cs" />
+    <Compile Include="GuiContent\Renderers\SlidingDoorRenderer.cs" />
+    <Compile Include="GuiContent\Renderers\VerticalSlidingDoorRenderer.cs" />
+    <Compile Include="GuiContent\RenderRules\ButtonRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\ComboBoxRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\ElevatorRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\HorizontalScrollBarRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\LabelRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\PanelRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\ScrollBarRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\ScrollBarsRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\SliderRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\TextBoxRenderRule.cs" />
+    <Compile Include="GuiContent\RenderRules\VerticalScrollBarRenderRule.cs" />
+    <Compile Include="Gui\Gui.cs" />
+    <Compile Include="Gui\InputManager.cs" />
+    <Compile Include="Gui\Input\WindowsHook.cs" />
+    <Compile Include="Gui\Layout\FontRenderRule.cs" />
+    <Compile Include="Gui\Layout\LayoutData.cs" />
+    <Compile Include="Gui\Layout\RenderRule.cs" />
+    <Compile Include="Gui\Misc.cs" />
+    <Compile Include="Gui\Rendering\Renderer.cs" />
+    <Compile Include="Gui\Rendering\RenderManager.cs" />
+    <Compile Include="Gui\Rendering\Skin.cs" />
+    <Compile Include="Gui\Rendering\TextRenderer.cs" />
+    <Compile Include="Gui\Utils\Pin.cs" />
+    <Compile Include="Gui\Utils\TreeNode.cs" />
+    <Compile Include="Gui\Widget.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GuiUtils\ConverterExtentions.cs" />
+    <Compile Include="GuiUtils\DebugUtils.cs" />
+    <Compile Include="GuiUtils\PngLoader.cs" />
+    <Compile Include="GuiUtils\RuntimeManager.cs" />
+    <Compile Include="GuiUtils\TextureBaker.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <!--
+      To modify your build process, add your task inside one of the targets below and uncomment it. 
+      Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+    -->
+</Project>

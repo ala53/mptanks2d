@@ -66,8 +66,9 @@
     <Reference Include="FarseerPhysics.Portable">
       <HintPath>..\packages\FarseerPhysics.Portable.3.5.1\lib\portable-net4+sl4+wp8+win8\FarseerPhysics.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -142,6 +143,14 @@
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\RuminateGui-Beta-3.18.2015\ruminate-gui-monogame.csproj">
+      <Project>{fd443d74-652a-4b28-9f75-fb824ac101da}</Project>
+      <Name>ruminate-gui-monogame</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj">
+      <Project>{44c828d4-02d6-413c-bfed-3bf72aa9322e}</Project>
+      <Name>Starbound.Input</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -33,6 +33,9 @@ namespace MPTanks_MK5.Rendering
             _helperTexture.SetData(new[] { Color.White });
             _font = _game.Content.Load<SpriteFont>("font");
 
+            Billboard = "Loading";
+            Status = "Working";
+
             BillboardColor = Color.Gray;
             StatusColor = Color.DarkGray;
             LoadedColor = Color.SlateGray;

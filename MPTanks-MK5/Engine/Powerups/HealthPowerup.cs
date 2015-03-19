@@ -14,6 +14,10 @@ namespace Engine.Powerups
         {
 
         }
+        protected override void AddComponents()
+        {
+            throw new NotImplementedException();
+        }
         public override bool SpawnRandomly
         {
             get { throw new NotImplementedException(); }
@@ -22,11 +26,6 @@ namespace Engine.Powerups
         public override void CollidedWithTank(Tanks.Tank tank)
         {
             throw new NotImplementedException();
-        }
-
-        public override Microsoft.Xna.Framework.Vector2 Size
-        {
-            get { throw new NotImplementedException(); }
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)

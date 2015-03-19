@@ -21,6 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DedicatedServer", "Dedicate
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterServer", "MasterServer\MasterServer.csproj", "{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{FBF79749-6EAB-4021-96DE-8330D74F54EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbound.Input", "ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj", "{44C828D4-02D6-413C-BFED-3BF72AA9322E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ruminate-gui-monogame", "ThirdParty\RuminateGui-Beta-3.18.2015\ruminate-gui-monogame.csproj", "{FD443D74-652A-4B28-9F75-FB824AC101DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +107,26 @@ Global
 		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|x86.ActiveCfg = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|x86.Build.0 = Debug|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|Any CPU.ActiveCfg = Release|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|Mixed Platforms.Build.0 = Release|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|x86.ActiveCfg = Release|x86
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Release|x86.Build.0 = Release|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Debug|x86.ActiveCfg = Debug|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Debug|x86.Build.0 = Debug|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Release|Any CPU.ActiveCfg = Release|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Release|Mixed Platforms.Build.0 = Release|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Release|x86.ActiveCfg = Release|x86
+		{FD443D74-652A-4B28-9F75-FB824AC101DA}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,5 +138,7 @@ Global
 		{EF7D12D4-A2B8-47C6-B93D-5264191892C8} = {C8E25003-9BC6-4807-8909-01E937A235D5}
 		{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED} = {325CA0C5-DD1F-4C9D-8F0C-0BF43061DE2F}
 		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2} = {C8E25003-9BC6-4807-8909-01E937A235D5}
+		{44C828D4-02D6-413C-BFED-3BF72AA9322E} = {FBF79749-6EAB-4021-96DE-8330D74F54EE}
+		{FD443D74-652A-4B28-9F75-FB824AC101DA} = {FBF79749-6EAB-4021-96DE-8330D74F54EE}
 	EndGlobalSection
 EndGlobal
