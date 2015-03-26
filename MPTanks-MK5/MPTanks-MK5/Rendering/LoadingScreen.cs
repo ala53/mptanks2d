@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5.Rendering
+namespace MPTanks.Clients.GameClient.Rendering
 {
     class LoadingScreen
     {

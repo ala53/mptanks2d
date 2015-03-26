@@ -7,8 +7,8 @@
     <ProjectGuid>{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Engine</RootNamespace>
-    <AssemblyName>Engine</AssemblyName>
+    <RootNamespace>MPTanks.Engine</RootNamespace>
+    <AssemblyName>MPTanks.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
@@ -61,6 +61,7 @@
     <Compile Include="assets\Assets.cs" />
     <Compile Include="assets\MapObjects.cs" />
     <Compile Include="assets\Maps.cs" />
+    <Compile Include="ConstructorHelper.cs" />
     <Compile Include="Core\Events\Types\GameObjects\StateChanged.cs" />
     <Compile Include="Core\Events\Types\Game\Initialized.cs" />
     <Compile Include="Core\RectangleF.cs" />

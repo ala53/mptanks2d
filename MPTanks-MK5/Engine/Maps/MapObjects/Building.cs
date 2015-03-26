@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Maps.MapObjects
+namespace MPTanks.Engine.Maps.MapObjects
 {
     public class Building : MapObject
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5.Screens.Component
+namespace MPTanks.Clients.GameClient.Screens.Component
 {
     class Dialog
     {

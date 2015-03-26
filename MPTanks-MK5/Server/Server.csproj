@@ -7,8 +7,8 @@
     <ProjectGuid>{6A9A39B2-3BDA-4BE0-98A4-6F2AB3F51B7F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Server</RootNamespace>
-    <AssemblyName>Server</AssemblyName>
+    <RootNamespace>MPTanks.Networking.Server</RootNamespace>
+    <AssemblyName>MPTanks.Networking.Server</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

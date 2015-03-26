@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Server
+namespace MPTanks.Networking.Server
 {
     public class Server
     {
-        private Engine.GameCore game = new Engine.GameCore(new Logger(), new Engine.Gamemodes.TeamDeathMatchGamemode(), "");
+        private MPTanks.Engine.GameCore game = new MPTanks.Engine.GameCore(new Logger(), new MPTanks.Engine.Gamemodes.TeamDeathMatchGamemode(), "");
         public void Open()
         {
         }

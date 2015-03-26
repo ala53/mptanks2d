@@ -1,4 +1,4 @@
-﻿using Engine.Core;
+﻿using MPTanks.Engine.Core;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering.Particles
+namespace MPTanks.Engine.Rendering.Particles
 {
     public partial class ParticleEngine
     {

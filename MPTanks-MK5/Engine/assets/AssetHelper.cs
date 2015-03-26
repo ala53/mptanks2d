@@ -1,11 +1,11 @@
-﻿using Engine.Rendering;
+﻿using MPTanks.Engine.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Assets
+namespace MPTanks.Engine.Assets
 {
     static class AssetHelper
     {
@@ -22,7 +22,7 @@ namespace Engine.Assets
 
         public static string AnimationToString(SpriteAnimationInfo info, float positionMs = 0, bool loop = false)
         {
-            return Engine.Rendering.Animations.Animation.
+            return MPTanks.Engine.Rendering.Animations.Animation.
                 AnimationAsString(info.AnimationName, info.SheetName, positionMs, loop);
         }
 

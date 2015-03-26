@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine
+namespace MPTanks.Engine
 {
     public abstract class GameObject
     {
@@ -40,14 +40,14 @@ namespace Engine
             get
             {
                 if (_hasBeenCreated)
-                    return Body.Position / Settings.PhysicsScale;
+                    return Body.Position / Game.Settings.PhysicsScale;
                 else
                     return _startPosition;
             }
             set
             {
                 if (_hasBeenCreated)
-                    Body.Position = value * Settings.PhysicsScale;
+                    Body.Position = value * Game.Settings.PhysicsScale;
                 else
                     _startPosition = value;
             }
@@ -79,14 +79,14 @@ namespace Engine
             get
             {
                 if (_hasBeenCreated)
-                    return Body.LinearVelocity / Settings.PhysicsScale;
+                    return Body.LinearVelocity / Game.Settings.PhysicsScale;
                 else
                     return _startVelocity;
             }
             set
             {
                 if (_hasBeenCreated)
-                    Body.LinearVelocity = value * Settings.PhysicsScale;
+                    Body.LinearVelocity = value * Game.Settings.PhysicsScale;
                 else
                     _startVelocity = value;
             }
@@ -213,8 +213,8 @@ namespace Engine
             }
             _hasBeenCreated = true;
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
-            Body = BodyFactory.CreateRectangle(Game.World, Size.X * Settings.PhysicsScale,
-                 Size.Y * Settings.PhysicsScale, _startDensity, Vector2.Zero, _startRotation,
+            Body = BodyFactory.CreateRectangle(Game.World, Size.X * Game.Settings.PhysicsScale,
+                 Size.Y * Game.Settings.PhysicsScale, _startDensity, Vector2.Zero, _startRotation,
                  FarseerPhysics.Dynamics.BodyType.Dynamic, this);
             Body.Restitution = _startBounciness;
             Body.OnCollision += Body_OnCollision;
@@ -339,6 +339,11 @@ namespace Engine
                 GameObject = this,
                 StateData = newStateData
             });
+        }
+
+        public virtual void ReceiveStateData(byte[] stateData)
+        {
+
         }
     }
 }

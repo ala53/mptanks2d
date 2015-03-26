@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events.Types.Game
+namespace MPTanks.Engine.Core.Events.Types.Game
 {
     public class Initialized : EventArgs
     {

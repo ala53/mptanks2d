@@ -1,4 +1,4 @@
-﻿using Engine.Rendering;
+﻿using MPTanks.Engine.Rendering;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Projectiles.BasicTank
+namespace MPTanks.Engine.Projectiles.BasicTank
 {
     public class MainGunProjectile : Projectile
     {

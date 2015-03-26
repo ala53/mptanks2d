@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetworkingCommon.Game
+namespace MPTanks.Networking.Common.Game
 {
     public class GameState
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5.Rendering.Animation
+namespace MPTanks.Clients.GameClient.Rendering.Animation
 {
     class Animation
     {

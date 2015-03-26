@@ -1,4 +1,4 @@
-﻿using Engine.Core.Timing;
+﻿using MPTanks.Engine.Core.Timing;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Tanks
+namespace MPTanks.Engine.Tanks
 {
     public class BasicTank : Tank
     {

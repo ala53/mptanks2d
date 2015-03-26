@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5
+namespace MPTanks.Clients.GameClient
 {
-    //TODO
     public static class Logger
     {
         private static NLog.Logger logger;
@@ -62,6 +61,7 @@ namespace MPTanks_MK5
         public static void Debug(string dbg)
         {
 #if DEBUG //Don't remove, compiler optimization. If we're not in debug mode, we don't need this info
+            //so we have it as dead code which the compiler (hopefully) removes
             logger.Debug(dbg);
 #endif
         }

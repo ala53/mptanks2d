@@ -6,15 +6,15 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
-using MPTanks_MK5.Rendering;
-using Engine.Tanks;
-using Engine;
+using MPTanks.Clients.GameClient.Rendering;
+using MPTanks.Engine.Tanks;
+using MPTanks.Engine;
 using System.Diagnostics;
 using System.Runtime;
 using System.Text;
 #endregion
 
-namespace MPTanks_MK5
+namespace MPTanks.Clients.GameClient
 {
     /// <summary>
     /// This is the main type for your game
@@ -26,7 +26,7 @@ namespace MPTanks_MK5
         private GameWorldRenderer renderer;
         private Guid player1Id;
         private Guid player2Id;
-        private Engine.GameCore game;
+        private MPTanks.Engine.GameCore game;
         private float zoom = 6.5f;
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
@@ -101,16 +101,16 @@ namespace MPTanks_MK5
 
         private void SetupGame()
         {
-            game = new Engine.GameCore(new EngineInterface.FileLogger(), new Engine.Gamemodes.TeamDeathMatchGamemode(), "");
+            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), new MPTanks.Engine.Gamemodes.TeamDeathMatchGamemode(), "");
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
 
             game.AddGameObject(
-                new Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge(
+                new MPTanks.Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge(
                     game, true, new Vector2(10, 20), 33), null, true);
-            game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
-            game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
-            game.AddGameObject(new Engine.Maps.MapObjects.Building(game, true, new Vector2(30, 80), 33), null, true);
+            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
+            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
+            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(30, 80), 33), null, true);
 
             player1Id = Guid.NewGuid();
             player2Id = Guid.NewGuid();
@@ -182,7 +182,7 @@ namespace MPTanks_MK5
             if (game.IsCountingDownToStart)
             {
                 loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
-                loadingScreen.Maximum = Engine.Settings.TimeToWaitBeforeStartingGame / 1000;
+                loadingScreen.Maximum = game.Settings.TimeToWaitBeforeStartingGame / 1000;
                 loadingScreen.Status = game.RemainingCountdownSeconds.ToString("N1") + " seconds remaining";
                 loadingScreen.Billboard = "Setting up...";
             }
@@ -269,7 +269,7 @@ namespace MPTanks_MK5
             {
                 for (var i = 0; i < 50; i++)
                 {
-                    game.ParticleEngine.CreateEmitter(0.2f, Engine.Assets.BasicTank.MainGunSparks, Color.Green, new Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
+                    game.ParticleEngine.CreateEmitter(0.2f, MPTanks.Engine.Assets.BasicTank.MainGunSparks, Color.Green, new MPTanks.Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
                 }
             }
 
@@ -409,9 +409,9 @@ namespace MPTanks_MK5
             var projCount = 0;
             foreach (var obj in game.GameObjects)
             {
-                if (obj.GetType().IsSubclassOf(typeof(Engine.Tanks.Tank)))
+                if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Tanks.Tank)))
                     tanksCount++;
-                if (obj.GetType().IsSubclassOf(typeof(Engine.Projectiles.Projectile)))
+                if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Projectiles.Projectile)))
                     projCount++;
             }
             var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
@@ -448,7 +448,7 @@ namespace MPTanks_MK5
             if (game.Gamemode.GameEnded)
                 _bldr.Append(" ended");
 
-            if (game.Gamemode.WinningTeam != Engine.Gamemodes.Team.Null)
+            if (game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
                 _bldr.Append(", Winner").Append(game.Gamemode.WinningTeam.TeamName);
 
             spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));

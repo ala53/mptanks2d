@@ -1,11 +1,11 @@
-﻿using Engine.Tanks;
+﻿using MPTanks.Engine.Tanks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine
+namespace MPTanks.Engine
 {
     public partial class GameCore
     {

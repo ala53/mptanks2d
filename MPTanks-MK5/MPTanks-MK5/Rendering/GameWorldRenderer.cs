@@ -1,21 +1,21 @@
-using Engine;
+using MPTanks.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace MPTanks_MK5.Rendering
+namespace MPTanks.Clients.GameClient.Rendering
 {
     class GameWorldRenderer : Renderer
     {
-        private Engine.GameCore _game;
+        private MPTanks.Engine.GameCore _game;
 
         private BasicEffect _effect;
         private AssetCache _cache;
         private RectangleF _viewRect;
 
-        public GameWorldRenderer(Screens.Screen screen, Engine.GameCore game)
+        public GameWorldRenderer(Screens.Screen screen, MPTanks.Engine.GameCore game)
             : base(screen)
         {
             if (game == null) throw new ArgumentNullException("game");
@@ -186,8 +186,8 @@ namespace MPTanks_MK5.Rendering
                 RasterizerState.CullNone, _effect);
             //Build a correctly sized rectangle to draw the asset on
             var drawRect = new Rectangle(
-                -Scale(Settings.PhysicsCompensationForRendering),
-                -Scale(Settings.PhysicsCompensationForRendering),
+                -Scale(_game.Settings.PhysicsCompensationForRendering),
+                -Scale(_game.Settings.PhysicsCompensationForRendering),
                 ScaleForRendering(component.Component.Size.X),
                 ScaleForRendering(component.Component.Size.Y));
             //Get the cached asset
@@ -201,7 +201,7 @@ namespace MPTanks_MK5.Rendering
         private struct RComponentInternal
         {
             public Matrix ComputedTransforms;
-            public Engine.Rendering.RenderableComponent Component;
+            public MPTanks.Engine.Rendering.RenderableComponent Component;
             public Color ComputedColor;
         }
         private class SortListItem
@@ -212,8 +212,8 @@ namespace MPTanks_MK5.Rendering
         }
         #endregion
 
-        private List<Engine.Rendering.Animations.Animation> _endedAnimations =
-            new List<Engine.Rendering.Animations.Animation>();
+        private List<MPTanks.Engine.Rendering.Animations.Animation> _endedAnimations =
+            new List<MPTanks.Engine.Rendering.Animations.Animation>();
         private void DrawAnimations(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
             //And render the animations
@@ -267,10 +267,10 @@ namespace MPTanks_MK5.Rendering
 
             _endedAnimations.Clear();
         }
-        private List<Engine.Rendering.Particles.Particle> _belowParticles =
-            new List<Engine.Rendering.Particles.Particle>();
-        private List<Engine.Rendering.Particles.Particle> _aboveParticles =
-            new List<Engine.Rendering.Particles.Particle>();
+        private List<MPTanks.Engine.Rendering.Particles.Particle> _belowParticles =
+            new List<MPTanks.Engine.Rendering.Particles.Particle>();
+        private List<MPTanks.Engine.Rendering.Particles.Particle> _aboveParticles =
+            new List<MPTanks.Engine.Rendering.Particles.Particle>();
         private void ComputeParticleOrdering()
         {
             //Here, we compute the ordering of particles
@@ -293,7 +293,7 @@ namespace MPTanks_MK5.Rendering
                     _aboveParticles.Add(particle);
         }
 
-        private void DrawParticles(IEnumerable<Engine.Rendering.Particles.Particle> _particles,
+        private void DrawParticles(IEnumerable<MPTanks.Engine.Rendering.Particles.Particle> _particles,
             RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
             //Tracker for how many particles we can render
@@ -342,18 +342,18 @@ namespace MPTanks_MK5.Rendering
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Scale(float amount)
         {
-            return (int)(amount * Settings.RenderScale);
+            return (int)(amount * _game.Settings.RenderScale);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float ScaleF(float amount)
         {
-            return amount * Settings.RenderScale;
+            return amount * _game.Settings.RenderScale;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Vector2 Scale(Vector2 amount)
         {
-            return amount * Settings.RenderScale;
+            return amount * _game.Settings.RenderScale;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -362,8 +362,8 @@ namespace MPTanks_MK5.Rendering
             //So, farseer keeps a small skin around objects (for whatever reason, only god knows)
             //so we have to artificially add the 0.0001 (or whatever) blocks around the object
             return (int)
-                ((amount + (2 * Settings.PhysicsCompensationForRendering))
-                * Settings.RenderScale);
+                ((amount + (2 * _game.Settings.PhysicsCompensationForRendering))
+                * _game.Settings.RenderScale);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsVisible(Vector2 pos, Vector2 size, RectangleF viewRect)

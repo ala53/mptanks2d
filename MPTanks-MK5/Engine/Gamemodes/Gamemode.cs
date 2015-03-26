@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Gamemodes
+namespace MPTanks.Engine.Gamemodes
 {
     public abstract class Gamemode
     {

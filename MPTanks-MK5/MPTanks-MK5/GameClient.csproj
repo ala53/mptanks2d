@@ -8,8 +8,8 @@
     <ProjectGuid>{1AA033D4-C1B0-4653-BA2F-672A79B207CE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MPTanks_MK5</RootNamespace>
-    <AssemblyName>MPTanks-MK5</AssemblyName>
+    <RootNamespace>MPTanks.Clients.GameClient</RootNamespace>
+    <AssemblyName>MPTanks.Clients.GameClient</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
@@ -80,8 +80,11 @@
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.2.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\animations\basictank_projectile.png">
@@ -111,7 +114,6 @@
     <Content Include="Icon.ico" />
     <Content Include="license.txt" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="app.config" />
     <None Include="assets\animations\basictank_projectile.png.json">
@@ -148,16 +150,19 @@
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ThirdParty\RuminateGui-Beta-3.18.2015\ruminate-gui-monogame.csproj">
-      <Project>{fd443d74-652a-4b28-9f75-fb824ac101da}</Project>
-      <Name>ruminate-gui-monogame</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj">
       <Project>{44c828d4-02d6-413c-bfed-3bf72aa9322e}</Project>
       <Name>Starbound.Input</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\ui\" />
+    <Folder Include="UI\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rem $(SolutionDir)packages\EmptyKeysUI.1.5.0.0\Generator\ekUiGen.exe --input="$(ProjectDir)UI\" --output="$(TargetDir)assets\ui" --oa="$(TargetDir)Content" --rm=MonoGame</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

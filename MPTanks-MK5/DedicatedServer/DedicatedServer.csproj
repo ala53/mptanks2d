@@ -7,8 +7,8 @@
     <ProjectGuid>{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DedicatedServer</RootNamespace>
-    <AssemblyName>DedicatedServer</AssemblyName>
+    <RootNamespace>MPTanks.Clients.DedicatedServer</RootNamespace>
+    <AssemblyName>MPTanks.Clients.DedicatedServer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

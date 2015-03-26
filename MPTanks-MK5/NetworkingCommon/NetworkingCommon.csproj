@@ -7,8 +7,8 @@
     <ProjectGuid>{EF7D12D4-A2B8-47C6-B93D-5264191892C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetworkingCommon</RootNamespace>
-    <AssemblyName>NetworkingCommon</AssemblyName>
+    <RootNamespace>MPTanks.Networking.Common</RootNamespace>
+    <AssemblyName>MPTanks.Networking.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

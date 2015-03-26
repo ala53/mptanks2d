@@ -7,8 +7,8 @@
     <ProjectGuid>{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MasterServer</RootNamespace>
-    <AssemblyName>MasterServer</AssemblyName>
+    <RootNamespace>MPTanks.Networking.MasterServer</RootNamespace>
+    <AssemblyName>MPTanks.Networking.MasterServer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

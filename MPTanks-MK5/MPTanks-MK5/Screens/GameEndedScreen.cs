@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5.Screens
+namespace MPTanks.Clients.GameClient.Screens
 {
     class GameEndedScreen : Screen
     {

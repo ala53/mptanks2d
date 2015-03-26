@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering.Animations
+namespace MPTanks.Engine.Rendering.Animations
 {
     public class AnimationEngine
     {

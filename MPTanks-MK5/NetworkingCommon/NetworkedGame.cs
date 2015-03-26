@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using NetworkingCommon.Game;
+using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetworkingCommon
+namespace MPTanks.Networking.Common
 {
     /// <summary>
     /// A networked game. It contains the core properties and methods that
@@ -20,8 +20,8 @@ namespace NetworkingCommon
         /// </summary>
         public int MaxFramesPerSecond { get; set; }
         public GameState CurrentGameState { get { return _pooledGameState; } }
-        public Engine.GameCore Game { get; private set; }
-        public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
+        public MPTanks.Engine.GameCore Game { get; private set; }
+        public MPTanks.Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
         #endregion
         #region Timing Management
         private double totalMilliseconds;

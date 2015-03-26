@@ -1,6 +1,6 @@
-﻿using Engine.Core.Timing;
-using Engine.Logging;
-using Engine.Rendering;
+﻿using MPTanks.Engine.Core.Timing;
+using MPTanks.Engine.Logging;
+using MPTanks.Engine.Rendering;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine
+namespace MPTanks.Engine
 {
     public partial class GameCore
     {
@@ -38,6 +38,7 @@ namespace Engine
         /// The timer manager which lets game objects create timers for their own use
         /// </summary>
         public Timer.Factory TimerFactory { get; private set; }
+        #region Diagnostics & Logging
         /// <summary>
         /// The Logger to use for logging important events
         /// </summary>
@@ -47,10 +48,12 @@ namespace Engine
         /// The parent for logging the diagnostics under.
         /// </summary>
         public string DiagnosticsParent { get; set; }
+        #endregion
         /// <summary>
         /// The game mode that dictates the rules for this instance.
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
+        public Settings Settings { get; private set; }
         public float Timescale { get; set; }
         #region Game Status
         /// <summary>
@@ -168,6 +171,9 @@ namespace Engine
         public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapName, bool skipInit = false)
         {
             Logger = logger;
+            //Safety: call all global Ctors
+            ConstructorHelper.CallGlobalCtors();
+
             _skipInit = skipInit;
             if (skipInit)
                 _gameStarted = true;
@@ -185,7 +191,8 @@ namespace Engine
             ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
-            Diagnostics = new Engine.Diagnostics();
+            Diagnostics = new MPTanks.Engine.Diagnostics();
+            Settings = new MPTanks.Engine.Settings();
             DiagnosticsParent = "Game Update";
             Logger.Log("Game initialized");
         }

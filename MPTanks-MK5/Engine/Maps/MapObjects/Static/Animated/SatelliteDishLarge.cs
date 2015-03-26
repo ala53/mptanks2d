@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Maps.MapObjects.Static.Animated
+namespace MPTanks.Engine.Maps.MapObjects.Static.Animated
 {
     public class SatelliteDishLarge : MapObject
     {

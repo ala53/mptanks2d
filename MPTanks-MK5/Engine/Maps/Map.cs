@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Maps
+namespace MPTanks.Engine.Maps
 {
     public class Map
     {

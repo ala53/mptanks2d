@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering.Animations
+namespace MPTanks.Engine.Rendering.Animations
 {
     /// <summary>
     /// An abstract description of an Animation / specific

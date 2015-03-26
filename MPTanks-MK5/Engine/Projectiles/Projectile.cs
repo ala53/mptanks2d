@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Projectiles
+namespace MPTanks.Engine.Projectiles
 {
     public abstract class Projectile : GameObject
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering.Particles
+namespace MPTanks.Engine.Rendering.Particles
 {
     /// <summary>
     /// A single in-engine particle, a 80 byte struct.

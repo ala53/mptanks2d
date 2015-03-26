@@ -1,4 +1,4 @@
-﻿using Engine.Gamemodes;
+﻿using MPTanks.Engine.Gamemodes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Tanks
+namespace MPTanks.Engine.Tanks
 {
 
     public abstract class Tank : GameObject
     {
-        public List<Powerups.Powerup> Powerups { get; private set; }
         public Guid PlayerId { get; private set; }
         public Team Team { get; internal set; }
         public InputState InputState { get; private set; }
@@ -22,7 +21,7 @@ namespace Engine.Tanks
         protected abstract float MovementSpeed { get; }
 
         public Tank(Guid playerId, GameCore game, bool authorized)
-            : base(game, authorized, Settings.TankDensity, 0, default(Vector2), 0)
+            : base(game, authorized, game.Settings.TankDensity, 0, default(Vector2), 0)
         {
             PlayerId = playerId;
         }
@@ -83,9 +82,41 @@ namespace Engine.Tanks
             Rotation += (float)rotationAmount;
         }
 
+
+
         public override string ToString()
         {
             return "Player ID: " + PlayerId.ToString();
         }
+
+        #region Static initialization
+        private static Dictionary<string, Type> _tankTypes =
+            new Dictionary<string, Type>();
+
+        public static Tank ReflectiveInitialize(string tankName, Guid playerId, GameCore game, bool authorized, byte[] state = null)
+        {
+            if (!_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Tank type does not exist.");
+
+           var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], playerId, game, authorized);
+           if (state != null) inst.ReceiveStateData(state);
+
+           return inst;
+        }
+
+        public static T ReflectiveInitialize<T>(string tankName, Guid playerId, GameCore game, bool authorized, byte[] state = null)
+        where T : Tank
+        {
+            return (T)ReflectiveInitialize(tankName, playerId, game, authorized, state);
+        }
+
+        protected static void RegisterType(string tankName, Type tankType)
+        {
+            if (!tankType.IsSubclassOf(typeof(Tank))) throw new Exception("Not a tank!");
+
+            if (_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Already registered!");
+
+            _tankTypes.Add(tankName.ToLower(), tankType);
+        }
+        #endregion
     }
 }

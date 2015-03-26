@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks_MK5.EngineInterface
+namespace MPTanks.Clients.GameClient.EngineInterface
 {
-    class FileLogger : Engine.Logging.ILogger
+    class FileLogger : MPTanks.Engine.Logging.ILogger
     {
 
         public void Log(string message)
@@ -37,7 +37,7 @@ namespace MPTanks_MK5.EngineInterface
 #endif
         }
 
-        public void LogObjectCreated(Engine.GameObject obj, Engine.GameObject creator = null, string additionalData = "")
+        public void LogObjectCreated(MPTanks.Engine.GameObject obj, MPTanks.Engine.GameObject creator = null, string additionalData = "")
         {
             if (creator == null)
                 Logger.Debug(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ")" +
@@ -49,7 +49,7 @@ namespace MPTanks_MK5.EngineInterface
 
         }
 
-        public void LogObjectDamaged(Engine.GameObject damaged, Engine.GameObject damager = null, string additionalData = "")
+        public void LogObjectDamaged(MPTanks.Engine.GameObject damaged, MPTanks.Engine.GameObject damager = null, string additionalData = "")
         {
             if (damager == null)
                 Logger.Debug(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " + damaged.ToString() +
@@ -61,7 +61,7 @@ namespace MPTanks_MK5.EngineInterface
                     (additionalData == "" ? ")" : "), " + additionalData));
         }
 
-        public void LogObjectDestroyed(Engine.GameObject destroyed, Engine.GameObject destroyer = null, string additionalData = "")
+        public void LogObjectDestroyed(MPTanks.Engine.GameObject destroyed, MPTanks.Engine.GameObject destroyer = null, string additionalData = "")
         {
             if (destroyer == null)
                 Logger.Debug(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +

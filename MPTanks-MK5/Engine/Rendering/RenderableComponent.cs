@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering
+namespace MPTanks.Engine.Rendering
 {
     public class RenderableComponent
     {

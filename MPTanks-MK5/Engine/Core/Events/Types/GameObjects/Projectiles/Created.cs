@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events.Types.GameObjects.Projectiles
+namespace MPTanks.Engine.Core.Events.Types.GameObjects.Projectiles
 {
     public class Created : EventArgs
     {

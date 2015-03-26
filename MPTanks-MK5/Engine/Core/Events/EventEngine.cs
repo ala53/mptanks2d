@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events
+namespace MPTanks.Engine.Core.Events
 {
     public class EventEngine
     {

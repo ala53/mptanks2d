@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Powerups
+namespace MPTanks.Engine.Powerups
 {
     public abstract class Powerup : GameObject
     {

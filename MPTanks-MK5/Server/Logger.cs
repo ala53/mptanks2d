@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Server
+namespace MPTanks.Networking.Server
 {
-    class Logger : Engine.Logging.ILogger
+    class Logger : MPTanks.Engine.Logging.ILogger
     {
         public void Log(string message)
         {
@@ -24,15 +24,15 @@ namespace Server
         {
         }
 
-        public void LogObjectCreated(Engine.GameObject obj, Engine.GameObject creator = null, string additionalData = "")
+        public void LogObjectCreated(MPTanks.Engine.GameObject obj, MPTanks.Engine.GameObject creator = null, string additionalData = "")
         {
         }
 
-        public void LogObjectDamaged(Engine.GameObject damaged, Engine.GameObject damager = null, string additionalData = "")
+        public void LogObjectDamaged(MPTanks.Engine.GameObject damaged, MPTanks.Engine.GameObject damager = null, string additionalData = "")
         {
         }
 
-        public void LogObjectDestroyed(Engine.GameObject destroyed, Engine.GameObject destroyer = null, string additionalData = "")
+        public void LogObjectDestroyed(MPTanks.Engine.GameObject destroyed, MPTanks.Engine.GameObject destroyer = null, string additionalData = "")
         {
         }
     }

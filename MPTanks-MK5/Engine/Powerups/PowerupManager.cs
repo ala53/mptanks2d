@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Powerups
+namespace MPTanks.Engine.Powerups
 {
     /// <summary>
     /// A class that manages the spawning of power ups for the game

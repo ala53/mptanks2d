@@ -10,18 +10,18 @@ namespace Starbound.Input
     /// Represents a polar coordinate, defined by a distance from the origin and an angle from the
     /// polar axis. 
     /// </summary>
-    public class PolarCoordinate
+    public struct PolarCoordinate
     {
         /// <summary>
         /// Stores the angle of the polar coordinate from the polar axis (usually the equivalent of the
         /// x-axis).
         /// </summary>
-        public float Angle { get; private set; }
+        public readonly float Angle;
 
         /// <summary>
         /// Stores the distance from the coordinate system's origin.
         /// </summary>
-        public float Distance { get; private set; }
+        public readonly float Distance;
 
         /// <summary>
         /// Creates a new PolarCoordinate from an angle and distance.

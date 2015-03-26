@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Rendering.Particles
+namespace MPTanks.Engine.Rendering.Particles
 {
     public partial class ParticleEngine
     {
@@ -27,7 +27,7 @@ namespace Engine.Rendering.Particles
         {
             //Compute the position with wraparound - if we're over the limit,
             //we remove the oldest particles first
-            _addPosition = _addPosition % Settings.ParticleLimit;
+            _addPosition = _addPosition % Game.Settings.ParticleLimit;
 
             //Sanity check
             if (particle.LifespanMs <= 0)
@@ -43,7 +43,7 @@ namespace Engine.Rendering.Particles
             particle.OriginalSize = particle.Size;
 
             //Guard clause: remove the first if we're over the limit
-            if (Settings.ParticleLimit <= _particles.Count)
+            if (Game.Settings.ParticleLimit <= _particles.Count)
                 RemoveNode(_particles.First);
             //And add the new node
             _particles.AddLast(GetNode(particle));

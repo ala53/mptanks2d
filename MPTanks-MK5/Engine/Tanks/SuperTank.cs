@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Tanks
+namespace MPTanks.Engine.Tanks
 {
     public abstract class SuperTank : Tank
     {

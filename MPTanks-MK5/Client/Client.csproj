@@ -7,8 +7,8 @@
     <ProjectGuid>{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Client</RootNamespace>
-    <AssemblyName>Client</AssemblyName>
+    <RootNamespace>MPTanks.Networking.Client</RootNamespace>
+    <AssemblyName>MPTanks.Networking.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

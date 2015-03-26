@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace MPTanks_MK5
+namespace MPTanks.Clients.GameClient
 {
 #if WINDOWS || LINUX
     /// <summary>
@@ -28,6 +28,7 @@ namespace MPTanks_MK5
                 dependencies += "[" + dep.ToString() + "], ";
             Logger.Log(dependencies);
 
+            MPTanks.Engine.ConstructorHelper.CallGlobalCtors();
             StartGame();
         }
 
