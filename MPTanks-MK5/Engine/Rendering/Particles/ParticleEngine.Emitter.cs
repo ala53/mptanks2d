@@ -17,7 +17,8 @@ namespace Engine.Rendering.Particles
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
             float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, Action<Emitter> diedCallback = null)
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,           
+            Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
             //e.g. fuzziness = 1 should be +- 50%, not +-100%
@@ -33,7 +34,7 @@ namespace Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
                        particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
-                       scaleUniform, diedCallback
+                       scaleUniform, renderBelowObjects, diedCallback
                   );
         }
         public Emitter CreateEmitter(float fuzziness, Assets.SpriteInfo[] spriteInfos,
@@ -43,7 +44,8 @@ namespace Engine.Rendering.Particles
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
             float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, Action<Emitter> diedCallback = null)
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects= false,
+            Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
             //e.g. fuzziness = 1 should be +- 50%, not +-100%
@@ -59,7 +61,7 @@ namespace Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
                        particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
-                       scaleUniform, diedCallback
+                       scaleUniform, renderBelowObjects, diedCallback
                   );
         }
         public Emitter CreateEmitter(Assets.SpriteInfo[] spriteInfos,
@@ -76,7 +78,7 @@ namespace Engine.Rendering.Particles
             float minRotationVelocity, float maxRotationVelocity,
             float minParticlesPerSecond, float maxParticlesPerSecond,
             float emitterLifespan, bool shrinkInsteadOfFadeOut,
-            bool scaleUniform,
+            bool scaleUniform, bool renderBelowObjects,
             Action<Emitter> diedCallback = null)
         {
             var em = new Emitter(this);
@@ -87,6 +89,7 @@ namespace Engine.Rendering.Particles
             em.MaxFadeOutMs = maxFadeOutTime;
             em.ShrinkInsteadOfFadeOut = shrinkInsteadOfFadeOut;
             em.ScaleUniform = scaleUniform;
+            em.RenderBelowObjects = renderBelowObjects;
             em.MinLifespanMs = minLifeSpan;
             em.MaxLifespanMs = maxLifeSpan;
             em.EmissionArea = emissionArea;
@@ -200,6 +203,7 @@ namespace Engine.Rendering.Particles
             public bool CalculateVelocityAndAccelerationRelativeToRotation { get; set; }
             public bool ShrinkInsteadOfFadeOut { get; set; }
             public bool ScaleUniform { get; set; }
+            public bool RenderBelowObjects { get; set; }
             public Vector2 MinSize { get; set; }
             public Vector2 MaxSize { get; set; }
             public RectangleF EmissionArea { get; set; }
@@ -308,6 +312,7 @@ namespace Engine.Rendering.Particles
                         RotationVelocity = GetRandomBetween(MinRotationVelocity, MaxRotationVelocity),
                         Size = size,
                         Velocity = velocity,
+                        RenderBelowObjects = RenderBelowObjects,
                         ShinkInsteadOfFade = ShrinkInsteadOfFadeOut
                     };
                     Container.AddParticle(particle);

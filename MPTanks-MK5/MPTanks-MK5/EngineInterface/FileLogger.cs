@@ -40,10 +40,10 @@ namespace MPTanks_MK5.EngineInterface
         public void LogObjectCreated(Engine.GameObject obj, Engine.GameObject creator = null, string additionalData = "")
         {
             if (creator == null)
-                Logger.Log(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ")" +
+                Logger.Debug(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ")" +
                     (additionalData == "" ? "" : ", " + additionalData));
             else
-                Logger.Log(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ") by " +
+                Logger.Debug(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ") by " +
                     creator.GetType().Name + " (ID " + creator.ObjectId + " - " + creator.ToString() + ")" +
                     (additionalData == "" ? "" : ", " + additionalData));
 
@@ -52,10 +52,10 @@ namespace MPTanks_MK5.EngineInterface
         public void LogObjectDamaged(Engine.GameObject damaged, Engine.GameObject damager = null, string additionalData = "")
         {
             if (damager == null)
-                Logger.Log(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " + damaged.ToString() +
+                Logger.Debug(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " + damaged.ToString() +
                     ") damaged" + (additionalData == "" ? "" : ", " + additionalData));
             else
-                Logger.Log(damaged.GetType().Name + "(ID " + damaged.ObjectId +
+                Logger.Debug(damaged.GetType().Name + "(ID " + damaged.ObjectId +
                     ") damaged by " + damager.GetType().Name + " (ID " +
                     damager.ObjectId + " - " + damaged.ToString() +
                     (additionalData == "" ? ")" : "), " + additionalData));
@@ -64,10 +64,10 @@ namespace MPTanks_MK5.EngineInterface
         public void LogObjectDestroyed(Engine.GameObject destroyed, Engine.GameObject destroyer = null, string additionalData = "")
         {
             if (destroyer == null)
-                Logger.Log(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
+                Logger.Debug(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
                     ") destroyed" + (additionalData == "" ? "" : ", " + additionalData));
             else
-                Logger.Log(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
+                Logger.Debug(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
                     ") destroyed by " + destroyer.GetType().Name + " (ID " +
                     destroyer.ObjectId + " - " + destroyer.ToString() +
                     (additionalData == "" ? ")" : "), " + additionalData));

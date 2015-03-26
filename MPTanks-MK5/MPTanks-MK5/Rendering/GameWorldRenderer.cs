@@ -15,7 +15,7 @@ namespace MPTanks_MK5.Rendering
         private RectangleF _viewRect;
 
         public GameWorldRenderer(Screens.Screen screen, Engine.GameCore game)
-            :base(screen)
+            : base(screen)
         {
             if (game == null) throw new ArgumentNullException("game");
 
@@ -34,6 +34,7 @@ namespace MPTanks_MK5.Rendering
 
         public override void Render(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, GameTime gameTime)
         {
+            _game.Diagnostics.BeginMeasurement("Compute view matrix", "World rendering", "Rendering");
             const float overdraw = 0.15f;
 
             var _boundsRect = new RectangleF( //Compute the bounds for visibility checks which have overdraw for simplicity
@@ -55,13 +56,32 @@ namespace MPTanks_MK5.Rendering
 
             //upload the projection matrix 
             _effect.Projection = projectionMatrix;
+            _game.Diagnostics.EndMeasurement("Compute view matrix", "World rendering", "Rendering");
+
+            //Compute particle stuffs
+            _game.Diagnostics.BeginMeasurement("Compute Particle Order", "World rendering", "Rendering");
+            ComputeParticleOrdering();
+            _game.Diagnostics.EndMeasurement("Compute Particle Order", "World rendering", "Rendering");
+
+            //Draw the below objects
+            _game.Diagnostics.BeginMeasurement("Draw Particles (Below Objects)", "World rendering", "Rendering");
+            DrawParticles(_belowParticles, _boundsRect, gameTime, sb);
+            _game.Diagnostics.EndMeasurement("Draw Particles (Below Objects)", "World rendering", "Rendering");
 
             //Draw game objects
+            _game.Diagnostics.BeginMeasurement("Draw Objects", "World rendering", "Rendering");
             DrawObjects(_boundsRect, gameTime, sb);
+            _game.Diagnostics.EndMeasurement("Draw Objects", "World rendering", "Rendering");
+
             //And animations
+            _game.Diagnostics.BeginMeasurement("Draw Animations", "World rendering", "Rendering");
             DrawAnimations(_boundsRect, gameTime, sb);
+            _game.Diagnostics.EndMeasurement("Draw Animations", "World rendering", "Rendering");
+
             //And particles
-            DrawParticles(_boundsRect, gameTime, sb);
+            _game.Diagnostics.BeginMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
+            DrawParticles(_aboveParticles, _boundsRect, gameTime, sb);
+            _game.Diagnostics.EndMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
         }
         #region Object Rendering
         private SortedDictionary<int, SortListItem> _renderLayers =
@@ -245,12 +265,27 @@ namespace MPTanks_MK5.Rendering
 
             _endedAnimations.Clear();
         }
-
-        private void DrawParticles(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
+        private List<Engine.Rendering.Particles.Particle> _belowParticles =
+            new List<Engine.Rendering.Particles.Particle>();
+        private List<Engine.Rendering.Particles.Particle> _aboveParticles =
+            new List<Engine.Rendering.Particles.Particle>();
+        private void ComputeParticleOrdering()
         {
             if (_game.ParticleEngine.Particles == null)
                 return;
 
+            _belowParticles.Clear();
+            _aboveParticles.Clear();
+            foreach (var particle in _game.ParticleEngine.Particles)
+                if (particle.RenderBelowObjects)
+                    _belowParticles.Add(particle);
+                else
+                    _aboveParticles.Add(particle);
+        }
+
+        private void DrawParticles(IEnumerable<Engine.Rendering.Particles.Particle> _particles,
+            RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
+        {
             int remainingAllowedParticles = ClientSettings.MaxParticlesToRender;
             _effect.World = Matrix.Identity;
             _effect.Alpha = 1;
@@ -258,7 +293,7 @@ namespace MPTanks_MK5.Rendering
             sb.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
-            foreach (var particle in _game.ParticleEngine.Particles)
+            foreach (var particle in _particles)
             {
                 if (remainingAllowedParticles == 0) break; //Stop drawing if too many particles
                 //And ignore off screen particles

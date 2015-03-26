@@ -51,7 +51,7 @@ namespace Engine.Projectiles.BasicTank
             _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.SmokePuffs.SmokePuffSprites,
                 new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
                 new Core.RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
-                new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true);
+                new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true, true);
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
@@ -69,7 +69,8 @@ namespace Engine.Projectiles.BasicTank
             if (destroyer != null && destroyer.ColorMask != Color.Black)
                 cMask = destroyer.ColorMask;
             //Make sure to kill the emitter
-            _trailEmitter.Kill();
+            if (_trailEmitter != null)
+                _trailEmitter.Kill();
 
             //Spawn the destruction sparks - a bit chaotic and random, much like their source code
             var rect = new Core.RectangleF(Position.X - 0.15f, Position.Y - 0.15f, 0.3f, 0.3f);
@@ -89,7 +90,7 @@ namespace Engine.Projectiles.BasicTank
                 //    Rotation
                 0, (float)Math.PI * 2,
                 // R Vel      Rate      Emitter life
-                0.05f, 0.5f, 75, 150, 200, false, false);
+                0.05f, 0.5f, 75, 150, 200, false, false, true);
 
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
 
@@ -99,7 +100,8 @@ namespace Engine.Projectiles.BasicTank
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
             //Move the particle emitter
-            _trailEmitter.EmissionArea = new Core.RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
+            if (_trailEmitter != null)
+                _trailEmitter.EmissionArea = new Core.RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
         }
     }
 }

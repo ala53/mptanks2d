@@ -63,12 +63,15 @@
     <Compile Include="Screens\Screen.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EmptyKeys.UserInterface">
+      <HintPath>..\packages\EmptyKeysUI.1.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+    </Reference>
     <Reference Include="FarseerPhysics.Portable">
       <HintPath>..\packages\FarseerPhysics.Portable.3.5.1\lib\portable-net4+sl4+wp8+win8\FarseerPhysics.Portable.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -106,6 +109,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
+    <Content Include="license.txt" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

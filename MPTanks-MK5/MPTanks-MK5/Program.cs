@@ -15,13 +15,13 @@ namespace MPTanks_MK5
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        [MTAThread]
         public static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             //Write down some logging information so we know what happened.
-            Logger.Log("MonoGame version: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
+            Logger.Log("MonoGame: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
                 typeof(Microsoft.Xna.Framework.Game).Assembly.ToString());
             string dependencies = "Dependencies: ";
             foreach (var dep in typeof(Microsoft.Xna.Framework.Game).Assembly.GetReferencedAssemblies())
@@ -34,7 +34,7 @@ namespace MPTanks_MK5
         static void StartGame()
         {
             using (var game = new GameClient())
-                game.Run(Microsoft.Xna.Framework.GameRunBehavior.Synchronous);
+                game.Run();
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

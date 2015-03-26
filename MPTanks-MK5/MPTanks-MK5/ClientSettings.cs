@@ -8,7 +8,7 @@ namespace MPTanks_MK5
 {
     class ClientSettings
     {
-        public static string LogLocation = "${basedir}/client.log";
+        public static string LogLocation = "${basedir}/clientlogs/client.log";
         /// <summary>
         /// The maximum number of on screen particles to allow
         /// </summary>
@@ -20,6 +20,7 @@ namespace MPTanks_MK5
         /// Unfortunately, it does so to the possible detriment of 
         /// framerate.
         /// </summary>
-        public const bool ForceGCEveryFrame = false;
+        public const bool ForceFullGCEveryFrame = false;
+        public const bool ForceGen0GCEveryFrame = false;
     }
 }

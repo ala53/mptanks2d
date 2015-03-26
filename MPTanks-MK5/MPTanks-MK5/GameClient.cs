@@ -11,6 +11,7 @@ using Engine.Tanks;
 using Engine;
 using System.Diagnostics;
 using System.Runtime;
+using System.Text;
 #endregion
 
 namespace MPTanks_MK5
@@ -43,16 +44,16 @@ namespace MPTanks_MK5
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+            GCSettings.LatencyMode = GCLatencyMode.Batch;
 
             graphics.PreferMultiSampling = true;
 
             Window.AllowUserResizing = true;
             // IsMouseVisible = true;
-            // IsFixedTimeStep = false;
-            // graphics.SynchronizeWithVerticalRetrace = false;
+            //IsFixedTimeStep = false;
+            //graphics.SynchronizeWithVerticalRetrace = false;
             // graphics.ApplyChanges();
-            // TargetElapsedTime = TimeSpan.FromMilliseconds(8);
+            // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
         }
 
         /// <summary>
@@ -70,9 +71,6 @@ namespace MPTanks_MK5
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             //Initialize input driver
-            Components.Add(new Starbound.Input.KeyboardEvents(this));
-            Components.Add(new Starbound.Input.MouseEvents(this));
-            Components.Add(new Starbound.Input.GamePadEvents(PlayerIndex.One, this));
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
         }
@@ -151,8 +149,12 @@ namespace MPTanks_MK5
             }
         }
 
+        private long updateNumber;
+        private long frameNumber;
         private float physicsMs = 0;
         private float renderMs = 0;
+        private Stopwatch _gameTimer;
+        private bool slow = false;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -160,10 +162,24 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (_gameTimer == null)
+                _gameTimer = new Stopwatch();
+
+            var el = _gameTimer.Elapsed;
+            _gameTimer.Restart();
+            if (el.TotalMilliseconds > 19)
+                slow = true;
+            else slow = false;
+
+            if (slow) Logger.Debug("Last frame was slow according to real time (" + el.TotalMilliseconds + "ms). Last frame was update " + updateNumber + ", frame " + frameNumber + " GameTime says: " +
+                gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
+
+            updateNumber++;
+            DetectGC();
             if (game.IsCountingDownToStart)
             {
                 loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
-                loadingScreen.Maximum = Settings.TimeToWaitBeforeStartingGame / 1000;
+                loadingScreen.Maximum = Engine.Settings.TimeToWaitBeforeStartingGame / 1000;
                 loadingScreen.Status = game.RemainingCountdownSeconds.ToString("N1") + " seconds remaining";
                 loadingScreen.Billboard = "Setting up...";
             }
@@ -191,6 +207,7 @@ namespace MPTanks_MK5
 
             if (game.IsGameRunning)
             {
+                game.Diagnostics.BeginMeasurement("Input processing");
                 var iState = new InputState();
                 iState.LookDirection = game.Players[player1Id].Rotation;
 
@@ -232,10 +249,13 @@ namespace MPTanks_MK5
                 //    Mouse.GetState().Position.Y);
                 //var ctr = screenCenter - mousePos;
                 //iState.LookDirection = (float)-Math.Atan2(ctr.X, ctr.Y);
+                game.Diagnostics.EndMeasurement("Input processing");
             }
 
+            game.Diagnostics.BeginMeasurement("Lock cursor calls");
             if (!_unlockCursor)
                 LockCursor();
+            game.Diagnostics.EndMeasurement("Lock cursor calls");
 
             if (Keyboard.GetState().IsKeyDown(Keys.X))
                 zoom += 0.1f;
@@ -252,9 +272,38 @@ namespace MPTanks_MK5
 
             game.Update(gameTime);
 
+            game.Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);
+            game.Diagnostics.EndMeasurement("Base.Update()");
             timer.Stop();
             physicsMs = (float)timer.Elapsed.TotalMilliseconds;
+            DetectGC();
+        }
+
+        private int _g0Gc = 0;
+        private int _g1Gc = 0;
+        private int _g2Gc = 0;
+        private void DetectGC()
+        {
+            var g0 = GC.CollectionCount(0);
+            var g1 = GC.CollectionCount(1);
+            var g2 = GC.CollectionCount(2);
+            if (g2 != _g2Gc)
+            {
+                Logger.Debug("Generation 2 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
+            }
+            else if (g1 != _g1Gc)
+            {
+                Logger.Debug("Generation 1 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
+            }
+            else if (g0 != _g0Gc)
+            {
+                Logger.Debug("Generation 0 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
+            }
+
+            _g0Gc = g0;
+            _g1Gc = g1;
+            _g2Gc = g2;
         }
 
         private void LockCursor()
@@ -292,6 +341,9 @@ namespace MPTanks_MK5
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            DetectGC();
+            frameNumber++;
+            game.Diagnostics.BeginMeasurement("Rendering");
             timer.Restart(); //Stat tracking
             GraphicsDevice.Clear(Color.Black);
 
@@ -302,33 +354,50 @@ namespace MPTanks_MK5
                     0,
                     30 * zoom,
                     20 * zoom);
-                if (game.Players.ContainsKey(player1Id))
-                    drawRect = new RectangleF(
-                        game.Players[player1Id].Position.X - (15 * zoom),
-                        game.Players[player1Id].Position.Y - (10 * zoom),
-                        30 * zoom,
-                        20 * zoom);
+                //if (game.Players.ContainsKey(player1Id))
+                //    drawRect = new RectangleF(
+                //        game.Players[player1Id].Position.X - (15 * zoom),
+                //        game.Players[player1Id].Position.Y - (10 * zoom),
+                //        30 * zoom,
+                //        20 * zoom);
+                game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
                 renderer.Render(spriteBatch, gameTime);
+                game.Diagnostics.EndMeasurement("World rendering", "Rendering");
             }
             //And draw the loading screen last so its over everything
             if (loading || loadingScreen.IsSlidingOut)
             {
                 loadingScreen.Render(spriteBatch, gameTime);
             }
+            game.Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
             DrawDebugInfo(gameTime);
+            game.Diagnostics.EndMeasurement("Draw debug text", "Rendering");
+
+            if (ClientSettings.ForceFullGCEveryFrame)
+                GC.Collect(2, GCCollectionMode.Forced, true);
+            if (ClientSettings.ForceGen0GCEveryFrame)
+                GC.Collect(0, GCCollectionMode.Forced, true);
+
+            game.Diagnostics.BeginMeasurement("Base.Draw()", "Rendering");
             base.Draw(gameTime);
+            game.Diagnostics.EndMeasurement("Base.Draw()", "Rendering");
+            game.Diagnostics.EndMeasurement("Rendering");
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;
-
-            if (ClientSettings.ForceGCEveryFrame)
-                GC.Collect(0, GCCollectionMode.Forced, true);
+            if (physicsMs + renderMs > 10 && game.IsGameRunning)
+            {
+                Logger.Debug("Frame took too long! (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
+                Logger.Debug("\n\n\n" + game.Diagnostics.ToString());
+            }
         }
 
         #region Debug info
         private Process _prc;
+        private StringBuilder _bldr = new StringBuilder(1000);
         private void DrawDebugInfo(GameTime gameTime)
         {
+            _bldr.Clear();
             if (_prc == null)
                 _prc = Process.GetCurrentProcess();
 
@@ -343,28 +412,43 @@ namespace MPTanks_MK5
                     projCount++;
             }
             var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
-            //Note: The debug screen generates a bunch of garbage so don't try to use it to nail down allocations
+            //Note: The debug screen generates a bit of garbage so don't try to use it to nail down allocations
             //Disable it first and then see if there's still a problem
-            spriteBatch.DrawString(font, "Tanks: " + tanksCount + ", Projectiles: " + projCount.ToString() +
-                    ", Zoom: " + zoom.ToString("N2") +
-                    ", Update: " + physicsMs.ToString("N2") + ", Render: " + renderMs.ToString("N2") +
-                ",\nMouse: " + Mouse.GetState().Position.ToString() + ", Tank: " +
-                (game.Players.ContainsKey(player1Id) ?
-                    "{ " + game.Players[player1Id].Position.X.ToString("N1") + ", " +
-                    game.Players[player1Id].Position.Y.ToString("N1") + " }" : "not spawned") +
-                ", Active timers: " + game.TimerFactory.ActiveTimersCount + ", \nAnimation layers: " +
-                game.AnimationEngine.Animations.Count + ", Particles: " +
-                game.ParticleEngine.LivingParticlesCount + ", FPS: " + fps + " avg, " +
-                (1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1") + " now"
-                + ",\nGC (gen 0, 1, 2): " +
-                GC.CollectionCount(0) + " " + GC.CollectionCount(1) + " " + GC.CollectionCount(2) + "," +
-                " Memory: " + (GC.GetTotalMemory(false) / (1024f * 1024)).ToString("N1") + "MB used" +
-                ",\nStatus: " + (game.IsWaitingForPlayers ? "waiting for players" : "") +
-                (game.IsGameRunning ? "running" : "") +
-                (game.Gamemode.GameEnded ? game.IsGameRunning ? ", game ended" : "game ended" : "") +
-                (game.IsCountingDownToStart ? game.RemainingCountdownSeconds.ToString("N1") + "s until start" : "") +
-                (game.Gamemode.WinningTeam == Engine.Gamemodes.Team.Null ? "" : ", Winner: " + game.Gamemode.WinningTeam.TeamName)
-            , new Vector2(10, 10), Color.MediumPurple);
+            _bldr.Append("Tanks: ").Append(tanksCount)
+            .Append(", Projectiles: ").Append(projCount)
+            .Append(", Zoom: ").Append(zoom.ToString("N2"))
+            .Append(", Update: ").Append(physicsMs.ToString("N2"))
+            .Append(", Render: ").Append(renderMs.ToString("N2"))
+            .Append(",\nMouse: ").Append(Mouse.GetState().Position.ToString())
+            .Append(", Tank: ");
+
+            if (game.Players.ContainsKey(player1Id))
+                _bldr.Append("{ ").Append(game.Players[player1Id].Position.X.ToString("N1"))
+                  .Append(", ").Append(game.Players[player1Id].Position.Y.ToString("N1"))
+                  .Append(" }");
+            else _bldr.Append("not spawned");
+
+            _bldr.Append(", Active Timers: ").Append(game.TimerFactory.ActiveTimersCount)
+                .Append(",\nAnimation layers: ").Append(game.AnimationEngine.Animations.Count)
+                .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
+                .Append(", FPS: ").Append(fps).Append(" avg, ")
+                .Append((1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1")).Append(" now")
+                .Append(",\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
+                .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
+                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
+                .Append(",\nStatus:");
+
+            if (game.IsWaitingForPlayers)
+                _bldr.Append(" waiting for players");
+            if (game.IsGameRunning)
+                _bldr.Append(" running");
+            if (game.Gamemode.GameEnded)
+                _bldr.Append(" ended");
+
+            if (game.Gamemode.WinningTeam != Engine.Gamemodes.Team.Null)
+                _bldr.Append(", Winner").Append(game.Gamemode.WinningTeam.TeamName);
+
+            spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));
             spriteBatch.End();
         }
         private float[] _fps;

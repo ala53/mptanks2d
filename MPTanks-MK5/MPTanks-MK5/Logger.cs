@@ -15,11 +15,23 @@ namespace MPTanks_MK5
             var config = new NLog.Config.LoggingConfiguration();
             var fileTarget =
                 new NLog.Targets.Wrappers.AsyncTargetWrapper(
-                    new NLog.Targets.FileTarget() { FileName = ClientSettings.LogLocation },
+                    new NLog.Targets.FileTarget()
+                    {
+                        FileName = ClientSettings.LogLocation,
+                        ArchiveOldFileOnStartup = true,
+                        KeepFileOpen = true,
+                        MaxArchiveFiles = 10,
+                        EnableFileDelete = true,
+                        CreateDirs = true
+                    },
                     10000, NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction.Grow);
 
             config.AddTarget("logfile", fileTarget);
+#if DEBUG
             config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Debug, fileTarget));
+#else
+            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Info, fileTarget));
+#endif
 
             NLog.LogManager.Configuration = config;
 
@@ -45,6 +57,13 @@ namespace MPTanks_MK5
         {
             logger.Fatal(fatal);
             logger.Trace(GetStackTrace());
+        }
+
+        public static void Debug(string dbg)
+        {
+#if DEBUG //Don't remove, compiler optimization. If we're not in debug mode, we don't need this info
+            logger.Debug(dbg);
+#endif
         }
 
 

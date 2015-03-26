@@ -4,7 +4,14 @@
     "size": { "x": 5000, "y": 5000 },
     "repeatX": 10,
     "repeatY": 10,
-    "background": "[animation]0,fuzzyPixelsAnim,assets/maps/testmapbackground.png,true",
+    "background": [
+        {
+            "sprite": "",
+            "asset": "",
+            "x": 0,
+            "y": 0
+        }
+    ],
     "objects": [
         {
             "type": "house_small",

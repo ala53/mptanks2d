@@ -78,6 +78,7 @@
     <Compile Include="Core\Events\Types\GameObjects\Tanks\Killed.cs" />
     <Compile Include="Core\Events\Types\GameObjects\Powerups\Created.cs" />
     <Compile Include="Core\Events\Types\GameObjects\Projectiles\Created.cs" />
+    <Compile Include="Diagnostics.cs" />
     <Compile Include="GameCore.cs" />
     <Compile Include="Core\Events\EventEngine.cs" />
     <Compile Include="GameCore.GameObjects.cs" />

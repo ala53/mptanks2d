@@ -4,6 +4,7 @@ using Engine.Rendering;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,11 +42,15 @@ namespace Engine
         /// The Logger to use for logging important events
         /// </summary>
         public ILogger Logger { get; private set; }
+        public Diagnostics Diagnostics { get; private set; }
+        /// <summary>
+        /// The parent for logging the diagnostics under.
+        /// </summary>
+        public string DiagnosticsParent { get; set; }
         /// <summary>
         /// The game mode that dictates the rules for this instance.
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
-        private float _timescale = 1;
         public float Timescale { get; set; }
         #region Game Status
         /// <summary>
@@ -180,6 +185,8 @@ namespace Engine
             ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
+            Diagnostics = new Engine.Diagnostics();
+            DiagnosticsParent = "Game Update";
             Logger.Log("Game initialized");
         }
 
@@ -271,28 +278,40 @@ namespace Engine
         /// <param name="gameTime"></param>
         private void UpdateInGame(GameTime gameTime)
         {
+            var hasControlOfParent = !Diagnostics.IsMeasuring(DiagnosticsParent);
+            if (hasControlOfParent) Diagnostics.BeginMeasurement(DiagnosticsParent);
+
+            Diagnostics.BeginMeasurement("Begin UpdateInGame()", DiagnosticsParent);
+
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
-            //Process timers
-            TimerFactory.Update(gameTime);
-            //start particle engine task
-            var pTask = Task.Run(() => ParticleEngine.Update(gameTime));
-            //Process animations
-            AnimationEngine.Update(gameTime);
-            //Process individual objects
-            foreach (var obj in _gameObjects)
-                if (obj.Alive) //Make sure it is actually "in game"
-                    obj.Update(gameTime);
-            //Tick physics
-            World.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
-            //Let the gamemode do it's calculations
-            Gamemode.Update(gameTime);
-            //Wait for particle engine
-            pTask.Wait();
+
+            Diagnostics.MonitorCall(() => TimerFactory.Update(gameTime), "Timer Updates", DiagnosticsParent);
+
+            Diagnostics.MonitorCall(() => ParticleEngine.Update(gameTime), "Particle Updates", DiagnosticsParent);
+
+            Diagnostics.MonitorCall(() => AnimationEngine.Update(gameTime), "Animation Updates", DiagnosticsParent);
+
+            Diagnostics.MonitorCall(() =>
+            {
+                //Process individual objects
+                foreach (var obj in _gameObjects)
+                    if (obj.Alive) //Make sure it is actually "in game"
+                        obj.Update(gameTime);
+            }, "GameObject.Update() calls", DiagnosticsParent);
+
+            Diagnostics.MonitorCall(() => World.Step((float)gameTime.ElapsedGameTime.TotalSeconds),
+                "Physics step", DiagnosticsParent);
+
+            Diagnostics.MonitorCall(() => Gamemode.Update(gameTime), "Gamemode update", DiagnosticsParent);
+
             //And notify that we exited the update loop
             _inUpdateLoop = false;
-            //Remove objects that were supposed to be removed last frame (foreach loop issues)
-            ProcessGameObjectQueues();
+
+            Diagnostics.MonitorCall(ProcessGameObjectQueues, "Process add/remove queue", DiagnosticsParent);
+
+            Diagnostics.EndMeasurement("Begin UpdateInGame()", DiagnosticsParent);
+            if (hasControlOfParent) Diagnostics.EndMeasurement(DiagnosticsParent);
         }
     }
 }
