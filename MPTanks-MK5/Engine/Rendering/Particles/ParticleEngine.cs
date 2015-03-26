@@ -13,7 +13,7 @@ namespace Engine.Rendering.Particles
         private List<Emitter> _emitters = new List<Emitter>();
         public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
         private LinkedList<Particle> _particles;
-        public LinkedList<Particle> Particles { get { return _particles; } }
+        public IEnumerable<Particle> Particles { get { return _particles; } }
         public GameCore Game { get; private set; }
         private int _addPosition = 0; //We track add position for wraparound when we go over
         public int LivingParticlesCount { get; private set; }

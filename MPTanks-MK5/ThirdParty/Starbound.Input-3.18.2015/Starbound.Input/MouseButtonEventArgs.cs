@@ -14,7 +14,7 @@ namespace Starbound.Input
         /// <summary>
         /// Gets or sets the mouse button that the event occurred for.
         /// </summary>
-        public MouseButton Button { get; protected set; }
+        public MouseButton Button { get; set; }
 
         /// <summary>
         /// Creates a new MouseButtonEventArgs object given a time, the previous and current mouse states, and

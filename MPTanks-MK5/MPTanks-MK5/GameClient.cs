@@ -71,6 +71,9 @@ namespace MPTanks_MK5
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             //Initialize input driver
+            Components.Add(new Starbound.Input.KeyboardEvents(this));
+            Components.Add(new Starbound.Input.MouseEvents(this));
+            Components.Add(new Starbound.Input.GamePadEvents(PlayerIndex.One, this));
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
         }

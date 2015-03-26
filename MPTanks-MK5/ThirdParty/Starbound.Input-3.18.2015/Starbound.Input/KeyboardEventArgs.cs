@@ -15,12 +15,12 @@ namespace Starbound.Input
         /// <summary>
         /// The current state of they keyboard.
         /// </summary>
-        public KeyboardState State { get; protected set; }
+        public KeyboardState State { get; set; }
 
         /// <summary>
         /// The current set of modifiers that are in use.
         /// </summary>
-        public Modifiers Modifiers { get; protected set; }
+        public Modifiers Modifiers { get; set; }
 
         /// <summary>
         /// The key that is involved in the event.

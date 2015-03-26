@@ -95,25 +95,25 @@ namespace Starbound.Input
             MouseState current = Mouse.GetState();
             
             // Check button press events.
-            if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) { OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
-            if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) { OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
-            if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) { OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
-            if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) { OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
-            if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) { OnButtonPressed(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
+            if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) { OnButtonPressed(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
+            if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) { OnButtonPressed(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
+            if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) { OnButtonPressed(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
+            if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) { OnButtonPressed(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
+            if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) { OnButtonPressed(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
 
             // Check button click events.
-            if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) { OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
-            if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) { OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
-            if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) { OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
-            if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) { OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
-            if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) { OnButtonClicked(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
+            if (current.LeftButton == ButtonState.Pressed && previous.LeftButton == ButtonState.Released) { OnButtonClicked(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
+            if (current.MiddleButton == ButtonState.Pressed && previous.MiddleButton == ButtonState.Released) { OnButtonClicked(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
+            if (current.RightButton == ButtonState.Pressed && previous.RightButton == ButtonState.Released) { OnButtonClicked(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
+            if (current.XButton1 == ButtonState.Pressed && previous.XButton1 == ButtonState.Released) { OnButtonClicked(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
+            if (current.XButton2 == ButtonState.Pressed && previous.XButton2 == ButtonState.Released) { OnButtonClicked(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
 
             // Check button releases.
-            if (current.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed) { OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
-            if (current.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed) { OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
-            if (current.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed) { OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
-            if (current.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed) { OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
-            if (current.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed) { OnButtonReleased(this, new MouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
+            if (current.LeftButton == ButtonState.Released && previous.LeftButton == ButtonState.Pressed) { OnButtonReleased(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Left)); }
+            if (current.MiddleButton == ButtonState.Released && previous.MiddleButton == ButtonState.Pressed) { OnButtonReleased(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Middle)); }
+            if (current.RightButton == ButtonState.Released && previous.RightButton == ButtonState.Pressed) { OnButtonReleased(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.Right)); }
+            if (current.XButton1 == ButtonState.Released && previous.XButton1 == ButtonState.Pressed) { OnButtonReleased(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton1)); }
+            if (current.XButton2 == ButtonState.Released && previous.XButton2 == ButtonState.Pressed) { OnButtonReleased(this, GetMouseButtonEventArgs(gameTime.TotalGameTime, previous, current, MouseButton.XButton2)); }
 
             // Whether ANY button is pressed.
             bool buttonDown = current.LeftButton == ButtonState.Pressed ||
@@ -126,9 +126,9 @@ namespace Starbound.Input
             // otherwise it's a move.
             if (previous.X != current.X || previous.Y != current.Y)
             {
-                if (buttonDown) { OnMouseDragged(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current)); }
+                if (buttonDown) { OnMouseDragged(this, GetMouseEventArgs(gameTime.TotalGameTime, previous, current)); }
                 
-                if(MoveRaisedOnDrag || !buttonDown) { OnMouseMoved(this, new MouseEventArgs(gameTime.TotalGameTime, previous, current)); }
+                if(MoveRaisedOnDrag || !buttonDown) { OnMouseMoved(this, GetMouseEventArgs(gameTime.TotalGameTime, previous, current)); }
             }
 
             // Handle mouse wheel events.
@@ -136,12 +136,97 @@ namespace Starbound.Input
             {
                 int value = current.ScrollWheelValue;
                 int delta = current.ScrollWheelValue - previous.ScrollWheelValue;
-                OnMouseWheelMoved(this, new MouseWheelEventArgs(gameTime.TotalGameTime, previous, current, delta, value));
+                OnMouseWheelMoved(this, GetMouseWheelEventArgs(gameTime.TotalGameTime, previous, current, delta, value));
             }
 
             previous = current;
+            ReleaseAll();
         }
 
+        #region Pooling
+        private List<MouseEventArgs> _freeMSEventArgs = new List<MouseEventArgs>();
+        private List<MouseEventArgs> _allMSEventArgs = new List<MouseEventArgs>();
+        private MouseEventArgs GetMouseEventArgs(TimeSpan time, MouseState prev, MouseState curr)
+        {
+            MouseEventArgs _arg;
+            if (_freeMSEventArgs.Count == 0)
+            { //If it doesn't exist
+                _arg = new MouseEventArgs(time, prev, curr);
+                _allMSEventArgs.Add(_arg);
+                return _arg;
+            }
+
+            //If it exists
+            _arg = _freeMSEventArgs[_freeMSEventArgs.Count - 1];
+            _freeMSEventArgs.RemoveAt(_freeMSEventArgs.Count - 1);
+
+            _arg.Time = time;
+            _arg.Previous = prev;
+            _arg.Current = curr;
+
+            return _arg;
+        }
+        private List<MouseButtonEventArgs> _freeMBEventArgs = new List<MouseButtonEventArgs>();
+        private List<MouseButtonEventArgs> _allMBEventArgs = new List<MouseButtonEventArgs>();
+        private MouseButtonEventArgs GetMouseButtonEventArgs(TimeSpan time, MouseState prev, MouseState curr, MouseButton btn)
+        {
+            MouseButtonEventArgs _arg;
+            if (_freeMBEventArgs.Count == 0)
+            { //If it doesn't exist
+                _arg = new MouseButtonEventArgs(time, prev, curr, btn);
+                _allMBEventArgs.Add(_arg);
+                return _arg;
+            }
+
+            //If it exists
+            _arg = _freeMBEventArgs[_freeMBEventArgs.Count - 1];
+            _freeMBEventArgs.RemoveAt(_freeMBEventArgs.Count - 1);
+
+            _arg.Time = time;
+            _arg.Button = btn;
+            _arg.Previous = prev;
+            _arg.Current = curr;
+
+            return _arg;
+        }
+
+        private List<MouseWheelEventArgs> _freeMWEventArgs = new List<MouseWheelEventArgs>();
+        private List<MouseWheelEventArgs> _allMWEventArgs = new List<MouseWheelEventArgs>();
+        private MouseWheelEventArgs GetMouseWheelEventArgs(TimeSpan time, MouseState prev, MouseState curr, int delta, int value)
+        {
+            MouseWheelEventArgs _arg;
+            if (_freeMWEventArgs.Count == 0)
+            { //If it doesn't exist
+                _arg = new MouseWheelEventArgs(time, prev, curr, delta, value);
+                _allMWEventArgs.Add(_arg);
+                return _arg;
+            }
+
+            //If it exists
+            _arg = _freeMWEventArgs[_freeMWEventArgs.Count - 1];
+            _freeMWEventArgs.RemoveAt(_freeMWEventArgs.Count - 1);
+
+            _arg.Time = time;
+            _arg.Delta = delta;
+            _arg.Value = value;
+            _arg.Previous = prev;
+            _arg.Current = curr;
+
+            return _arg;
+        }
+
+        private void ReleaseAll()
+        {
+            _freeMSEventArgs.Clear();
+            _freeMSEventArgs.AddRange(_allMSEventArgs);
+
+            _freeMWEventArgs.Clear();
+            _freeMWEventArgs.AddRange(_allMWEventArgs);
+
+            _freeMBEventArgs.Clear();
+            _freeMBEventArgs.AddRange(_allMBEventArgs);
+        }
+        #endregion
         /// <summary>
         /// Raises the ButtonReleased event. This is done automatically by a correctly configured component,
         /// but this is exposed publicly to allow programmatic button release events to occur.

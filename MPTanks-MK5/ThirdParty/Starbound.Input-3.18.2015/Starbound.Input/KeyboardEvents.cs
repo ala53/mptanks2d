@@ -54,6 +54,8 @@ namespace Starbound.Input
         /// </summary>
         private bool isInitial;
 
+
+        private Array _cachedKeys = Enum.GetValues(typeof(Keys));
         /// <summary>
         /// Sets up the class with defaults.
         /// </summary>
@@ -125,12 +127,12 @@ namespace Starbound.Input
             if (current.IsKeyDown(Keys.LeftAlt) || current.IsKeyDown(Keys.RightAlt)) { modifiers |= Modifiers.Alt; }
             
             // Key pressed and initial key typed events for all keys.
-            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+            foreach (Keys key in _cachedKeys)
             {
                 if (current.IsKeyDown(key) && previous.IsKeyUp(key))
                 {
-                    OnKeyPressed(this, new KeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current));
-                    OnKeyTyped(this, new KeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current));
+                    OnKeyPressed(this, GetKeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current));
+                    OnKeyTyped(this, GetKeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current));
 
                     // Maintain the state of last key pressed.
                     lastKey = key;
@@ -140,9 +142,9 @@ namespace Starbound.Input
             }
 
             // Key released events for all keys.
-            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+            foreach (Keys key in _cachedKeys)
             {
-                if (current.IsKeyUp(key) && previous.IsKeyDown(key)) { OnKeyReleased(this, new KeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current)); }
+                if (current.IsKeyUp(key) && previous.IsKeyDown(key)) { OnKeyReleased(this, GetKeyboardEventArgs(gameTime.TotalGameTime, key, modifiers, current)); }
             }
 
             // Handle keys being held down and getting multiple KeyTyped events in sequence.
@@ -150,13 +152,46 @@ namespace Starbound.Input
 
             if (current.IsKeyDown(lastKey) && ((isInitial && elapsedTime > InitialDelay) || (!isInitial && elapsedTime > RepeatDelay)))
             {
-                OnKeyTyped(this, new KeyboardEventArgs(gameTime.TotalGameTime, lastKey, modifiers, current));
+                OnKeyTyped(this, GetKeyboardEventArgs(gameTime.TotalGameTime, lastKey, modifiers, current));
                 lastPress = gameTime.TotalGameTime;
                 isInitial = false;
             }
 
             previous = current;
+            ReleaseAll();
         }
+
+        #region Pooling
+        private List<KeyboardEventArgs> _freeKBEventArgs = new List<KeyboardEventArgs>();
+        private List<KeyboardEventArgs> _allKBEventArgs = new List<KeyboardEventArgs>();
+        private KeyboardEventArgs GetKeyboardEventArgs(TimeSpan time, Keys key, Modifiers mods, KeyboardState state)
+        {
+            KeyboardEventArgs _arg;
+            if (_freeKBEventArgs.Count == 0)
+            { //If it doesn't exist
+                _arg = new KeyboardEventArgs(time, key, mods, state);
+                _allKBEventArgs.Add(_arg);
+                return _arg;
+            }
+
+            //If it exists
+            _arg = _freeKBEventArgs[_freeKBEventArgs.Count - 1];
+            _freeKBEventArgs.RemoveAt(_freeKBEventArgs.Count - 1);
+
+            _arg.Time = time;
+            _arg.State = state;
+            _arg.Modifiers = mods;
+            _arg.Key = key;
+
+            return _arg;
+        }
+
+        private void ReleaseAll()
+        {
+            _freeKBEventArgs.Clear();
+            _freeKBEventArgs.AddRange(_allKBEventArgs);
+        }
+        #endregion
 
         /// <summary>
         /// Raises the KeyPressed event. This is done automatically by a correctly configured component,

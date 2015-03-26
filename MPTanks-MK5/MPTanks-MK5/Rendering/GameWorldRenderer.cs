@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace MPTanks_MK5.Rendering
 {
@@ -220,19 +221,19 @@ namespace MPTanks_MK5.Rendering
                 foreach (var anim in _game.AnimationEngine.Animations)
                 {
                     //Check if the animation will be done by next frame (approximately)
-                    if (_cache.AnimEnded(anim.AnimationName,
-                        anim.PositionInAnimationMs + (float)gameTime.ElapsedGameTime.TotalMilliseconds,
-                        anim.SpriteSheetName, anim.LoopCount))
-                        _endedAnimations.Add(anim);
-                    //cull if invisible
+                    if (_cache.AnimEnded(anim.AnimationName, //name
+                        anim.PositionInAnimationMs + (float)gameTime.ElapsedGameTime.TotalMilliseconds, //next frame time
+                        anim.SpriteSheetName, anim.LoopCount)) //sheet and number of loops
+                        _endedAnimations.Add(anim); //track it as ended
+                    //cull if invisible from rendering
                     if (!IsVisible(anim.Position - (anim.Size / 2), anim.Size, boundsRect))
                         continue;
 
                     //Calculate the model's position in the world
                     var animMatrix =
-                        Matrix.CreateTranslation(new Vector3(-Scale(anim.Size / 2), 0)) *
-                        Matrix.CreateRotationZ(anim.Rotation) *
-                        Matrix.CreateTranslation(
+                        Matrix.CreateTranslation(new Vector3(-Scale(anim.Size / 2), 0)) * //center it
+                        Matrix.CreateRotationZ(anim.Rotation) * //rotate around center
+                        Matrix.CreateTranslation( //and translate back into position
                             new Vector3(Scale((anim.Size / 2) + anim.Position), 0));
 
                     //It doesn't have configurable alpha so set the full opacity
@@ -243,20 +244,21 @@ namespace MPTanks_MK5.Rendering
                     sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                         SamplerState.PointWrap, DepthStencilState.Default,
                         RasterizerState.CullNone, _effect);
-                    //Load the sprite sheet
+                    //Load the sprite sheet and get it from the cache
                     var asset = _cache.GetAnimation(anim.AnimationName, anim.PositionInAnimationMs, anim.SpriteSheetName);
-                    //Compute the draw rectangle
+                    //Compute the draw rectangle (size of the object, centered in world space)
                     var drawRect = new Rectangle(
                         Scale(-anim.Size.X / 2),
                         Scale(-anim.Size.Y / 2),
                         Scale(anim.Size.X),
                         Scale(anim.Size.X)
                         );
-                    //And draw
+                    //And draw it with the correct texture space
                     sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, Color.White);
-                    sb.End();
+                    sb.End(); //End the spritebatch call
                 }
 
+            //Take all of the ended animations and track them
             foreach (var anim in _endedAnimations)
             {
                 //Remove all the animations which are ended by now
@@ -271,11 +273,19 @@ namespace MPTanks_MK5.Rendering
             new List<Engine.Rendering.Particles.Particle>();
         private void ComputeParticleOrdering()
         {
-            if (_game.ParticleEngine.Particles == null)
+            //Here, we compute the ordering of particles
+            // so we split them into two lists. 
+            // Those that are supposed to be drawn below the world
+            // will go into the first list and the rest in the second list.
+
+            if (_game.ParticleEngine.Particles == null) //sanity check
                 return;
 
-            _belowParticles.Clear();
-            _aboveParticles.Clear();
+            _belowParticles.Clear(); //clear existing
+            _aboveParticles.Clear(); //clear existing
+
+            //And iterate over all of the particles to find which ones are above
+            //the world and which ones are below the world
             foreach (var particle in _game.ParticleEngine.Particles)
                 if (particle.RenderBelowObjects)
                     _belowParticles.Add(particle);
@@ -286,57 +296,76 @@ namespace MPTanks_MK5.Rendering
         private void DrawParticles(IEnumerable<Engine.Rendering.Particles.Particle> _particles,
             RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
+            //Tracker for how many particles we can render
+            //This is decremented for each particle that is drawn *on screen*
+            //but not for those that are outside of the view radius
             int remainingAllowedParticles = ClientSettings.MaxParticlesToRender;
+            //upload the world matrix
             _effect.World = Matrix.Identity;
+            //and set the alpha back to max
             _effect.Alpha = 1;
 
+            //Begin a draw call which handles sorting for us - NOTE: THIS DOES MEMORY ALLOCATIONS
+            //in the form of SpriteBatchItems.
             sb.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointWrap,
                 DepthStencilState.Default, RasterizerState.CullNone, _effect);
 
+            //Iterate over the particle lists
             foreach (var particle in _particles)
             {
-                if (remainingAllowedParticles == 0) break; //Stop drawing if too many particles
+                //Stop drawing if we've hit the on screen particle limit
+                if (remainingAllowedParticles == 0) break;
                 //And ignore off screen particles
                 if (!IsVisible(particle.Position, particle.Size, boundsRect)) continue;
-                var pos = Scale(particle.Position);
-                var size = Scale(particle.Size);
 
-                //Get the cached asset
+                //Get the cached asset (or load it). See asset management below.
                 var asset = _cache.GetArtAsset(particle.SheetName, particle.AssetName, gameTime);
                 // A note to future me:
                 // I'm aware that the rotation is incorrectly drawn, but to do it correctly requires
                 // generating a matrix on the CPU which will be quite processor intensive. For now,
                 // this looks good enough and is a bit faster.
-                sb.Draw(asset.SpriteSheet.Texture, new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y),
+                sb.Draw(asset.SpriteSheet.Texture, new Rectangle(
+                    Scale(particle.Position.X), Scale(particle.Position.Y),
+                    Scale(particle.Size.X), Scale(particle.Size.Y)
+                    ),
                     asset.Bounds, particle.ColorMask, particle.Rotation, Vector2.Zero, SpriteEffects.None, 0);
 
-                remainingAllowedParticles--; //Mark that another particle was drawn
+                remainingAllowedParticles--; //Mark that another particle was drawn / note how many particles
+                //we are still able to draw
             }
 
+            //And do the deferred draw
             sb.End();
         }
 
         #region Scaling helpers
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Scale(float amount)
         {
             return (int)(amount * Settings.RenderScale);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float ScaleF(float amount)
         {
             return amount * Settings.RenderScale;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Vector2 Scale(Vector2 amount)
         {
             return amount * Settings.RenderScale;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int ScaleForRendering(float amount)
         {
+            //So, farseer keeps a small skin around objects (for whatever reason, only god knows)
+            //so we have to artificially add the 0.0001 (or whatever) blocks around the object
             return (int)
                 ((amount + (2 * Settings.PhysicsCompensationForRendering))
                 * Settings.RenderScale);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsVisible(Vector2 pos, Vector2 size, RectangleF viewRect)
         {
             return pos.X < viewRect.Right &&

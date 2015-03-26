@@ -16,13 +16,13 @@ namespace Starbound.Input
         /// Gets or sets the previous mouse state for the given event. This is what the mouse looked like
         /// in the previous Update.
         /// </summary>
-        public MouseState Previous { get; protected set; }
+        public MouseState Previous { get; set; }
 
         /// <summary>
         /// Gets or sets the current mouse state for the given event. This is what the mouse looked like
         /// at the time the event occurred.
         /// </summary>
-        public MouseState Current { get; protected set; }
+        public MouseState Current { get; set; }
 
         /// <summary>
         /// Creates a new MouseEventArgs object, based on a time for the event, and the previous and

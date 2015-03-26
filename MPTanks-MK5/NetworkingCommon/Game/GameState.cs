@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetworkingCommon.Game
 {
-    class GameState
+    public class GameState
     {
     }
 }
