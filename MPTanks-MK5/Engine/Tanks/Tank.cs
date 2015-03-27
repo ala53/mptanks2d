@@ -97,10 +97,10 @@ namespace MPTanks.Engine.Tanks
         {
             if (!_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Tank type does not exist.");
 
-           var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], playerId, game, authorized);
-           if (state != null) inst.ReceiveStateData(state);
+            var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], playerId, game, authorized);
+            if (state != null) inst.ReceiveStateData(state);
 
-           return inst;
+            return inst;
         }
 
         public static T ReflectiveInitialize<T>(string tankName, Guid playerId, GameCore game, bool authorized, byte[] state = null)
@@ -109,13 +109,22 @@ namespace MPTanks.Engine.Tanks
             return (T)ReflectiveInitialize(tankName, playerId, game, authorized, state);
         }
 
-        protected static void RegisterType(string tankName, Type tankType)
+        protected static void RegisterType<T>() where T : Tank
         {
-            if (!tankType.IsSubclassOf(typeof(Tank))) throw new Exception("Not a tank!");
+            //get the name
+            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
+            System.Reflection.BindingFlags.Static |
+            System.Reflection.BindingFlags.GetProperty |
+            System.Reflection.BindingFlags.Public)
+            .GetMethod.Invoke(null, null);
+            if (_tankTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
-            if (_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Already registered!");
+            _tankTypes.Add(name, typeof(T));
+        }
 
-            _tankTypes.Add(tankName.ToLower(), tankType);
+        public static ICollection<string> GetAllTankTypes()
+        {
+            return _tankTypes.Keys;
         }
         #endregion
     }

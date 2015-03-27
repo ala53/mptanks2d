@@ -9,6 +9,8 @@ namespace MPTanks.Engine.Maps.MapObjects.Static.Animated
 {
     public class SatelliteDishLarge : MapObject
     {
+        public static string ReflectionTypeName { get { return "SatelliteDishLarge"; } }
+
         public SatelliteDishLarge(GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {
@@ -27,7 +29,7 @@ namespace MPTanks.Engine.Maps.MapObjects.Static.Animated
             {
                 Size = new Vector2(6, 3.5f),
                 RotationOrigin = new Vector2(3, 1f),
-                Offset = new Vector2 (-1.5f, 0.75f),
+                Offset = new Vector2(-1.5f, 0.75f),
                 AssetName = Assets.MapObjects.SatelliteDish.DishAndRevolver.SpriteName,
                 SpriteSheetName = Assets.MapObjects.SatelliteDish.DishAndRevolver.SheetName,
                 DrawLayer = 5 //Dish should always be on top of tanks

@@ -54,6 +54,10 @@ namespace MPTanks.Clients.GameClient
             //graphics.SynchronizeWithVerticalRetrace = false;
             // graphics.ApplyChanges();
             // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
+
+            var err = "";
+            var asms = AppDomain.CurrentDomain.GetAssemblies();
+            Modding.Compiliation.Verification.WhitelistVerify.IsAssemblySafe(asms[12], out err);
         }
 
         /// <summary>

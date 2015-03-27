@@ -49,5 +49,9 @@ namespace MPTanks.Clients.GameClient
             }
         }
     }
+
+    #region Assembly resolution
+
+    #endregion
 #endif
 }

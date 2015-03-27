@@ -9,8 +9,33 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine
 {
+    /// <summary>
+    /// NOTE: Must have a static property string named ReflectionTypeName
+    /// </summary>
     public abstract class GameObject
     {
+        #region Reflection helper
+        //We cache the info for performance. Multiple calls only create one instance
+        private Func<string> _cachedReflectionInfo; 
+        public string ReflectionName
+        {
+            get
+            {
+                //Because it's a requirement to have ReflectionTypeName, we do a reflection query on ourselves
+                //toget the static property - we check and cache the delegate
+                if (_cachedReflectionInfo == null) 
+                    _cachedReflectionInfo = (Func<string>)GetType().GetProperty("ReflectionTypeName", 
+                    System.Reflection.BindingFlags.Static |
+                    System.Reflection.BindingFlags.GetProperty | 
+                    System.Reflection.BindingFlags.Public)
+                    .GetMethod.CreateDelegate(typeof(Func<string>));
+
+                //call the delegate
+                return _cachedReflectionInfo();
+            }
+        }
+
+        #endregion
         public Color ColorMask { get; set; }
         public int ObjectId { get; private set; }
         public FarseerPhysics.Dynamics.Body Body { get; private set; }

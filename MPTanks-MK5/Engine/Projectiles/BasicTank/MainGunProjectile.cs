@@ -22,14 +22,25 @@ namespace MPTanks.Engine.Projectiles.BasicTank
         {
             get { return 60; }
         }
+        public static string ReflectionTypeName
+        {
+            get
+            {
+                return "BasicTankMPMainProjectile";
+            }
+        }
+
+        static MainGunProjectile()
+        {
+            Projectile.RegisterType<MainGunProjectile>();
+        }
 
         private Rendering.Particles.ParticleEngine.Emitter _trailEmitter;
         private Core.Timing.Timer _timeoutTimer;
-        public MainGunProjectile(Tanks.Tank owner, GameCore game, Color colorMask, bool authorized = false,
+        public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
             : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
-            ColorMask = colorMask;
             Size = new Vector2(0.25f);
         }
 

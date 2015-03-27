@@ -8,8 +8,18 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Tanks
 {
+    [MPTanks.Modding.Tank(Category = MPTanks.Modding.TankAttribute.TankCategory.Basic,
+        DisplayName = "Basic Tank", Description = "Basic Tank", ReflectionName = "BasicTankMP",
+        RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
     {
+        public static string ReflectionTypeName
+        {
+            get
+            {
+                return "BasicTankMP";
+            }
+        }
         protected override float RotationSpeed
         {
             get { return 0.05f; }
@@ -24,6 +34,13 @@ namespace MPTanks.Engine.Tanks
         {
             Health = 150;
             Size = new Vector2(3, 5);
+        }
+
+        //static register
+        static BasicTank()
+        {
+            //register my type
+            Tanks.Tank.RegisterType<BasicTank>();
         }
 
         protected override void AddComponents()
@@ -96,7 +113,7 @@ namespace MPTanks.Engine.Tanks
                 var rotation = InputState.LookDirection;
                 //Spawn a projectile
                 var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                    this, Game, ColorMask, false,
+                    this, Game, false,
                     TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
                 //Fire it in the barrel direction
                 const float velocity = 60f;
@@ -121,7 +138,7 @@ namespace MPTanks.Engine.Tanks
                 var rotation = InputState.LookDirection;
                 //Spawn a projectile
                 var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                    this, Game, ColorMask, false,
+                    this, Game, false,
                     TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
                 //Fire it in the barrel direction
                 const float velocity = 7f;

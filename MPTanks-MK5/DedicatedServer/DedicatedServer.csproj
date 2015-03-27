@@ -48,6 +48,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NetworkingCommon\NetworkingCommon.csproj">
+      <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
+      <Name>NetworkingCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
       <Name>Server</Name>

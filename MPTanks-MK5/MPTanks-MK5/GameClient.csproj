@@ -146,9 +146,25 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <Project>{2f77b6ce-2d2d-4e67-a7bd-38e896a52931}</Project>
+      <Name>Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkingCommon\NetworkingCommon.csproj">
+      <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
+      <Name>NetworkingCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
+      <Name>Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj">
       <Project>{44c828d4-02d6-413c-bfed-3bf72aa9322e}</Project>

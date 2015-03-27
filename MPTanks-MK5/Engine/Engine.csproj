@@ -108,7 +108,6 @@
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
-    <Compile Include="ScriptableGameObject.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
     <Compile Include="Tanks\InputState.cs" />
@@ -121,6 +120,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Maps\MapObjects\Dynamic\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
