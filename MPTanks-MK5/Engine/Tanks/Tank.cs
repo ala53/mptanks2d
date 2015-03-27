@@ -119,7 +119,7 @@ namespace MPTanks.Engine.Tanks
             .GetMethod.Invoke(null, null);
             if (_tankTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
-            _tankTypes.Add(name, typeof(T));
+            _tankTypes.Add(name.ToLower(), typeof(T));
         }
 
         public static ICollection<string> GetAllTankTypes()

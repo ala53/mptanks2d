@@ -19,10 +19,6 @@ namespace MPTanks.Modding
         }
 
         /// <summary>
-        /// The name for use in reflective initialization
-        /// </summary>
-        public string ReflectionName {get; set;}
-        /// <summary>
         /// The display name of the tank: E.g. "Basic Tank"
         /// </summary>
         public string DisplayName { get; set; }
@@ -64,17 +60,66 @@ namespace MPTanks.Modding
         public float MinWidthBlocks { get; set; }
         public float MinHeightBlocks { get; set; }
         public string Name { get; set; }
-        public string ReflectionName { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class ProjectileAttribute : Attribute
     {
         /// <summary>
-        /// The name of the tank type (it's reflection name) this projectile type applies to.
+        /// The name of the tank type that owns this projectile type
         /// </summary>
-        public string TankReflectionName { get; set; }
-        public string ReflectionName { get; set; }
+        public string OwnerReflectionName { get; set; }
         public string Name { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+    public sealed class GamemodeAttribute : Attribute
+    {
+        /// <summary>
+        /// The minimum number of players required to start a game.
+        /// </summary>
+        public int MinPlayersCount { get; set; }
+        /// <summary>
+        /// Whether to whitelist or blacklist allowed tank types.
+        /// </summary>
+        public bool WhitelistPlayerTankTypes { get; set; }
+        /// <summary>
+        /// Whether to allow supertanks
+        /// </summary>
+        public bool AllowSuperTanks { get; set; }
+        /// <summary>
+        /// If whitelisted: the allowed player tank types (reflection names)
+        /// </summary>
+        public IEnumerable<string> AllowedPlayerTankTypes { get; set; }
+        /// <summary>
+        /// If blacklisted: the disallowed player tank types (reflection names)
+        /// </summary>
+        public IEnumerable<string> DisallowedPlayerTankTypes { get; set; }
+        /// <summary>
+        /// The name of the gamemode
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// The description of the gamemode
+        /// </summary>
+        public string Description { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public sealed class ModuleDeclarationAttribute : Attribute
+    {
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public string Author { get; private set; }
+        public string Version { get; private set; }
+
+        // This is a positional argument
+        public ModuleDeclarationAttribute(string name, string description, string author, string version)
+        {
+            Name = name;
+            Description = description;
+            Author = author;
+            Version = version;
+        }
     }
 }

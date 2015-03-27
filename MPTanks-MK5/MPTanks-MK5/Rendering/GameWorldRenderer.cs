@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
-    class GameWorldRenderer : Renderer
+    class GameWorldRenderer : Renderer, IDisposable
     {
         private MPTanks.Engine.GameCore _game;
 
@@ -337,6 +337,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             //And do the deferred draw
             sb.End();
         }
+        
 
         #region Scaling helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -375,10 +376,15 @@ namespace MPTanks.Clients.GameClient.Rendering
         }
 
         #endregion
-        public override void Destroy()
+
+        void IDisposable.Dispose()
         {
             _effect.Dispose();
             _cache.Dispose();
+        }
+        public override void Destroy()
+        {
+            ((IDisposable)this).Dispose();
         }
     }
 }

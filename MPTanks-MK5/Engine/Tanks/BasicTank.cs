@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MPTanks.Engine.Tanks
 {
     [MPTanks.Modding.Tank(Category = MPTanks.Modding.TankAttribute.TankCategory.Basic,
-        DisplayName = "Basic Tank", Description = "Basic Tank", ReflectionName = "BasicTankMP",
+        DisplayName = "Basic Tank", Description = "Basic Tank",
         RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
     {
@@ -112,9 +112,10 @@ namespace MPTanks.Engine.Tanks
             {
                 var rotation = InputState.LookDirection;
                 //Spawn a projectile
-                var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                    this, Game, false,
-                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
+                var projectile = Projectiles.Projectile.ReflectiveInitialize<Projectiles.BasicTank.MainGunProjectile>(
+                    Projectiles.BasicTank.MainGunProjectile.ReflectionTypeName, this, Game,
+                    false, TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
+
                 //Fire it in the barrel direction
                 const float velocity = 60f;
                 var x = velocity * (float)Math.Sin(rotation);

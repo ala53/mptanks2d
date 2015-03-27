@@ -27,7 +27,7 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         public static MapObject ReflectiveInitialize(string objName, GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0, byte[] state = null)
         {
-            if (!_objTypes.ContainsKey(objName.ToLower())) throw new Exception("Tank type does not exist.");
+            if (!_objTypes.ContainsKey(objName.ToLower())) throw new Exception("Map object type does not exist.");
 
             var inst = (MapObject)Activator.CreateInstance(_objTypes[objName.ToLower()], game, authorized, position, rotation);
             if (state != null) inst.ReceiveStateData(state);
@@ -51,7 +51,7 @@ namespace MPTanks.Engine.Maps.MapObjects
             .GetMethod.Invoke(null, null);
             if (_objTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
-            _objTypes.Add(name, typeof(T));
+            _objTypes.Add(name.ToLower(), typeof(T));
         }
 
         public static ICollection<string> GetAllMapObjectTypes()

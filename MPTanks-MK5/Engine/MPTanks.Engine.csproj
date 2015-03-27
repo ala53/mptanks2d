@@ -61,7 +61,11 @@
     <Compile Include="assets\Assets.cs" />
     <Compile Include="assets\MapObjects.cs" />
     <Compile Include="assets\Maps.cs" />
+    <Content Include="assets\mods\ExampleModDeathMatch.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Compile Include="ConstructorHelper.cs" />
+    <Compile Include="Core\Events\Types\Gamemodes\StateChanged.cs" />
     <Compile Include="Core\Events\Types\GameObjects\StateChanged.cs" />
     <Compile Include="Core\Events\Types\Game\Initialized.cs" />
     <Compile Include="Core\RectangleF.cs" />
@@ -95,6 +99,7 @@
     <Compile Include="Maps\MapObjects\Building.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
     <Compile Include="Maps\MapObjects\Static\Animated\SatelliteDishLarge.cs" />
+    <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Powerups\HealthPowerup.cs" />
     <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Powerups\PowerupManager.cs" />

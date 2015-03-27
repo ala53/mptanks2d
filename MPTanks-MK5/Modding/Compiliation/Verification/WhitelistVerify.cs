@@ -22,20 +22,22 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.Globalization",
         "Newtonsoft.Json",
         "Microsoft.Xna.Framework",
-        "Lidgren.Network",
         "Microsoft.VisualBasic",
-        "MPTanks.Modding",
+        "MPTanks.Modding.Mods",
         "Starbound.Input",
-        "MPTanks.Clients"
+        "MPTanks.Clients",
+        "System.Dynamic"
         });
 
         private static List<string> WhitelistedTypes = new List<string>(new[] { 
+        //Primitive types
         "System.Nullable",
         "System.Object",
         "System.Void",
         "System.IDisposable",
         "System.String",
         "System.Math",
+        "System.Type",
         "System.Enum",
         "System.ValueType",
         "System.Guid",
@@ -55,11 +57,15 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.DateTime",
         "System.TimeSpan",
         "System.Array",
+        //Debug helpers
         "System.Runtime.CompilerServices.RuntimeHelpers",
         "System.Diagnostics.Debugger",
+        //Streams
         "System.IO.Stream",
         "System.IO.TextReader",
         "System.IO.TextWriter",
+        "System.IO.MemoryStream",
+        //Exceptions
         "System.NullReferenceException",
         "System.ArgumentException",
         "System.ArgumentNullException",
@@ -70,16 +76,26 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.DivideByZeroException",
         "System.InvalidCastException",
         "System.IO.FileNotFoundException",
+        //Path concentation tools
         "System.IO.Path",
+        //Event args
         "System.EventArgs",
+        //Helpers
         "System.Random",
         "System.Convert",
         "System.Nullable",
         "System.StringComparer",
         "System.IComparable",
         "System.Diagnostics.Stopwatch",
+        //GC
         "System.GC",
-        "System.GCSettings"
+        "System.GCSettings",
+        //Lidgren
+        "Lidgren.Network.NetBuffer",
+        "Lidgren.Network.NetException",
+        "Lidgren.Network.NetIncomingMessage",
+        "Lidgren.Network.NetConnection",
+
         });
 
         /// <summary>
@@ -98,17 +114,42 @@ namespace MPTanks.Modding.Compiliation.Verification
             bool hasBadTypes = false;
             foreach (var module in definition.Modules)
             {
+                if (IsUnsafe(module))
+                {
+                    error = "\n\n\nModule " + module.Name + ": Unsafe code is disallowed.\n";
+                    hasBadTypes = false;
+                }
+
                 int amount = 0;
                 foreach (var type in module.Types)
                 {
                     amount++;
+                    //Ignore unnecessary
+                    if (type == null || type.FullName == "<Module>") continue;
+
+                    if (!IsTypeWhitelisted(type.FullName))
+                    {
+                        error += "\n\n\nType " + type.FullName + " is not allowed. Are you in the MPTanks.Modding.Mods namespace?";
+                        hasBadTypes = true;
+                    }
+
+                    var inheritanceErr = "";
+                    if (!CheckTypeInheritanceTree(type, out inheritanceErr))
+                    {
+                        error += "\n\n\nType inheritance tree for " + type.FullName + ": \n" +
+                            "========================================================\n\n" + inheritanceErr;
+                        hasBadTypes = true;
+                    }
+
+
                     foreach (var method in type.Methods)
                     {
                         var err = "";
                         if (!CheckMethod(method, out err))
                         {
                             hasBadTypes = true; //Has error
-                            error += "\n\n\nMethod: " + method.FullName + " has bad types\n" + err;
+                            error += "\n\n\nMethod: " + method.FullName + " has bad types\n" +
+                                "----------------------------------------------------------" + err;
                         }
                     }
 
@@ -118,13 +159,15 @@ namespace MPTanks.Modding.Compiliation.Verification
                         if (property.GetMethod != null && !CheckMethod(property.GetMethod, out err))
                         {
                             hasBadTypes = true; //Has error
-                            error += "\n\n\nProperty: " + property.GetMethod.FullName + "'s getter has bad types\n" + err;
+                            error += "\n\n\nProperty: " + property.GetMethod.FullName + "'s getter has bad types\n" +
+                                "----------------------------------------------------------" + err;
                         }
 
                         if (property.SetMethod != null && !CheckMethod(property.SetMethod, out err))
                         {
                             hasBadTypes = true; //Has error
-                            error += "\n\n\nProperty: " + property.SetMethod.FullName + "'s setter has bad types\n" + err;
+                            error += "\n\n\nProperty: " + property.SetMethod.FullName + "'s setter has bad types\n" +
+                                "----------------------------------------------------------" + err;
                         }
                     }
 
@@ -141,15 +184,50 @@ namespace MPTanks.Modding.Compiliation.Verification
                 }
             }
 
-            
-            return hasBadTypes;
+
+            return !hasBadTypes;
+        }
+
+        private static bool CheckTypeInheritanceTree(Mono.Cecil.TypeDefinition def, out string error)
+        {
+            error = "";
+           var baseType = def.BaseType;
+           bool safe = true;
+           while (baseType != null)
+           {
+               if (!IsTypeWhitelisted(baseType.FullName))
+               {
+                   error += "\n\n" + baseType.FullName + " is not allowed.";
+               }
+               baseType = baseType.Resolve().BaseType;
+           }
+
+           return safe;
         }
 
         private static bool CheckMethod(Mono.Cecil.MethodDefinition def, out string error)
         {
             error = "";
-            if (!def.HasBody) return true;
             bool safe = true;
+            if (!def.HasBody) return true;
+            if (def.IsUnmanagedExport || def.IsUnmanaged)
+            {
+                error = "\n\nUnmanaged exports are disallowed.";
+                safe = false;
+            }
+
+            if (def.IsPInvokeImpl)
+            {
+                error = "\n\nPInvoke is disallowed.";
+                safe = false;
+            }
+
+            if (def.IsNative)
+            {
+                error = "\n\nNative methods are disallowed.";
+                safe = false;
+            }
+
 
             if (!IsTypeWhitelisted(def.ReturnType.FullName))
             {
@@ -194,9 +272,17 @@ namespace MPTanks.Modding.Compiliation.Verification
 
             }
 
-            if (!safe) 
+            if (!safe)
                 return false;
             return safe;
+        }
+
+        private static bool IsUnsafe(ModuleDefinition module)
+        {
+            foreach (CustomAttribute cattr in module.CustomAttributes)
+                if (cattr.Constructor.DeclaringType.Name == "UnverifiableCodeAttribute")
+                    return true;
+            return false;
         }
 
         private static bool IsTypeWhitelisted(string typeName)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Gamemodes
 {
+    [Modding.Gamemode(AllowSuperTanks = true, Name = "Team deathmatch", Description = "1v1 to 20v20 TDM gamemode")]
     public class TeamDeathMatchGamemode : Gamemode
     {
         private bool _gameEnded = false;
@@ -34,6 +35,20 @@ namespace MPTanks.Engine.Gamemodes
         {
             get { return 2; }
         }
+
+        public static string ReflectionTypeName
+        {
+            get
+            {
+                return "TeamDeathMatchGamemode";
+            }
+        }
+
+        static TeamDeathMatchGamemode()
+        {
+            Gamemode.RegisterType<TeamDeathMatchGamemode>();
+        }
+
         /// <summary>
         /// The ratio of super tanks to normal tanks in this specific instance
         /// </summary>
@@ -109,9 +124,10 @@ namespace MPTanks.Engine.Gamemodes
             }
         }
 
-        public override byte[] Networkify()
+        public override void ReceiveStateData(byte[] data)
         {
-            return null; //TODO
+            base.ReceiveStateData(data);
         }
+
     }
 }

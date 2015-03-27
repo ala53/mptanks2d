@@ -15,12 +15,33 @@ namespace MPTanks.Engine.Gamemodes
         public abstract Team[] Teams { get; }
         public abstract int MinPlayerCount { get; }
 
+        //We cache the info for performance. Multiple calls only create one instance
+        private Func<string> _cachedReflectionInfo;
+        public string ReflectionName
+        {
+            get
+            {
+                //Because it's a requirement to have ReflectionTypeName, we do a reflection query on ourselves
+                //to get the static property and then we cache the delegate before returning the data for the 
+                //reflectiontypename property
+                if (_cachedReflectionInfo == null)
+                    _cachedReflectionInfo = (Func<string>)GetType().GetProperty("ReflectionTypeName",
+                    System.Reflection.BindingFlags.Static |
+                    System.Reflection.BindingFlags.GetProperty |
+                    System.Reflection.BindingFlags.Public)
+                    .GetMethod.CreateDelegate(typeof(Func<string>));
+
+                //call the delegate
+                return _cachedReflectionInfo();
+            }
+        }
+
         /// <summary>
         /// An event that is fired when the gamemode updates and changes state
         /// </summary>
         public event EventHandler<GamemodeChangedArgs> OnGamemodeStateChanged;
 
-        public class GamemodeChangedArgs
+        public class GamemodeChangedArgs : EventArgs
         {
             public byte[] NewStateData;
         }
@@ -99,14 +120,57 @@ namespace MPTanks.Engine.Gamemodes
             return int.MaxValue;
         }
 
-        public virtual void ReceiveStateChange(byte[] data)
+        public virtual void ReceiveStateData(byte[] data)
         {
         }
 
-        /// <summary>
-        /// Converts the gamemode's state to a network representation
-        /// </summary>
-        /// <returns></returns>
-        public abstract byte[] Networkify();
+        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> StateChanged;
+
+        protected void RaiseStateChanged(byte[] data)
+        {
+            if (StateChanged != null)
+                StateChanged(this, new Core.Events.Types.Gamemodes.StateChanged() { StateData = data });
+        }
+
+
+        #region Static initialization
+        private static Dictionary<string, Type> _gamemodeTypes =
+            new Dictionary<string, Type>();
+
+        public static Gamemode ReflectiveInitialize(string gamemodeName, GameCore game = null, byte[] state = null)
+        {
+            if (!_gamemodeTypes.ContainsKey(gamemodeName.ToLower())) throw new Exception("Gamemode type does not exist.");
+
+            var inst = (Gamemode)Activator.CreateInstance(_gamemodeTypes[gamemodeName.ToLower()]);
+            if (game != null) inst.SetGame(game);
+            if (state != null) inst.ReceiveStateData(state);
+
+            return inst;
+        }
+
+        public static T ReflectiveInitialize<T>(string tankName, GameCore game = null, byte[] state = null)
+        where T : Gamemode
+        {
+            return (T)ReflectiveInitialize(tankName, game, state);
+        }
+
+        protected static void RegisterType<T>() where T : Gamemode
+        {
+            //get the name
+            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
+            System.Reflection.BindingFlags.Static |
+            System.Reflection.BindingFlags.GetProperty |
+            System.Reflection.BindingFlags.Public)
+            .GetMethod.Invoke(null, null);
+            if (_gamemodeTypes.ContainsKey(name)) throw new Exception("Already registered!");
+
+            _gamemodeTypes.Add(name.ToLower(), typeof(T));
+        }
+
+        public static ICollection<string> GetAllGamemodeTypes()
+        {
+            return _gamemodeTypes.Keys;
+        }
+        #endregion
     }
 }

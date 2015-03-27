@@ -38,7 +38,7 @@ namespace MPTanks.Engine.Projectiles
             if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Tank type does not exist.");
 
             var inst = (Projectile)Activator.CreateInstance(_prjTypes[prjName.ToLower()], owner, game, authorized,
-                position);
+                position, rotation);
             if (state != null) inst.ReceiveStateData(state);
 
             return inst;
@@ -73,7 +73,7 @@ namespace MPTanks.Engine.Projectiles
             .GetMethod.Invoke(null, null);
             if (_prjTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
-            _prjTypes.Add(name, typeof(T));
+            _prjTypes.Add(name.ToLower(), typeof(T));
         }
 
         public static ICollection<string> GetAllProjectileTypes()

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
-    class FXAA
+    class FXAA : IDisposable
     {
         private Game _game;
         private Effect _fxaa;
@@ -46,11 +46,16 @@ namespace MPTanks.Clients.GameClient.Rendering
             _game.GraphicsDevice.SetRenderTarget(null);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _fxaa.Dispose();
             _target.Dispose();
             _sb.Dispose();
+        }
+
+        public void Destroy()
+        {
+            ((IDisposable)this).Dispose();
         }
     }
 }

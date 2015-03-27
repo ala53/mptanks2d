@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
-    class LoadingScreen
+    class LoadingScreen : IDisposable
     {
         public float Value { get; set; }
         public float Maximum { get; set; }
@@ -116,9 +116,15 @@ namespace MPTanks.Clients.GameClient.Rendering
         {
             return new Vector2(_game.GraphicsDevice.Viewport.Width / 2, _game.GraphicsDevice.Viewport.Height / 2);
         }
-        public void Destroy()
+
+        void IDisposable.Dispose()
         {
             _helperTexture.Dispose();
+        }
+
+        public void Destroy()
+        {
+            ((IDisposable)this).Dispose();
         }
     }
 }

@@ -55,9 +55,11 @@ namespace MPTanks.Clients.GameClient
             // graphics.ApplyChanges();
             // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
 
-            var err = "";
-            var asms = AppDomain.CurrentDomain.GetAssemblies();
-            Modding.Compiliation.Verification.WhitelistVerify.IsAssemblySafe(asms[12], out err);
+            var errors = "";
+
+
+            var result = Engine.Mods.ModLoader.LoadModFromSource(
+System.IO.File.ReadAllText(@"C:\Users\Alastair\Documents\GitHub\mptanks2d\MPTanks-MK5\MPTanks-MK5\bin\Windows\Debug\assets\mods\ExampleModDeathMatch.cs"), true, out errors);
         }
 
         /// <summary>
@@ -105,7 +107,7 @@ namespace MPTanks.Clients.GameClient
 
         private void SetupGame()
         {
-            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), new MPTanks.Engine.Gamemodes.TeamDeathMatchGamemode(), "");
+            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("OfficialModDeathMatchGamemode"), "");
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
 
@@ -120,7 +122,7 @@ namespace MPTanks.Clients.GameClient
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
             game.AddPlayer(player2Id);
-            for (var i = 0; i < 0; i++)
+            for (var i = 0; i < 20; i++)
                 game.AddPlayer(Guid.NewGuid());
 
             //Set up rendering

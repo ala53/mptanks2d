@@ -16,13 +16,13 @@ namespace MPTanks.Engine.Gamemodes
         /// The team to flag as a tie or when no one wins.
         /// </summary>
         public static Team Indeterminate { get { return _tied; } }
-        public Player[] Players { get; internal set; }
-        public string TeamName { get; internal set; }
-        public Color TeamColor { get; internal set; }
+        public Player[] Players { get; set; }
+        public string TeamName { get; set; }
+        public Color TeamColor { get; set; }
         /// <summary>
         /// The team's goal, for an explanation to the players.
         /// </summary>
-        public string Objective { get; internal set; }
+        public string Objective { get; set; }
 
         public struct Player
         {

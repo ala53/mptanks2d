@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Projectiles.BasicTank
 {
+    [MPTanks.Modding.Projectile(Name = "Main gun projectile for Basic Tank", 
+        OwnerReflectionName = reflectionName)]
     public class MainGunProjectile : Projectile
     {
+        const string reflectionName = "BasicTankMPMainProjectile";
         /// <summary>
         /// The number of milliseconds this projectile lives
         /// </summary>
@@ -26,7 +29,7 @@ namespace MPTanks.Engine.Projectiles.BasicTank
         {
             get
             {
-                return "BasicTankMPMainProjectile";
+                return reflectionName;
             }
         }
 
@@ -42,6 +45,7 @@ namespace MPTanks.Engine.Projectiles.BasicTank
             : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
             Size = new Vector2(0.25f);
+            ColorMask = owner.ColorMask;
         }
 
         protected override void AddComponents()
