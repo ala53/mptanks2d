@@ -122,9 +122,9 @@
     <Folder Include="Maps\MapObjects\Dynamic\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Modding\Modding.csproj">
+    <ProjectReference Include="..\Modding\MPTanks.Modding.csproj">
       <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
-      <Name>Modding</Name>
+      <Name>MPTanks.Modding</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

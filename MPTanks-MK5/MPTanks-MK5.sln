@@ -3,29 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameClient", "MPTanks-MK5\GameClient.csproj", "{1AA033D4-C1B0-4653-BA2F-672A79B207CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.GameClient", "MPTanks-MK5\MPTanks.Clients.GameClient.csproj", "{1AA033D4-C1B0-4653-BA2F-672A79B207CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Engine", "Engine\MPTanks.Engine.csproj", "{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Networking", "Networking", "{C8E25003-9BC6-4807-8909-01E937A235D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{6A9A39B2-3BDA-4BE0-98A4-6F2AB3F51B7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Server", "Server\MPTanks.Networking.Server.csproj", "{6A9A39B2-3BDA-4BE0-98A4-6F2AB3F51B7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Client", "Client\MPTanks.Networking.Client.csproj", "{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkingCommon", "NetworkingCommon\NetworkingCommon.csproj", "{EF7D12D4-A2B8-47C6-B93D-5264191892C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Common", "NetworkingCommon\MPTanks.Networking.Common.csproj", "{EF7D12D4-A2B8-47C6-B93D-5264191892C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{325CA0C5-DD1F-4C9D-8F0C-0BF43061DE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DedicatedServer", "DedicatedServer\DedicatedServer.csproj", "{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.DedicatedServer", "DedicatedServer\MPTanks.Clients.DedicatedServer.csproj", "{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterServer", "MasterServer\MasterServer.csproj", "{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.MasterServer", "MasterServer\MPTanks.Networking.MasterServer.csproj", "{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{FBF79749-6EAB-4021-96DE-8330D74F54EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbound.Input", "ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj", "{44C828D4-02D6-413C-BFED-3BF72AA9322E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modding", "Modding\Modding.csproj", "{3A8512C9-59E4-4312-A718-F47F40A5F494}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Modding", "Modding\MPTanks.Modding.csproj", "{3A8512C9-59E4-4312-A718-F47F40A5F494}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
