@@ -46,11 +46,6 @@ namespace MPTanks.Modding.Mods.Official
             }
         }
 
-        static DeathMatchGamemode()
-        {
-            Gamemode.RegisterType<DeathMatchGamemode>();
-        }
-
         /// <summary>
         /// The ratio of super tanks to normal tanks in this specific instance
         /// </summary>

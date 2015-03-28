@@ -109,7 +109,7 @@ namespace MPTanks.Engine.Tanks
             return (T)ReflectiveInitialize(tankName, playerId, game, authorized, state);
         }
 
-        protected static void RegisterType<T>() where T : Tank
+        private static void RegisterType<T>() where T : Tank
         {
             //get the name
             var name = (string)typeof(T).GetProperty("ReflectionTypeName",
@@ -127,5 +127,11 @@ namespace MPTanks.Engine.Tanks
             return _tankTypes.Keys;
         }
         #endregion
+
+        static Tank()
+        {
+            //Every tank object should be registered here
+            RegisterType<BasicTank>();
+        }
     }
 }

@@ -120,15 +120,15 @@ namespace MPTanks.Modding
             }
             module.Gamemodes = gamemodes.ToArray();
 
-            errors = safetyCheckErrors + "\n\n" + builderErrors;
+            //And call the constructors
+            CallStaticCtors(asm);
 
-            //And last but not least, call all of the static initializers
-            CallStaticCtors(module.Assembly);
+            errors = safetyCheckErrors + "\n\n" + builderErrors;
 
             return module;
         }
 
-        private static void CallStaticCtors(Assembly asm)
+        public static void CallStaticCtors(Assembly asm)
         {
             foreach (Type t in asm.GetTypes())
             {

@@ -12,7 +12,7 @@ namespace MPTanks.Clients.GameClient
         /// <summary>
         /// The maximum number of on screen particles to allow
         /// </summary>
-        public const int MaxParticlesToRender = 10000;
+        public static int MaxParticlesToRender = 10000;
 
         /// <summary>
         /// Whether to force a gen 0 GC every frame. This gets rid of
@@ -20,7 +20,7 @@ namespace MPTanks.Clients.GameClient
         /// Unfortunately, it does so to the possible detriment of 
         /// framerate.
         /// </summary>
-        public const bool ForceFullGCEveryFrame = false;
-        public const bool ForceGen0GCEveryFrame = false;
+        public static bool ForceFullGCEveryFrame = false;
+        public static bool ForceGen0GCEveryFrame = false;
     }
 }

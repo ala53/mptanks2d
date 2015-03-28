@@ -44,11 +44,6 @@ namespace MPTanks.Engine.Gamemodes
             }
         }
 
-        static TeamDeathMatchGamemode()
-        {
-            Gamemode.RegisterType<TeamDeathMatchGamemode>();
-        }
-
         /// <summary>
         /// The ratio of super tanks to normal tanks in this specific instance
         /// </summary>

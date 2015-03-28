@@ -33,11 +33,6 @@ namespace MPTanks.Engine.Projectiles.BasicTank
             }
         }
 
-        static MainGunProjectile()
-        {
-            Projectile.RegisterType<MainGunProjectile>();
-        }
-
         private Rendering.Particles.ParticleEngine.Emitter _trailEmitter;
         private Core.Timing.Timer _timeoutTimer;
         public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,

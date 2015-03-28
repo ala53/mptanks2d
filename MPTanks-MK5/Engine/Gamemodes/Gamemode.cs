@@ -154,7 +154,7 @@ namespace MPTanks.Engine.Gamemodes
             return (T)ReflectiveInitialize(tankName, game, state);
         }
 
-        protected static void RegisterType<T>() where T : Gamemode
+        private static void RegisterType<T>() where T : Gamemode
         {
             //get the name
             var name = (string)typeof(T).GetProperty("ReflectionTypeName",
@@ -172,5 +172,11 @@ namespace MPTanks.Engine.Gamemodes
             return _gamemodeTypes.Keys;
         }
         #endregion
+
+        static Gamemode()
+        {
+            //Every gamemode should be registered here
+            RegisterType<TeamDeathMatchGamemode>();
+        }
     }
 }

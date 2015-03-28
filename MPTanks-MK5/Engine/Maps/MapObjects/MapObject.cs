@@ -41,7 +41,7 @@ namespace MPTanks.Engine.Maps.MapObjects
             return (T)ReflectiveInitialize(objName, game, authorized, position, rotation, state);
         }
 
-        protected static void RegisterType<T>() where T : MapObject
+        private static void RegisterType<T>() where T : MapObject
         {
             //get the name
             var name = (string)typeof(T).GetProperty("ReflectionTypeName",
@@ -57,6 +57,15 @@ namespace MPTanks.Engine.Maps.MapObjects
         public static ICollection<string> GetAllMapObjectTypes()
         {
             return _objTypes.Keys;
+        }
+        #endregion
+
+        #region
+        static MapObject()
+        {
+            //Every map object type should be registered in here
+            RegisterType<Building>();
+            RegisterType<Static.Animated.SatelliteDishLarge>();
         }
         #endregion
     }

@@ -12,8 +12,10 @@ namespace MPTanks.Engine.Mods
         private static List<Modding.Module> _modules = new List<Modding.Module>();
         public static IReadOnlyList<Modding.Module> Modules { get { return _modules.ToArray(); } }
 
-        public static bool LoadModFromSource(string sourceCode, bool verifySafety, out string errors)
+        public static bool LoadModFromSource(string sourceCode, bool verifySafety, out string errors, 
+            out Modding.Module module, bool activate = false)
         {
+            module = null;
             errors = "";
             try
             {
@@ -24,6 +26,9 @@ namespace MPTanks.Engine.Mods
                     return false;
                 }
                 _modules.Add(mod);
+                if (activate) ActivateMod(mod);
+
+                module = mod;
             }
             catch (Exception e)
             {
@@ -35,8 +40,10 @@ namespace MPTanks.Engine.Mods
         }
 
         private static HashSet<string> _loadedModFiles = new HashSet<string>();
-        public static bool LoadModFromFile(string file, bool verifySafety, out string errors)
+        public static bool LoadModFromFile(string file, bool verifySafety, out string errors, 
+            out Modding.Module module, bool activate = false)
         {
+            module = null;
             if (_loadedModFiles.Contains(file.ToLower()))
             {
                 errors = "Mod already loaded.";
@@ -52,6 +59,9 @@ namespace MPTanks.Engine.Mods
                     return false;
                 }
                 _modules.Add(mod);
+                module = mod;
+                if (activate) ActivateMod(mod);
+
                 _loadedModFiles.Add(file.ToLower());
             }
             catch (Exception e)
@@ -61,6 +71,12 @@ namespace MPTanks.Engine.Mods
             }
 
             return true;
+        }
+
+        public static void ActivateMod(Modding.Module mod)
+        {
+            if (!mod.Activated)
+                mod.Inject();
         }
     }
 }

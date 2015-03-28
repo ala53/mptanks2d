@@ -36,13 +36,6 @@ namespace MPTanks.Engine.Tanks
             Size = new Vector2(3, 5);
         }
 
-        //static register
-        static BasicTank()
-        {
-            //register my type
-            Tanks.Tank.RegisterType<BasicTank>();
-        }
-
         protected override void AddComponents()
         {
             Components.Add("base", new Rendering.RenderableComponent()

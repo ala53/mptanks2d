@@ -28,7 +28,7 @@ namespace MPTanks.Engine.Projectiles
 
         abstract public void CollidedWithTank(Tanks.Tank tank);
 
-        #region ReflectionHelpers
+        #region Static initialization
         private static Dictionary<string, Type> _prjTypes =
             new Dictionary<string, Type>();
 
@@ -63,7 +63,7 @@ namespace MPTanks.Engine.Projectiles
             return (T)ReflectiveInitialize(prjName, state, args);
         }
 
-        protected static void RegisterType<T>() where T : Projectile
+        private static void RegisterType<T>() where T : Projectile
         {
             //get the ReflectionTypeName static property 
             var name = (string)typeof(T).GetProperty("ReflectionTypeName",
@@ -81,5 +81,11 @@ namespace MPTanks.Engine.Projectiles
             return _prjTypes.Keys;
         }
         #endregion
+
+        static Projectile()
+        {
+            //Every projectile type should be registered here
+            RegisterType<BasicTank.MainGunProjectile>();
+        }
     }
 }

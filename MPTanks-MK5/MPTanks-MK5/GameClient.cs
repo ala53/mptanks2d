@@ -51,15 +51,15 @@ namespace MPTanks.Clients.GameClient
             Window.AllowUserResizing = true;
             // IsMouseVisible = true;
             IsFixedTimeStep = false;
-            //graphics.SynchronizeWithVerticalRetrace = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
             // graphics.ApplyChanges();
             // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
 
             var errors = "";
-
+            Modding.Module mod;
 
             var result = Engine.Mods.ModLoader.LoadModFromSource(
-                System.IO.File.ReadAllText("assets/mods/ExampleModDeathMatch.cs"), true, out errors);
+                System.IO.File.ReadAllText("assets/mods/ExampleModDeathMatch.cs"), true, out errors, out mod, true);
         }
 
         /// <summary>
@@ -112,7 +112,8 @@ namespace MPTanks.Clients.GameClient
             //game.FriendlyFireEnabled = true;
 
             game.AddGameObject(
-                new MPTanks.Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge(
+                MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize(
+                    MPTanks.Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge.ReflectionTypeName,
                     game, true, new Vector2(10, 20), 33), null, true);
             game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
             game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
