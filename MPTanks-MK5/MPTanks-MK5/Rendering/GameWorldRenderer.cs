@@ -337,7 +337,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             //And do the deferred draw
             sb.End();
         }
-        
+
 
         #region Scaling helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

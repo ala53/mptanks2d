@@ -43,14 +43,14 @@ namespace MPTanks.Clients.GameClient
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            GCSettings.LatencyMode = GCLatencyMode.Batch;
+            Content.RootDirectory = "assets/mgcontent";
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
             graphics.PreferMultiSampling = true;
 
             Window.AllowUserResizing = true;
             // IsMouseVisible = true;
-            //IsFixedTimeStep = false;
+            IsFixedTimeStep = false;
             //graphics.SynchronizeWithVerticalRetrace = false;
             // graphics.ApplyChanges();
             // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
@@ -59,7 +59,7 @@ namespace MPTanks.Clients.GameClient
 
 
             var result = Engine.Mods.ModLoader.LoadModFromSource(
-System.IO.File.ReadAllText(@"C:\Users\Alastair\Documents\GitHub\mptanks2d\MPTanks-MK5\MPTanks-MK5\bin\Windows\Debug\assets\mods\ExampleModDeathMatch.cs"), true, out errors);
+                System.IO.File.ReadAllText("assets/mods/ExampleModDeathMatch.cs"), true, out errors);
         }
 
         /// <summary>

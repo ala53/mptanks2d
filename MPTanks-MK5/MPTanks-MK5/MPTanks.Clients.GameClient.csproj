@@ -140,7 +140,7 @@
     <None Include="assets\tanks\basictank2d.png.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\font.xnb">
+    <None Include="assets\mgcontent\font.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
