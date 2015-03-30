@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Gamemodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Engine.Gamemodes
+namespace MPTanks.Modding.Mods.Core.Gamemodes
 {
     [Modding.Gamemode(AllowSuperTanks = true, Name = "Team deathmatch", Description = "1v1 to 20v20 TDM gamemode")]
     public class TeamDeathMatchGamemode : Gamemode

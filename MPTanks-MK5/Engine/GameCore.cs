@@ -168,7 +168,7 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gameMode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapName, bool skipInit = false)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapData, bool skipInit = false)
         {
             Logger = logger;
             //Safety: call all global Ctors
@@ -178,7 +178,7 @@ namespace MPTanks.Engine
             if (skipInit)
                 _gameStarted = true;
 
-            Map = Maps.Map.LoadMap("", this);
+            Map = Maps.Map.LoadMap(mapData, this);
 
             //Set up the game mode internally
             Gamemode = gameMode;

@@ -16,6 +16,8 @@ namespace MPTanks.Clients.GameClient.Rendering
         private SpriteBatch _sb;
         public FXAA(Game game)
         {
+            _sb = new SpriteBatch(game.GraphicsDevice);
+            _game = game;
             _fxaa = _game.Content.Load<Effect>("fxaaEffect");
             _target = new RenderTarget2D(_game.GraphicsDevice,
                 _game.GraphicsDevice.Viewport.Width,

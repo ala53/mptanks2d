@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Assets
 {
-   public static class MapObjects
+    public static class AssetManager
     {
     }
 }

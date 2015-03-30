@@ -50,16 +50,11 @@ namespace MPTanks.Clients.GameClient
 
             Window.AllowUserResizing = true;
             // IsMouseVisible = true;
-            IsFixedTimeStep = false;
-            graphics.SynchronizeWithVerticalRetrace = false;
-            // graphics.ApplyChanges();
-            // TargetElapsedTime = TimeSpan.FromMilliseconds(33.3333333);
+            // IsFixedTimeStep = false;
+            // graphics.SynchronizeWithVerticalRetrace = false;
+            // TargetElapsedTime = TimeSpan.FromMilliseconds(66.3333333);
 
-            var errors = "";
-            Modding.Module mod;
-
-            var result = Engine.Mods.ModLoader.LoadModFromSource(
-                System.IO.File.ReadAllText("assets/mods/ExampleModDeathMatch.cs"), true, out errors, out mod, true);
+            MPTanks.Engine.Mods.CoreModLoader.LoadTrustedMods();
         }
 
         /// <summary>
@@ -107,23 +102,24 @@ namespace MPTanks.Clients.GameClient
 
         private void SetupGame()
         {
-            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("OfficialModDeathMatchGamemode"), "");
+            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("OfficialModDeathMatchGamemode"),
+                System.IO.File.ReadAllText("assets/maps/testmap.json")
+                );
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
 
             game.AddGameObject(
-                MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize(
-                    MPTanks.Engine.Maps.MapObjects.Static.Animated.SatelliteDishLarge.ReflectionTypeName,
+                MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("SatelliteDishLarge",
                     game, true, new Vector2(10, 20), 33), null, true);
-            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(50, 50), 33), null, true);
-            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(150, 30), 33), null, true);
-            game.AddGameObject(new MPTanks.Engine.Maps.MapObjects.Building(game, true, new Vector2(30, 80), 33), null, true);
+            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(50, 50), 33), null, true);
+            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(150, 30), 33), null, true);
+            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(30, 80), 33), null, true);
 
             player1Id = Guid.NewGuid();
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
             game.AddPlayer(player2Id);
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 0; i++)
                 game.AddPlayer(Guid.NewGuid());
 
             //Set up rendering
@@ -271,14 +267,6 @@ namespace MPTanks.Clients.GameClient
                 zoom += 0.1f;
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.V))
-            {
-                for (var i = 0; i < 50; i++)
-                {
-                    game.ParticleEngine.CreateEmitter(0.2f, MPTanks.Engine.Assets.BasicTank.MainGunSparks, Color.Green, new MPTanks.Engine.Core.RectangleF(20, 20, 10, 10), new Vector2(0.05f));
-                }
-            }
 
             game.Update(gameTime);
 
@@ -467,7 +455,7 @@ namespace MPTanks.Clients.GameClient
         {
             if (_fps == null)
             {
-                _fps = new float[30];
+                _fps = new float[15];
                 for (int i = 0; i < _fps.Length; i++)
                     _fps[i] = 16.666666f;
             }

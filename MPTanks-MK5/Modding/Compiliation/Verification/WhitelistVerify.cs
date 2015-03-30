@@ -75,7 +75,6 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.UnhandledExceptionEventArgs",
         "System.DivideByZeroException",
         "System.InvalidCastException",
-        "System.IO.FileNotFoundException",
         //Path concentation tools
         "System.IO.Path",
         //Event args
@@ -94,8 +93,8 @@ namespace MPTanks.Modding.Compiliation.Verification
         "Lidgren.Network.NetBuffer",
         "Lidgren.Network.NetException",
         "Lidgren.Network.NetIncomingMessage",
+        "Lidgren.Network.NetOutgoingMessage",
         "Lidgren.Network.NetConnection",
-
         });
 
         /// <summary>
@@ -104,7 +103,6 @@ namespace MPTanks.Modding.Compiliation.Verification
         private static List<string> BlacklistedTypes = new List<string>(new[] { 
             "Engine.Logging.ILogger", //Don't let it thrash the HDD
             "Microsoft.Xna.Framework.Content.ContentManager", //Or load content from the hard drive
-            "MPTanks.Modding.Compiliation.Compiler"
         });
 
         public static bool IsAssemblySafe(Assembly assembly, out string error)

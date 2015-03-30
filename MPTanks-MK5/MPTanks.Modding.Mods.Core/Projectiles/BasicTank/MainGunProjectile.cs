@@ -5,11 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Projectiles;
+using MPTanks.Engine.Tanks;
+using MPTanks.Engine;
+using MPTanks.Engine.Core;
 
-namespace MPTanks.Engine.Projectiles.BasicTank
+namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 {
     [MPTanks.Modding.Projectile(Name = "Main gun projectile for Basic Tank", 
-        OwnerReflectionName = reflectionName)]
+        OwnerReflectionName = "BasicTankMP")]
     public class MainGunProjectile : Projectile
     {
         const string reflectionName = "BasicTankMPMainProjectile";
@@ -33,9 +37,9 @@ namespace MPTanks.Engine.Projectiles.BasicTank
             }
         }
 
-        private Rendering.Particles.ParticleEngine.Emitter _trailEmitter;
-        private Core.Timing.Timer _timeoutTimer;
-        public MainGunProjectile(Tanks.Tank owner, GameCore game, bool authorized = false,
+        private MPTanks.Engine.Rendering.Particles.ParticleEngine.Emitter _trailEmitter;
+        private MPTanks.Engine.Core.Timing.Timer _timeoutTimer;
+        public MainGunProjectile(Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
             : base(owner, game, authorized, 1, 1.2f, position, rotation)
         {
@@ -46,10 +50,11 @@ namespace MPTanks.Engine.Projectiles.BasicTank
         protected override void AddComponents()
         {
 
-            Components.Add("bullet", new Rendering.RenderableComponent()
+            Components.Add("bullet", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 SpriteSheetName = Assets.BasicTank.MainProjectile.SheetName,
-                AssetName = Assets.AssetHelper.AnimationToString(Assets.BasicTank.MainProjectile, 0, true),
+                AssetName = MPTanks.Engine.Assets.AssetHelper.
+                    AnimationToString(Assets.BasicTank.MainProjectile, 0, true),
                 Size = new Vector2(0.5f),
                 Rotation = MathHelper.ToRadians(45),
                 RotationOrigin = new Vector2(0.25f),
@@ -58,17 +63,18 @@ namespace MPTanks.Engine.Projectiles.BasicTank
             });
 
             // Create the trail emitter
-            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, Assets.SmokePuffs.SmokePuffSprites,
+            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, MPTanks.Engine.Assets.SmokePuffs.SmokePuffSprites,
                 new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
-                new Core.RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
-                new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true, true);
+                new RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
+                new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, 
+                    Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true, true);
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
             _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => CollidedWithTank(null), lifespan);
         }
 
-        public override void CollidedWithTank(Tanks.Tank tank)
+        public override void CollidedWithTank(Tank tank)
         {
             Game.RemoveGameObject(this, tank);
         }
@@ -83,7 +89,7 @@ namespace MPTanks.Engine.Projectiles.BasicTank
                 _trailEmitter.Kill();
 
             //Spawn the destruction sparks - a bit chaotic and random, much like their source code
-            var rect = new Core.RectangleF(Position.X - 0.15f, Position.Y - 0.15f, 0.3f, 0.3f);
+            var rect = new RectangleF(Position.X - 0.15f, Position.Y - 0.15f, 0.3f, 0.3f);
             //Generate the particle emitter
             var explosion = Game.ParticleEngine.CreateEmitter(
                 //         Asset                          Fade in    Fade out
@@ -111,7 +117,7 @@ namespace MPTanks.Engine.Projectiles.BasicTank
         {
             //Move the particle emitter
             if (_trailEmitter != null)
-                _trailEmitter.EmissionArea = new Core.RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
+                _trailEmitter.EmissionArea = new RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
         }
     }
 }

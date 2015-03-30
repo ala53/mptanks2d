@@ -1,0 +1,15 @@
+﻿<Window x:Class="MPTanks.MapMaker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MPTanks Map Maker" Height="500" Width="825">
+    <Grid>
+        <DockPanel HorizontalAlignment="Stretch" LastChildFill="True" VerticalAlignment="Stretch">
+            <WrapPanel Width="200" DockPanel.Dock="Left">
+                
+            </WrapPanel>
+            <Canvas HorizontalAlignment="Stretch" DockPanel.Dock="Right">
+                
+            </Canvas>
+        </DockPanel>
+    </Grid>
+</Window>

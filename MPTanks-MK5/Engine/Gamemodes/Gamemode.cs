@@ -14,6 +14,8 @@ namespace MPTanks.Engine.Gamemodes
         public virtual Team WinningTeam { get { return Team.Null; } }
         public abstract Team[] Teams { get; }
         public abstract int MinPlayerCount { get; }
+        public bool AllowRespawn { get; protected set; }
+        public float RespawnTimeMs { get; protected set; }
 
         //We cache the info for performance. Multiple calls only create one instance
         private Func<string> _cachedReflectionInfo;
@@ -175,8 +177,7 @@ namespace MPTanks.Engine.Gamemodes
 
         static Gamemode()
         {
-            //Every gamemode should be registered here
-            RegisterType<TeamDeathMatchGamemode>();
+            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

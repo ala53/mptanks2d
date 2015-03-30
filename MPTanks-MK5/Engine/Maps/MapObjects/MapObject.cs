@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Mods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,9 +64,7 @@ namespace MPTanks.Engine.Maps.MapObjects
         #region
         static MapObject()
         {
-            //Every map object type should be registered in here
-            RegisterType<Building>();
-            RegisterType<Static.Animated.SatelliteDishLarge>();
+            Mods.CoreModLoader.LoadTrustedMods();
         }
         #endregion
     }

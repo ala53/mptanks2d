@@ -57,11 +57,9 @@ namespace MPTanks.Engine
                 var type = Gamemode.GetAssignedTankType(player);
                 if (type == Gamemodes.PlayerTankType.BasicTank)
                 {
-                    var tank = new Tanks.BasicTank(player, this, false)
-                    {
-                        Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player)),
-                        ColorMask = Gamemode.GetTeam(player).TeamColor,
-                    };
+                    var tank = MPTanks.Engine.Tanks.Tank.ReflectiveInitialize("BasicTankMP", player, this, false);
+                    tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
+                    tank.ColorMask = Gamemode.GetTeam(player).TeamColor;
 
                     Gamemode.SetTank(player, tank);
                     AddGameObject(tank);

@@ -130,8 +130,7 @@ namespace MPTanks.Engine.Tanks
 
         static Tank()
         {
-            //Every tank object should be registered here
-            RegisterType<BasicTank>();
+            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

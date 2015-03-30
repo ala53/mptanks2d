@@ -1,12 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine;
+using MPTanks.Engine.Maps.MapObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Engine.Maps.MapObjects.Static.Animated
+namespace MPTanks.Modding.Mods.Core.MapObjects
 {
+    [Modding.MapObject(IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, Name = "Satellite Dish (large)")]
     public class SatelliteDishLarge : MapObject
     {
         public static string ReflectionTypeName { get { return "SatelliteDishLarge"; } }
@@ -19,19 +22,19 @@ namespace MPTanks.Engine.Maps.MapObjects.Static.Animated
 
         protected override void AddComponents()
         {
-            Components.Add("base", new Rendering.RenderableComponent()
+            Components.Add("base", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(4),
-                AssetName = Assets.MapObjects.SatelliteDish.Base.SpriteName,
-                SpriteSheetName = Assets.MapObjects.SatelliteDish.Base.SheetName
+                AssetName = Assets.SatelliteDish.Base.SpriteName,
+                SpriteSheetName = Assets.SatelliteDish.Base.SheetName
             });
-            Components.Add("dish", new Rendering.RenderableComponent()
+            Components.Add("dish", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(6, 3.5f),
                 RotationOrigin = new Vector2(3, 1f),
                 Offset = new Vector2(-1.5f, 0.75f),
-                AssetName = Assets.MapObjects.SatelliteDish.DishAndRevolver.SpriteName,
-                SpriteSheetName = Assets.MapObjects.SatelliteDish.DishAndRevolver.SheetName,
+                AssetName = Assets.SatelliteDish.DishAndRevolver.SpriteName,
+                SpriteSheetName = Assets.SatelliteDish.DishAndRevolver.SheetName,
                 DrawLayer = 5 //Dish should always be on top of tanks
             });
         }

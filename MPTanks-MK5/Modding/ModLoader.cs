@@ -11,6 +11,10 @@ namespace MPTanks.Modding
     {
         public static Module Load(string source, bool verifySafe, out string errors)
         {
+            return Load(new[] { source }, verifySafe, out errors);
+        }
+        public static Module Load(string[] source, bool verifySafe, out string errors)
+        {
             var compileErrors = "";
             var asm = Compiliation.Compiler.CompileAssembly(source, out compileErrors);
             var mbuilderrors = "";

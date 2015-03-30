@@ -16,6 +16,13 @@ namespace MPTanks.Engine
         /// </summary>
         public float PhysicsScale = 0.1f;
 
+        /// <summary>
+        /// A list of mod files (relative or absolute) that should be loaded without 
+        /// Code security verification. AKA trusted mods.
+        /// </summary>
+        public static readonly string[] TrustedMods = {
+            "MPTanks.Modding.Mods.Core.dll"
+            };
 
         /// <summary>
         /// The scale the rendering runs at relative to the blocks.

@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Tanks;
+using MPTanks.Engine;
 
-namespace MPTanks.Engine.Tanks
+namespace MPTanks.Modding.Mods.Core.Tanks
 {
     [MPTanks.Modding.Tank(Category = MPTanks.Modding.TankAttribute.TankCategory.Basic,
         DisplayName = "Basic Tank", Description = "Basic Tank",
@@ -38,12 +40,12 @@ namespace MPTanks.Engine.Tanks
 
         protected override void AddComponents()
         {
-            Components.Add("base", new Rendering.RenderableComponent()
+            Components.Add("base", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(3, 5),
                 Mask = new Color(Color.White, 200)
             });
-            Components.Add("tankFront", new Rendering.RenderableComponent()
+            Components.Add("tankFront", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(3f, 0.25f),
                 Mask = new Color(Color.White, 200),
@@ -52,7 +54,7 @@ namespace MPTanks.Engine.Tanks
                 SpriteSheetName = Assets.BasicTank.GrillMask.SheetName,
                 Rotation = 0
             });
-            Components.Add("turret", new Rendering.RenderableComponent()
+            Components.Add("turret", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.5f, 2.35f),
                 Mask = new Color(255, 150, 150, 150),
@@ -60,7 +62,7 @@ namespace MPTanks.Engine.Tanks
                 RotationOrigin = new Vector2(0.25f, 3.5f),
                 Rotation = 0
             });
-            Components.Add("turretBase", new Rendering.RenderableComponent()
+            Components.Add("turretBase", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(2, 2.5f),
                 Mask = new Color(Color.White, 200),
@@ -70,7 +72,7 @@ namespace MPTanks.Engine.Tanks
                 SpriteSheetName = Assets.BasicTank.TurretBase.SheetName,
                 Rotation = 0
             });
-            Components.Add("turretDoor", new Rendering.RenderableComponent()
+            Components.Add("turretDoor", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.65f, 0.65f),
                 Mask = new Color(Color.Gray, 100),
@@ -105,7 +107,8 @@ namespace MPTanks.Engine.Tanks
             {
                 var rotation = InputState.LookDirection;
                 //Spawn a projectile
-                var projectile = Projectiles.Projectile.ReflectiveInitialize<Projectiles.BasicTank.MainGunProjectile>(
+                var projectile = MPTanks.Engine.Projectiles.Projectile
+                    .ReflectiveInitialize<Projectiles.BasicTank.MainGunProjectile>(
                     Projectiles.BasicTank.MainGunProjectile.ReflectionTypeName, this, Game,
                     false, TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
 
@@ -149,8 +152,8 @@ namespace MPTanks.Engine.Tanks
 
         protected override bool DestroyInternal(GameObject destructor = null)
         {
-            var si = Assets.AssetHelper.GetRandomExplosionAnimation();
-            var anim = new Rendering.Animations.Animation(
+            var si = MPTanks.Engine.Assets.AssetHelper.GetRandomExplosionAnimation();
+            var anim = new MPTanks.Engine.Rendering.Animations.Animation(
                      si.AnimationName, Position, new Vector2(10), si.SheetName);
 
             Game.AnimationEngine.AddAnimation(anim);

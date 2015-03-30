@@ -84,8 +84,7 @@ namespace MPTanks.Engine.Projectiles
 
         static Projectile()
         {
-            //Every projectile type should be registered here
-            RegisterType<BasicTank.MainGunProjectile>();
+            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

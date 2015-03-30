@@ -58,12 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="assets\AssetHelper.cs" />
+    <Compile Include="assets\AssetManager.cs" />
     <Compile Include="assets\Assets.cs" />
     <Compile Include="assets\MapObjects.cs" />
     <Compile Include="assets\Maps.cs" />
-    <Content Include="assets\mods\ExampleModDeathMatch.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Compile Include="ConstructorHelper.cs" />
     <Compile Include="Core\Events\Types\Gamemodes\StateChanged.cs" />
     <Compile Include="Core\Events\Types\GameObjects\StateChanged.cs" />
@@ -90,21 +88,18 @@
     <Compile Include="GameCore.Maps.cs" />
     <Compile Include="GameCore.Players.cs" />
     <Compile Include="Gamemodes\EPlayerTankType.cs" />
-    <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Maps\Map.cs" />
-    <Compile Include="Maps\MapObjects\Building.cs" />
+    <Compile Include="Maps\MapDeserializationClasses.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
-    <Compile Include="Maps\MapObjects\Static\Animated\SatelliteDishLarge.cs" />
+    <Compile Include="Mods\CoreModLoader.cs" />
     <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Powerups\HealthPowerup.cs" />
     <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Powerups\PowerupManager.cs" />
-    <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
-    <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animations\Animation.cs" />
@@ -114,17 +109,18 @@
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Tanks\BasicTank.cs" />
     <Compile Include="Tanks\InputState.cs" />
     <Compile Include="Tanks\SuperTank.cs" />
     <Compile Include="Tanks\Tank.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\maps\testmap.json" />
+    <None Include="assets\maps\testmap.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Maps\MapObjects\Dynamic\" />
+    <Folder Include="assets\mods\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Modding\MPTanks.Modding.csproj">

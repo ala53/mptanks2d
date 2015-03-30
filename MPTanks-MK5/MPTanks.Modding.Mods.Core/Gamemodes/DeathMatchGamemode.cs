@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Gamemodes;
 
-namespace MPTanks.Modding.Mods.Official
+namespace MPTanks.Modding.Mods.Core
 {
-    [MPTanks.Modding.ModuleDeclaration("Death match gamemode", "Whaddya think...", "ZSB Games, Official", "0")]
     [MPTanks.Modding.Gamemode(AllowSuperTanks = true, Name = "Deathmatch (no teams)", Description = "Up to 5v5 deathmatch")]
     public class DeathMatchGamemode : Gamemode
     {

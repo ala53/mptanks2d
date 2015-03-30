@@ -12,7 +12,7 @@ namespace MPTanks.Modding.Compiliation
 {
     public class Compiler
     {
-        public static Assembly CompileAssembly(string sourceCode, out string errors)
+        public static Assembly CompileAssembly(string[] sourceCode, out string errors)
         {
             errors = "";
 
@@ -28,16 +28,14 @@ namespace MPTanks.Modding.Compiliation
             param.ReferencedAssemblies.Add("System.Linq.Expressions.dll");
             param.ReferencedAssemblies.Add("System.Linq.Parallel.dll");
             param.ReferencedAssemblies.Add("System.Linq.Queryable.dll");
-            param.ReferencedAssemblies.Add("Monogame.Framework.dll");
-            
+            param.ReferencedAssemblies.Add("MonoGame.Framework.dll");
+
             CompilerResults results = compiler.CompileAssemblyFromSource(param, sourceCode);
 
             if (results.Errors.HasErrors)
             {
                 foreach (CompilerError error in results.Errors)
-                {
                     errors += String.Format("Error ({0}): {1}\n\n", error.ErrorNumber, error.ErrorText);
-                }
 
                 return null;
             }

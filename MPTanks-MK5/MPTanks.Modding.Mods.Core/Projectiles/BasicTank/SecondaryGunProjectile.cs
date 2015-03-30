@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Engine.Projectiles.BasicTank
+namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 {
     class SecondaryGunProjectile
     {
