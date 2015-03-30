@@ -41,7 +41,7 @@ namespace MPTanks.Modding.Mods.Core
         {
             get
             {
-                return "OfficialModDeathMatchGamemode";
+                return "DeathMatchGamemode";
             }
         }
 
