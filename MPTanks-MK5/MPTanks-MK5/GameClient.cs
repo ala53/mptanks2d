@@ -102,7 +102,9 @@ namespace MPTanks.Clients.GameClient
 
         private void SetupGame()
         {
-            game = new MPTanks.Engine.GameCore(new EngineInterface.FileLogger(), MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("OfficialModDeathMatchGamemode"),
+            game = new MPTanks.Engine.GameCore(
+                new EngineInterface.FileLogger(),
+                MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 System.IO.File.ReadAllText("assets/maps/testmap.json")
                 );
             game.Authoritative = true;
@@ -267,6 +269,16 @@ namespace MPTanks.Clients.GameClient
                 zoom += 0.1f;
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.V))
+            {
+                for (var i = 0; i < 10; i++)
+                    game.ParticleEngine.CreateEmitter(0.05f,
+                        MPTanks.Modding.Mods.Core.Assets.BasicTank.MainGunSparks,
+                        Color.Red, new MPTanks.Engine.Core.RectangleF(10, 10, 10, 10),
+                        new Vector2(0.2f)
+                        );
+            }
 
             game.Update(gameTime);
 

@@ -9,7 +9,6 @@ namespace MPTanks.Engine.Rendering.Particles
 {
     public partial class ParticleEngine
     {
-        private List<LinkedListNode<Particle>> _nodePool = new List<LinkedListNode<Particle>>();
         private List<Emitter> _emitters = new List<Emitter>();
         public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
         private LinkedList<Particle> _particles;
@@ -53,8 +52,10 @@ namespace MPTanks.Engine.Rendering.Particles
         {
             //Update emitters
             ProcessEmitters(gameTime);
-
+            //And particles
             ProcessParticles((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            //And clean the cache
+            CleanNodeCache();
         }
         private void ProcessParticles(float deltaMs)
         {
@@ -109,9 +110,19 @@ namespace MPTanks.Engine.Rendering.Particles
             LivingParticlesCount = particlesCount;
         }
 
+        private List<LRULinkedListNode> _nodePool = new List<LRULinkedListNode>();
+        private struct LRULinkedListNode
+        {
+            public DateTime AddTime;
+            public LinkedListNode<Particle> ParticleNode;
+        }
         private void RemoveNode(LinkedListNode<Particle> node)
         {
-            _nodePool.Add(node);
+            _nodePool.Add(new LRULinkedListNode()
+            {
+                ParticleNode = node,
+                AddTime = DateTime.UtcNow
+            });
             _particles.Remove(node);
         }
         private LinkedListNode<Particle> GetNode(Particle particle)
@@ -120,8 +131,8 @@ namespace MPTanks.Engine.Rendering.Particles
             {
                 var node = _nodePool.Last();
                 _nodePool.RemoveAt(_nodePool.Count - 1);
-                node.Value = particle;
-                return node;
+                node.ParticleNode.Value = particle;
+                return node.ParticleNode;
             }
             else
             {
@@ -129,6 +140,50 @@ namespace MPTanks.Engine.Rendering.Particles
                 var node = new LinkedListNode<Particle>(particle);
                 return node;
             }
+        }
+
+        private DateTime _lastNodeCleanup =
+            DateTime.UtcNow;
+        /// <summary>
+        /// Cleans up the node cache removing
+        /// the least recently used nodes.
+        /// </summary>
+        private void CleanNodeCache()
+        {
+            //The minimum interval in
+            //milliseconds between 
+            //linked list node gc's
+            var minGCIntervalMs = 1000;
+            //The minimum age of a LLN
+            //to remove it at
+            var minAgeToRemoveMs = 10000;
+            //Check if we're above the min time to gc
+            if (!((DateTime.UtcNow - _lastNodeCleanup).TotalMilliseconds > minGCIntervalMs))
+                return;
+
+            var countToRemove = 0;
+            foreach (var node in _nodePool)
+            {
+                var msSinceAdded = (DateTime.UtcNow - node.AddTime).TotalMilliseconds;
+                if (!(msSinceAdded < minAgeToRemoveMs))
+                    break; //Because of the way items are added, we can
+                //           we can guarantee that no later items will be removed
+                countToRemove++;
+            }
+            //If there are nodes to remove:
+            if (countToRemove > 0)
+            {
+                //remove them
+                _nodePool.RemoveRange(0, countToRemove);
+                //resize the thing for performance
+                if (_nodePool.Capacity > (_nodePool.Count * 2))
+                    _nodePool.Capacity = _nodePool.Count * 2;
+                //and the emitter pool
+                if (_emitters.Capacity > (_emitters.Count * 2))
+                    _emitters.Capacity = _emitters.Count * 2;
+            }
+
+            _lastNodeCleanup = DateTime.UtcNow;
         }
     }
 }

@@ -291,6 +291,12 @@ namespace MPTanks.Clients.GameClient.Rendering
                     _belowParticles.Add(particle);
                 else
                     _aboveParticles.Add(particle);
+
+            //Handle resizing (for mem usage)
+            if (_belowParticles.Capacity > (_belowParticles.Count * 2))
+                _belowParticles.Capacity = _belowParticles.Count * 2;
+            if (_aboveParticles.Capacity > (_aboveParticles.Count * 2))
+                _aboveParticles.Capacity = _aboveParticles.Count * 2;
         }
 
         private void DrawParticles(IEnumerable<MPTanks.Engine.Rendering.Particles.Particle> _particles,

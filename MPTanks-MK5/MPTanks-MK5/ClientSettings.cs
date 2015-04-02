@@ -22,5 +22,10 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         public static bool ForceFullGCEveryFrame = false;
         public static bool ForceGen0GCEveryFrame = false;
+
+        /// <summary>
+        /// The number of instances of a sound that can be playing at the same time.
+        /// </summary>
+        public static int MaxInstancesOfOneSoundAllowed = 4;
     }
 }
