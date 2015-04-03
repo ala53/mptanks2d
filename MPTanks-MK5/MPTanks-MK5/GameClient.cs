@@ -121,7 +121,7 @@ namespace MPTanks.Clients.GameClient
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
             game.AddPlayer(player2Id);
-            for (var i = 0; i < 0; i++)
+            for (var i = 0; i < 3; i++)
                 game.AddPlayer(Guid.NewGuid());
 
             //Set up rendering
@@ -278,6 +278,11 @@ namespace MPTanks.Clients.GameClient
                         Color.Red, new MPTanks.Engine.Core.RectangleF(10, 10, 10, 10),
                         new Vector2(0.2f)
                         );
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.B))
+            {
+                Logger.Log(game.Diagnostics.ToString());
             }
 
             game.Update(gameTime);

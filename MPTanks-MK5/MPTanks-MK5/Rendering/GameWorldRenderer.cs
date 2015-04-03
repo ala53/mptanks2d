@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
-    class GameWorldRenderer : Renderer, IDisposable
+    partial class GameWorldRenderer : Renderer, IDisposable
     {
         private MPTanks.Engine.GameCore _game;
 
@@ -59,14 +59,9 @@ namespace MPTanks.Clients.GameClient.Rendering
             _effect.Projection = projectionMatrix;
             _game.Diagnostics.EndMeasurement("Compute view matrix", "World rendering", "Rendering");
 
-            //Compute particle stuffs
-            _game.Diagnostics.BeginMeasurement("Compute Particle Order", "World rendering", "Rendering");
-            ComputeParticleOrdering();
-            _game.Diagnostics.EndMeasurement("Compute Particle Order", "World rendering", "Rendering");
-
             //Draw the below objects
             _game.Diagnostics.BeginMeasurement("Draw Particles (Below Objects)", "World rendering", "Rendering");
-            DrawParticles(_belowParticles, _boundsRect, gameTime, sb);
+            DrawParticles(_game.ParticleEngine.Particles, _boundsRect, gameTime, sb, true);
             _game.Diagnostics.EndMeasurement("Draw Particles (Below Objects)", "World rendering", "Rendering");
 
             //Draw game objects
@@ -81,7 +76,7 @@ namespace MPTanks.Clients.GameClient.Rendering
 
             //And particles
             _game.Diagnostics.BeginMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
-            DrawParticles(_aboveParticles, _boundsRect, gameTime, sb);
+            DrawParticles(_game.ParticleEngine.Particles, _boundsRect, gameTime, sb, false);
             _game.Diagnostics.EndMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
         }
         #region Object Rendering
@@ -212,6 +207,7 @@ namespace MPTanks.Clients.GameClient.Rendering
         }
         #endregion
 
+        #region Animation Rendering
         private List<MPTanks.Engine.Rendering.Animations.Animation> _endedAnimations =
             new List<MPTanks.Engine.Rendering.Animations.Animation>();
         private void DrawAnimations(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
@@ -246,6 +242,9 @@ namespace MPTanks.Clients.GameClient.Rendering
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet and get it from the cache
                     var asset = _cache.GetAnimation(anim.AnimationName, anim.PositionInAnimationMs, anim.SpriteSheetName);
+                    //For safety: if the asset's name is "loading", we set alpha to 0
+                    if (asset.Name == "loading")
+                        _effect.Alpha = 0;
                     //Compute the draw rectangle (size of the object, centered in world space)
                     var drawRect = new Rectangle(
                         Scale(-anim.Size.X / 2),
@@ -267,40 +266,11 @@ namespace MPTanks.Clients.GameClient.Rendering
 
             _endedAnimations.Clear();
         }
-        private List<MPTanks.Engine.Rendering.Particles.Particle> _belowParticles =
-            new List<MPTanks.Engine.Rendering.Particles.Particle>();
-        private List<MPTanks.Engine.Rendering.Particles.Particle> _aboveParticles =
-            new List<MPTanks.Engine.Rendering.Particles.Particle>();
-        private void ComputeParticleOrdering()
-        {
-            //Here, we compute the ordering of particles
-            // so we split them into two lists. 
-            // Those that are supposed to be drawn below the world
-            // will go into the first list and the rest in the second list.
+        #endregion
 
-            if (_game.ParticleEngine.Particles == null) //sanity check
-                return;
-
-            _belowParticles.Clear(); //clear existing
-            _aboveParticles.Clear(); //clear existing
-
-            //And iterate over all of the particles to find which ones are above
-            //the world and which ones are below the world
-            foreach (var particle in _game.ParticleEngine.Particles)
-                if (particle.RenderBelowObjects)
-                    _belowParticles.Add(particle);
-                else
-                    _aboveParticles.Add(particle);
-
-            //Handle resizing (for mem usage)
-            if (_belowParticles.Capacity > (_belowParticles.Count * 2))
-                _belowParticles.Capacity = _belowParticles.Count * 2;
-            if (_aboveParticles.Capacity > (_aboveParticles.Count * 2))
-                _aboveParticles.Capacity = _aboveParticles.Count * 2;
-        }
-
+        #region Particle Rendering
         private void DrawParticles(IEnumerable<MPTanks.Engine.Rendering.Particles.Particle> _particles,
-            RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
+            RectangleF boundsRect, GameTime gameTime, SpriteBatch sb, bool renderParticlesBelow)
         {
             //Tracker for how many particles we can render
             //This is decremented for each particle that is drawn *on screen*
@@ -321,6 +291,8 @@ namespace MPTanks.Clients.GameClient.Rendering
             {
                 //Stop drawing if we've hit the on screen particle limit
                 if (remainingAllowedParticles == 0) break;
+                //Ignore particles in wrong order
+                if (particle.RenderBelowObjects != renderParticlesBelow) continue;
                 //And ignore off screen particles
                 if (!IsVisible(particle.Position, particle.Size, boundsRect)) continue;
 
@@ -343,7 +315,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             //And do the deferred draw
             sb.End();
         }
-
+        #endregion
 
         #region Scaling helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

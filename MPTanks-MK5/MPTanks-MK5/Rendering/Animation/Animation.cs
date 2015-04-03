@@ -32,7 +32,7 @@ namespace MPTanks.Clients.GameClient.Rendering.Animation
             FramesPerSecond = fps;
         }
 
-        public static Sprites.Sprite GetFrame(string animationDescription, Dictionary<string, Animation> animations)
+        public static Sprites.Sprite GetFrame(string animationDescription, IReadOnlyDictionary<string, Animation> animations)
         {
             var animInfo = animationDescription.Substring(11);
             var timeIntoAnimation = float.Parse(animInfo.Split(',')[0]);
@@ -52,7 +52,7 @@ namespace MPTanks.Clients.GameClient.Rendering.Animation
             return anim.GetFrame(frameNumber);
         }
 
-        public static string AdvanceAnimation(string animation, float amountMs, Dictionary<string, Animation> animations)
+        public static string AdvanceAnimation(string animation, float amountMs, IReadOnlyDictionary<string, Animation> animations)
         {
             var animInfo = animation.Substring(11);
             var animSplit = animInfo.Split(',');
@@ -82,7 +82,7 @@ namespace MPTanks.Clients.GameClient.Rendering.Animation
             return animInfo.Split(',')[1];
         }
 
-        public static Sprites.Sprite GetFrame(string animName, Dictionary<string, Animation> animations, float positionMs)
+        public static Sprites.Sprite GetFrame(string animName, IReadOnlyDictionary<string, Animation> animations, float positionMs)
         {
             if (!animations.ContainsKey(animName))
             {
@@ -94,7 +94,7 @@ namespace MPTanks.Clients.GameClient.Rendering.Animation
             return anim.GetFrame((int)(positionMs / (1000 / anim.FramesPerSecond)));
         }
 
-        public static bool Ended(string animName, Dictionary<string, Animation> animations, float positionMs, float loopCount = 1)
+        public static bool Ended(string animName, IReadOnlyDictionary<string, Animation> animations, float positionMs, float loopCount = 1)
         {
             if (!animations.ContainsKey(animName))
             {
