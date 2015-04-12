@@ -13,12 +13,12 @@ namespace MPTanks.Engine
         /// </summary>
         public void ForceMapLoad()
         {
-            CreateMapObjects(true);
+            CreateMapObjects();
         }
 
-        private void CreateMapObjects(bool authorized = false)
+        private void CreateMapObjects()
         {
-
+            Map.CreateObjects();
         }
     }
 }

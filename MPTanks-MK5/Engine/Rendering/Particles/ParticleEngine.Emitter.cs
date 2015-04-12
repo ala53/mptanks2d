@@ -10,14 +10,37 @@ namespace MPTanks.Engine.Rendering.Particles
 {
     public partial class ParticleEngine
     {
+        /// <summary>
+        /// Creates a particle emitter instance.
+        /// </summary>
+        /// <param name="fuzziness">The amount of randomness to apply, between 0 and 1.</param>
+        /// <param name="spriteInfo">The info for the sprite to render on the particles.</param>
+        /// <param name="colorMask">The color mask to apply to the texture. E.g. a white texture with a blue mask will be blue.</param>
+        /// <param name="emissionArea">The rectangle of the emission area.</param>
+        /// <param name="size"></param>
+        /// <param name="calculateVelocityAndAccelRelativeToRotation"></param>
+        /// <param name="fadeInTime"></param>
+        /// <param name="fadeOutTime"></param>
+        /// <param name="lifeSpan"></param>
+        /// <param name="velocity"></param>
+        /// <param name="acceleration"></param>
+        /// <param name="rotation"></param>
+        /// <param name="rotationVelocity"></param>
+        /// <param name="particlesPerSecond"></param>
+        /// <param name="emitterLifespan"></param>
+        /// <param name="shrinkInsteadOfFadeOut"></param>
+        /// <param name="scaleUniform"></param>
+        /// <param name="renderBelowObjects"></param>
+        /// <param name="diedCallback"></param>
+        /// <returns></returns>
         public Emitter CreateEmitter(float fuzziness, Assets.SpriteInfo spriteInfo,
             Color colorMask, RectangleF emissionArea, Vector2 size,
             bool calculateVelocityAndAccelRelativeToRotation = false,
             float fadeInTime = 0, float fadeOutTime = 0, float lifeSpan = 500,
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
-            float rotation = 0,
+            Vector2 emitterVelocity = default(Vector2), float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,           
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,
             Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
@@ -34,17 +57,40 @@ namespace MPTanks.Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
                        particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
-                       scaleUniform, renderBelowObjects, diedCallback
+                       scaleUniform, renderBelowObjects, emitterVelocity, diedCallback
                   );
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fuzziness"></param>
+        /// <param name="spriteInfos"></param>
+        /// <param name="colorMask"></param>
+        /// <param name="emissionArea"></param>
+        /// <param name="size"></param>
+        /// <param name="calculateVelocityAndAccelRelativeToRotation"></param>
+        /// <param name="fadeInTime"></param>
+        /// <param name="fadeOutTime"></param>
+        /// <param name="lifeSpan"></param>
+        /// <param name="velocity"></param>
+        /// <param name="acceleration"></param>
+        /// <param name="rotation"></param>
+        /// <param name="rotationVelocity"></param>
+        /// <param name="particlesPerSecond"></param>
+        /// <param name="emitterLifespan"></param>
+        /// <param name="shrinkInsteadOfFadeOut"></param>
+        /// <param name="scaleUniform"></param>
+        /// <param name="renderBelowObjects"></param>
+        /// <param name="diedCallback"></param>
+        /// <returns></returns>
         public Emitter CreateEmitter(float fuzziness, Assets.SpriteInfo[] spriteInfos,
             Color colorMask, RectangleF emissionArea, Vector2 size,
             bool calculateVelocityAndAccelRelativeToRotation = false,
             float fadeInTime = 0, float fadeOutTime = 0, float lifeSpan = 500,
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
-            float rotation = 0,
+            Vector2 emitterVelocity = default(Vector2), float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects= false,
+            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,
             Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
@@ -61,9 +107,41 @@ namespace MPTanks.Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
                        particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
-                       scaleUniform, renderBelowObjects, diedCallback
+                       scaleUniform, renderBelowObjects, emitterVelocity, diedCallback
                   );
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="spriteInfos"></param>
+        /// <param name="minFadeInTime"></param>
+        /// <param name="maxFadeInTime"></param>
+        /// <param name="minFadeOutTime"></param>
+        /// <param name="maxFadeOutTime"></param>
+        /// <param name="minLifeSpan"></param>
+        /// <param name="maxLifeSpan"></param>
+        /// <param name="emissionArea"></param>
+        /// <param name="minVelocity"></param>
+        /// <param name="maxVelocity"></param>
+        /// <param name="minAcceleration"></param>
+        /// <param name="maxAcceleration"></param>
+        /// <param name="calculateVelocityAndAccelRelativeToRotation"></param>
+        /// <param name="minSize"></param>
+        /// <param name="maxSize"></param>
+        /// <param name="minColorMask"></param>
+        /// <param name="maxColorMask"></param>
+        /// <param name="minRotation"></param>
+        /// <param name="maxRotation"></param>
+        /// <param name="minRotationVelocity"></param>
+        /// <param name="maxRotationVelocity"></param>
+        /// <param name="minParticlesPerSecond"></param>
+        /// <param name="maxParticlesPerSecond"></param>
+        /// <param name="emitterLifespan"></param>
+        /// <param name="shrinkInsteadOfFadeOut"></param>
+        /// <param name="scaleUniform"></param>
+        /// <param name="renderBelowObjects"></param>
+        /// <param name="diedCallback"></param>
+        /// <returns></returns>
         public Emitter CreateEmitter(Assets.SpriteInfo[] spriteInfos,
             float minFadeInTime, float maxFadeInTime,
             float minFadeOutTime, float maxFadeOutTime,
@@ -79,6 +157,7 @@ namespace MPTanks.Engine.Rendering.Particles
             float minParticlesPerSecond, float maxParticlesPerSecond,
             float emitterLifespan, bool shrinkInsteadOfFadeOut,
             bool scaleUniform, bool renderBelowObjects,
+            Vector2 emitterVelocity,
             Action<Emitter> diedCallback = null)
         {
             var em = new Emitter(this);
@@ -109,6 +188,7 @@ namespace MPTanks.Engine.Rendering.Particles
             em.MinParticlesPerSecond = minParticlesPerSecond;
             em.MaxParticlesPerSecond = maxParticlesPerSecond;
             em.EmitterLifespanMs = emitterLifespan;
+            em.EmitterVelocity = emitterVelocity;
             em.RemovedCallback = diedCallback;
 
             AddEmitter(em);
@@ -162,17 +242,48 @@ namespace MPTanks.Engine.Rendering.Particles
         }
 
         private volatile bool _updating = false;
+        private double _deficitMs = 0;
+        private GameTime _internalGameTime = new GameTime();
+
         private void ProcessEmitters(GameTime gameTime)
         {
+            //Track the deficit in milliseconds so we can do multiple steps for 1 frame if necessary
+            _deficitMs += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (_deficitMs <= 0) return; //if we are over on frame time, just do nothing
+            //And then do the update loop
             _updating = true;
+
+            //Keep track of the "totalGameTime"
+            var totalTime = gameTime.TotalGameTime - TimeSpan.FromMilliseconds(_deficitMs);
+
+            while (_deficitMs > 0) //otherwise, loop and do all the ticks
+            {
+                double tickMs = _deficitMs;
+                if (tickMs >= Game.Settings.ParticleEmitterMaxDeltaTime) //handle a disproportionately large tick time
+                    tickMs = Game.Settings.ParticleEmitterMaxDeltaTime; //and do multiple steps if necessary
+                //Set the internal gametime instance so we can pass the correct tick time
+                _internalGameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(tickMs);
+                _internalGameTime.TotalGameTime = totalTime;
+                //And do the tick 
+                ProcessEmittersTicked(_internalGameTime);
+                //And subtract the tick time so we have an accurate clock
+                _deficitMs -= tickMs;
+                //And the total time
+                totalTime += TimeSpan.FromMilliseconds(tickMs);
+            }
+
+            _updating = false;
+            //And process the remove/add queue 
+            ProcessEmitterQueue();
+        }
+
+        private void ProcessEmittersTicked(GameTime gameTime)
+        {
             for (var i = 0; i < _emitters.Count; i++)
             {
                 lock (_emitters)
                     _emitters[i].Update(gameTime);
             }
-            _updating = false;
-            //And process the remove/add queue 
-            ProcessEmitterQueue();
         }
 
         /// <summary>
@@ -210,6 +321,8 @@ namespace MPTanks.Engine.Rendering.Particles
             public float EmitterLifespanMs { get; set; }
             public Action<Emitter> RemovedCallback { get; set; }
             public ParticleEngine Container { get; private set; }
+
+            public Vector2 EmitterVelocity { get; set; }
 
             private float totalTimeAlive = 0;
             private int totalParticlesCreated = 0;
@@ -258,13 +371,21 @@ namespace MPTanks.Engine.Rendering.Particles
 
             public void Update(GameTime gameTime)
             {
+                //Update the total time
                 totalTimeAlive += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //Handle being dead
                 if (totalTimeAlive > EmitterLifespanMs || !Alive)
                 {
                     Kill();
                     return;
                 }
 
+                var emitterDelta = EmitterVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                //Move the emitter based on the velocity
+                EmissionArea = new RectangleF(EmissionArea.X + emitterDelta.X, EmissionArea.Y + emitterDelta.Y,
+                    EmissionArea.Width, EmissionArea.Height);
+
+                //Keep track of how many particles we can create
                 int numberOfParticlesToCreate = GetNumberOfParticlesToCreate();
                 if (numberOfParticlesToCreate <= 0)
                     return; //No particles to make, nothing to do
@@ -272,15 +393,16 @@ namespace MPTanks.Engine.Rendering.Particles
                 //Spawn the particles
                 for (var i = 0; i < numberOfParticlesToCreate; i++)
                 {
-                    var asset = ChooseRandomAsset();
+                    //Get one of the allowed assets (randomly)
+                    var asset = Assets.AssetHelper.ChooseRandom(Sprites);
                     var fadeOutTime = GetRandomBetween(MinFadeOutMs, MaxFadeOutMs);
                     var fadeInTime = GetRandomBetween(MinFadeInMs, MaxFadeInMs);
 
                     Vector2 velocity = GetRandomBetween(MinVelocity, MaxVelocity);
                     Vector2 acceleration = GetRandomBetween(MinAcceleration, MaxAcceleration);
                     float rotation = GetRandomBetween(MinRotation, MaxRotation);
-
-                    var size = GetRandomBetween(MinSize, MaxSize);
+                    //Get the size and scale either uniformly or randomly
+                    Vector2 size;
                     if (ScaleUniform)
                     {
                         var factor = GetRandomBetween(0, 1);
@@ -288,7 +410,12 @@ namespace MPTanks.Engine.Rendering.Particles
                         var distY = MaxSize.Y - MinSize.Y;
                         size = new Vector2(distX * factor + MinSize.X, distY * factor + MinSize.Y);
                     }
+                    else
+                    {
+                        size = GetRandomBetween(MinSize, MaxSize);
+                    }
 
+                    //Do you really have to ask with that variable name?
                     if (CalculateVelocityAndAccelerationRelativeToRotation)
                     {
                         var rotationRel = new Vector2(
@@ -298,6 +425,7 @@ namespace MPTanks.Engine.Rendering.Particles
                         acceleration *= rotationRel;
                     }
 
+                    //And create the actual particle
                     var particle = new Particle()
                     {
                         Acceleration = acceleration,
@@ -315,17 +443,10 @@ namespace MPTanks.Engine.Rendering.Particles
                         RenderBelowObjects = RenderBelowObjects,
                         ShinkInsteadOfFade = ShrinkInsteadOfFadeOut
                     };
+                    //And add it to the list
                     Container.AddParticle(particle);
                     totalParticlesCreated++; //Note that we created another particle
                 }
-            }
-
-            private Assets.SpriteInfo ChooseRandomAsset()
-            {
-                if (Sprites.Length == 1)
-                    return Sprites[0];
-
-                return Sprites[_random.Next(0, Sprites.Length - 1)];
             }
 
             private int GetNumberOfParticlesToCreate()

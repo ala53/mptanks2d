@@ -67,7 +67,7 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
                 new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
                 new RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
                 new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, 
-                    Vector2.Zero, 0, 0.15f, 60, lifespan + 100, true, true, true);
+                    Vector2.Zero, Vector2.Zero, 0, 0.15f, 600, lifespan + 100, true, true, true);
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
@@ -105,8 +105,8 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
                 new Color(cMask.ToVector3() * new Vector3(0.7f, 0.9f, 0.8f)),
                 //    Rotation
                 0, (float)Math.PI * 2,
-                // R Vel      Rate      Emitter life
-                0.05f, 0.5f, 75, 150, 200, false, false, true);
+                // R Vel      Rate      Emitter life          Emitter velocity
+                0.05f, 0.5f, 75, 150, 200, false, false, true, Vector2.Zero);
 
             Game.TimerFactory.RemoveTimer(_timeoutTimer);
 
@@ -116,8 +116,10 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
             //Move the particle emitter
-            if (_trailEmitter != null)
+            if (_trailEmitter != null) {
                 _trailEmitter.EmissionArea = new RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
+                _trailEmitter.EmitterVelocity = LinearVelocity;
+            }
         }
     }
 }

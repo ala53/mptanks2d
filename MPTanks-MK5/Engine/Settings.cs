@@ -20,7 +20,7 @@ namespace MPTanks.Engine
         /// A list of mod files (relative or absolute) that should be loaded without 
         /// Code security verification. AKA trusted mods.
         /// </summary>
-        public static readonly string[] TrustedMods = {
+        public static string[] TrustedMods = {
             "MPTanks.Modding.Mods.Core.dll"
             };
 
@@ -54,6 +54,24 @@ namespace MPTanks.Engine
         /// <summary>
         /// The maximum number of particles to allow in game
         /// </summary>
-        public int ParticleLimit = 100000;
+        public int ParticleLimit = 50000;
+
+        /// <summary>
+        /// The maximum delta time in milliseconds that a tick of the particle emitter can be.
+        /// If DT is greater than this, multiple steps will be taken rather than a single one.
+        /// </summary>
+        public float ParticleEmitterMaxDeltaTime = 17f / 4;
+
+        /// <summary>
+        /// The minimum delta time in milliseconds for a game tick. If DT is less than this,
+        /// we do one tick, then skip the next one, etc. until we have a deficit of game time,
+        /// then do another and repeat.
+        /// </summary>
+        public float MinDeltaTimeGameTick = 1f;
+
+        /// <summary>
+        /// The maximum delta time for a game tick. If the time is greater, multiple steps will be taken.
+        /// </summary>
+        public float MaxDeltaTimeGameTick = 18f;
     }
 }

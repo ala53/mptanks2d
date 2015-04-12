@@ -198,14 +198,38 @@ namespace MPTanks.Engine
         }
 
         private bool _hasDoneCleanup;
+        private GameTime _internalGameTime = new GameTime();
+        private double _deficitGameTime;
         public void Update(GameTime gameTime)
         {
-            var elapsed = gameTime.ElapsedGameTime; //Store the time so we can restore it if necessary
-            if (Timescale != 1)
+            _deficitGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * Timescale;
+            if (_deficitGameTime <= 0) return;
+            //
+            var totalGameTime = gameTime.TotalGameTime - TimeSpan.FromMilliseconds(_deficitGameTime);
+            //Loop until we have fulfilled the game time deficit
+            while (_deficitGameTime > 0)
             {
-                gameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(
-                    gameTime.ElapsedGameTime.TotalMilliseconds * Timescale);
+                //Figure out how big the step is
+                var tickMs = _deficitGameTime;
+                if (tickMs < Settings.MinDeltaTimeGameTick) tickMs = Settings.MinDeltaTimeGameTick;
+                if (tickMs > Settings.MaxDeltaTimeGameTick) tickMs = Settings.MaxDeltaTimeGameTick;
+                //Build the gametime instance
+                _internalGameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(tickMs);
+                _internalGameTime.TotalGameTime = totalGameTime;
+                //Do the tick
+                DoUpdate(_internalGameTime);
+
+                //And correct the total game time
+                totalGameTime += TimeSpan.FromMilliseconds(tickMs);
+
+                //Subtract from the deficit
+                _deficitGameTime -= tickMs;
+                //...and repeat
             }
+        }
+
+        private void DoUpdate(GameTime gameTime)
+        {
             if (Gamemode.GameEnded)
             {
                 TickGameEnd(gameTime);
@@ -232,9 +256,6 @@ namespace MPTanks.Engine
                 else
                     _timeSinceGameBeganStarting = 0; //Reset the counter if not ready
             }
-
-            //And restore possible change to gametime
-            gameTime.ElapsedGameTime = elapsed;
         }
 
         private void EndGame()

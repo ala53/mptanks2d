@@ -51,6 +51,13 @@ namespace MPTanks.Engine.Maps
         /// </summary>
         public void CreateObjects()
         {
+            foreach (var mapObj in _deserialized.Objects)
+            {
+                MapObject obj = MapObject.ReflectiveInitialize(mapObj.TypeName, _game, true, mapObj.Position, mapObj.Rotation);
+                obj.ColorMask = mapObj.Mask;
+
+                _game.AddGameObject(obj, null, true);
+            }
         }
 
         /// <summary>

@@ -110,13 +110,6 @@ namespace MPTanks.Clients.GameClient
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
 
-            game.AddGameObject(
-                MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("SatelliteDishLarge",
-                    game, true, new Vector2(10, 20), 33), null, true);
-            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(50, 50), 33), null, true);
-            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(150, 30), 33), null, true);
-            game.AddGameObject(MPTanks.Engine.Maps.MapObjects.MapObject.ReflectiveInitialize("LargeHouseMultiLevel", game, true, new Vector2(30, 80), 33), null, true);
-
             player1Id = Guid.NewGuid();
             player2Id = Guid.NewGuid();
             game.AddPlayer(player1Id);
@@ -202,7 +195,7 @@ namespace MPTanks.Clients.GameClient
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
-                game.Timescale = 1 / 32f;
+                game.Timescale = 1 / 128f;
             else
                 game.Timescale = 1f;
             timer.Restart();
@@ -450,9 +443,15 @@ namespace MPTanks.Clients.GameClient
                 .Append((1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1")).Append(" now")
                 .Append(",\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
-                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
-                .Append(",\nStatus:");
+                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used");
 
+            if (game.IsGameRunning)
+                _bldr.Append(", Timescale: 1 / " + (1 / game.Timescale).ToString("N0"));
+
+            _bldr.Append("\nStatus: ");
+
+            if (game.IsCountingDownToStart)
+                _bldr.Append("starting game");
             if (game.IsWaitingForPlayers)
                 _bldr.Append(" waiting for players");
             if (game.IsGameRunning)
@@ -461,7 +460,7 @@ namespace MPTanks.Clients.GameClient
                 _bldr.Append(" ended");
 
             if (game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
-                _bldr.Append(", Winner").Append(game.Gamemode.WinningTeam.TeamName);
+                _bldr.Append(", Winner: ").Append(game.Gamemode.WinningTeam.TeamName);
 
             spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));
             spriteBatch.End();

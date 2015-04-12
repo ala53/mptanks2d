@@ -19,6 +19,7 @@ namespace MPTanks.Engine.Maps.MapDeserializationClasses
         public string[] AllowedGamemodes { get; set; }
         public BackgroundTileJSON[] Background { get; set; }
         public MapTeamsJSON[] Spawns { get; set; }
+        public MapObjectJSON[] Objects { get; set; }
 
         public static MapJSON Load(string data)
         {
