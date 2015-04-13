@@ -171,6 +171,7 @@ namespace MPTanks.Engine
         public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapData, bool skipInit = false)
         {
             Logger = logger;
+            Settings = new MPTanks.Engine.Settings();
             //Safety: call all global Ctors
             ConstructorHelper.CallGlobalCtors();
 
@@ -193,7 +194,6 @@ namespace MPTanks.Engine
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
             Diagnostics = new MPTanks.Engine.Diagnostics();
-            Settings = new MPTanks.Engine.Settings();
             DiagnosticsParent = "Game Update";
             Logger.Log("Game initialized");
         }
