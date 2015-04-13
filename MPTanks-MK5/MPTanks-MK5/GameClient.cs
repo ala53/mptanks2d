@@ -150,6 +150,9 @@ namespace MPTanks.Clients.GameClient
             }
         }
 
+        const float limit = 1024;
+        private float timescale = limit;
+        private float timescaleShiftAmount = 0;
         private long updateNumber;
         private long frameNumber;
         private float physicsMs = 0;
@@ -195,9 +198,25 @@ namespace MPTanks.Clients.GameClient
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
-                game.Timescale = 1 / 128f;
+            {
+                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.00001f);
+                timescale -= timescaleShiftAmount;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.U))
+            {
+                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.00001f);
+                timescale += timescaleShiftAmount;
+            }
             else
-                game.Timescale = 1f;
+                MathHelper.Lerp(timescaleShiftAmount, 0, 0.01f);
+
+            if (timescale <= 0)
+                timescale = 1;
+
+            if (timescale > limit * 128)
+                timescale = limit * 128;
+
+            game.Timescale = (timescale / limit);
             timer.Restart();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -446,7 +465,9 @@ namespace MPTanks.Clients.GameClient
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used");
 
             if (game.IsGameRunning)
-                _bldr.Append(", Timescale: 1 / " + (1 / game.Timescale).ToString("N0"));
+            {
+                _bldr.Append(", Timescale: " + (int)timescale + "/" + limit);
+            }
 
             _bldr.Append("\nStatus: ");
 
@@ -465,6 +486,7 @@ namespace MPTanks.Clients.GameClient
             spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));
             spriteBatch.End();
         }
+
         private float[] _fps;
 
         private float CalculateAverageFPS(float deltaMs)

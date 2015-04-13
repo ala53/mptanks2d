@@ -185,6 +185,7 @@ namespace MPTanks.Engine
             Gamemode.SetGame(this);
 
             //Initialize game
+            Timescale = 1;
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
             AnimationEngine = new Rendering.Animations.AnimationEngine();
