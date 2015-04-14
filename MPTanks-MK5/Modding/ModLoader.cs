@@ -9,14 +9,17 @@ namespace MPTanks.Modding
 {
     public class ModLoader
     {
-        public static Module Load(string source, bool verifySafe, out string errors)
+        public static Module Load(string source, bool verifySafe, out string errors, Assembly[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
         {
-            return Load(new[] { source }, verifySafe, out errors);
+            return Load(new[] { source }, verifySafe, out errors, precompiledAssemblies, otherAssemblyReferences);
         }
-        public static Module Load(string[] source, bool verifySafe, out string errors)
+        public static Module Load(string[] sources, bool verifySafe, out string errors, Assembly[] precompiledAssemblies, string[] otherAssemblyReferences = null)
         {
+            if (otherAssemblyReferences == null) otherAssemblyReferences = new string[0];
+            if (precompiledAssemblies == null ) precompiledAssemblies = new Assembly[0];
+
             var compileErrors = "";
-            var asm = Compiliation.Compiler.CompileAssembly(source, out compileErrors);
+            var asm = Compiliation.Compiler.CompileAssembly(sources, out compileErrors, otherAssemblyReferences);
             var mbuilderrors = "";
 
             if (asm == null)
@@ -26,23 +29,33 @@ namespace MPTanks.Modding
                 return null;
             }
 
-            var module = Load(asm, verifySafe, out mbuilderrors);
+            var assemblies = precompiledAssemblies.ToList();
+            assemblies.Add(asm);
+
+            var module = Load(assemblies.ToArray(), verifySafe, out mbuilderrors);
 
             errors = compileErrors + "\n\n\n" + mbuilderrors;
             return module;
 
         }
+
         public static Module Load(Assembly asm, bool verifySafe, out string errors)
         {
+            return Load(new[] { asm }, verifySafe, out errors);
+        }
+
+        public static Module Load(Assembly[] assemblies, bool verifySafe, out string errors)
+        {
             var safetyCheckErrors = "";
-            var safe = true;
             if (verifySafe)
             {//Scan the IL of the assembly
-                safe = Compiliation.Verification.WhitelistVerify.IsAssemblySafe(asm, out safetyCheckErrors);
-                if (!safe)
+                foreach (var asm in assemblies)
                 {
-                    errors = safetyCheckErrors;
-                    return null;
+                    if (!Compiliation.Verification.WhitelistVerify.IsAssemblySafe(asm, out safetyCheckErrors))
+                    {
+                        errors = safetyCheckErrors;
+                        return null;
+                    }
                 }
             }
 
@@ -50,7 +63,16 @@ namespace MPTanks.Modding
             var module = new Module();
 
             //Get the declaration
-            var moduleDeclaration = FindModuleDeclaration(asm);
+            ModuleDeclarationAttribute moduleDeclaration = null;
+            foreach (var asm in assemblies)
+            {
+                var decl = FindModuleDeclaration(asm);
+                if (decl != null)
+                {
+                    moduleDeclaration = decl;
+                    break;
+                }
+            }
             if (moduleDeclaration == null)
             {
                 builderErrors = "Missing module declaration. ([ModuleDeclarationAttribute]). Cannot proceed.";
@@ -58,7 +80,7 @@ namespace MPTanks.Modding
                 return null;
             }
 
-            module.Assembly = asm;
+            module.Assemblies = assemblies;
             module.Name = moduleDeclaration.Name;
             module.Description = moduleDeclaration.Description;
             module.Author = moduleDeclaration.Author;
@@ -66,66 +88,71 @@ namespace MPTanks.Modding
 
             //Tanks
             var tanks = new List<TankType>();
-            foreach (var tank in ScanTankTypes(asm))
-            {
-                try
+            foreach (var asm in assemblies)
+                foreach (var tank in ScanTankTypes(asm))
                 {
-                    tanks.Add(new TankType(tank));
+                    try
+                    {
+                        tanks.Add(new TankType(tank));
+                    }
+                    catch (Exception e)
+                    {
+                        builderErrors += "\n\n\nTank: " + tank.FullName + " has error: " + e.Message;
+                    }
                 }
-                catch (Exception e)
-                {
-                    builderErrors += "\n\n\nTank: " + tank.FullName + " has error: " + e.Message;
-                }
-            }
             module.Tanks = tanks.ToArray();
 
             //Projectiles
             var projectiles = new List<ProjectileType>();
-            foreach (var prj in ScanProjectileTypes(asm))
-            {
-                try
+            foreach (var asm in assemblies)
+                foreach (var prj in ScanProjectileTypes(asm))
                 {
-                    projectiles.Add(new ProjectileType(prj, module.Tanks));
+                    try
+                    {
+                        projectiles.Add(new ProjectileType(prj, module.Tanks));
+                    }
+                    catch (Exception e)
+                    {
+                        builderErrors += "\n\n\nProjectile: " + prj.FullName + " has error: " + e.Message;
+                    }
                 }
-                catch (Exception e)
-                {
-                    builderErrors += "\n\n\nProjectile: " + prj.FullName + " has error: " + e.Message;
-                }
-            }
             module.Projectiles = projectiles.ToArray();
 
             //Map objects
             var mapObjects = new List<MapObjectType>();
-            foreach (var mapObject in ScanMapObjectTypes(asm))
-            {
-                try
+            foreach (var asm in assemblies)
+                foreach (var mapObject in ScanMapObjectTypes(asm))
                 {
-                    mapObjects.Add(new MapObjectType(mapObject));
+                    try
+                    {
+                        mapObjects.Add(new MapObjectType(mapObject));
+                    }
+                    catch (Exception e)
+                    {
+                        builderErrors += "\n\n\nMap object: " + mapObject.FullName + " has error: " + e.Message;
+                    }
                 }
-                catch (Exception e)
-                {
-                    builderErrors += "\n\n\nMap object: " + mapObject.FullName + " has error: " + e.Message;
-                }
-            }
             module.MapObjects = mapObjects.ToArray();
 
             //Gamemodes
             var gamemodes = new List<GamemodeType>();
-            foreach (var gamemode in ScanGamemodeTypes(asm))
-            {
-                try
+            foreach (var asm in assemblies)
+                foreach (var gamemode in ScanGamemodeTypes(asm))
                 {
-                    gamemodes.Add(new GamemodeType(gamemode));
+                    try
+                    {
+                        gamemodes.Add(new GamemodeType(gamemode));
+                    }
+                    catch (Exception e)
+                    {
+                        builderErrors += "\n\n\nGamemode: " + gamemode.FullName + " has error: " + e.Message;
+                    }
                 }
-                catch (Exception e)
-                {
-                    builderErrors += "\n\n\nGamemode: " + gamemode.FullName + " has error: " + e.Message;
-                }
-            }
             module.Gamemodes = gamemodes.ToArray();
 
             //And call the constructors
-            CallStaticCtors(asm);
+            foreach (var asm in assemblies)
+                CallStaticCtors(asm);
 
             errors = safetyCheckErrors + "\n\n" + builderErrors;
 
@@ -152,9 +179,8 @@ namespace MPTanks.Modding
         private static ModuleDeclarationAttribute FindModuleDeclaration(Assembly asm)
         {
             foreach (var type in asm.GetTypes())
-                if (type.GetCustomAttribute(typeof(ModuleDeclarationAttribute)) != null)
-                    return (ModuleDeclarationAttribute)type.GetCustomAttribute(
-                        typeof(ModuleDeclarationAttribute));
+                if (type.GetCustomAttribute<ModuleDeclarationAttribute>() != null)
+                    return type.GetCustomAttribute<ModuleDeclarationAttribute>();
 
             return null;
         }

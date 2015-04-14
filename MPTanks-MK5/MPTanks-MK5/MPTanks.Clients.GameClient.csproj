@@ -65,6 +65,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animation\Animation.cs" />
     <Compile Include="Rendering\AssetCache.cs" />
+    <Compile Include="Rendering\AssetResolver.cs" />
     <Compile Include="Rendering\FXAA.cs" />
     <Compile Include="Rendering\GameWorldRenderer.cs" />
     <Compile Include="Rendering\LoadingScreen.cs" />
@@ -200,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\ui\" />
+    <Folder Include="mods\" />
     <Folder Include="UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

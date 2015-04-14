@@ -11,15 +11,32 @@ namespace MPTanks.Engine.Mods
     {
         private static List<Modding.Module> _modules = new List<Modding.Module>();
         public static IReadOnlyList<Modding.Module> Modules { get { return _modules.ToArray(); } }
+        private static Dictionary<string, Assembly> _loadedModAssemblies = new Dictionary<string, Assembly>();
 
-        public static bool LoadModFromSource(string sourceCode, bool verifySafety, out string errors, 
+        public static bool LoadModComplex(string[] sourceCode, string[] assemblyFiles, bool verifySafety, out string errors,
             out Modding.Module module, bool activate = false)
         {
+            //Load the assemblies into memory
+            var asms = new List<Assembly>();
+            foreach (var asmFile in assemblyFiles)
+            {
+                if (_loadedModAssemblies.ContainsKey(asmFile.ToLower()))
+                {
+                    asms.Add(_loadedModAssemblies[asmFile.ToLower()]);
+                    continue;
+                }
+
+                var asm = Assembly.LoadFile(asmFile);
+                _loadedModAssemblies.Add(asmFile.ToLower(), asm);
+                asms.Add(asm);
+            }
+
+            //Then load the actual mod
             module = null;
             errors = "";
             try
             {
-                var mod = MPTanks.Modding.ModLoader.Load(sourceCode, verifySafety, out errors);
+                var mod = MPTanks.Modding.ModLoader.Load(sourceCode, verifySafety, out errors, asms.ToArray(), assemblyFiles);
                 if (mod == null)
                 {
                     errors = "Mod injection failed.\n=================================\n\n\n" + errors;
@@ -32,6 +49,7 @@ namespace MPTanks.Engine.Mods
             }
             catch (Exception e)
             {
+                //Handle errors
                 errors = "Something went really wrong!\n\n" + e.ToString();
                 return false;
             }
@@ -39,12 +57,11 @@ namespace MPTanks.Engine.Mods
             return true;
         }
 
-        private static HashSet<string> _loadedModFiles = new HashSet<string>();
-        public static bool LoadModFromFile(string file, bool verifySafety, out string errors, 
+        public static bool LoadModFromFile(string file, bool verifySafety, out string errors,
             out Modding.Module module, bool activate = false)
         {
             module = null;
-            if (_loadedModFiles.Contains(file.ToLower()))
+            if (_loadedModAssemblies.ContainsKey(file.ToLower()))
             {
                 errors = "Mod already loaded.";
                 return false;
@@ -52,7 +69,8 @@ namespace MPTanks.Engine.Mods
             errors = "";
             try
             {
-                var mod = MPTanks.Modding.ModLoader.Load(Assembly.LoadFile(file), verifySafety, out errors);
+                var asm = Assembly.LoadFile(file);
+                var mod = MPTanks.Modding.ModLoader.Load(asm, verifySafety, out errors);
                 if (mod == null)
                 {
                     errors = "Mod injection failed.\n=================================\n\n\n" + errors;
@@ -62,7 +80,7 @@ namespace MPTanks.Engine.Mods
                 module = mod;
                 if (activate) ActivateMod(mod);
 
-                _loadedModFiles.Add(file.ToLower());
+                _loadedModAssemblies.Add(file.ToLower(), asm);
             }
             catch (Exception e)
             {

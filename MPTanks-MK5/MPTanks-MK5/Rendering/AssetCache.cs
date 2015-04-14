@@ -195,6 +195,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             {
                 try
                 {
+                    sheetName = AssetResolver.Resolve(sheetName);
                     //Open a file stream to the sheet
                     FileStream fStream = null;
                     fStream = System.IO.File.OpenRead(sheetName);

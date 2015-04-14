@@ -12,7 +12,7 @@ namespace MPTanks.Modding.Compiliation
 {
     public class Compiler
     {
-        public static Assembly CompileAssembly(string[] sourceCode, out string errors)
+        public static Assembly CompileAssembly(string[] sourceCode, out string errors, params string[] otherReferences)
         {
             errors = "";
 
@@ -29,6 +29,9 @@ namespace MPTanks.Modding.Compiliation
             param.ReferencedAssemblies.Add("System.Linq.Parallel.dll");
             param.ReferencedAssemblies.Add("System.Linq.Queryable.dll");
             param.ReferencedAssemblies.Add("MonoGame.Framework.dll");
+
+            foreach (var reference in otherReferences)
+                param.ReferencedAssemblies.Add(reference);
 
             CompilerResults results = compiler.CompileAssemblyFromSource(param, sourceCode);
 
