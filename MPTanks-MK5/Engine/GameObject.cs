@@ -309,6 +309,10 @@ namespace MPTanks.Engine
         }
 
         abstract public void Update(GameTime time);
+        public virtual void UpdatePostPhysics(GameTime gameTime)
+        {
+
+        }
 
         private bool _hasBeenDeleted;
         internal bool Destroy(GameObject destructor = null)

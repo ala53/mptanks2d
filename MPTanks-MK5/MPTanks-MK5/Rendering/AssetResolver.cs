@@ -10,6 +10,7 @@ namespace MPTanks.Clients.GameClient.Rendering
     {
         public static string Resolve(string filename)
         {
+
             return filename;
         }
     }

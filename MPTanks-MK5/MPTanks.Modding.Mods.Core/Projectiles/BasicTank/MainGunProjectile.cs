@@ -64,10 +64,10 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 
             // Create the trail emitter
             _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, MPTanks.Engine.Assets.SmokePuffs.SmokePuffSprites,
-                new Color(new Color(255, 200, 255).ToVector4() * ColorMask.ToVector4()),
+                new Color(new Color(255, 200, 255, 127).ToVector4() * ColorMask.ToVector4()),
                 new RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
                 new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, 
-                    Vector2.Zero, Vector2.Zero, 0, 0.15f, 600, lifespan + 100, true, true, true);
+                    Vector2.Zero, Vector2.Zero, 0, 0.15f, 2000, lifespan + 100, true, true, true);
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
@@ -115,11 +115,17 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 
         public override void Update(Microsoft.Xna.Framework.GameTime time)
         {
-            //Move the particle emitter
-            if (_trailEmitter != null) {
+            //We update the position before physics and the velocity after
+            //or we end up drawing the smoke in front of the bullet
+            if (_trailEmitter != null)
                 _trailEmitter.EmissionArea = new RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
+
+        }
+        public override void UpdatePostPhysics(GameTime gameTime)
+        {
+            //Move the particle emitter
+            if (_trailEmitter != null)
                 _trailEmitter.EmitterVelocity = LinearVelocity;
-            }
         }
     }
 }

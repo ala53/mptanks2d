@@ -303,8 +303,27 @@ namespace MPTanks.Engine.Rendering.Particles
             public float MaxRotation { get; set; }
             public float MinRotationVelocity { get; set; }
             public float MaxRotationVelocity { get; set; }
-            public float MinParticlesPerSecond { get; set; }
-            public float MaxParticlesPerSecond { get; set; }
+            private float _minPPS;
+            public float MinParticlesPerSecond
+            {
+                get { return _minPPS; }
+                set
+                {
+                    _minPPS = value;
+                    ActualParticlesPerSecond = GetRandomBetween(MinParticlesPerSecond, MaxParticlesPerSecond);
+                }
+            }
+            private float _maxPPS;
+            public float MaxParticlesPerSecond
+            {
+                get { return _maxPPS; }
+                set
+                {
+                    _maxPPS = value;
+                    ActualParticlesPerSecond = GetRandomBetween(MinParticlesPerSecond, MaxParticlesPerSecond);
+                }
+            }
+            public float ActualParticlesPerSecond { get; set; }
             public Color MinColorMask { get; set; }
             public Color MaxColorMask { get; set; }
             public Vector2 MinVelocity { get; set; }
@@ -336,6 +355,8 @@ namespace MPTanks.Engine.Rendering.Particles
             {
                 Container = engine;
                 Alive = true;
+
+                ActualParticlesPerSecond = GetRandomBetween(MinParticlesPerSecond, MaxParticlesPerSecond);
             }
 
             public void Kill()
@@ -380,6 +401,10 @@ namespace MPTanks.Engine.Rendering.Particles
                     return;
                 }
 
+                //Cache the initial value so we can do computations and get the exact position
+                var currentEmissionArea = EmissionArea;
+
+                //And move the emitter to its starting position
                 var emitterDelta = EmitterVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 //Move the emitter based on the velocity
                 EmissionArea = new RectangleF(EmissionArea.X + emitterDelta.X, EmissionArea.Y + emitterDelta.Y,
@@ -435,7 +460,7 @@ namespace MPTanks.Engine.Rendering.Particles
                         FadeInMs = fadeInTime,
                         FadeOutMs = fadeOutTime,
                         LifespanMs = GetRandomBetween(MinLifespanMs, MaxLifespanMs) + fadeInTime + fadeOutTime,
-                        Position = GetRandomPosition(EmissionArea),
+                        Position = GetRandomPosition(currentEmissionArea),
                         Rotation = rotation,
                         RotationVelocity = GetRandomBetween(MinRotationVelocity, MaxRotationVelocity),
                         Size = size,
@@ -443,10 +468,18 @@ namespace MPTanks.Engine.Rendering.Particles
                         RenderBelowObjects = RenderBelowObjects,
                         ShinkInsteadOfFade = ShrinkInsteadOfFadeOut
                     };
+                    //Move the emitter to the exact location it should be for this particle
+                    var exactEmitterDelta = EmitterVelocity *
+                        (((float)i / numberOfParticlesToCreate) * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    //Move the emitter based on the velocity
+                    currentEmissionArea =
+                        new RectangleF(EmissionArea.X + exactEmitterDelta.X, EmissionArea.Y + exactEmitterDelta.Y,
+                        EmissionArea.Width, EmissionArea.Height);
                     //And add it to the list
                     Container.AddParticle(particle);
                     totalParticlesCreated++; //Note that we created another particle
                 }
+
             }
 
             private int GetNumberOfParticlesToCreate()
@@ -455,7 +488,7 @@ namespace MPTanks.Engine.Rendering.Particles
                 //E.g. if we are supposed to release 5 particles / sec and each frame is 1/10 of a sec,
                 //a naive implementation would never spawn a particles
                 float totalParticlesToSpawn = ((totalTimeAlive / 1000) *
-                    GetRandomBetween(MinParticlesPerSecond, MaxParticlesPerSecond));
+                    ActualParticlesPerSecond);
 
                 return (int)(totalParticlesToSpawn - totalParticlesCreated);
             }

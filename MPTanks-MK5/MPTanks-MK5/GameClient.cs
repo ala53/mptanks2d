@@ -199,16 +199,15 @@ namespace MPTanks.Clients.GameClient
 
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
             {
-                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.00001f);
+                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.0001f);
                 timescale -= timescaleShiftAmount;
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.U))
             {
-                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.00001f);
+                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.0001f);
                 timescale += timescaleShiftAmount;
             }
-            else
-                MathHelper.Lerp(timescaleShiftAmount, 0, 0.01f);
+            else timescaleShiftAmount = 0;
 
             if (timescale <= 0)
                 timescale = 1;
