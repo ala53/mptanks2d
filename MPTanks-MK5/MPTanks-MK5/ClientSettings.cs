@@ -57,44 +57,18 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         public Setting<int> MaxInstancesOfOneSoundAllowed { get; private set; }
 
-        public string[] AssetAllowedFileExtensions = {
-            ".dds",
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".bmp",
-            ".gif"
-            };
+        public Setting<string[]> AssetAllowedFileExtensions { get; private set; }
 
         //Where config information is stored
-        public string ConfigDir =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D");
+        public Setting<string> ConfigDir { get; private set; }
 
         //Where to look for assets
-        public string[] AssetSearchPaths = {
-            Directory.GetCurrentDirectory(), //current directory
-            Path.Combine(Directory.GetCurrentDirectory(), "assets"),
-            Path.Combine(Directory.GetCurrentDirectory(), "assets", "animations"),
-            Path.Combine(Directory.GetCurrentDirectory(), "assets", "mapobjects"),
-            Path.Combine(Directory.GetCurrentDirectory(), "assets", "other"),
-            Path.Combine(Directory.GetCurrentDirectory(), "assets", "tanks"),
-            Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-            Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-            Path.Combine(Directory.GetCurrentDirectory(), "mods", "modassets"),
-            Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods", "modassets"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "assets")
-            };
-
-        //Looks for *.mod files to unpack
-        public string[] ModSearchPaths = {
-            Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "mods")
-            };
+        public Setting<string[]> AssetSearchPaths { get; private set; } //Looks for *.mod files to unpack
+        public Setting<string[]> ModSearchPaths { get; private set; }
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
-        //just leave them in the runtime directory where they are removed next time the program opens
-        public string ModUnpackPath =
-            Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods");
+        //just leave them in the temp directory where they are removed next time the program opens
+        public Setting<string> ModUnpackPath { get; private set; }
 
         public ClientSettings()
         {
@@ -112,11 +86,48 @@ namespace MPTanks.Clients.GameClient
             ForceFullGCEveryFrame = new Setting<bool>(this, "Force Full GC every frame",
             "Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance.", false);
 
-            ForceGen0GCEveryFrame = new Setting<bool>(this, "Force Gen0 GC every frame",
-            "Whether to force a fast GC every frame. This is rarely a significant performance problem but" +
-            " is useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
+            ForceGen0GCEveryFrame = new Setting<bool>(this, "Force Gen 0 GC every frame",
+            "Whether to force a fast GC every frame. This is rarely a significant performance problem so" +
+            " it's useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
 
-            MaxInstancesOfOneSoundAllowed = new Setting<int>(this, "", "", 4);
+            MaxInstancesOfOneSoundAllowed = new Setting<int>(this, "Max instances of 1 sound",
+            "The maximum number of instaces of a single sound that can be playing simultaneously." +
+            " If more sounds than that try to play simultaneously, the oldest one will be cut off. Increase" +
+            " this if you are hearing audible cutoffs, at the cost of memory usage and performace.", 4);
+
+            AssetAllowedFileExtensions = new Setting<string[]>(this, "Image asset file extensions",
+                "The extensions to search for when trying to load an image, in the correct search order.",
+                new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
+
+            ConfigDir = new Setting<string>(this, "Save directory",
+                "The directory where configuration information and mods are stored in.",
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D"));
+
+            AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets.",
+                new[] {
+                    Directory.GetCurrentDirectory(), //current directory
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "animations"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "mapobjects"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "other"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "tanks"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "mods", "modassets"),
+                    Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods", "modassets"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "assets")
+                });
+
+            ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
+                new[] {
+                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "mods")
+                });
+
+            ModUnpackPath = new Setting<string>(this, "Mod temp directory",
+                "The place to store mods that are used at runtime. In other words, this is the directory" +
+                " that *.mod files are unpacked into.",
+                Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods"));
         }
     }
 }

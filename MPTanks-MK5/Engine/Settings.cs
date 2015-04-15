@@ -20,7 +20,7 @@ namespace MPTanks.Engine
         /// A list of mod files (relative or absolute) that should be loaded without 
         /// Code security verification. AKA trusted mods.
         /// </summary>
-        public readonly Setting<string[]> TrustedMods { get; private set; }
+        public Setting<string[]> TrustedMods { get; private set; }
 
         public static readonly string[] DefaultTrustedMods = new[] {
                     "MPTanks.Modding.Mods.Core.dll"
@@ -30,31 +30,31 @@ namespace MPTanks.Engine
         /// The scale the rendering runs at relative to the blocks.
         /// This way, we can pass integers around safely.
         /// </summary>
-        public readonly Setting<float> RenderScale { get; private set; }
+        public Setting<float> RenderScale { get; private set; }
 
         /// <summary>
         /// The amount of "blocks" to compensate for in rendering because of the 
         /// skin on physics objects
         /// </summary>
-        public readonly Setting<float> PhysicsCompensationForRendering { get; private set; }
+        public Setting<float> PhysicsCompensationForRendering { get; private set; }
 
-        public readonly Setting<float> TankDensity { get; private set; }
+        public Setting<float> TankDensity { get; private set; }
 
         /// <summary>
         /// Number of milliseconds after GameCore initialization to wait before starting
         /// the game because we want all of the setup to be done and for people to be connected.
         /// </summary>
-        public readonly Setting<float> TimeToWaitBeforeStartingGame { get; private set; }
+        public Setting<float> TimeToWaitBeforeStartingGame { get; private set; }
 
         /// <summary>
         /// The number of milliseconds after game to continue updating
         /// </summary>
-        public readonly Setting<float> TimePostGameToContinueRunning { get; private set; }
+        public Setting<float> TimePostGameToContinueRunning { get; private set; }
 
         /// <summary>
         /// The maximum number of particles to allow in game
         /// </summary>
-        public readonly Setting<int> ParticleLimit { get; private set; }
+        public Setting<int> ParticleLimit { get; private set; }
 
 
         /// <summary>
@@ -62,18 +62,18 @@ namespace MPTanks.Engine
         /// we do one tick, then skip the next one, etc. until we have a deficit of game time,
         /// then do another and repeat.
         /// </summary>
-        public readonly Setting<float> MinDeltaTimeGameTick { get; private set; }
+        public Setting<float> MinDeltaTimeGameTick { get; private set; }
 
         /// <summary>
         /// The maximum delta time for a game tick. If the time is greater, multiple steps will be taken.
         /// </summary>
-        public readonly Setting<float> MaxDeltaTimeGameTick { get; private set; }
+        public Setting<float> MaxDeltaTimeGameTick { get; private set; }
 
         /// <summary>
         /// The maximum delta time in milliseconds that a tick of the particle emitter can be.
         /// If DT is greater than this, multiple steps will be taken rather than a single one.
         /// </summary>
-        public readonly Setting<float> ParticleEmitterMaxDeltaTime { get; private set; }
+        public Setting<float> ParticleEmitterMaxDeltaTime { get; private set; }
 
         public Settings()
         {
