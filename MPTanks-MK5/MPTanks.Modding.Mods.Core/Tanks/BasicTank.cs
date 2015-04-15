@@ -123,7 +123,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             //Reload timer
             canFirePrimary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 50);
+            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
         }
         private void FireSecondary()
         {

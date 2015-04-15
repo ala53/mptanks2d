@@ -16,7 +16,7 @@ namespace MPTanks.Clients.GameClient
                 new NLog.Targets.Wrappers.AsyncTargetWrapper(
                     new NLog.Targets.FileTarget()
                     {
-                        FileName = ClientSettings.LogLocation,
+                        FileName = (string)ClientSettings.Instance.LogLocation,
                         ArchiveOldFileOnStartup = true,
                         KeepFileOpen = true,
                         MaxArchiveFiles = 10,

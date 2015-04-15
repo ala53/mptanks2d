@@ -15,7 +15,7 @@ namespace MPTanks.Engine.Mods
             if (_hasLoadedMods) return;
             _hasLoadedMods = true;
 
-            foreach (var modFile in Settings.TrustedMods)
+            foreach (var modFile in Settings.DefaultTrustedMods)
             {
                 try
                 {
@@ -25,8 +25,8 @@ namespace MPTanks.Engine.Mods
                     {
                         string errors;
                         Module mod;
-                        ModLoader.LoadModFromFile(
-                            System.IO.File.ReadAllText(modFile),
+                        ModLoader.LoadModComplex(
+                            new string[] { System.IO.File.ReadAllText(modFile) }, null,
                             false, out errors, out mod, true
                             );
                     }

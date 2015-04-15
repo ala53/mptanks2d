@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\ui\" />
+    <Folder Include="Input\" />
     <Folder Include="mods\" />
     <Folder Include="UI\" />
   </ItemGroup>

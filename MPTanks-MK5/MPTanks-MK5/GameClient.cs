@@ -400,9 +400,9 @@ namespace MPTanks.Clients.GameClient
             DrawDebugInfo(gameTime);
             game.Diagnostics.EndMeasurement("Draw debug text", "Rendering");
 
-            if (ClientSettings.ForceFullGCEveryFrame)
+            if (ClientSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
-            if (ClientSettings.ForceGen0GCEveryFrame)
+            if (ClientSettings.Instance.ForceGen0GCEveryFrame)
                 GC.Collect(0, GCCollectionMode.Forced, true);
 
             game.Diagnostics.BeginMeasurement("Base.Draw()", "Rendering");

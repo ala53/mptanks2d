@@ -23,17 +23,17 @@ namespace MPTanks.Clients.GameClient.Sound
         {
             if (_instances == null)
             {
-                _instances = new SoundEffectInstance[ClientSettings.MaxInstancesOfOneSoundAllowed];
+                _instances = new SoundEffectInstance[ClientSettings.Instance.MaxInstancesOfOneSoundAllowed];
                 _instancesByActivationTime = new Queue<SoundEffectInstance>(
-                    ClientSettings.MaxInstancesOfOneSoundAllowed);
+                    ClientSettings.Instance.MaxInstancesOfOneSoundAllowed);
 
-                for (var i = 0; i < ClientSettings.MaxInstancesOfOneSoundAllowed; i++)
+                for (var i = 0; i < ClientSettings.Instance.MaxInstancesOfOneSoundAllowed; i++)
                 {
                     _instances[i] = _fx.CreateInstance();
                     _instancesByActivationTime.Enqueue(_instances[i]);
                 }
                 //And create emitters
-                for (var i = 0; i < ClientSettings.MaxInstancesOfOneSoundAllowed; i++)
+                for (var i = 0; i < ClientSettings.Instance.MaxInstancesOfOneSoundAllowed; i++)
                     _emitters.Enqueue(new AudioEmitter());
             }
         }

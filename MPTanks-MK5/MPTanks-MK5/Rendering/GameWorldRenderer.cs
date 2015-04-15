@@ -275,7 +275,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             //Tracker for how many particles we can render
             //This is decremented for each particle that is drawn *on screen*
             //but not for those that are outside of the view radius
-            int remainingAllowedParticles = ClientSettings.MaxParticlesToRender;
+            int remainingAllowedParticles = ClientSettings.Instance.MaxParticlesToRender;
             //upload the world matrix
             _effect.World = Matrix.Identity;
             //and set the alpha back to max

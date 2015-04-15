@@ -7,13 +7,41 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient
 {
-    class ClientSettings
+    public class ClientSettings : MPTanks.Engine.Settings
     {
-        public static string LogLocation = "${basedir}/clientlogs/client.log";
+        private static ClientSettings _instance;
+        public static ClientSettings Instance
+        {
+            get
+            {
+                if (_instance == null) LoadSettings();
+                return _instance;
+            }
+        }
+        #region Load Helper
+        private static void LoadSettings()
+        {
+            _instance = new ClientSettings();
+        }
+
+        #endregion
+        #region Save Helper
+        public static void Save()
+        {
+            Instance.SaveChanges();
+        }
+        public void SaveChanges()
+        {
+
+        }
+        #endregion
+
+        public Setting<string> LogLocation { get; private set; }
+
         /// <summary>
         /// The maximum number of on screen particles to allow
         /// </summary>
-        public static int MaxParticlesToRender = 10000;
+        public Setting<int> MaxParticlesToRender { get; private set; }
 
         /// <summary>
         /// Whether to force a gen 0 GC every frame. This gets rid of
@@ -21,15 +49,15 @@ namespace MPTanks.Clients.GameClient
         /// Unfortunately, it does so to the possible detriment of 
         /// framerate.
         /// </summary>
-        public static bool ForceFullGCEveryFrame = false;
-        public static bool ForceGen0GCEveryFrame = false;
+        public Setting<bool> ForceFullGCEveryFrame { get; private set; }
+        public Setting<bool> ForceGen0GCEveryFrame { get; private set; }
 
         /// <summary>
         /// The number of instances of a sound that can be playing at the same time.
         /// </summary>
-        public static int MaxInstancesOfOneSoundAllowed = 4;
+        public Setting<int> MaxInstancesOfOneSoundAllowed { get; private set; }
 
-        public static string[] AssetAllowedFileExtensions = {
+        public string[] AssetAllowedFileExtensions = {
             ".dds",
             ".png",
             ".jpg",
@@ -39,11 +67,11 @@ namespace MPTanks.Clients.GameClient
             };
 
         //Where config information is stored
-        public static string ConfigDir = 
+        public string ConfigDir =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D");
 
         //Where to look for assets
-        public static string[] AssetSearchPaths = {
+        public string[] AssetSearchPaths = {
             Directory.GetCurrentDirectory(), //current directory
             Path.Combine(Directory.GetCurrentDirectory(), "assets"),
             Path.Combine(Directory.GetCurrentDirectory(), "assets", "animations"),
@@ -54,21 +82,41 @@ namespace MPTanks.Clients.GameClient
             Path.Combine(Directory.GetCurrentDirectory(), "mods"),
             Path.Combine(Directory.GetCurrentDirectory(), "mods", "modassets"),
             Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods", "modassets"),
-            Path.Combine(ConfigDir, "assets")
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "assets")
             };
 
         //Looks for *.mod files to unpack
-        public static string[] ModSearchPaths = {
+        public string[] ModSearchPaths = {
             Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-            Path.Combine(ConfigDir, "mods")
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "mods")
             };
-
-        //Intentionally left blank here. This is for the user to load mods without whitelisting on their local computer
-        public static string[] TrustedModPaths = {};
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
         //just leave them in the runtime directory where they are removed next time the program opens
-        public static string ModUnpackPath =
+        public string ModUnpackPath =
             Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods");
+
+        public ClientSettings()
+        {
+            LogLocation = new Setting<string>(this, "Log storage location",
+               "Where to store runtime logs for the game. This uses NLog storage conventions." +
+               " So, ${basedir} is the program's installation directory.",
+               "${basedir}/clientlogs/client.log");
+
+            MaxParticlesToRender = new Setting<int>(this, "Max particles allowed on screen",
+            "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +
+            " can increase visual fidelity (some particles may not be rendered at lower settings) while lower ones" +
+            " substantially increase performance. See the related Particle Limit settings.",
+            5000);
+
+            ForceFullGCEveryFrame = new Setting<bool>(this, "Force Full GC every frame",
+            "Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance.", false);
+
+            ForceGen0GCEveryFrame = new Setting<bool>(this, "Force Gen0 GC every frame",
+            "Whether to force a fast GC every frame. This is rarely a significant performance problem but" +
+            " is useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
+
+            MaxInstancesOfOneSoundAllowed = new Setting<int>(this, "", "", 4);
         }
+    }
 }

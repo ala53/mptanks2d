@@ -67,11 +67,11 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
                 new Color(new Color(255, 200, 255, 127).ToVector4() * ColorMask.ToVector4()),
                 new RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
                 new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, 
-                    Vector2.Zero, Vector2.Zero, 0, 0.15f, 2000, lifespan + 100, true, true, true);
+                    Vector2.Zero, Vector2.Zero, 0, 0.15f, 250, lifespan + 100, true, true, true);
             _trailEmitter.MinSize = new Vector2(0.1f);
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
-            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => CollidedWithTank(null), lifespan);
+            _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, null), lifespan);
         }
 
         public override void CollidedWithTank(Tank tank)
