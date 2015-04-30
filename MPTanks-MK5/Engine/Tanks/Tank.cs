@@ -104,7 +104,7 @@ namespace MPTanks.Engine.Tanks
         }
 
         public static T ReflectiveInitialize<T>(string tankName, Guid playerId, GameCore game, bool authorized, byte[] state = null)
-        where T : Tank
+            where T : Tank
         {
             return (T)ReflectiveInitialize(tankName, playerId, game, authorized, state);
         }
@@ -112,11 +112,8 @@ namespace MPTanks.Engine.Tanks
         private static void RegisterType<T>() where T : Tank
         {
             //get the name
-            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
-            System.Reflection.BindingFlags.Static |
-            System.Reflection.BindingFlags.GetProperty |
-            System.Reflection.BindingFlags.Public)
-            .GetMethod.Invoke(null, null);
+            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
+                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
             if (_tankTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _tankTypes.Add(name.ToLower(), typeof(T));

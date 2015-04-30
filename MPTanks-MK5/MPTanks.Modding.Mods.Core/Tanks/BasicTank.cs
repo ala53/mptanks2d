@@ -10,18 +10,11 @@ using MPTanks.Engine;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
-    [MPTanks.Modding.Tank(Category = MPTanks.Modding.TankAttribute.TankCategory.Basic,
+    [MPTanks.Modding.Tank("BasicTankMP", 
         DisplayName = "Basic Tank", Description = "Basic Tank",
         RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
     {
-        public static string ReflectionTypeName
-        {
-            get
-            {
-                return "BasicTankMP";
-            }
-        }
         protected override float RotationSpeed
         {
             get { return 0.05f; }

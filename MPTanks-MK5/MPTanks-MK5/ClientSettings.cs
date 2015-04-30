@@ -70,6 +70,18 @@ namespace MPTanks.Clients.GameClient
         //just leave them in the temp directory where they are removed next time the program opens
         public Setting<string> ModUnpackPath { get; private set; }
 
+        /// <summary>
+        /// The scale the rendering runs at relative to the blocks.
+        /// This way, we can pass integers around safely.
+        /// </summary>
+        public Setting<float> RenderScale { get; private set; }
+
+        /// <summary>
+        /// The amount of "blocks" to compensate for in rendering because of the 
+        /// skin on physics objects
+        /// </summary>
+        public Setting<float> PhysicsCompensationForRendering { get; private set; }
+
         public ClientSettings()
         {
             LogLocation = new Setting<string>(this, "Log storage location",
@@ -128,6 +140,12 @@ namespace MPTanks.Clients.GameClient
                 "The place to store mods that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into.",
                 Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods"));
+
+            RenderScale = new Setting<float>(this, "Render Scale",
+            "The scale of rendering relative to game space so integer conversions work", 100f);
+
+            PhysicsCompensationForRendering = new Setting<float>(this, "Physics Skin Compensation",
+                "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
         }
     }
 }

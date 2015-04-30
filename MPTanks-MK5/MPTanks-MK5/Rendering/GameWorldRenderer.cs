@@ -181,8 +181,8 @@ namespace MPTanks.Clients.GameClient.Rendering
                 RasterizerState.CullNone, _effect);
             //Build a correctly sized rectangle to draw the asset on
             var drawRect = new Rectangle(
-                -Scale(_game.Settings.PhysicsCompensationForRendering),
-                -Scale(_game.Settings.PhysicsCompensationForRendering),
+                -Scale(ClientSettings.Instance.PhysicsCompensationForRendering),
+                -Scale(ClientSettings.Instance.PhysicsCompensationForRendering),
                 ScaleForRendering(component.Component.Size.X),
                 ScaleForRendering(component.Component.Size.Y));
             //Get the cached asset
@@ -321,18 +321,18 @@ namespace MPTanks.Clients.GameClient.Rendering
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Scale(float amount)
         {
-            return (int)(amount * _game.Settings.RenderScale);
+            return (int)(amount * ClientSettings.Instance.RenderScale);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float ScaleF(float amount)
         {
-            return amount * _game.Settings.RenderScale;
+            return amount * ClientSettings.Instance.RenderScale;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Vector2 Scale(Vector2 amount)
         {
-            return amount * _game.Settings.RenderScale;
+            return amount * ClientSettings.Instance.RenderScale;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -341,8 +341,8 @@ namespace MPTanks.Clients.GameClient.Rendering
             //So, farseer keeps a small skin around objects (for whatever reason, only god knows)
             //so we have to artificially add the 0.0001 (or whatever) blocks around the object
             return (int)
-                ((amount + (2 * _game.Settings.PhysicsCompensationForRendering))
-                * _game.Settings.RenderScale);
+                ((amount + (2 * ClientSettings.Instance.PhysicsCompensationForRendering))
+                * ClientSettings.Instance.RenderScale);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsVisible(Vector2 pos, Vector2 size, RectangleF viewRect)

@@ -108,9 +108,8 @@ namespace MPTanks.Modding
                 throw new Exception(t.FullName + " is missing [GamemodeAttribute]");
 
             Type = t;
-            ReflectionTypeName = (string)t.GetProperty("ReflectionTypeName", BindingFlags.Public
-                | BindingFlags.GetProperty | BindingFlags.Static).GetMethod.Invoke(null, null);
-            DisplayName = attrib.Name;
+            ReflectionTypeName = attrib.ReflectionTypeName;
+            DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
             MinPlayersCount = attrib.MinPlayersCount;
             WhitelistPlayerTankTypes = attrib.WhitelistPlayerTankTypes;
@@ -127,7 +126,6 @@ namespace MPTanks.Modding
     }
     public class TankType
     {
-        public TankAttribute.TankCategory Category { get; internal set; }
         public Type Type { get; internal set; }
         public string ReflectionTypeName { get; internal set; }
         public string DisplayName { get; internal set; }
@@ -139,10 +137,8 @@ namespace MPTanks.Modding
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [TankAttribute]");
 
-            Category = attrib.Category;
             Type = t;
-            ReflectionTypeName = (string)t.GetProperty("ReflectionTypeName", BindingFlags.Public
-                | BindingFlags.GetProperty | BindingFlags.Static).GetMethod.Invoke(null, null);
+            ReflectionTypeName = attrib.ReflectionTypeName;
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
         }
@@ -168,16 +164,15 @@ namespace MPTanks.Modding
                 throw new Exception(t.FullName + " is missing [ProjectileAttribute]");
 
             Type = t;
-            ReflectionTypeName = (string)t.GetProperty("ReflectionTypeName", BindingFlags.Public
-                | BindingFlags.GetProperty | BindingFlags.Static).GetMethod.Invoke(null, null);
-            DisplayName = attrib.Name;
+            ReflectionTypeName = attrib.ReflectionTypeName;
+            DisplayName = attrib.DisplayName;
 
             foreach (var tk in tankTypes)
                 if (tk.ReflectionTypeName == attrib.OwnerReflectionName)
                     OwnerType = tk;
 
             if (OwnerType == null)
-                throw new Exception(attrib.Name + "'s owner \"" + attrib.OwnerReflectionName
+                throw new Exception(attrib.DisplayName + "'s owner \"" + attrib.OwnerReflectionName
                     + "\" does not exist in this module");
         }
 
@@ -204,9 +199,8 @@ namespace MPTanks.Modding
                 throw new Exception(t.FullName + " is missing [MapObjectAttribute]");
 
             Type = t;
-            ReflectionTypeName = (string)t.GetProperty("ReflectionTypeName", BindingFlags.Public
-                | BindingFlags.GetProperty | BindingFlags.Static).GetMethod.Invoke(null, null);
-            DisplayName = attrib.Name;
+            ReflectionTypeName = attrib.ReflectionTypeName;
+            DisplayName = attrib.DisplayName;
 
         }
 

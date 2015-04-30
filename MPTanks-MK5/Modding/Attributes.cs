@@ -11,70 +11,56 @@ namespace MPTanks.Modding
     /// An attribute that marks an object as a tank
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class TankAttribute : Attribute
+    public sealed class TankAttribute : GameObjectAttribute
     {
-        public TankAttribute()
+        public TankAttribute(string reflectionName)
+            : base(reflectionName)
         {
 
         }
-
-        /// <summary>
-        /// The display name of the tank: E.g. "Basic Tank"
-        /// </summary>
-        public string DisplayName { get; set; }
-        /// <summary>
-        /// The description to display for the tank. 
-        /// E.g. "A simple tank for simple people"
-        /// </summary>
-        public string Description { get; set; }
         /// <summary>
         /// Whether this tank types requires a matching tank on the enemy team.
         /// </summary>
         public bool RequiresMatchingOnOtherTeam { get; set; }
-        /// <summary>
-        /// The general category this tank fits under, for matchmaking reasons.
-        /// </summary>
-        public TankCategory Category { get; set; }
-
-        public enum TankCategory
-        {
-            Basic,
-            Artillery,
-            Supression,
-            Stealth,
-            SuperTank,
-            StealthSuperTank,
-            Engineer,
-            Melee,
-
-        }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class MapObjectAttribute : Attribute
+    public sealed class MapObjectAttribute : GameObjectAttribute
     {
+        public MapObjectAttribute(string reflectionName)
+            : base(reflectionName)
+        {
+
+        }
         /// <summary>
         /// Whether the body for the object is static or dynamic
         /// </summary>
         public bool IsStatic { get; set; }
         public float MinWidthBlocks { get; set; }
         public float MinHeightBlocks { get; set; }
-        public string Name { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class ProjectileAttribute : Attribute
+    public sealed class ProjectileAttribute : GameObjectAttribute
     {
         /// <summary>
-        /// The name of the tank type that owns this projectile type
+        /// The reflection type name of the owner. So, the tank type this projectile is assigned to.
         /// </summary>
         public string OwnerReflectionName { get; set; }
-        public string Name { get; set; }
+        public ProjectileAttribute(string reflectionName, string ownerReflectionName)
+            : base(reflectionName)
+        {
+            OwnerReflectionName = ownerReflectionName;
+        }
     }
 
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class GamemodeAttribute : Attribute
+    public sealed class GamemodeAttribute : GameObjectAttribute
     {
+        public GamemodeAttribute(string reflectionName)
+            : base(reflectionName)
+        {
+
+        }
         /// <summary>
         /// The minimum number of players required to start a game.
         /// </summary>
@@ -95,14 +81,6 @@ namespace MPTanks.Modding
         /// If blacklisted: the disallowed player tank types (reflection names)
         /// </summary>
         public IEnumerable<string> DisallowedPlayerTankTypes { get; set; }
-        /// <summary>
-        /// The name of the gamemode
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// The description of the gamemode
-        /// </summary>
-        public string Description { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -113,7 +91,6 @@ namespace MPTanks.Modding
         public string Author { get; private set; }
         public string Version { get; private set; }
 
-        // This is a positional argument
         public ModuleDeclarationAttribute(string name, string description, string author, string version)
         {
             Name = name;
@@ -121,5 +98,30 @@ namespace MPTanks.Modding
             Author = author;
             Version = version;
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+    public class GameObjectAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a new GameObjectAttribute.
+        /// </summary>
+        /// <param name="reflectionName">The reflection name of the object.</param>
+        public GameObjectAttribute(string reflectionName)
+        {
+            ReflectionTypeName = reflectionName;
+        }
+        /// <summary>
+        /// The reflection type name for the object (from map.json files).
+        /// </summary>
+        public string ReflectionTypeName { get; private set; }
+        /// <summary>
+        /// The display name of the object to be shown in error messages or the map editor.
+        /// </summary>
+        public string DisplayName { get; set; }
+        /// <summary>
+        /// The description of the object to be shown in the map editor.
+        /// </summary>
+        public string Description { get; set; }
     }
 }

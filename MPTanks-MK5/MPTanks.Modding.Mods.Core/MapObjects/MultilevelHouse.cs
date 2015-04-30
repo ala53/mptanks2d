@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.MapObjects
 {
-    [Modding.MapObject(IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3, Name = "Multi level house")]
+    [Modding.MapObject("LargeHouseMultiLevel", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
+        DisplayName = "Multi level house")]
     public class MultilevelHouse : MapObject
     {
-        public static string ReflectionTypeName { get { return "LargeHouseMultiLevel"; } }
-
         public MultilevelHouse(GameCore game, bool authorized = false, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {

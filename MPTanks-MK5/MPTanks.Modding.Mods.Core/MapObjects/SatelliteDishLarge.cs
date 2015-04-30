@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.MapObjects
 {
-    [Modding.MapObject(IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, Name = "Satellite Dish (large)")]
+    [Modding.MapObject("SatelliteDishLarge", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
+        DisplayName = "Satellite Dish (large)")]
     public class SatelliteDishLarge : MapObject
     {
-        public static string ReflectionTypeName { get { return "SatelliteDishLarge"; } }
-
         public SatelliteDishLarge(GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {

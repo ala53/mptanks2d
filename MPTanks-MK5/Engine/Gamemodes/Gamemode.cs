@@ -18,7 +18,7 @@ namespace MPTanks.Engine.Gamemodes
         public float RespawnTimeMs { get; protected set; }
 
         //We cache the info for performance. Multiple calls only create one instance
-        private Func<string> _cachedReflectionInfo;
+        private string _cachedReflectionInfo;
         public string ReflectionName
         {
             get
@@ -27,14 +27,11 @@ namespace MPTanks.Engine.Gamemodes
                 //to get the static property and then we cache the delegate before returning the data for the 
                 //reflectiontypename property
                 if (_cachedReflectionInfo == null)
-                    _cachedReflectionInfo = (Func<string>)GetType().GetProperty("ReflectionTypeName",
-                    System.Reflection.BindingFlags.Static |
-                    System.Reflection.BindingFlags.GetProperty |
-                    System.Reflection.BindingFlags.Public)
-                    .GetMethod.CreateDelegate(typeof(Func<string>));
+                    _cachedReflectionInfo = ((MPTanks.Modding.GameObjectAttribute)(GetType().
+                         GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
 
                 //call the delegate
-                return _cachedReflectionInfo();
+                return _cachedReflectionInfo;
             }
         }
 
@@ -159,11 +156,8 @@ namespace MPTanks.Engine.Gamemodes
         private static void RegisterType<T>() where T : Gamemode
         {
             //get the name
-            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
-            System.Reflection.BindingFlags.Static |
-            System.Reflection.BindingFlags.GetProperty |
-            System.Reflection.BindingFlags.Public)
-            .GetMethod.Invoke(null, null);
+            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
+                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
             if (_gamemodeTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _gamemodeTypes.Add(name.ToLower(), typeof(T));

@@ -26,18 +26,6 @@ namespace MPTanks.Engine
                     "MPTanks.Modding.Mods.Core.dll"
                 };
 
-        /// <summary>
-        /// The scale the rendering runs at relative to the blocks.
-        /// This way, we can pass integers around safely.
-        /// </summary>
-        public Setting<float> RenderScale { get; private set; }
-
-        /// <summary>
-        /// The amount of "blocks" to compensate for in rendering because of the 
-        /// skin on physics objects
-        /// </summary>
-        public Setting<float> PhysicsCompensationForRendering { get; private set; }
-
         public Setting<float> TankDensity { get; private set; }
 
         /// <summary>
@@ -83,12 +71,6 @@ namespace MPTanks.Engine
 
             TrustedMods = new Setting<string[]>(this, "Trusted Mods",
                 "The paths of mods to load without whitelist verification", DefaultTrustedMods);
-
-            RenderScale = new Setting<float>(this, "Render Scale",
-            "The scale of rendering relative to game space so integer conversions work", 100f);
-
-            PhysicsCompensationForRendering = new Setting<float>(this, "Physics Skin Compensation",
-                "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
 
             TankDensity = new Setting<float>(this, "Tank density",
             "The density of a tank in the physics engine.", 15f);

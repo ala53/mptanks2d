@@ -12,8 +12,7 @@ using MPTanks.Engine.Core;
 
 namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 {
-    [MPTanks.Modding.Projectile(Name = "Main gun projectile for Basic Tank", 
-        OwnerReflectionName = "BasicTankMP")]
+    [MPTanks.Modding.Projectile("BasicTankMPMainProjectile", "BasicTankMP", DisplayName = "Main gun projectile for Basic Tank")]
     public class MainGunProjectile : Projectile
     {
         const string reflectionName = "BasicTankMPMainProjectile";

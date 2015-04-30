@@ -45,11 +45,8 @@ namespace MPTanks.Engine.Maps.MapObjects
         private static void RegisterType<T>() where T : MapObject
         {
             //get the name
-            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
-            System.Reflection.BindingFlags.Static |
-            System.Reflection.BindingFlags.GetProperty |
-            System.Reflection.BindingFlags.Public)
-            .GetMethod.Invoke(null, null);
+            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
+                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
             if (_objTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _objTypes.Add(name.ToLower(), typeof(T));

@@ -9,14 +9,12 @@ namespace MPTanks.Engine.Sound
 {
     public class SoundEngine
     {
-        public Song Music { get; set; }
         private LinkedList<Sound> _sounds = new LinkedList<Sound>();
         public IEnumerable<Sound> Sounds { get { return _sounds; } }
 
-        public Sound PlaySound(string soundName,
-            float lengthMs = Sound.PlayToEnd,
-            bool loop = false,
-            Vector2 position = default(Vector2))
+        public Sound PlaySound(string soundName, Sound.SoundPositioning positioning,
+            float beginningOffsetMs = Sound.Beginning, float endOffsetMs = Sound.PlayToEnd,
+            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat)
         {
             return null;
         }

@@ -16,22 +16,43 @@ namespace MPTanks.Engine
     {
         #region Reflection helper
         //We cache the info for performance. Multiple calls only create one instance
-        private Func<string> _cachedReflectionInfo; 
+        private string _cachedReflectionName;
         public string ReflectionName
         {
             get
             {
-                //Because it's a requirement to have ReflectionTypeName, we do a reflection query on ourselves
-                //toget the static property - we check and cache the delegate
-                if (_cachedReflectionInfo == null) 
-                    _cachedReflectionInfo = (Func<string>)GetType().GetProperty("ReflectionTypeName", 
-                    System.Reflection.BindingFlags.Static |
-                    System.Reflection.BindingFlags.GetProperty | 
-                    System.Reflection.BindingFlags.Public)
-                    .GetMethod.CreateDelegate(typeof(Func<string>));
+                if (_cachedReflectionName == null)
+                    _cachedReflectionName = ((MPTanks.Modding.GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true)))[0]
+                          .ReflectionTypeName;
 
-                //call the delegate
-                return _cachedReflectionInfo();
+                return _cachedReflectionName;
+            }
+        }
+        private string _cachedDisplayName;
+        public string DisplayName
+        {
+            get
+            {
+                if (_cachedDisplayName == null)
+                    _cachedDisplayName = ((MPTanks.Modding.GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true)))[0]
+                          .DisplayName;
+
+                return _cachedDisplayName;
+            }
+        }
+        private string _cachedDescription;
+        public string Description
+        {
+            get
+            {
+                if (_cachedDescription == null)
+                    _cachedDescription = ((MPTanks.Modding.GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true)))[0]
+                          .Description;
+
+                return _cachedDescription;
             }
         }
 

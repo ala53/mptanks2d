@@ -35,7 +35,7 @@ namespace MPTanks.Engine.Projectiles
         public static Projectile ReflectiveInitialize(string prjName, Tanks.Tank owner, GameCore game, bool authorized,
             Vector2 position = default(Vector2), float rotation = 0, byte[] state = null)
         {
-            if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Tank type does not exist.");
+            if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Projectile type does not exist.");
 
             var inst = (Projectile)Activator.CreateInstance(_prjTypes[prjName.ToLower()], owner, game, authorized,
                 position, rotation);
@@ -51,7 +51,7 @@ namespace MPTanks.Engine.Projectiles
         }
         public static Projectile ReflectiveInitialize(string prjName, byte[] state = null, params object[] args)
         {
-            if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Tank type does not exist.");
+            if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Projectile type does not exist.");
 
             var inst = (Projectile)Activator.CreateInstance(_prjTypes[prjName.ToLower()], args);
             if (state != null) inst.ReceiveStateData(state);
@@ -66,11 +66,8 @@ namespace MPTanks.Engine.Projectiles
         private static void RegisterType<T>() where T : Projectile
         {
             //get the ReflectionTypeName static property 
-            var name = (string)typeof(T).GetProperty("ReflectionTypeName",
-            System.Reflection.BindingFlags.Static |
-            System.Reflection.BindingFlags.GetProperty |
-            System.Reflection.BindingFlags.Public)
-            .GetMethod.Invoke(null, null);
+            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
+                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
             if (_prjTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _prjTypes.Add(name.ToLower(), typeof(T));

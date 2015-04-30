@@ -8,7 +8,8 @@ using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Modding.Mods.Core
 {
-    [MPTanks.Modding.Gamemode(AllowSuperTanks = true, Name = "Deathmatch (no teams)", Description = "Up to 5v5 deathmatch")]
+    [MPTanks.Modding.Gamemode("DeathMatchGamemode", AllowSuperTanks = true, DisplayName = "Deathmatch (no teams)", 
+        Description = "2 team deathmatch", MinPlayersCount = 2)]
     public class DeathMatchGamemode : Gamemode
     {
         private bool _gameEnded = false;
@@ -35,14 +36,6 @@ namespace MPTanks.Modding.Mods.Core
         public override int MinPlayerCount
         {
             get { return 2; }
-        }
-
-        public static string ReflectionTypeName
-        {
-            get
-            {
-                return "DeathMatchGamemode";
-            }
         }
 
         /// <summary>

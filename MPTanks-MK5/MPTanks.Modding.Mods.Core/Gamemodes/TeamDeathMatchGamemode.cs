@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.Gamemodes
 {
-    [Modding.Gamemode(AllowSuperTanks = true, Name = "Team deathmatch", Description = "1v1 to 20v20 TDM gamemode")]
+    [Modding.Gamemode("TeamDeathMatchGamemode", AllowSuperTanks = true, DisplayName = "Team Deathmatch",
+        Description = "A free-for-all deathmatch", MinPlayersCount = 2)]
     public class TeamDeathMatchGamemode : Gamemode
     {
         private bool _gameEnded = false;
@@ -35,14 +36,6 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
         public override int MinPlayerCount
         {
             get { return 2; }
-        }
-
-        public static string ReflectionTypeName
-        {
-            get
-            {
-                return "TeamDeathMatchGamemode";
-            }
         }
 
         /// <summary>
