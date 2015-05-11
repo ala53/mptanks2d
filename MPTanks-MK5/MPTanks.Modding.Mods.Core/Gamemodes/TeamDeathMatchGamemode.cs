@@ -68,10 +68,6 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
 
             _teams[1].Players = players.ToArray(); // red team
         }
-        public override PlayerTankType GetAssignedTankType(Guid playerId)
-        {
-            return PlayerTankType.BasicTank;
-        }
 
         public override void StartGame()
         {
@@ -118,5 +114,15 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
             base.ReceiveStateData(data);
         }
 
+
+        public override string[] GetPlayerAllowedTankTypes(Guid playerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool SetPlayerTankType(Guid playerId, string tankType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

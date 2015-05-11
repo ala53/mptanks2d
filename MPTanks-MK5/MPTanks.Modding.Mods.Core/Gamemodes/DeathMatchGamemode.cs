@@ -68,11 +68,6 @@ namespace MPTanks.Modding.Mods.Core
             return new Color(r, g, b, 1);
         }
 
-        public override PlayerTankType GetAssignedTankType(Guid playerId)
-        {
-            return PlayerTankType.BasicTank;
-        }
-
         public override void StartGame()
         {
             //No complex initialization here
@@ -106,5 +101,15 @@ namespace MPTanks.Modding.Mods.Core
             base.ReceiveStateData(data);
         }
 
+
+        public override string[] GetPlayerAllowedTankTypes(Guid playerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool SetPlayerTankType(Guid playerId, string tankType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

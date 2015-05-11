@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ActionQueue.cs" />
+    <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="NetworkedGame.cs" />
     <Compile Include="Player.cs" />
@@ -54,6 +56,10 @@
     <ProjectReference Include="..\Engine\MPTanks.Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Strings\Strings.csproj">
+      <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
+      <Name>Strings</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -38,6 +38,10 @@ namespace MPTanks.Engine
         /// The timer manager which lets game objects create timers for their own use
         /// </summary>
         public Timer.Factory TimerFactory { get; private set; }
+        /// <summary>
+        /// The sound engine for the game. Manages where sounds should be and when they're playing.
+        /// </summary>
+        public Sound.SoundEngine SoundEngine { get; private set; }
         #region Diagnostics & Logging
         /// <summary>
         /// The Logger to use for logging important events
@@ -194,6 +198,7 @@ namespace MPTanks.Engine
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
             Diagnostics = new MPTanks.Engine.Diagnostics();
+            SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
             Logger.Log("Game initialized");
         }

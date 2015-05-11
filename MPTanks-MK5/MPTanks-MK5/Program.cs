@@ -15,8 +15,8 @@ namespace MPTanks.Clients.GameClient
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [MTAThread]
-        public static void Main()
+        [STAThread]
+        public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 

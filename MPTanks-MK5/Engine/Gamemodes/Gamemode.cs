@@ -17,7 +17,7 @@ namespace MPTanks.Engine.Gamemodes
         public bool AllowRespawn { get; protected set; }
         public float RespawnTimeMs { get; protected set; }
 
-        //We cache the info for performance. Multiple calls only create one instance
+        //We cache the info for performance. Multiple requests only do one call
         private string _cachedReflectionInfo;
         public string ReflectionName
         {
@@ -38,12 +38,8 @@ namespace MPTanks.Engine.Gamemodes
         /// <summary>
         /// An event that is fired when the gamemode updates and changes state
         /// </summary>
-        public event EventHandler<GamemodeChangedArgs> OnGamemodeStateChanged;
+        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> OnGamemodeStateChanged;
 
-        public class GamemodeChangedArgs : EventArgs
-        {
-            public byte[] NewStateData;
-        }
         public Gamemode(byte[] serverState = null)
         {
 
@@ -61,15 +57,23 @@ namespace MPTanks.Engine.Gamemodes
         public abstract void MakeTeams(Guid[] playerIds);
 
         /// <summary>
-        /// Gets the tank type for a single player.
+        /// Gets the tank types that a player can choose from
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public abstract PlayerTankType GetAssignedTankType(Guid playerId);
+        public abstract string[] GetPlayerAllowedTankTypes(Guid playerId);
 
         /// <summary>
-        /// Notifies the Gamemode that the game has started. So, it can do whatever it wants 
-        /// related to that.
+        /// Sets the tank type for a player, from the list of allowed types. 
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="tankType"></param>
+        /// <returns>Returns true if the tank type is still allowed or false if it is not.</returns>
+        public abstract bool SetPlayerTankType(Guid playerId, string tankType);
+
+        /// <summary>
+        /// Notifies the Gamemode that the game has started. It can do whatever it wants 
+        /// in terms of startup logic.
         /// </summary>
         public abstract void StartGame();
         /// <summary>
@@ -123,12 +127,10 @@ namespace MPTanks.Engine.Gamemodes
         {
         }
 
-        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> StateChanged;
-
         protected void RaiseStateChanged(byte[] data)
         {
-            if (StateChanged != null)
-                StateChanged(this, new Core.Events.Types.Gamemodes.StateChanged() { StateData = data });
+            if (OnGamemodeStateChanged != null)
+                OnGamemodeStateChanged(this, new Core.Events.Types.Gamemodes.StateChanged() { StateData = data });
         }
 
 
@@ -147,10 +149,10 @@ namespace MPTanks.Engine.Gamemodes
             return inst;
         }
 
-        public static T ReflectiveInitialize<T>(string tankName, GameCore game = null, byte[] state = null)
+        public static T ReflectiveInitialize<T>(string gamemodeName, GameCore game = null, byte[] state = null)
         where T : Gamemode
         {
-            return (T)ReflectiveInitialize(tankName, game, state);
+            return (T)ReflectiveInitialize(gamemodeName, game, state);
         }
 
         private static void RegisterType<T>() where T : Gamemode

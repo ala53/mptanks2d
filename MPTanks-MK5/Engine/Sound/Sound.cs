@@ -10,9 +10,6 @@ namespace MPTanks.Engine.Sound
     public class Sound
     {
         #region Constants
-        public const float Beginning = float.MaxValue;
-        public const float PlayToEnd = float.MaxValue;
-
         public enum SoundPositioning
         {
             /// <summary>
@@ -52,21 +49,32 @@ namespace MPTanks.Engine.Sound
         #endregion
 
         public string AssetName { get; private set; }
-        public object UserData { get; set; }
+        /// <summary>
+        /// The data stored by the actual sound player on the server side.
+        /// </summary>
+        public object PlayerData { get; set; }
 
-        public int TotalRepeatCount { get; private set; }
-        public float PositionMs { get; private set; }
+        public int TotalRepeatCount { get; set; }
+        public float PositionMs { get; set; }
         /// <summary>
         /// The timescale that the sound is played at (1, 2, 1/2, 1/4, 1/8, etc.)
         /// </summary>
         public float Timescale { get; set; }
-        /// <summary>
-        /// Repeats the sound from the start, incrementing the repeat counter.
-        /// </summary>
-        public void Repeat()
+
+        public Vector2 Position { get; set; }
+        public Vector2 Velocity { get; set; }
+
+        public Action<Sound> CompletionCallback { get; set; }
+        public SoundPositioning PositioningMode { get; set; }
+
+        public SoundEngine Engine { get; private set; }
+
+        internal Sound(SoundEngine engine)
         {
-            TotalRepeatCount++;
-            PositionMs = 0;
+            Engine = engine;
+            Timescale = 1;
+            TotalRepeatCount = 1;
         }
+
     }
 }

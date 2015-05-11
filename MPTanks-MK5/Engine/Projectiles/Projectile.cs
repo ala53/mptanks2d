@@ -65,7 +65,7 @@ namespace MPTanks.Engine.Projectiles
 
         private static void RegisterType<T>() where T : Projectile
         {
-            //get the ReflectionTypeName static property 
+            //get the reflection name from the attribute 
             var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
                 GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
             if (_prjTypes.ContainsKey(name)) throw new Exception("Already registered!");

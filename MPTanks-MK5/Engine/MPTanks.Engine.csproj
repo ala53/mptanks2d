@@ -88,7 +88,7 @@
     <Compile Include="GameCore.GameObjects.cs" />
     <Compile Include="GameCore.Maps.cs" />
     <Compile Include="GameCore.Players.cs" />
-    <Compile Include="Gamemodes\EPlayerTankType.cs" />
+    <Compile Include="Gamemodes\DefaultGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
     <Compile Include="GameObject.cs" />
@@ -106,14 +106,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animations\Animation.cs" />
     <Compile Include="Rendering\Animations\AnimationEngine.cs" />
+    <Compile Include="Rendering\NullRenderer.cs" />
     <Compile Include="Rendering\Particles\Particle.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Sound\Song.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
+    <Compile Include="Sound\SoundEvents.cs" />
     <Compile Include="Tanks\InputState.cs" />
     <Compile Include="Tanks\SuperTank.cs" />
     <Compile Include="Tanks\Tank.cs" />
@@ -131,6 +132,10 @@
     <ProjectReference Include="..\Modding\MPTanks.Modding.csproj">
       <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
       <Name>MPTanks.Modding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Strings\Strings.csproj">
+      <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
+      <Name>Strings</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

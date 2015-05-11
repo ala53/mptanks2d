@@ -1,0 +1,1 @@
+﻿GameForciblyClosedByWatchDog The game was forcibly stopped by the watchdog application, likely due to a mod from the server.

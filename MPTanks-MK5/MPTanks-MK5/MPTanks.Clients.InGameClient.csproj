@@ -194,6 +194,10 @@
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
       <Name>MPTanks.Networking.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Strings\Strings.csproj">
+      <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
+      <Name>Strings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj">
       <Project>{44c828d4-02d6-413c-bfed-3bf72aa9322e}</Project>
       <Name>Starbound.Input</Name>
