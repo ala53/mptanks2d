@@ -37,8 +37,8 @@ namespace MPTanks.StringData
                 try
                 {
                     if (lines[i].Split(' ').Length < 2 || lines[i].Trim().StartsWith("###")) continue;
-                    var name = lines[i].Split(' ')[0];
-                    var value = String.Join(" ", lines[i].Split(' ').Skip(1)).Replace(@"\n", "\n");
+                    var name = lines[i].TrimStart().Split(' ')[0];
+                    var value = String.Join(" ", lines[i].Split(' ').Skip(1)).Replace(@"\n", "\n").TrimEnd();
                     _loadedStrings.Add(name, value);
                 }
                 catch (Exception)

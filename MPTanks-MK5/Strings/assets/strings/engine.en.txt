@@ -1,9 +1,10 @@
 ﻿###Game ending conditions
-GameWinner You won!
-GameLoser You lost :( {0} won.
-GameTied The game was a tie.
+	GameWinner You won!
+	GameLoser You lost :( {0} won.
+	GameTied The game was a tie.
 ###Logging messages
    ###How stuff should show up in the log
-GameStarted Game started.
-GameEnded Game ended. {0} won.
-RunningSlowly The game is running slowly. Your experience may not be optimal until you close some background tasks.
+	GameCreated Game initialized.
+	GameStarted Game started.
+	GameEnded Game ended. {0} won.
+	RunningSlowly The game is running slowly. Your experience may not be optimal until you close some background tasks.
