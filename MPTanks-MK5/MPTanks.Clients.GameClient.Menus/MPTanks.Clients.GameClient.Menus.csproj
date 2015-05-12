@@ -67,6 +67,27 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EmptyKeys.UserInterface">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.CocosSharp">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\CocosSharp\AnyCPU\EmptyKeys.UserInterface.CocosSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Core">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.FNA">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.MonoGame">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Paradox">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Paradox\AnyCPU\EmptyKeys.UserInterface.Paradox.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.SunBurn">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
@@ -76,38 +97,40 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <Content Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="assets\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Client\MPTanks.Networking.Client.csproj">
+    <ProjectReference Include="..\MPTanks.Networking.Client\MPTanks.Networking.Client.csproj">
       <Project>{2f77b6ce-2d2d-4e67-a7bd-38e896a52931}</Project>
       <Name>MPTanks.Networking.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Engine\MPTanks.Engine.csproj">
+    <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MPTanks-MK5\MPTanks.Clients.InGameClient.csproj">
+    <ProjectReference Include="..\MPTanks.Clients.InGameClient\MPTanks.Clients.InGameClient.csproj">
       <Project>{1aa033d4-c1b0-4653-ba2f-672a79b207ce}</Project>
       <Name>MPTanks.Clients.InGameClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NetworkingCommon\MPTanks.Networking.Common.csproj">
+    <ProjectReference Include="..\MPTanks.Networking.Common\MPTanks.Networking.Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
       <Name>MPTanks.Networking.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Server\MPTanks.Networking.Server.csproj">
+    <ProjectReference Include="..\MPTanks.Networking.Server\MPTanks.Networking.Server.csproj">
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
       <Name>MPTanks.Networking.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Strings\Strings.csproj">
+    <ProjectReference Include="..\MPTanks.Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
       <Name>Strings</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

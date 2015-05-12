@@ -1,0 +1,129 @@
+﻿###Basic things
+	###Checkboxes
+		RememberMyDecision Remember my decision
+	###Buttons
+		YesButton Yes
+		NoButton No
+		OkButton Ok
+		CancelButton Cancel
+	###Please wait spinner
+		PleaseWait Please wait...
+		ThisMayTakeAMinute This may take a minute.
+###Connecting to servers
+	###Game Errors
+		GameForciblyClosedByWatchDog The game was forcibly stopped by the watchdog application.
+		GameCrashedUnknownCause The game crashed, most likely due to a mod that was running. The log was saved at {0} so you can send it to the server host, the mod developer, or us, depending on what happened. 
+		GameCannotConnect Cannot connect to the server. Double check the IP and port and make sure you aren't in airplane mode.
+		GameConnectionLost The connection to the server was lost, sorry.
+		GameCannotAuthenticate Could not authenticate to the server. Are you in offline mode?
+		GameInvalidPassword The password you entered is incorrect. Can't connect to the server.
+		GameAlreadyJoined The server's saying you're already on the server. Can't join.
+		GameRequiresTrustedMods This server has a core mod that you don't have. We cannot download these from the server as they are a very big security risk. However, you can download them yourself and reconnect later. The exact missing mods are {0}.
+	###General prompts
+		GameRequiresDownloadingMods This server requires downloading mods. While we do try to secure such mods, there is a possibility that they can "hack" your computer through them. Are you sure you want to continue connecting?
+	###Connection Prompt
+		GameConnectToServerPrompt Connect to a server
+		GameConnectToServerIPWatermark IP address or hostname
+		GameConnectToServerPortWatermark Port, blank for default
+		GameConnectToServerPasswordWatermark Password, blank for none
+		GameConnectToServerButton Connect
+	###Hosting prompt
+		ServerHostingPrompt Host a server
+		ServerHostingPortWatermark Port
+		ServerHostingForwardCheckbox Try to forward
+		ServerHostingPasswordWatermark Password, blank for none
+		ServerHostingHostButton Host
+		###Hosting select map prompt
+			SelectMapPrompt Select maps to use
+			SelectMapShuffleCheckbox Shuffle
+			SelectMapButton Confirm selection
+		###Hosting select mods prompt
+			SelectModsPrompt Select mods for server
+			SelectModsButton Confirm selection
+			###Warning message for trusted mods
+				TrustedModWarningHeader Trusted mod warning
+				TrustedModWarningContent Trusted mods cannot be downloaded by clients. If you continue, users will not be able to join unless they download the mod themselves. For reference, the problematic mods are {0}. Are you sure you want to continue?
+###ZSB Server errors
+	ZSBServerCannotConnect Cannot connect to the server. Are you in airplane mode?
+	ZSBServerInternalServerError An error occurred with the ZSB servers. If this keeps happening, try updating the game and/or contacting support.
+	ZSBServerMaintainance The ZSB servers are currently undergoing maintainance, sorry for the inconvenience. Try going into offline mode?
+
+###Login
+	###Login prompts
+		LoginPrompt Please log in
+		UsernameWatermark Username
+		PasswordWatermark Password
+	###Login Buttons
+		RememberMeCheckbox Remember Username & Password
+		OfflineModeCheckbox Go offline (LAN servers only)
+		SubmitButton Log in
+		ExitButton Cancel and Exit
+	###Login prompt special cases
+		ForgotUsernameLink Forgot your username?
+		ForgotPasswordLink Forgot your password?
+	###Login failure messages
+		LoginUsernameNotFound Cannot log in. We couldn't find your username.
+		LoginPasswordIncorrect Cannot log in. Your password is incorrect.
+###Create account
+	###Prompt
+		CreateAccountPrompt Create an account
+		CreateAccountUsernameWatermark Username
+		CreateAccountPasswordWatermark Password
+		CreateAccountEmailWatermark E-mail address
+		CreateAccountConfirmPasswordWatermark Confirm password
+		CreateAccountEnterKeyWatermark Enter product key
+		CreateAccountButton Create account
+	###Username Errors
+		UsernameAlreadyExists Someone already has that username. Try a different one.
+		UsernameBanned That username was banned by the moderators. 
+		UsernameDisallowed The username you entered contains disallowed characters or words. How about avoiding cusswords and restraining yourself to a-z, 0-9, and spaces?
+	###Password Errors
+		PasswordsDoNotMatch The passwords you entered do not match.
+		PasswordIsSuperObvious The password you entered includes the word password or is 1234. How about being a bit more creative?
+		PasswordTooShort The password you entered is too short. It needs to be at least 6 characters (but please do more).
+	###Product key errors
+		CreateAccountInvalidKey The product key you entered is invalid.
+		CreateAccountKeyAlreadyUsed The product key you entered has already been used.
+		CreateAccountKeyBanned The product key you entered was used, but the account was banned. Please contact support.
+###Account Settings
+	###Clans
+		###Invite to clan
+			InviteToClanPrompt Invite someone to your clan
+			InviteToClanUsernameWatermark Username to invite
+			InviteToClanIsAdminCheckbox Administrator (can add and remove members)
+			InviteToClanButton Invite
+			###Errors
+				InviteToClanUsernameNotFound We couldn't find {0}. Did you misspell their name?
+				InviteToClanNotAdmin I don't know who you are. I don't know what you want. I don't know how you found this without being an administrator. Leave now and I will not look for you. But if you don't, the game will probably crash in a blaze of glitches.
+		###Create
+			CreateAClanPrompt Create a clan
+			CreateAClanWatermark Clan name
+			CreateAClanButton Create
+		###Rename
+			RenameClanPrompt Rename your clan
+			RenameClanWatermark New clan name
+			RenameClanButton Rename
+		###Create or Rename Errors
+			CreateOrRenameClanAlreadyExists The clan already exists. Try a different name...
+			CreateOrRenameClanNameBanned The clan name was banned by the system moderators.
+			CreateOrRenameClanNameDisallowed The clan name contains disallowed characters or words.
+			CreateClanCurrentClanWillGetDisbanded You're the only administrator for your clan. If you create a new one, the current one will be disbanded. Are you sure you want to continue?
+	###Username and password
+		###Change username
+			ChangeUsernamePrompt Change my username
+			ChangeUsernameWatermark New username
+			ChangeUsernameButton Change username
+			###For errors, look under create account. We share the same ones
+		###Change password
+			ChangePasswordPrompt Change my password
+			ChangePasswordCurrentPasswordWatermark Current password
+			ChangePasswordNewPasswordWatermark New password
+			ChangePasswordConfirmPasswordWatermark Confirm new password
+			###For the other errors, look under create account. We share the some of the same ones.
+			###Errors
+				ChangePasswordInvalidCurrent The current password you entered is incorrect.
+	###Tank decal
+		UploadTankDecalPrompt Upload a tank decal for use on servers. 
+		UploadTankDecalRequirements It must be black and white (or it will be converted to black and white) and at least half the image must be lighter than dark gray, shown below. Resolution must be exactly 300 pixels wide by 500 pixels high or it will be rescaled to those exact dimensions.
+		UploadTankDecalSelectorButton Select an image file to upload.
+		UploadTankDecalButton Upload.

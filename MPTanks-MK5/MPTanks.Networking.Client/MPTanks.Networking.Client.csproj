@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EF7D12D4-A2B8-47C6-B93D-5264191892C8}</ProjectGuid>
+    <ProjectGuid>{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MPTanks.Networking.Common</RootNamespace>
-    <AssemblyName>MPTanks.Networking.Common</AssemblyName>
+    <RootNamespace>MPTanks.Networking.Client</RootNamespace>
+    <AssemblyName>MPTanks.Networking.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,9 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,20 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionQueue.cs" />
-    <Compile Include="Connection\ConnectionInfo.cs" />
-    <Compile Include="Game\GameState.cs" />
-    <Compile Include="NetworkedGame.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\MPTanks.Engine.csproj">
+    <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Strings\Strings.csproj">
+    <ProjectReference Include="..\MPTanks.Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
       <Name>Strings</Name>
     </ProjectReference>

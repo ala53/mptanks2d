@@ -3,29 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.InGameClient", "MPTanks-MK5\MPTanks.Clients.InGameClient.csproj", "{1AA033D4-C1B0-4653-BA2F-672A79B207CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.InGameClient", "MPTanks.Clients.InGameClient\MPTanks.Clients.InGameClient.csproj", "{1AA033D4-C1B0-4653-BA2F-672A79B207CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Engine", "Engine\MPTanks.Engine.csproj", "{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Engine", "MPTanks.Engine\MPTanks.Engine.csproj", "{3D9A65BD-CC42-4A73-8816-3E01E0C4B09F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Networking", "Networking", "{C8E25003-9BC6-4807-8909-01E937A235D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Server", "Server\MPTanks.Networking.Server.csproj", "{6A9A39B2-3BDA-4BE0-98A4-6F2AB3F51B7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Server", "MPTanks.Networking.Server\MPTanks.Networking.Server.csproj", "{6A9A39B2-3BDA-4BE0-98A4-6F2AB3F51B7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Client", "Client\MPTanks.Networking.Client.csproj", "{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Client", "MPTanks.Networking.Client\MPTanks.Networking.Client.csproj", "{2F77B6CE-2D2D-4E67-A7BD-38E896A52931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Common", "NetworkingCommon\MPTanks.Networking.Common.csproj", "{EF7D12D4-A2B8-47C6-B93D-5264191892C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.Common", "MPTanks.Networking.Common\MPTanks.Networking.Common.csproj", "{EF7D12D4-A2B8-47C6-B93D-5264191892C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{325CA0C5-DD1F-4C9D-8F0C-0BF43061DE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.DedicatedServer", "DedicatedServer\MPTanks.Clients.DedicatedServer.csproj", "{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Networking.MasterServer", "MasterServer\MPTanks.Networking.MasterServer.csproj", "{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.DedicatedServer", "MPTanks.Clients.DedicatedServer\MPTanks.Clients.DedicatedServer.csproj", "{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{FBF79749-6EAB-4021-96DE-8330D74F54EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starbound.Input", "ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj", "{44C828D4-02D6-413C-BFED-3BF72AA9322E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Modding", "Modding\MPTanks.Modding.csproj", "{3A8512C9-59E4-4312-A718-F47F40A5F494}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Modding", "MPTanks.Modding\MPTanks.Modding.csproj", "{3A8512C9-59E4-4312-A718-F47F40A5F494}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Asset Pipeline", "Asset Pipeline", "{110EAE75-A784-48F2-BD49-3D2D52EB8B90}"
 EndProject
@@ -37,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game Client", "Game Client"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTanks.Clients.GameClient.Menus", "MPTanks.Clients.GameClient.Menus\MPTanks.Clients.GameClient.Menus.csproj", "{600EB8F7-0534-459E-9C8A-6D7FBA0EB82B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strings", "Strings\Strings.csproj", "{65A6037C-A629-4884-A94E-E91B4591AA45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strings", "MPTanks.Strings\Strings.csproj", "{65A6037C-A629-4884-A94E-E91B4591AA45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{BA1A149F-DF77-431C-9A87-93D30BCC59F8}"
 EndProject
@@ -118,17 +116,6 @@ Global
 		{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED}.Release|x86.Build.0 = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|x86.ActiveCfg = Release|Any CPU
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2}.Release|x86.Build.0 = Release|Any CPU
 		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{44C828D4-02D6-413C-BFED-3BF72AA9322E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -206,7 +193,6 @@ Global
 		{2F77B6CE-2D2D-4E67-A7BD-38E896A52931} = {C8E25003-9BC6-4807-8909-01E937A235D5}
 		{EF7D12D4-A2B8-47C6-B93D-5264191892C8} = {C8E25003-9BC6-4807-8909-01E937A235D5}
 		{CF9FA3A5-E8E8-45FD-A12C-29C56703AFED} = {325CA0C5-DD1F-4C9D-8F0C-0BF43061DE2F}
-		{FA3A419F-9A9A-4364-A2E5-DE3BE0B142C2} = {C8E25003-9BC6-4807-8909-01E937A235D5}
 		{44C828D4-02D6-413C-BFED-3BF72AA9322E} = {FBF79749-6EAB-4021-96DE-8330D74F54EE}
 		{110EAE75-A784-48F2-BD49-3D2D52EB8B90} = {BA1A149F-DF77-431C-9A87-93D30BCC59F8}
 		{16C6DFE1-2EF7-4D9D-9224-EE8A40F8AE78} = {110EAE75-A784-48F2-BD49-3D2D52EB8B90}
