@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient
+namespace MPTanks.Clients.GameClient.Menus
 {
     public static class Logger
     {
@@ -16,7 +16,7 @@ namespace MPTanks.Clients.GameClient
                 new NLog.Targets.Wrappers.AsyncTargetWrapper(
                     new NLog.Targets.FileTarget()
                     {
-                        FileName = (string)GameSettings.Instance.GameLogLocation,
+                        FileName = (string)ClientSettings.Instance.ClientLogLocation,
                         ArchiveOldFileOnStartup = true,
                         KeepFileOpen = true,
                         MaxArchiveFiles = 10,
@@ -35,7 +35,6 @@ namespace MPTanks.Clients.GameClient
             NLog.LogManager.Configuration = config;
 
             logger = NLog.LogManager.GetLogger("Client");
-
         }
         public static void Log(string info)
         {
@@ -73,4 +72,5 @@ namespace MPTanks.Clients.GameClient
             return Environment.StackTrace;
         }
     }
+
 }

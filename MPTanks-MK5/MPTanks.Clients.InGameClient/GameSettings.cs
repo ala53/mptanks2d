@@ -17,6 +17,9 @@ namespace MPTanks.Clients.GameClient
             Instance = new GameSettings();
         }
 
+        //Where config information is stored
+        public Setting<string> ConfigDir { get; private set; }
+
         public Setting<string> GameLogLocation { get; private set; }
 
         /// <summary>
@@ -65,10 +68,14 @@ namespace MPTanks.Clients.GameClient
 
         public GameSettings()
         {
+            ConfigDir = new Setting<string>(this, "Save directory",
+                "The directory where configuration information and mods are stored in.",
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D"));
+            
             GameLogLocation = new Setting<string>(this, "Log storage location",
                "Where to store runtime logs for the game. This uses NLog storage conventions." +
                " So, ${basedir} is the program's installation directory.",
-               "${basedir}/gamelogs/game.log");
+               Path.Combine(ConfigDir, "gamelogs", "game.log"));
 
             MaxParticlesToRender = new Setting<int>(this, "Max particles allowed on screen",
             "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +
@@ -92,6 +99,11 @@ namespace MPTanks.Clients.GameClient
                 "The extensions to search for when trying to load an image, in the correct search order.",
                 new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
 
+            ModUnpackPath = new Setting<string>(this, "Mod temp directory",
+                "The place to store mods that are used at runtime. In other words, this is the directory" +
+                " that *.mod files are unpacked into.",
+                Path.Combine(ConfigDir, "tempmodunpack"));
+
             AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets.",
                 new[] {
                     Directory.GetCurrentDirectory(), //current directory
@@ -103,14 +115,9 @@ namespace MPTanks.Clients.GameClient
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(Directory.GetCurrentDirectory(), "mods", "modassets"),
-                    Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods", "modassets"),
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "assets")
+                    Path.Combine(ModUnpackPath, "assets"),
+                    Path.Combine(ConfigDir, "assets")
                 });
-
-            ModUnpackPath = new Setting<string>(this, "Mod temp directory",
-                "The place to store mods that are used at runtime. In other words, this is the directory" +
-                " that *.mod files are unpacked into.",
-                Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "mptanks", "runtimemods"));
 
             RenderScale = new Setting<float>(this, "Render Scale",
             "The scale of rendering relative to game space so integer conversions work", 100f);

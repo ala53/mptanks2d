@@ -45,23 +45,21 @@ namespace MPTanks.Clients.GameClient.Menus
             Save();
         }
 
-        //Where config information is stored
-        public Setting<string> ConfigDir { get; private set; }
-
         public Setting<string[]> ModSearchPaths { get; private set; }
+
+        public Setting<string> ClientLogLocation { get; private set; }
 
         public ClientSettings()
         {
             ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
                 new[] {
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "mods")
+                    Path.Combine(ConfigDir, "mods")
                 });
 
-            ConfigDir = new Setting<string>(this, "Save directory",
-                "The directory where configuration information and mods are stored in.",
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D"));
-
+            ClientLogLocation = new Setting<string>(this, "Client log directory",
+                "The directory where the client (menus and watchdog) logs are stored.",
+                Path.Combine(ConfigDir, "clientlogs", "client.log"));
         }
 
     }

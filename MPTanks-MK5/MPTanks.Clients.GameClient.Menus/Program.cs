@@ -21,8 +21,7 @@ namespace MPTanks.Clients.GameClient.Menus
         static void Main()
         {
             var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo() { FriendlyServerName = "LOL" }, new[] { "" });
-            Thread.Sleep(250000);
-            game.Close();
+            game.WaitForExit();
         }
     }
 #endif
