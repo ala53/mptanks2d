@@ -56,10 +56,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ClientSettings.cs" />
+    <Compile Include="GameSettings.cs" />
+    <Compile Include="CrossDomainObject.cs" />
     <Compile Include="EngineInterface\FileLogger.cs" />
     <Compile Include="GameClient.cs" />
+    <Compile Include="GameRenderState.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -205,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\ui\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Input\" />
     <Folder Include="mods\" />
     <Folder Include="UI\" />

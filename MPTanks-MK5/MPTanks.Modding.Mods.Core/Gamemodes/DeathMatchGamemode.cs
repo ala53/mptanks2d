@@ -8,11 +8,18 @@ using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Modding.Mods.Core
 {
-    [MPTanks.Modding.Gamemode("DeathMatchGamemode", AllowSuperTanks = true, DisplayName = "Deathmatch (no teams)", 
+    [MPTanks.Modding.Gamemode("DeathMatchGamemode", AllowSuperTanks = true, DisplayName = "Deathmatch (no teams)",
         Description = "2 team deathmatch", MinPlayersCount = 2)]
     public class DeathMatchGamemode : Gamemode
     {
-        private bool _gameEnded = false;
+        public DeathMatchGamemode()
+            : base()
+        {
+            AllowRespawn = false;
+            RespawnTimeMs = 0;
+        }
+
+        private bool _gameEnded;
         public override bool GameEnded
         {
             get { return _gameEnded; }
@@ -33,83 +40,79 @@ namespace MPTanks.Modding.Mods.Core
             }
         }
 
-        public override int MinPlayerCount
+        public override void MakeTeams(Engine.GamePlayer[] players)
         {
-            get { return 2; }
-        }
+            var rnd = new Random();
+            var teams = new List<Team>();
+            var teamId = 1;
 
-        /// <summary>
-        /// The ratio of super tanks to normal tanks in this specific instance
-        /// </summary>
-        public float SuperTankRatio { get; set; }
-        public override void MakeTeams(Guid[] playerIds)
-        {
-            _teams = new Team[playerIds.Length];
-
-            for (var i = 0; i < _teams.Length; i++)
+            foreach (var p in players)
             {
-                _teams[i] = new Team();
-                _teams[i].Objective = "Kill all other players.";
-                _teams[i].TeamColor = GetRandomColor();
-                _teams[i].TeamName = "Player #" + i;
+                var team = new Team
+                {
+                    Objective = "Kill all other players.",
+                    Players = new[] { p },
+                    TeamColor = new Color(rnd.Next(50, 255), rnd.Next(50, 255), rnd.Next(50, 255)),
+                    TeamId = teamId++,
+                    TeamName = p.Name
+                };
 
-                _teams[i].Players = new[] { new Team.Player() { PlayerId = playerIds[i] } };
+                teams.Add(team);
             }
 
+            _teams = teams.ToArray();
+        }
+        
+        public override string[] GetPlayerAllowedTankTypes(Engine.GamePlayer player)
+        {
+            return Engine.Tanks.Tank.GetAllTankTypes().ToArray();
         }
 
-        private Random rand = new Random();
-        private Color GetRandomColor()
+        public override bool SetPlayerTankType(Engine.GamePlayer player, string tankType)
         {
-            var r = (float)(rand.NextDouble() / 2 + 0.5);
-            var g = (float)(rand.NextDouble() / 2 + 0.5);
-            var b = (float)(rand.NextDouble() / 2 + 0.5);
-
-            return new Color(r, g, b, 1);
+            if (Engine.Tanks.Tank.GetAllTankTypes().Contains(tankType))
+            {
+                player.SelectedTankReflectionName = tankType;
+                return true;
+            }
+            return false;
         }
 
         public override void StartGame()
         {
-            //No complex initialization here
         }
 
         public override void Update(GameTime gameTime)
         {
-            Team winner = null;
-            int teamsAlive = 0;
-            foreach (var team in Teams)
-                if (team.Players[0].Tank.Alive)
-                {
-                    winner = team;
-                    teamsAlive++;
-                }
+            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => p.Tank.Alive);
+            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => p.Tank.Alive);
 
-            if (teamsAlive == 0)
+            if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue > 0)
+                return; //game still running
+
+            //Red team wins
+            if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue == 0)
+            {
+                _gameEnded = true;
+                _winner = Teams[0];
+                return;
+            }
+
+            //Blue team wins
+            if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue > 0)
+            {
+                _gameEnded = true;
+                _winner = Teams[1];
+                return;
+            }
+
+            //Tie
+            if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue == 0)
             {
                 _gameEnded = true;
                 _winner = Team.Indeterminate;
+                return;
             }
-            if (teamsAlive == 1)
-            {
-                _gameEnded = true;
-                _winner = winner;
-            }
-        }
-
-        public override void ReceiveStateData(byte[] data)
-        {
-            base.ReceiveStateData(data);
-        }
-
-
-        public override string[] GetPlayerAllowedTankTypes(Guid playerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool SetPlayerTankType(Guid playerId, string tankType)
-        {
-            throw new NotImplementedException();
         }
     }
 }

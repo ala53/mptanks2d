@@ -29,7 +29,7 @@ namespace MPTanks.StringData
             if (_loadedStrings != null) return;
 
             var lines = System.IO.File.ReadAllLines(GetLocalizedFile(_filename));
-            _loadedStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //optimize searches to avoid .ToLower allocation
+            _loadedStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //optimize searches to avoid .ToLower() allocations
 
             //It's a flat file of type: key<space>value pairs
             for (var i = 0; i < lines.Length; i++)
@@ -59,6 +59,20 @@ namespace MPTanks.StringData
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = GetByName(binder.Name);
+
+            return true;
+        }
+
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        {
+            result = String.Format(binder.Name, args);
+
+            return true;
+        }
+
+        public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
+        {
+            result = String.Format(args[0].ToString(), args.Skip(1).ToArray());
 
             return true;
         }

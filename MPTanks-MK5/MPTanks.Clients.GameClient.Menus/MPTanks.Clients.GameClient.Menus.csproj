@@ -60,6 +60,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ClientSettings.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="InGame\LiveGame.cs" />
     <Compile Include="Program.cs" />

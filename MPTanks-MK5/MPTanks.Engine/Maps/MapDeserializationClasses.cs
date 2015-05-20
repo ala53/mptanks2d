@@ -14,6 +14,7 @@ namespace MPTanks.Engine.Maps.MapDeserializationClasses
         public string Name { get; set; }
         public string Author { get; set; }
         public Vector2 Size { get; set; }
+        public bool FogOfWar { get; private set; }
         public int MaxPlayers { get; set; }
         public bool WhitelistGamemodes { get; set; }
         public string[] AllowedGamemodes { get; set; }

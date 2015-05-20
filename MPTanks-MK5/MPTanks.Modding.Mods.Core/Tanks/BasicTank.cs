@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
+using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
@@ -24,8 +25,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         {
             get { return 50; }
         }
-        public BasicTank(Guid playerId, GameCore game, bool authorized = false)
-            : base(playerId, game, authorized)
+        public BasicTank(GamePlayer player, Team team, GameCore game, bool authorized = false)
+            : base(player, team, game, authorized)
         {
             Health = 150;
             Size = new Vector2(3, 5);

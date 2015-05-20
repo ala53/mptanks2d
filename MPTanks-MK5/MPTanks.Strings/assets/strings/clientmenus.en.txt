@@ -12,7 +12,7 @@
 ###Connecting to servers
 	###Game Errors
 		GameForciblyClosedByWatchDog The game was forcibly stopped by the watchdog application.
-		GameCrashedUnknownCause The game crashed, most likely due to a mod that was running. The log was saved at {0} so you can send it to the server host, the mod developer, or us, depending on what happened. 
+		GameCrashedUnknownCause The game crashed, most likely due to a mod that was running. The log was saved so you can send it to the server host, the mod developer, or us, depending on what happened. For reference, the error message was {0}
 		GameCannotConnect Cannot connect to the server. Double check the IP and port and make sure you aren't in airplane mode.
 		GameConnectionLost The connection to the server was lost, sorry.
 		GameCannotAuthenticate Could not authenticate to the server. Are you in offline mode?

@@ -65,6 +65,8 @@
     <Compile Include="assets\Maps.cs" />
     <Compile Include="ConstructorHelper.cs" />
     <Compile Include="Core\Events\Types\Gamemodes\StateChanged.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\Created.cs" />
+    <Compile Include="Core\Events\Types\GameObjects\DestructionEnded.cs" />
     <Compile Include="Core\Events\Types\GameObjects\StateChanged.cs" />
     <Compile Include="Core\Events\Types\Game\Initialized.cs" />
     <Compile Include="Core\RectangleF.cs" />
@@ -106,6 +108,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animations\Animation.cs" />
     <Compile Include="Rendering\Animations\AnimationEngine.cs" />
+    <Compile Include="Rendering\Lighting\Light.cs" />
+    <Compile Include="Rendering\Lighting\LightEngine.cs" />
     <Compile Include="Rendering\NullRenderer.cs" />
     <Compile Include="Rendering\Particles\Particle.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />

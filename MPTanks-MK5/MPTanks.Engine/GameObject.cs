@@ -272,6 +272,10 @@ namespace MPTanks.Engine
             IsSensor = _startIsSensor;
             IsStatic = _startIsStatic;
 
+            //Call the event
+            _createdEventObj.Object = this;
+            OnCreated(this, _createdEventObj);
+
             //And call the internal function
             CreateInternal();
         }
@@ -344,6 +348,11 @@ namespace MPTanks.Engine
             }
             Alive = false;
             _hasBeenDeleted = true;
+            //Call the event
+            _destroyedEventObj.DeadObject = this;
+            _destroyedEventObj.Killer = destructor;
+            OnDestroyed(this, _destroyedEventObj);
+
             var canDeleteRightAway = DestroyInternal(destructor);
             if (!Body.IsDisposed && canDeleteRightAway == false)
                 Body.Dispose(); //Kill the physics body if allowed to delete
@@ -370,12 +379,26 @@ namespace MPTanks.Engine
                 Body.Dispose(); //Kill the physics body for sure
             Alive = false;
             OnRemovedFromGame(); //And call the destructor logic
+
+            _destructionEndedEventObj.Object = this;
+            OnDestructionEnded(this, _destructionEndedEventObj);
         }
 
         protected virtual void OnRemovedFromGame()
         {
 
         }
+
+        #region Events
+        private Core.Events.Types.GameObjects.Created _createdEventObj =
+            new Core.Events.Types.GameObjects.Created();
+        public event EventHandler<Core.Events.Types.GameObjects.Created> OnCreated = delegate { };
+        private Core.Events.Types.GameObjects.Destroyed _destroyedEventObj =
+            new Core.Events.Types.GameObjects.Destroyed();
+        public event EventHandler<Core.Events.Types.GameObjects.Destroyed> OnDestroyed = delegate { };
+        private Core.Events.Types.GameObjects.DestructionEnded _destructionEndedEventObj =
+            new Core.Events.Types.GameObjects.DestructionEnded();
+        public event EventHandler<Core.Events.Types.GameObjects.DestructionEnded> OnDestructionEnded = delegate { };
 
         public event EventHandler<Core.Events.Types.GameObjects.StateChanged> OnStateChanged;
 
@@ -395,5 +418,7 @@ namespace MPTanks.Engine
         {
 
         }
+
+        #endregion
     }
 }

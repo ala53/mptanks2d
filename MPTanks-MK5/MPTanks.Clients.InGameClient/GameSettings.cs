@@ -7,36 +7,17 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient
 {
-    public class ClientSettings : MPTanks.Engine.Settings
+    [Serializable]
+    public class GameSettings : MPTanks.Engine.Settings
     {
-        private static ClientSettings _instance;
-        public static ClientSettings Instance
+        public static GameSettings Instance { get; private set; }
+
+        static GameSettings()
         {
-            get
-            {
-                if (_instance == null) LoadSettings();
-                return _instance;
-            }
-        }
-        #region Load Helper
-        private static void LoadSettings()
-        {
-            _instance = new ClientSettings();
+            Instance = new GameSettings();
         }
 
-        #endregion
-        #region Save Helper
-        public static void Save()
-        {
-            Instance.SaveChanges();
-        }
-        public void SaveChanges()
-        {
-
-        }
-        #endregion
-
-        public Setting<string> LogLocation { get; private set; }
+        public Setting<string> GameLogLocation { get; private set; }
 
         /// <summary>
         /// The maximum number of on screen particles to allow
@@ -59,12 +40,8 @@ namespace MPTanks.Clients.GameClient
 
         public Setting<string[]> AssetAllowedFileExtensions { get; private set; }
 
-        //Where config information is stored
-        public Setting<string> ConfigDir { get; private set; }
-
         //Where to look for assets
-        public Setting<string[]> AssetSearchPaths { get; private set; } //Looks for *.mod files to unpack
-        public Setting<string[]> ModSearchPaths { get; private set; }
+        public Setting<string[]> AssetSearchPaths { get; private set; }
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
         //just leave them in the temp directory where they are removed next time the program opens
@@ -82,12 +59,16 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         public Setting<float> PhysicsCompensationForRendering { get; private set; }
 
-        public ClientSettings()
+        #region Screen Resolution
+        public Setting<bool> Fullscreen { get; private set; }
+        #endregion
+
+        public GameSettings()
         {
-            LogLocation = new Setting<string>(this, "Log storage location",
+            GameLogLocation = new Setting<string>(this, "Log storage location",
                "Where to store runtime logs for the game. This uses NLog storage conventions." +
                " So, ${basedir} is the program's installation directory.",
-               "${basedir}/clientlogs/client.log");
+               "${basedir}/gamelogs/game.log");
 
             MaxParticlesToRender = new Setting<int>(this, "Max particles allowed on screen",
             "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +
@@ -111,10 +92,6 @@ namespace MPTanks.Clients.GameClient
                 "The extensions to search for when trying to load an image, in the correct search order.",
                 new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
 
-            ConfigDir = new Setting<string>(this, "Save directory",
-                "The directory where configuration information and mods are stored in.",
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D"));
-
             AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets.",
                 new[] {
                     Directory.GetCurrentDirectory(), //current directory
@@ -130,12 +107,6 @@ namespace MPTanks.Clients.GameClient
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "assets")
                 });
 
-            ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
-                new[] {
-                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Saved Games", "MP Tanks 2D", "mods")
-                });
-
             ModUnpackPath = new Setting<string>(this, "Mod temp directory",
                 "The place to store mods that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into.",
@@ -146,6 +117,9 @@ namespace MPTanks.Clients.GameClient
 
             PhysicsCompensationForRendering = new Setting<float>(this, "Physics Skin Compensation",
                 "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
+
+            Fullscreen = new Setting<bool>(this, "Fullscreen mode",
+                "Whether to render the game in fullscreen mode", false);
         }
     }
 }

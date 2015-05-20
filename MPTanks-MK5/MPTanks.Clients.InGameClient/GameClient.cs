@@ -12,6 +12,7 @@ using MPTanks.Engine;
 using System.Diagnostics;
 using System.Runtime;
 using System.Text;
+using MPTanks.Engine.Rendering.Particles;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -65,8 +66,6 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
             //Set up resize handler
             Window.ClientSizeChanged += Window_ClientSizeChanged;
@@ -228,7 +227,7 @@ namespace MPTanks.Clients.GameClient
             {
                 game.Diagnostics.BeginMeasurement("Input processing");
                 var iState = new InputState();
-                iState.LookDirection = game.Players[player1Id].Rotation;
+                iState.LookDirection = game.PlayersById[player1Id].Tank.Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.W))
                     iState.MovementSpeed = 1;
@@ -245,7 +244,7 @@ namespace MPTanks.Clients.GameClient
                 game.InjectPlayerInput(player1Id, iState);
 
                 var iState2 = new InputState();
-                iState2.LookDirection = game.Players[player2Id].Rotation;
+                iState2.LookDirection = game.PlayersById[player2Id].Tank.Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Up))
                     iState2.MovementSpeed = 1;
@@ -400,22 +399,23 @@ namespace MPTanks.Clients.GameClient
             DrawDebugInfo(gameTime);
             game.Diagnostics.EndMeasurement("Draw debug text", "Rendering");
 
-            if (ClientSettings.Instance.ForceFullGCEveryFrame)
+            if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
-            if (ClientSettings.Instance.ForceGen0GCEveryFrame)
+            if (GameSettings.Instance.ForceGen0GCEveryFrame)
                 GC.Collect(0, GCCollectionMode.Forced, true);
 
             game.Diagnostics.BeginMeasurement("Base.Draw()", "Rendering");
             base.Draw(gameTime);
             game.Diagnostics.EndMeasurement("Base.Draw()", "Rendering");
             game.Diagnostics.EndMeasurement("Rendering");
-            timer.Stop();
-            renderMs = (float)timer.Elapsed.TotalMilliseconds;
             if (physicsMs + renderMs > 10 && game.IsGameRunning)
             {
                 Logger.Debug("Frame took too long! (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
                 Logger.Debug("\n\n\n" + game.Diagnostics.ToString());
             }
+
+            timer.Stop();
+            renderMs = (float)timer.Elapsed.TotalMilliseconds;
         }
 
         #region Debug info
@@ -448,9 +448,9 @@ namespace MPTanks.Clients.GameClient
             .Append(",\nMouse: ").Append(Mouse.GetState().Position.ToString())
             .Append(", Tank: ");
 
-            if (game.Players.ContainsKey(player1Id))
-                _bldr.Append("{ ").Append(game.Players[player1Id].Position.X.ToString("N1"))
-                  .Append(", ").Append(game.Players[player1Id].Position.Y.ToString("N1"))
+            if (game.PlayersById.ContainsKey(player1Id) && game.PlayersById[player1Id].Tank != null)
+                _bldr.Append("{ ").Append(game.PlayersById[player1Id].Tank.Position.X.ToString("N1"))
+                  .Append(", ").Append(game.PlayersById[player1Id].Tank.Position.Y.ToString("N1"))
                   .Append(" }");
             else _bldr.Append("not spawned");
 

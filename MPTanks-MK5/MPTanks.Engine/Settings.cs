@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine
 {
-    public class Settings
+    public class Settings 
     {
         /// <summary>
         /// The physics engine runs at 1/10 scale for some idiotic reason.
@@ -20,7 +20,7 @@ namespace MPTanks.Engine
         /// A list of mod files (relative or absolute) that should be loaded without 
         /// Code security verification. AKA trusted mods.
         /// </summary>
-        public Setting<string[]> TrustedMods { get; private set; }
+        public Setting<string[]> CoreMods { get; private set; }
 
         public static readonly string[] DefaultTrustedMods = new[] {
                     "MPTanks.Modding.Mods.Core.dll"
@@ -69,8 +69,8 @@ namespace MPTanks.Engine
                 "The scale of the physics engine relative to game world space",
                 0.1f, Setting.SettingDisplayType.Percentage);
 
-            TrustedMods = new Setting<string[]>(this, "Trusted Mods",
-                "The paths of mods to load without whitelist verification", DefaultTrustedMods);
+            CoreMods = new Setting<string[]>(this, "Core Mods",
+                "The core mods that will be autoinjected into every game without verification. They must be DLL files.", DefaultTrustedMods);
 
             TankDensity = new Setting<float>(this, "Tank density",
             "The density of a tank in the physics engine.", 15f);

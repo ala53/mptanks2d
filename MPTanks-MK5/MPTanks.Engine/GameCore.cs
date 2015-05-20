@@ -42,6 +42,10 @@ namespace MPTanks.Engine
         /// The sound engine for the game. Manages where sounds should be and when they're playing.
         /// </summary>
         public Sound.SoundEngine SoundEngine { get; private set; }
+        /// <summary>
+        /// The lighting positions.
+        /// </summary>
+        public Rendering.Lighting.LightEngine LightEngine { get; private set; }
         #region Diagnostics & Logging
         /// <summary>
         /// The Logger to use for logging important events
@@ -78,8 +82,11 @@ namespace MPTanks.Engine
         public float RemainingCountdownSeconds { get; private set; }
         public bool IsCountingDownToStart { get { return RemainingCountdownSeconds > 0; } }
         #endregion
-        private Dictionary<Guid, Tanks.Tank> _players = new Dictionary<Guid, Tanks.Tank>();
-        public IReadOnlyDictionary<Guid, Tanks.Tank> Players { get { return _players; } }
+        private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
+        public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
+
+        public IList<GamePlayer> Players { get { return _playersById.Values.ToList(); } }
+
         public Maps.Map Map { get; private set; }
 
         #region World Management
@@ -198,6 +205,7 @@ namespace MPTanks.Engine
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
             Diagnostics = new MPTanks.Engine.Diagnostics();
+            LightEngine = new Rendering.Lighting.LightEngine();
             SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
             Logger.Log(Strings.Engine.GameCreated);

@@ -16,18 +16,23 @@ namespace MPTanks.Engine.Gamemodes
         /// The team to flag as a tie or when no one wins.
         /// </summary>
         public static Team Indeterminate { get { return _tied; } }
-        public Player[] Players { get; set; }
+        private GamePlayer[] _players;
+        public GamePlayer[] Players
+        {
+            get { return _players; }
+            set
+            {
+                _players = value;
+                foreach (var p in _players)
+                    p.Team = this;
+            }
+        }
         public string TeamName { get; set; }
         public Color TeamColor { get; set; }
+        public int TeamId { get; set; }
         /// <summary>
         /// The team's goal, for an explanation to the players.
         /// </summary>
         public string Objective { get; set; }
-
-        public struct Player
-        {
-            public Guid PlayerId;
-            public Tanks.Tank Tank;
-        }
     }
 }

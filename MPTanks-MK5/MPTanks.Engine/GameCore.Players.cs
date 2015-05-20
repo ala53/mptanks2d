@@ -10,10 +10,24 @@ namespace MPTanks.Engine
     public partial class GameCore
     {
         private List<Guid> _playerIds = new List<Guid>();
-        public void AddPlayer(Guid playerId)
+        public GamePlayer AddPlayer(Guid playerId)
         {
-            if (!_playerIds.Contains(playerId)) //Ignore existing
-                _playerIds.Add(playerId);
+            return AddPlayer(new GamePlayer()
+              {
+                  Id = playerId,
+                  HasSelectedTankYet = false,
+                  Game = this
+              });
+        }
+
+        public GamePlayer AddPlayer(GamePlayer player)
+        {
+            if (!_playerIds.Contains(player.Id))
+            {
+                _playerIds.Add(player.Id);
+                _playersById.Add(player.Id, player);
+            }
+            return player;
         }
         /// <summary>
         /// Kill and remove the player
@@ -22,27 +36,52 @@ namespace MPTanks.Engine
         public void RemovePlayer(Guid playerId)
         {
             _playerIds.Remove(playerId);
-            if (_players.ContainsKey(playerId))
+            if (_playersById.ContainsKey(playerId))
             {
-                RemoveGameObject(_players[playerId]);
-                _players.Remove(playerId);
+                RemoveGameObject(_playersById[playerId].Tank);
+                _playersById.Remove(playerId);
             }
+        }
+
+        /// <summary>
+        /// Kill and remove the player
+        /// </summary>
+        /// <param name="playerId"></param>
+        public void RemovePlayer(GamePlayer player)
+        {
+            _playerIds.Remove(player.Id);
+            if (_playersById.ContainsKey(player.Id))
+            {
+                RemoveGameObject(_playersById[player.Id].Tank);
+                _playersById.Remove(player.Id);
+            }
+        }
+
+        public GamePlayer FindPlayer(Guid playerId)
+        {
+            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] : null;
         }
 
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
             if (IsGameRunning)
-                Players[playerId].Input(state);
+                PlayersById[playerId].Tank.Input(state);
         }
 
-        public bool CheckPlayerIsAlive(Guid playerId)
+        public void InjectPlayerInput(GamePlayer player, InputState state)
         {
-            return Players.ContainsKey(playerId) && Players[playerId].Alive;
+            if (IsGameRunning)
+                player.Tank.Input(state);
         }
 
-        public bool CheckPlayerHasTank(Guid playerId)
+        public bool CheckPlayerIsAlive(GamePlayer player)
         {
-            return Players.ContainsKey(playerId);
+            return player.Tank != null && player.Tank.Alive;
+        }
+
+        public bool CheckPlayerHasTank(GamePlayer player)
+        {
+            return player.Tank != null;
         }
 
         /// <summary>
@@ -50,18 +89,18 @@ namespace MPTanks.Engine
         /// </summary>
         private void SetUpGamePlayers()
         {
-            Gamemode.MakeTeams(_playerIds.ToArray());
+            Gamemode.MakeTeams(Players.ToArray());
 
-            foreach (var player in _playerIds)
+            foreach (var player in Players)
             {
                 //TODO
-                    var tank = MPTanks.Engine.Tanks.Tank.ReflectiveInitialize("BasicTankMP", player, this, false);
-                    tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
-                    tank.ColorMask = Gamemode.GetTeam(player).TeamColor;
+                var tank = MPTanks.Engine.Tanks.Tank.ReflectiveInitialize("BasicTankMP", player, player.Team, this, false);
+                tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
 
-                    Gamemode.SetTank(player, tank);
-                    AddGameObject(tank);
-                    _players.Add(player, tank);
+                tank.ColorMask = player.Team.TeamColor;
+
+                AddGameObject(tank);
+                player.Tank = tank;
             }
         }
 

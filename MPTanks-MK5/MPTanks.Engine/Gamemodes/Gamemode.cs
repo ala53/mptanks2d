@@ -13,7 +13,6 @@ namespace MPTanks.Engine.Gamemodes
         public abstract bool GameEnded { get; }
         public virtual Team WinningTeam { get { return Team.Null; } }
         public abstract Team[] Teams { get; }
-        public abstract int MinPlayerCount { get; }
         public bool AllowRespawn { get; protected set; }
         public float RespawnTimeMs { get; protected set; }
 
@@ -35,10 +34,23 @@ namespace MPTanks.Engine.Gamemodes
             }
         }
 
+        private int _cachedPlrCt = -799023;
+        public int MinPlayerCount
+        {
+            get
+            {
+                if (_cachedPlrCt == -799023)
+                    _cachedPlrCt = ((MPTanks.Modding.GamemodeAttribute)(GetType().
+                         GetCustomAttributes(typeof(MPTanks.Modding.GamemodeAttribute), true))[0]).MinPlayersCount;
+
+                return _cachedPlrCt;
+            }
+        }
+
         /// <summary>
         /// An event that is fired when the gamemode updates and changes state
         /// </summary>
-        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> OnGamemodeStateChanged;
+        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> OnGamemodeStateChanged = delegate { };
 
         public Gamemode(byte[] serverState = null)
         {
@@ -54,22 +66,22 @@ namespace MPTanks.Engine.Gamemodes
         /// Puts all of the tanks on teams
         /// </summary>
         /// <param name="tanks"></param>
-        public abstract void MakeTeams(Guid[] playerIds);
+        public abstract void MakeTeams(GamePlayer[] players);
 
         /// <summary>
-        /// Gets the tank types that a player can choose from
+        /// Gets the tank types that a player can choose from (reflection names only)
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public abstract string[] GetPlayerAllowedTankTypes(Guid playerId);
+        public abstract string[] GetPlayerAllowedTankTypes(GamePlayer player);
 
         /// <summary>
         /// Sets the tank type for a player, from the list of allowed types. 
         /// </summary>
         /// <param name="playerId"></param>
         /// <param name="tankType"></param>
-        /// <returns>Returns true if the tank type is still allowed or false if it is not.</returns>
-        public abstract bool SetPlayerTankType(Guid playerId, string tankType);
+        /// <returns>Returns true if the tank type was able to be set (still allowed) or false if it is not.</returns>
+        public abstract bool SetPlayerTankType(GamePlayer player, string tankType);
 
         /// <summary>
         /// Notifies the Gamemode that the game has started. It can do whatever it wants 
@@ -81,43 +93,11 @@ namespace MPTanks.Engine.Gamemodes
         /// </summary>
         /// <param name="gameTime"></param>
         public abstract void Update(GameTime gameTime);
-
-        /// <summary>
-        /// Sets the tank associated to a specific player.
-        /// </summary>
-        /// <param name="playerId"></param>
-        /// <param name="tank"></param>
-        public virtual void SetTank(Guid playerId, Tanks.Tank tank)
+        
+        public int GetTeamIndex(GamePlayer player)
         {
-            foreach (var team in Teams)
-                for (var i = 0; i < team.Players.Length; i++)
-                    if (team.Players[i].PlayerId == playerId)
-                    {
-                        //Simply do an in place replace and assign the new tank to 
-                        var tmp = team.Players[i];
-                        tmp.Tank = tank;
-                        tank.Team = team;
-                        team.Players[i] = tmp;
-                        return;
-                    }
-
-        }
-
-        public Team GetTeam(Guid playerId)
-        {
-            foreach (var team in Teams)
-                for (var i = 0; i < team.Players.Length; i++)
-                    if (team.Players[i].PlayerId == playerId)
-                        return team;
-
-            return null;
-        }
-
-        public int GetTeamIndex(Guid playerId)
-        {
-            var t = GetTeam(playerId);
             for (var i = 0; i < Teams.Length; i++)
-                if (Teams[i] == t)
+                if (Teams[i] == player.Team)
                     return i;
 
             return int.MaxValue;
