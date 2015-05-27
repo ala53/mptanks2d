@@ -23,6 +23,8 @@ namespace EKUI
 
         private UIRoot basicUI;
 
+        private bool sizeDirty = true;
+
         public Game1()
             : base()
         {
@@ -30,7 +32,14 @@ namespace EKUI
             Content.RootDirectory = "assets/ui/imgs";
             graphics.PreparingDeviceSettings += graphics_PreparingDeviceSettings;
             graphics.DeviceCreated += graphics_DeviceCreated;
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
+            Window.AllowUserResizing = true;
 
+        }
+
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            sizeDirty = true;
         }
 
         void graphics_DeviceCreated(object sender, EventArgs e)
@@ -116,6 +125,16 @@ namespace EKUI
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (sizeDirty)
+            {
+                graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+                graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+                graphics.ApplyChanges();
+                basicUI.Resize(Window.ClientBounds.Width, Window.ClientBounds.Height);
+                var eng = new MonoGameEngine(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
+                sizeDirty = false;
+            }
+
             basicUI.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
             basicUI.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
 
