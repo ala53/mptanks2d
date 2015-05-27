@@ -13,6 +13,10 @@ using System.Diagnostics;
 using System.Runtime;
 using System.Text;
 using MPTanks.Engine.Rendering.Particles;
+using MPTanks.Rendering.UI;
+using EmptyKeys.UserInterface.Controls;
+using EmptyKeys.UserInterface;
+using EmptyKeys.UserInterface.Media;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -35,6 +39,8 @@ namespace MPTanks.Clients.GameClient
         private bool loading { get { return !loadingScreen.Completed || !loadingScreen.IsSlidingOut; } }
         private LoadingScreen loadingScreen;
         private Screens.Screen currentScreen;
+        private UIRoot root;
+        private MonoGameEngine eng;
 
         private bool _unlockCursor = false;
 
@@ -44,10 +50,11 @@ namespace MPTanks.Clients.GameClient
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "assets/mgcontent";
+            Content.RootDirectory = "xContent";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
             graphics.PreferMultiSampling = true;
+            graphics.DeviceCreated += graphics_DeviceCreated;
 
             Window.AllowUserResizing = true;
             // IsMouseVisible = true;
@@ -56,6 +63,12 @@ namespace MPTanks.Clients.GameClient
             // TargetElapsedTime = TimeSpan.FromMilliseconds(66.3333333);
 
             MPTanks.Engine.Mods.CoreModLoader.LoadTrustedMods();
+        }
+
+        void graphics_DeviceCreated(object sender, EventArgs e)
+        {
+
+            eng = new MonoGameEngine(GraphicsDevice, 800, 480); 
         }
 
         /// <summary>
@@ -97,6 +110,13 @@ namespace MPTanks.Clients.GameClient
             SetupGame();
             loadingScreen = new LoadingScreen(this);
             font = Content.Load<SpriteFont>("font");
+
+            root = new EmptyKeys.UserInterface.Generated.CreateAccountPage(800, 480);
+
+            FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(Content.Load<SpriteFont>("Segoe_UI_9_Regular"));
+            FontManager.Instance.LoadFonts(Content);
+            ImageManager.Instance.LoadImages(Content);
+            SoundManager.Instance.LoadSounds(Content);
         }
 
         private void SetupGame()
@@ -370,7 +390,7 @@ namespace MPTanks.Clients.GameClient
             frameNumber++;
             game.Diagnostics.BeginMeasurement("Rendering");
             timer.Restart(); //Stat tracking
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Red);
 
             if (!loading || loadingScreen.IsSlidingOut)
             { //in game
@@ -404,6 +424,7 @@ namespace MPTanks.Clients.GameClient
             if (GameSettings.Instance.ForceGen0GCEveryFrame)
                 GC.Collect(0, GCCollectionMode.Forced, true);
 
+            root.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
             game.Diagnostics.BeginMeasurement("Base.Draw()", "Rendering");
             base.Draw(gameTime);
             game.Diagnostics.EndMeasurement("Base.Draw()", "Rendering");

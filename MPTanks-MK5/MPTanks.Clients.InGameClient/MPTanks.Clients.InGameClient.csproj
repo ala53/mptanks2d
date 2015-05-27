@@ -92,8 +92,15 @@
     <Compile Include="Sound\SoundProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="EmptyKeys.UserInterface">
-      <HintPath>..\packages\EmptyKeysUI.1.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+    <Reference Include="EmptyKeys.UserInterface, Version=1.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Core">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.MonoGame">
+      <HintPath>..\packages\EmptyKeysUI.1.6.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
     </Reference>
     <Reference Include="FarseerPhysics.Portable">
       <HintPath>..\packages\FarseerPhysics.Portable.3.5.1\lib\portable-net4+sl4+wp8+win8\FarseerPhysics.Portable.dll</HintPath>
@@ -199,6 +206,10 @@
     <ProjectReference Include="..\MPTanks.Networking.Server\MPTanks.Networking.Server.csproj">
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
       <Name>MPTanks.Networking.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MPTanks.Renderer\MPTanks.Renderer.csproj">
+      <Project>{9845aa6f-4b25-4685-9554-148376a73561}</Project>
+      <Name>MPTanks.Renderer</Name>
     </ProjectReference>
     <ProjectReference Include="..\MPTanks.Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>

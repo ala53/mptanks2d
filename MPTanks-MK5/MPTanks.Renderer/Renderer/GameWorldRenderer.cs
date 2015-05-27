@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Engine;
+using MPTanks.Engine.Logging;
 using MPTanks.Rendering.Renderer.Assets;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace MPTanks.Rendering.Renderer
         private BasicEffect _effect;
         private SpriteBatch _spriteBatch;
 
+        public ILogger Logger { get; private set; }
+
         /// <summary>
         /// Initializes a new game world renderer.
         /// </summary>
@@ -37,15 +40,17 @@ namespace MPTanks.Rendering.Renderer
         /// <param name="antiAlias">Whether to use FXAA for the output.</param>
         /// <param name="playerTeamNumber">The team the player is on, for lighting calculations.</param>
         public GameWorldRenderer(GameCore game, RenderTarget2D drawTarget, GraphicsDevice gDevice,
-            bool antiAlias, int playerTeamNumber)
+            bool antiAlias, int playerTeamNumber, ILogger logger, string[] assetSearchPaths)
         {
+            Logger = logger;
+
             _fxaa = new FXAA(_graphicsDevice);
 
-            _animationRenderer = new AnimationRenderer(game.AnimationEngine, _spriteBatch, gDevice, _effect, _resolver);
-            _objectRenderer = new GameObjectRenderer(game, _spriteBatch, gDevice, _effect, _resolver);
-            _lightRenderer = new LightMaskRenderer(playerTeamNumber, game.LightEngine, _spriteBatch, gDevice, _effect, _resolver);
-            _backgroundRenderer = new MapBackgroundRenderer(game.Map, _spriteBatch, gDevice, _effect, _resolver);
-            _particleRenderer = new ParticleRenderer(game.ParticleEngine, _spriteBatch, gDevice, _effect, _resolver);
+            _animationRenderer = new AnimationRenderer(this, game.AnimationEngine, _spriteBatch, gDevice, _effect, _resolver);
+            _objectRenderer = new GameObjectRenderer(this, game, _spriteBatch, gDevice, _effect, _resolver);
+            _lightRenderer = new LightMaskRenderer(this, playerTeamNumber, game.LightEngine, _spriteBatch, gDevice, _effect, _resolver);
+            _backgroundRenderer = new MapBackgroundRenderer(this, game.Map, _spriteBatch, gDevice, _effect, _resolver);
+            _particleRenderer = new ParticleRenderer(this, game.ParticleEngine, _spriteBatch, gDevice, _effect, _resolver);
         }
 
         public void Draw(GameTime gameTime)

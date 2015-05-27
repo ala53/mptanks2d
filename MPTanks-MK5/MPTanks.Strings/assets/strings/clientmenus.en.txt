@@ -27,6 +27,11 @@
 		GameConnectToServerPortWatermark Port, blank for default
 		GameConnectToServerPasswordWatermark Password, blank for none
 		GameConnectToServerButton Connect
+	###Connecting To Server Page
+		ConnectingToServerHeader Connecting to server...
+		ConnectingToServerAddress Address: 
+		ConnectingToServerReturnToMenu Return to menu
+		ConnectingToServerConnectionFailed Connection failed
 	###Hosting prompt
 		ServerHostingPrompt Host a server
 		ServerHostingPortWatermark Port

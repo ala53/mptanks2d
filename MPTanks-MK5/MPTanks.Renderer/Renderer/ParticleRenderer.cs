@@ -12,7 +12,7 @@ namespace MPTanks.Rendering.Renderer
 {
     class ParticleRenderer
     {
-        public ParticleRenderer(ParticleEngine game, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
+        public ParticleRenderer(GameWorldRenderer renderer, ParticleEngine game, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
         {
 
         }

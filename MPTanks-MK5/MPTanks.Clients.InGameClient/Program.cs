@@ -20,7 +20,7 @@ namespace MPTanks.Clients.GameClient
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            CrossDomainObject.Instance.ConnectionFailureCause = "BLEHMOB";
+            CrossDomainObject.Instance.ConnectionFailureCause = "NOCOMMENT";
             //Write down some logging information so we know what happened.
             Logger.Log("MonoGame: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
                 typeof(Microsoft.Xna.Framework.Game).Assembly.ToString());

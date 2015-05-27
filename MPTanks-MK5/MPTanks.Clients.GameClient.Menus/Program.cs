@@ -1,4 +1,5 @@
 ﻿#region Using Statements
+using EKUI;
 using MPTanks.Clients.GameClient.Menus.InGame;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace MPTanks.Clients.GameClient.Menus
         [STAThread]
         static void Main()
         {
+            using (var gm = new Game1())
+                gm.Run();
             var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo() { FriendlyServerName = "LOL" }, new[] { "" });
             game.WaitForExit();
         }

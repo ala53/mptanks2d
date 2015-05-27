@@ -12,7 +12,7 @@ namespace MPTanks.Rendering.Renderer
 {
     class AnimationRenderer 
     {
-        public AnimationRenderer(AnimationEngine animations, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
+        public AnimationRenderer(GameWorldRenderer renderer, AnimationEngine animations, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
         {
 
         }

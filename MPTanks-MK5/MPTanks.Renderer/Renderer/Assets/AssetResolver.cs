@@ -8,5 +8,15 @@ namespace MPTanks.Rendering.Renderer.Assets
 {
     class AssetResolver
     {
+        public string[] SearchPaths { get; private set; }
+        public AssetResolver(string[] searchPaths)
+        {
+            SearchPaths = searchPaths;
+        }
+
+        public string ResolveAssetFile(string sheetName)
+        {
+            return "";
+        }
     }
 }

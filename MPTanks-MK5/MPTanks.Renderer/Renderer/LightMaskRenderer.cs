@@ -14,7 +14,7 @@ namespace MPTanks.Rendering.Renderer
     class LightMaskRenderer 
     {
         private RenderTarget2D _lightMask;
-        public LightMaskRenderer(int teamNumber, LightEngine engine,  SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
+        public LightMaskRenderer(GameWorldRenderer renderer, int teamNumber, LightEngine engine, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
         {
 
         }

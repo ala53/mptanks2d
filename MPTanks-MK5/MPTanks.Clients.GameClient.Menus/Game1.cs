@@ -1,8 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EmptyKeys.UserInterface;
+using EmptyKeys.UserInterface.Controls;
+using EmptyKeys.UserInterface.Generated;
+using EmptyKeys.UserInterface.Input;
+using EmptyKeys.UserInterface.Media;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MPTanks.Rendering.UI;
+using System;
 
-namespace MPTanks.Clients.GameClient.Menus
+namespace EKUI
 {
     /// <summary>
     /// This is the main type for your game
@@ -10,13 +17,36 @@ namespace MPTanks.Clients.GameClient.Menus
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+
+        private int nativeScreenWidth;
+        private int nativeScreenHeight;
+
+        private UIRoot basicUI;
 
         public Game1()
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "assets/ui/imgs";
+            graphics.PreparingDeviceSettings += graphics_PreparingDeviceSettings;
+            graphics.DeviceCreated += graphics_DeviceCreated;
+
+        }
+
+        void graphics_DeviceCreated(object sender, EventArgs e)
+        {
+            Engine engine = new MonoGameEngine(GraphicsDevice, nativeScreenWidth, nativeScreenHeight);
+        }
+
+        private void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            nativeScreenWidth = graphics.PreferredBackBufferWidth;
+            nativeScreenHeight = graphics.PreferredBackBufferHeight;
+
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferMultiSampling = true;
+            graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
         }
 
         /// <summary>
@@ -38,10 +68,36 @@ namespace MPTanks.Clients.GameClient.Menus
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            this.IsMouseVisible = true;
 
-            // TODO: use this.Content to load your game content here
+            SpriteFont font = Content.Load<SpriteFont>("Segoe_UI_12_Regular");
+            FontManager.DefaultFont = Engine.Instance.Renderer.CreateFont(font);
+            Viewport viewport = GraphicsDevice.Viewport;
+            UserInterfacePage iff = new UserInterfacePage("connectingtoserverpage");
+            iff.UserInterface.Resize(viewport.Width, viewport.Height);
+            basicUI = iff.UserInterface;
+            var ctx = iff.Binder;
+            ctx.FailureReason = "I'm broken and stupid";
+            ctx.ConnectionAddress = "192.168.1.1";
+            ctx.Port = 33132;
+
+            ((MPTanks.Rendering.UI.Binders.ConnectingToServerPage)ctx).OnCancelPressed += (obj, arg) =>
+                {
+                    Exit();
+                };
+
+            FontManager.Instance.LoadFonts(Content);
+            ImageManager.Instance.LoadImages(Content);
+            SoundManager.Instance.LoadSounds(Content);
+
+            RelayCommand command = new RelayCommand(new Action<object>(ExitEvent));
+            KeyBinding keyBinding = new KeyBinding(command, KeyCode.Escape, ModifierKeys.None);
+            basicUI.InputBindings.Add(keyBinding);
+        }
+
+        private void ExitEvent(object parameter)
+        {
+            Exit();
         }
 
         /// <summary>
@@ -60,10 +116,8 @@ namespace MPTanks.Clients.GameClient.Menus
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
+            basicUI.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
+            basicUI.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
 
             base.Update(gameTime);
         }
@@ -74,9 +128,9 @@ namespace MPTanks.Clients.GameClient.Menus
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(15, 15, 15, 255));
 
-            // TODO: Add your drawing code here
+            basicUI.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
 
             base.Draw(gameTime);
         }

@@ -16,7 +16,7 @@ namespace MPTanks.Rendering.Renderer
     class MapBackgroundRenderer
     {
         private SpriteBatch _spriteBatch;
-        public MapBackgroundRenderer(Map map, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
+        public MapBackgroundRenderer(GameWorldRenderer renderer, Map map, SpriteBatch sb, GraphicsDevice gd, BasicEffect effect, AssetResolver resolver)
         {
 
         }

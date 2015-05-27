@@ -10,7 +10,7 @@ namespace MPTanks.Clients.GameClient.Menus
     class ClientSettings : GameSettings
     {
         private static ClientSettings _instance;
-        public static ClientSettings Instance
+        public new static ClientSettings Instance
         {
             get
             {
