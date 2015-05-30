@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace AssetCompileHelper
 {
     class Program
     {
+
+        private static Dictionary<string, string> _filesAndMD5s = new Dictionary<string, string>();
         static int Main(string[] args)
         {
             var inDir = args[0];
@@ -36,16 +39,63 @@ namespace AssetCompileHelper
 
             string cmdArgs = "";
 
-            foreach (var file in files)
+            foreach (var file in GetAssetsNeedingRecompile(files))
+            {
                 cmdArgs += String.Format("/build:\"{0}\" ", file);
-            
+                _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
+            }
+
             var prc = Process.Start(@"C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MGCB.exe",
                 cmdArgs);
             prc.WaitForExit();
 
             if (prc.ExitCode != 0) ok = false;
+            WriteDictionary();
 
             return ok ? 0 : -2;
         }
+
+        private static string[] GetAssetsNeedingRecompile(IEnumerable<string> inputFiles)
+        {
+            if (System.IO.File.Exists("asset_md5s.json"))
+                Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                    System.IO.File.ReadAllText("asset_md5s.json"));
+
+            List<string> _outFiles = new List<string>();
+            foreach (var file in inputFiles)
+            {
+                if (!_filesAndMD5s.ContainsKey(file))
+                {
+                    _outFiles.Add(file);
+                    continue;
+                }
+                if (CalculateMD5Hash(System.IO.File.ReadAllText(file)) != _filesAndMD5s[file])
+                    _outFiles.Add(file);
+            }
+
+            return _outFiles.ToArray();
+        }
+
+        private static void WriteDictionary()
+        {
+            System.IO.File.WriteAllText("asset_md5s.json", Newtonsoft.Json.JsonConvert.SerializeObject(_filesAndMD5s));
+        }
+
+        private static string CalculateMD5Hash(string input)
+        {
+            // step 1, calculate MD5 hash from input
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // step 2, convert byte array to hex string
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
     }
 }

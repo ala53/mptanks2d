@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/MPTanks.Renderer/assets/ui/imgs/Segoe_UI_36_Regular.spritefont</SourceFile>
-  <SourceTime>2015-05-29T17:56:36.0002847-07:00</SourceTime>
-  <DestFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/MPTanks.Renderer/bin/Debug/../../assets/ui/imgs/Segoe_UI_36_Regular.xnb</DestFile>
-  <DestTime>2015-05-29T17:56:49.0554657-07:00</DestTime>
+  <SourceFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_36_Regular.spritefont</SourceFile>
+  <SourceTime>2015-05-29T18:14:01.36451-07:00</SourceTime>
+  <DestFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_36_Regular.xnb</DestFile>
+  <DestTime>2015-05-29T19:15:08.4743523-07:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2015-03-15T20:01:46-07:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

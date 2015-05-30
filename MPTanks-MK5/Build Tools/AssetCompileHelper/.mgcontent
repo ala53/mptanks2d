@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>HiDef</Profile>
+  <Platform>Windows</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_12_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_13.5_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_15_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_18_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_22.5_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_27_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_36_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/Build Tools/AssetCompileHelper/../../MPTanks.Renderer/assets/ui/imgs/Segoe_UI_9_Regular.spritefont</File>
+  </SourceFiles>
+</SourceFileCollection>

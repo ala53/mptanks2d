@@ -9,12 +9,12 @@ using Microsoft.Xna.Framework.Input;
 using MPTanks.Rendering.UI;
 using System;
 
-namespace EKUI
+namespace MPTanks.Clients.GameClient.Menus
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Game
+    public class ClientCore : Game
     {
         GraphicsDeviceManager graphics;
 
@@ -25,11 +25,11 @@ namespace EKUI
         private bool sizeDirty = true;
         UserInterface ui;
 
-        public Game1()
+        public ClientCore()
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "assets/ui/imgs";
+            Content.RootDirectory = "mgcontent";
             graphics.PreparingDeviceSettings += graphics_PreparingDeviceSettings;
             graphics.DeviceCreated += graphics_DeviceCreated;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
@@ -79,33 +79,8 @@ namespace EKUI
         {
             this.IsMouseVisible = true;
 
-            Viewport viewport = GraphicsDevice.Viewport;
             ui = new UserInterface(Content, GraphicsDevice);
-            UserInterfacePage iff = new UserInterfacePage("connectingtoserverpage");
-            iff.Page.Resize(viewport.Width, viewport.Height);
-            var ctx = iff.Binder;
-            ctx.FailureReason = "I'm broken and stupid";
-            ctx.ConnectionAddress = "192.168.1.1";
-            ctx.Port = 33132;
-
-            ui.UIPage = iff;
-            ((MPTanks.Rendering.UI.Binders.ConnectingToServerPage)ctx).OnCancelPressed += (obj, arg) =>
-            {
-                Exit();
-            };
-            ((MPTanks.Rendering.UI.Binders.ConnectingToServerPage)ctx).OnReturnToMenuPressed += (obj, arg) =>
-            {
-                ui.ShowMessageBox("Message 2", "I've got the content",
-                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.YesNo, (res) =>
-                    {
-                        ct = 0;
-                        v();
-                    });
-            };
-
-            FontManager.Instance.LoadFonts(Content);
-            ImageManager.Instance.LoadImages(Content);
-            SoundManager.Instance.LoadSounds(Content);
+            ui.SetPage("mainmenu");
         }
 
         int ct;

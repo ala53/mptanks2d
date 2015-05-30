@@ -99,7 +99,8 @@ namespace MPTanks.Rendering.UI
         }
         public void Draw(GameTime gameTime)
         {
-            _activePage.Draw(gameTime);
+            if (_activePage != null)
+                _activePage.Draw(gameTime);
         }
 
         private float GetPercentageStepForTransition(GameTime gameTime)
@@ -217,7 +218,7 @@ namespace MPTanks.Rendering.UI
                 if (property.CanWrite && property.CanRead)
                 {
                     var value = property.GetValue(binder);
-                    property.SetValue(newBinder,value );
+                    property.SetValue(newBinder, value);
                 }
             }
 
