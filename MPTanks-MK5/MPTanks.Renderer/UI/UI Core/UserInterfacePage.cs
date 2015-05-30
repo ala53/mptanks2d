@@ -13,27 +13,27 @@ namespace MPTanks.Rendering.UI
 {
     public class UserInterfacePage
     {
-        public UIRoot UserInterface { get; private set; }
+        public UIRoot Page { get; private set; }
         public dynamic Binder { get; private set; }
+        public UserInterface UserInterface { get; internal set; }
 
         public UserInterfacePage(string pageName)
         {
             //Generate an instance of the page
-            UserInterface = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
+            Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
             Binder = (ViewModelBase)Activator.CreateInstance(Type.GetType("MPTanks.Rendering.UI.Binders." + pageName, true, true));
 
-            UserInterface.DataContext = Binder;
+            Page.DataContext = Binder;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            UserInterface.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
-            UserInterface.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
+            Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
+            Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
-        public virtual void Draw(GameTime gameTime, 
-            EmptyKeys.UserInterface.Renderers.Renderer renderer, float opacity = 1)
+        public virtual void Draw(GameTime gameTime)
         {
-            UserInterface.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
+            Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
     }
 }

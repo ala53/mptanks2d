@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -75,11 +79,20 @@
     <Compile Include="Renderer\ParticleRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Binders\ConnectingToServerPage.cs" />
+    <Compile Include="UI\Binders\MainMenu.cs" />
+    <Compile Include="UI\Binders\MessageBoxes\ErrorMessageBox.cs" />
+    <Compile Include="UI\Binders\MessageBoxes\OKMessageBox.cs" />
+    <Compile Include="UI\Binders\MessageBoxes\WarningMessageBox.cs" />
+    <Compile Include="UI\Binders\MessageBoxes\MessageBoxBinder.cs" />
     <Compile Include="UI\ConnectingToServerPage.xaml.cs" />
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
+    <Compile Include="UI\MainMenu.xaml.cs" />
+    <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
+    <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
+    <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />
     <Compile Include="UI\UITemplateDictionary.xaml.cs" />
-    <Compile Include="UI\UserInterfacePage.cs" />
-    <Compile Include="UI\UserInterface.cs" />
+    <Compile Include="UI\UI Core\UserInterfacePage.cs" />
+    <Compile Include="UI\UI Core\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">
@@ -96,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\ui\imgs\Segoe_UI_12_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Segoe_UI_15_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\Segoe_UI_18_Regular.xnb">
@@ -129,6 +145,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\ui\xaml\MessageBoxes\ErrorMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="assets\ui\xaml\MessageBoxes\WarningMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="assets\ui\xaml\MessageBoxes\OKMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="assets\ui\xaml\MainMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Rendering.Renderer
 {
-    public class GameWorldRenderer
+    public class GameWorldRenderer : IDisposable
     {
         private GameCore _game;
         private RenderTarget2D _target;
@@ -45,6 +45,13 @@ namespace MPTanks.Rendering.Renderer
             Logger = logger;
 
             _fxaa = new FXAA(_graphicsDevice);
+            _game = game;
+            _target = drawTarget;
+            _graphicsDevice = gDevice;
+            _antiAlias = antiAlias;
+
+            _effect = new BasicEffect(gDevice);
+            _spriteBatch = new SpriteBatch(gDevice);
 
             _animationRenderer = new AnimationRenderer(this, game.AnimationEngine, _spriteBatch, gDevice, _effect, _resolver);
             _objectRenderer = new GameObjectRenderer(this, game, _spriteBatch, gDevice, _effect, _resolver);
@@ -57,6 +64,8 @@ namespace MPTanks.Rendering.Renderer
         {
             if (_antiAlias)
                 _fxaa.BeginDraw(); //hook the rendertarget  
+            else
+                SetTarget();
 
             _backgroundRenderer.Draw(gameTime);
             _particleRenderer.DrawBelow(gameTime);
@@ -67,7 +76,32 @@ namespace MPTanks.Rendering.Renderer
             _lightRenderer.Draw(gameTime);
 
             //And composite to the output buffer
-            _fxaa.Draw(_target);
+            if (_antiAlias)
+                _fxaa.Draw(_target);
+        }
+
+        private void SetTarget()
+        {
+            _graphicsDevice.SetRenderTarget(_target);
+        }
+
+        ~GameWorldRenderer()
+        {
+            Destroy();
+        }
+
+        private bool _disposeCalled = false;
+        public void Dispose()
+        {
+            if (_disposeCalled) return;
+            _disposeCalled = true;
+            GC.SuppressFinalize(this);
+            Destroy();
+        }
+
+        private void Destroy()
+        {
+
         }
     }
 }

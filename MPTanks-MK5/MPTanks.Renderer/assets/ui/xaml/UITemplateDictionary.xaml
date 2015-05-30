@@ -20,15 +20,11 @@
     <SolidColorBrush x:Key="MenuPageHeaderTextColor" Color="#FFFFF096"></SolidColorBrush>
     <SolidColorBrush x:Key="MenuPageSubHeaderTextColor" Color="#FFFFE664"></SolidColorBrush>
     <SolidColorBrush x:Key="MenuPageContentTextColor" Color="#FFFFFFFF"></SolidColorBrush>
-    <SolidColorBrush x:Key="SuccessTextColor" Color="#FF14FF14"></SolidColorBrush>
+    <SolidColorBrush x:Key="SuccessTextColor" Color="#FF4F8A10"></SolidColorBrush>
     <SolidColorBrush x:Key="ErrorTextColor" Color="Red"></SolidColorBrush>
     <SolidColorBrush x:Key="WarningTextColor" Color="#FFC8C828"></SolidColorBrush>
     <!--Buttons-->
     <Style x:Key="PrimaryButton" TargetType="Button">
-        <Setter Property="BorderBrush" Value="{DynamicResource MenuPageHeaderTextColor}"></Setter>
-        <Setter Property="BorderThickness" Value="2"></Setter>
-        <Setter Property="Background" Value="Black"></Setter>
-        <Setter Property="Foreground" Value="{DynamicResource MenuPageHeaderTextColor}"></Setter>
         <Setter Property="FontSize" Value="24"></Setter>
     </Style>
     <Style x:Key="SecondaryButton" TargetType="Button">

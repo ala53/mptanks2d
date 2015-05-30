@@ -1,0 +1,36 @@
+﻿<ek:UIRoot
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:ek="clr-namespace:EmptyKeys.UserInterface.Designer;assembly=EmptyKeys.UserInterface.Designer"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             Width="800" Height="480" Background="#33000000">
+
+    <ek:UIRoot.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://siteoforigin:,,,/assets/ui/xaml/UITemplateDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ek:UIRoot.Resources>
+    <Grid>
+        <Border MaxWidth="600" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2" BorderBrush="{DynamicResource SuccessTextColor}">
+            <StackPanel Background="#CC000000">
+                <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource SuccessTextColor}">
+                    <TextBlock Margin="10" HorizontalAlignment="Center" FontSize="20" Foreground="{DynamicResource SuccessTextColor}" Text="{Binding Header}"></TextBlock>
+                </Border>
+                <TextBlock Margin="10" Style="{DynamicResource MenuContent}" Text="{Binding Content}"></TextBlock>
+
+                <Border BorderThickness="0,2,0,0" BorderBrush="{DynamicResource SuccessTextColor}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Visibility="{Binding CancelButtonVisibility}" Command="{Binding CancelCommand}" Padding="10,0,10,0" Margin="5">Cancel</Button>
+                        <Button Visibility="{Binding NoButtonVisibility}" Command="{Binding NoCommand}" Padding="10,0,10,0" Margin="5">No</Button>
+                        <Button Visibility="{Binding YesButtonVisibility}" Command="{Binding YesCommand}" Padding="10,0,10,0" Margin="5">Yes</Button>
+                        <Button Visibility="{Binding OkButtonVisibility}" Command="{Binding OkCommand}" Padding="10,0,10,0" Margin="5">Ok</Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</ek:UIRoot>

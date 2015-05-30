@@ -21,11 +21,11 @@ namespace MPTanks.Rendering.Renderer.Assets
             _resolver = resolver;
         }
 
-        public void DeferredLoadSpriteSheet(string sheetName, Action<SpriteSheet> callbackComplete, Action errorCallback)
+        public void DeferredLoadSpriteSheet(string sheetName, Action<SpriteSheet> callbackComplete, Action errorCallback, Sprite missingTextureSprite = null)
         {
             Task.Run(() =>
             {
-                var sheet = LoadSpriteSheet(sheetName);
+                var sheet = LoadSpriteSheet(sheetName, missingTextureSprite);
 
                 if (sheet == null)
                     errorCallback();
@@ -34,7 +34,7 @@ namespace MPTanks.Rendering.Renderer.Assets
             });
         }
 
-        public SpriteSheet LoadSpriteSheet(string sheetName)
+        public SpriteSheet LoadSpriteSheet(string sheetName, Sprite missingTextureSprite = null)
         {
             try
             {
@@ -55,7 +55,22 @@ namespace MPTanks.Rendering.Renderer.Assets
 
                 //Then load the texture
                 var texture = LoadTexture(resolvedFilename);
+                //And metadata
+                var metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
+                        System.IO.File.ReadAllText(resolvedFilename + ".json"));
 
+                var sprites = new Dictionary<string, Sprite>();
+                var animations = new Dictionary<string, Animation>();
+                //Parse the animations
+                if (metadata.Animations != null)
+                    foreach (var animation in metadata.Animations)
+                        animations.Add(animation.Name, new Animation(animation.Name, animation.Frames, animation.FrameRate));
+                //And the sprites
+                if (metadata.Sprites != null)
+                    foreach (var sprite in metadata.Sprites)
+                        sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
+                //And build the output sprite sheet
+                return new SpriteSheet(animations, sprites, texture, metadata.Name, missingTextureSprite);
             }
             catch (Exception ex)
             {

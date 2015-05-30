@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LanguageCompiler
+namespace MPTanks.Rendering.UI.Binders
 {
-    class Program
+    public class WarningMessageBox : MessageBoxBinder
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

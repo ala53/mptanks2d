@@ -46,7 +46,7 @@ namespace EmptyKeys.UserInterface.Generated {
             // Resource - [MenuPageSubHeaderTextColor] SolidColorBrush
             this.Add("MenuPageSubHeaderTextColor", new SolidColorBrush(new ColorW(255, 230, 100, 255)));
             // Resource - [SuccessTextColor] SolidColorBrush
-            this.Add("SuccessTextColor", new SolidColorBrush(new ColorW(20, 255, 20, 255)));
+            this.Add("SuccessTextColor", new SolidColorBrush(new ColorW(79, 138, 16, 255)));
             // Resource - [MenuPageBGBrush] SolidColorBrush
             this.Add("MenuPageBGBrush", new SolidColorBrush(new ColorW(20, 20, 20, 255)));
             // Resource - [SecondaryButton] Style
@@ -58,16 +58,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Add("MenuPageContentTextColor", new SolidColorBrush(new ColorW(255, 255, 255, 255)));
             // Resource - [PrimaryButton] Style
             Style r_7_s = new Style(typeof(Button));
-            Setter r_7_s_S_0 = new Setter(Button.BorderBrushProperty, new ResourceReferenceExpression("MenuPageHeaderTextColor"));
+            Setter r_7_s_S_0 = new Setter(Button.FontSizeProperty, 24F);
             r_7_s.Setters.Add(r_7_s_S_0);
-            Setter r_7_s_S_1 = new Setter(Button.BorderThicknessProperty, new Thickness(2F));
-            r_7_s.Setters.Add(r_7_s_S_1);
-            Setter r_7_s_S_2 = new Setter(Button.BackgroundProperty, new SolidColorBrush(new ColorW(0, 0, 0, 255)));
-            r_7_s.Setters.Add(r_7_s_S_2);
-            Setter r_7_s_S_3 = new Setter(Button.ForegroundProperty, new ResourceReferenceExpression("MenuPageHeaderTextColor"));
-            r_7_s.Setters.Add(r_7_s_S_3);
-            Setter r_7_s_S_4 = new Setter(Button.FontSizeProperty, 24F);
-            r_7_s.Setters.Add(r_7_s_S_4);
             this.Add("PrimaryButton", r_7_s);
             // Resource - [MenuContent] Style
             Style r_8_s = new Style(typeof(TextBlock));

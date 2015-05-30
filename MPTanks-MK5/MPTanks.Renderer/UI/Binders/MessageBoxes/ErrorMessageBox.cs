@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LanguageCompiler.Compiler
+namespace MPTanks.Rendering.UI.Binders
 {
-    class FunctionCompiler
+    public class ErrorMessageBox : MessageBoxBinder
     {
-        public static byte[] CompileFunctionBody()
-        {
-
-        }
     }
 }

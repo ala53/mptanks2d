@@ -82,7 +82,7 @@ namespace MPTanks.Rendering.Renderer.Assets
             sprites.Add("loading_texture_sprite", new Sprite(52, 52, 54, 54, "loading_texture_sprite"));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
-                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx));
+                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
         }
 
         public Sprite GetSprite(string spriteName, string sheetName)
@@ -132,7 +132,7 @@ namespace MPTanks.Rendering.Renderer.Assets
             }, () =>
             {
                 _sheetsThatAreCurrentlyLoading.Remove(sheetName);
-            });
+            }, MissingTextureSprite);
         }
     }
 }

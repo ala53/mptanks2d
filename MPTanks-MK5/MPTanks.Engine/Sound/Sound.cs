@@ -69,8 +69,9 @@ namespace MPTanks.Engine.Sound
 
         public SoundEngine Engine { get; private set; }
 
-        internal Sound(SoundEngine engine)
+        internal Sound(SoundEngine engine, string _asset)
         {
+            AssetName = _asset;
             Engine = engine;
             Timescale = 1;
             TotalRepeatCount = 1;

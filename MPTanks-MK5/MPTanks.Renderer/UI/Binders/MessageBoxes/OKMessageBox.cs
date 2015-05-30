@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LanguageCompiler.Tokenizer
+namespace MPTanks.Rendering.UI.Binders
 {
-    class Tokenizer
+    public class OKMessageBox : MessageBoxBinder
     {
     }
 }

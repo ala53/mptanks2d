@@ -113,10 +113,6 @@ namespace MPTanks.Clients.GameClient
 
             root = new EmptyKeys.UserInterface.Generated.CreateAccountPage(800, 480);
 
-            FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(Content.Load<SpriteFont>("Segoe_UI_9_Regular"));
-            FontManager.Instance.LoadFonts(Content);
-            ImageManager.Instance.LoadImages(Content);
-            SoundManager.Instance.LoadSounds(Content);
         }
 
         private void SetupGame()

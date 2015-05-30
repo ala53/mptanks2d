@@ -21,9 +21,9 @@ namespace EKUI
         private int nativeScreenWidth;
         private int nativeScreenHeight;
 
-        private UIRoot basicUI;
 
         private bool sizeDirty = true;
+        UserInterface ui;
 
         public Game1()
             : base()
@@ -44,7 +44,6 @@ namespace EKUI
 
         void graphics_DeviceCreated(object sender, EventArgs e)
         {
-            Engine engine = new MonoGameEngine(GraphicsDevice, nativeScreenWidth, nativeScreenHeight);
         }
 
         private void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -71,6 +70,7 @@ namespace EKUI
             base.Initialize();
         }
 
+        private bool _bl;
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -79,29 +79,46 @@ namespace EKUI
         {
             this.IsMouseVisible = true;
 
-            SpriteFont font = Content.Load<SpriteFont>("Segoe_UI_12_Regular");
-            FontManager.DefaultFont = Engine.Instance.Renderer.CreateFont(font);
             Viewport viewport = GraphicsDevice.Viewport;
+            ui = new UserInterface(Content, GraphicsDevice);
             UserInterfacePage iff = new UserInterfacePage("connectingtoserverpage");
-            iff.UserInterface.Resize(viewport.Width, viewport.Height);
-            basicUI = iff.UserInterface;
+            iff.Page.Resize(viewport.Width, viewport.Height);
             var ctx = iff.Binder;
             ctx.FailureReason = "I'm broken and stupid";
             ctx.ConnectionAddress = "192.168.1.1";
             ctx.Port = 33132;
 
+            ui.UIPage = iff;
             ((MPTanks.Rendering.UI.Binders.ConnectingToServerPage)ctx).OnCancelPressed += (obj, arg) =>
-                {
-                    Exit();
-                };
+            {
+                Exit();
+            };
+            ((MPTanks.Rendering.UI.Binders.ConnectingToServerPage)ctx).OnReturnToMenuPressed += (obj, arg) =>
+            {
+                ui.ShowMessageBox("Message 2", "I've got the content",
+                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.YesNo, (res) =>
+                    {
+                        ct = 0;
+                        v();
+                    });
+            };
 
             FontManager.Instance.LoadFonts(Content);
             ImageManager.Instance.LoadImages(Content);
             SoundManager.Instance.LoadSounds(Content);
+        }
 
-            RelayCommand command = new RelayCommand(new Action<object>(ExitEvent));
-            KeyBinding keyBinding = new KeyBinding(command, KeyCode.Escape, ModifierKeys.None);
-            basicUI.InputBindings.Add(keyBinding);
+        int ct;
+        private void v()
+        {
+            if (ct++ < 10)
+            {
+                ui.ShowMessageBox("Message" + ct, "ssssssssssssssssssssssssssssssssssssssssssssssss",
+                   (UserInterface.MessageBoxType)(ct % 3), (UserInterface.MessageBoxButtons)(ct % 6), (r) =>
+                   {
+                       v();
+                   });
+            }
         }
 
         private void ExitEvent(object parameter)
@@ -118,6 +135,7 @@ namespace EKUI
             // TODO: Unload any non ContentManager content here
         }
 
+        private float opacity = 1;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -130,13 +148,19 @@ namespace EKUI
                 graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
                 graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 graphics.ApplyChanges();
-                basicUI.Resize(Window.ClientBounds.Width, Window.ClientBounds.Height);
-                var eng = new MonoGameEngine(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
                 sizeDirty = false;
             }
 
-            basicUI.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
-            basicUI.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
+            if (_bl)
+            {
+                if (opacity <= 0)
+                    opacity = 0;
+                else
+                    opacity -= 0.05f;
+
+            }
+
+            ui.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -149,7 +173,7 @@ namespace EKUI
         {
             GraphicsDevice.Clear(new Color(15, 15, 15, 255));
 
-            basicUI.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
+            ui.Draw(gameTime);
 
             base.Draw(gameTime);
         }

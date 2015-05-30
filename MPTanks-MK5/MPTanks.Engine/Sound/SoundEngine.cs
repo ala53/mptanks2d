@@ -54,47 +54,51 @@ namespace MPTanks.Engine.Sound
         /// <param name="repeat"></param>
         /// <returns></returns>
         public Sound PlaySound(string soundName,
-            SoundOffset beginningOffset, SoundOffset endOffset, Sound.SoundPositioning positioning,
-            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat)
+            float beginningOffset, Sound.SoundPositioning positioning,
+            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat, object tag = null)
         {
-            return null;
+            int repeatCount = 0;
+            if (repeat == Sound.SoundRepeat.RepeatOnce)
+                repeatCount = 1;
+            if (repeat == Sound.SoundRepeat.RepeatTwice)
+                repeatCount = 2;
+            if (repeat == Sound.SoundRepeat.Loop)
+                repeatCount = int.MaxValue;
+            var _sound = new Sound(this, soundName)
+            {
+                PlayerData = tag,
+                Position = position,
+                PositioningMode = positioning,
+                PositionMs = beginningOffset,
+                TotalRepeatCount = repeatCount,
+            };
+            _sounds.AddLast(_sound);
+            return _sound;
         }
         public Sound PlaySound(string soundName, Sound.SoundPositioning positioning = Sound.SoundPositioning.Static,
-            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat)
+            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat, object tag = null)
         {
-            return PlaySound(soundName, SoundOffset.Beginning, SoundOffset.End, positioning, position, repeat);
+            return PlaySound(soundName, 0, positioning, position, repeat);
         }
 
         /// <summary>
-        /// Allows the player to mark a sound as completed and have it removed from existence
+        /// Allows the client to mark a sound as completed and have it removed from existence
         /// </summary>
         /// <param name="sound"></param>
         public void MarkSoundCompleted(Sound sound)
         {
+            if (sound.CompletionCallback != null)
+                sound.CompletionCallback(sound);
 
-        }
-    }
-
-    public struct SoundOffset
-    {
-        public static readonly SoundOffset Beginning =
-            new SoundOffset(0);
-        public static readonly SoundOffset End =
-            new SoundOffset(float.MaxValue);
-
-        public readonly float Offset;
-        public SoundOffset(float offset)
-        {
-            Offset = offset;
+            _sounds.Remove(sound);
         }
 
-        public static implicit operator SoundOffset(float ms)
+        public void Update(GameTime gameTime)
         {
-            return new SoundOffset(ms);
-        }
-        public static implicit operator float(SoundOffset offset)
-        {
-            return offset.Offset;
+            foreach (var sound in _sounds)
+            {
+                sound.Position += sound.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
         }
     }
 }
