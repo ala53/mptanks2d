@@ -21,7 +21,9 @@ namespace MPTanks.Rendering.UI
         {
             //Generate an instance of the page
             Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
-            Binder = (ViewModelBase)Activator.CreateInstance(Type.GetType("MPTanks.Rendering.UI.Binders." + pageName, true, true));
+            Binder = Activator.CreateInstance(Type.GetType("MPTanks.Rendering.UI.Binders." + pageName, true, true));
+            if (Binder is BinderBase)
+                Binder.Owner = this;
 
             Page.DataContext = Binder;
         }

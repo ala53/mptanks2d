@@ -50,7 +50,7 @@ namespace MPTanks.Engine.Gamemodes
         /// <summary>
         /// An event that is fired when the gamemode updates and changes state
         /// </summary>
-        public event EventHandler<Core.Events.Types.Gamemodes.StateChanged> OnGamemodeStateChanged = delegate { };
+        public event EventHandler<Core.Events.Types.Gamemodes.StateChangedEventArgs> OnGamemodeStateChanged = delegate { };
 
         public Gamemode(byte[] serverState = null)
         {
@@ -107,10 +107,14 @@ namespace MPTanks.Engine.Gamemodes
         {
         }
 
+        private Core.Events.Types.Gamemodes.StateChangedEventArgs _args = 
+            new Core.Events.Types.Gamemodes.StateChangedEventArgs();
         protected void RaiseStateChanged(byte[] data)
         {
+            _args.Gamemode = this;
+            _args.State = data;
             if (OnGamemodeStateChanged != null)
-                OnGamemodeStateChanged(this, new Core.Events.Types.Gamemodes.StateChanged() { StateData = data });
+                OnGamemodeStateChanged(this, _args);
         }
 
 

@@ -155,7 +155,7 @@ namespace MPTanks.Engine
         #endregion
 
         //Helper method for the event engine
-        private void HandleGameObjectStateChangedEvent(object sender, Core.Events.Types.GameObjects.StateChanged args)
+        private void HandleGameObjectStateChangedEvent(object sender, Core.Events.Types.GameObjects.StateChangedEventArgs args)
         {
             EventEngine.RaiseGameObjectStateChanged(args);
         }

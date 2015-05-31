@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Rendering.UI.Binders
 {
-    public class ConnectingToServerPage : ViewModelBase
+    public class ConnectingToServerPage : BinderBase
     {
         #region Stuff that is there for the UI Layer and not the user
         public string ConnectingToServer

@@ -92,13 +92,5 @@ namespace MPTanks.Engine.Sound
 
             _sounds.Remove(sound);
         }
-
-        public void Update(GameTime gameTime)
-        {
-            foreach (var sound in _sounds)
-            {
-                sound.Position += sound.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-        }
     }
 }

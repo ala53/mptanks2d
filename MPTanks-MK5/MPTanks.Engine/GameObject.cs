@@ -273,8 +273,7 @@ namespace MPTanks.Engine
             IsStatic = _startIsStatic;
 
             //Call the event
-            _createdEventObj.Object = this;
-            OnCreated(this, _createdEventObj);
+            OnCreated(this, this);
 
             //And call the internal function
             CreateInternal();
@@ -349,8 +348,8 @@ namespace MPTanks.Engine
             Alive = false;
             _hasBeenDeleted = true;
             //Call the event
-            _destroyedEventObj.DeadObject = this;
-            _destroyedEventObj.Killer = destructor;
+            _destroyedEventObj.Destroyed = this;
+            _destroyedEventObj.Destroyer = destructor;
             OnDestroyed(this, _destroyedEventObj);
 
             var canDeleteRightAway = DestroyInternal(destructor);
@@ -379,9 +378,8 @@ namespace MPTanks.Engine
                 Body.Dispose(); //Kill the physics body for sure
             Alive = false;
             OnRemovedFromGame(); //And call the destructor logic
-
-            _destructionEndedEventObj.Object = this;
-            OnDestructionEnded(this, _destructionEndedEventObj);
+            
+            OnDestructionEnded(this, this);
         }
 
         protected virtual void OnRemovedFromGame()
@@ -390,28 +388,24 @@ namespace MPTanks.Engine
         }
 
         #region Events
-        private Core.Events.Types.GameObjects.Created _createdEventObj =
-            new Core.Events.Types.GameObjects.Created();
-        public event EventHandler<Core.Events.Types.GameObjects.Created> OnCreated = delegate { };
-        private Core.Events.Types.GameObjects.Destroyed _destroyedEventObj =
-            new Core.Events.Types.GameObjects.Destroyed();
-        public event EventHandler<Core.Events.Types.GameObjects.Destroyed> OnDestroyed = delegate { };
-        private Core.Events.Types.GameObjects.DestructionEnded _destructionEndedEventObj =
-            new Core.Events.Types.GameObjects.DestructionEnded();
-        public event EventHandler<Core.Events.Types.GameObjects.DestructionEnded> OnDestructionEnded = delegate { };
+        public event EventHandler<GameObject> OnCreated = delegate { };
+        private Core.Events.Types.GameObjects.DestroyedEventArgs _destroyedEventObj =
+            new Core.Events.Types.GameObjects.DestroyedEventArgs();
+        public event EventHandler<Core.Events.Types.GameObjects.DestroyedEventArgs> OnDestroyed = delegate { };
+        public event EventHandler<GameObject> OnDestructionEnded = delegate { };
 
-        public event EventHandler<Core.Events.Types.GameObjects.StateChanged> OnStateChanged;
+        private Core.Events.Types.GameObjects.StateChangedEventArgs _stateArgs = 
+            new Core.Events.Types.GameObjects.StateChangedEventArgs();
+        public event EventHandler<Core.Events.Types.GameObjects.StateChangedEventArgs> OnStateChanged;
 
         public void RaiseStateChangeEvent(byte[] newStateData)
         {
             if (OnStateChanged == null || !Game.Authoritative || newStateData == null || newStateData.Length == 0)
                 return;
 
-            OnStateChanged(this, new Core.Events.Types.GameObjects.StateChanged()
-            {
-                GameObject = this,
-                StateData = newStateData
-            });
+            _stateArgs.Object = this;
+            _stateArgs.State = newStateData;
+            OnStateChanged(this, _stateArgs);
         }
 
         public virtual void ReceiveStateData(byte[] stateData)

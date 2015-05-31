@@ -52,8 +52,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
 
         public void WaitForExit()
         {
-            while (_mtTask.IsAlive)
-                Thread.Sleep(50);
+            _mtTask.Join();
             Unload();
         }
 

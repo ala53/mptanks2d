@@ -90,6 +90,7 @@
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />
+    <Compile Include="UI\UI Core\BinderBase.cs" />
     <Compile Include="UI\UITemplateDictionary.xaml.cs" />
     <Compile Include="UI\UI Core\UserInterfacePage.cs" />
     <Compile Include="UI\UI Core\UserInterface.cs" />
@@ -174,9 +175,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>rmdir /S /Q "$(ProjectDir)assets\ui\imgs"
-mkdir "$(ProjectDir)assets\ui\imgs"
-
+    <PreBuildEvent>
 "$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
 "$(SolutionDir)Build Tools\AssetCompileHelper\AssetCompileHelper.exe" "$(ProjectDir)assets\ui\imgs"</PreBuildEvent>
   </PropertyGroup>

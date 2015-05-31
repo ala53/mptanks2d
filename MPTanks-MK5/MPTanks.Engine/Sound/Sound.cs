@@ -48,26 +48,26 @@ namespace MPTanks.Engine.Sound
         }
         #endregion
 
-        public string AssetName { get; private set; }
+        public virtual string AssetName { get; private set; }
         /// <summary>
         /// The data stored by the actual sound player on the server side.
         /// </summary>
-        public object PlayerData { get; set; }
+        public virtual object PlayerData { get; set; }
 
-        public int TotalRepeatCount { get; set; }
-        public float PositionMs { get; set; }
+        public virtual int TotalRepeatCount { get; set; }
+        public virtual float PositionMs { get; set; }
         /// <summary>
         /// The timescale that the sound is played at (1, 2, 1/2, 1/4, 1/8, etc.)
         /// </summary>
-        public float Timescale { get; set; }
+        public virtual float Timescale { get; set; }
 
-        public Vector2 Position { get; set; }
-        public Vector2 Velocity { get; set; }
+        public virtual Vector2 Position { get; set; }
+        public virtual Vector2 Velocity { get; set; }
 
-        public Action<Sound> CompletionCallback { get; set; }
-        public SoundPositioning PositioningMode { get; set; }
+        public virtual Action<Sound> CompletionCallback { get; set; }
+        public virtual SoundPositioning PositioningMode { get; set; }
 
-        public SoundEngine Engine { get; private set; }
+        public virtual SoundEngine Engine { get; private set; }
 
         internal Sound(SoundEngine engine, string _asset)
         {

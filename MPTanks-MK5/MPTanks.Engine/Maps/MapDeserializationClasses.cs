@@ -21,11 +21,24 @@ namespace MPTanks.Engine.Maps.MapDeserializationClasses
         public BackgroundTileJSON[] Background { get; set; }
         public MapTeamsJSON[] Spawns { get; set; }
         public MapObjectJSON[] Objects { get; set; }
+        public string[] ModDependencies { get; set; }
 
         public static MapJSON Load(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<MapJSON>(data);
         }
+    }
+
+    internal class MapModJSON
+    {
+        public string Name { get; set; }
+        public string Author { get; set; }
+        /// <summary>
+        /// Version can be *, which means either installed or current version aka whatever
+        /// Version can be 1.0+, which means version 1.0, 1.1, 1.2, 2.0, etc. AKA 1.0 or greater
+        /// Version can be 1.0, which means exactly version 1
+        /// </summary>
+        public string Version { get; set; }
     }
 
     internal class BackgroundTileJSON

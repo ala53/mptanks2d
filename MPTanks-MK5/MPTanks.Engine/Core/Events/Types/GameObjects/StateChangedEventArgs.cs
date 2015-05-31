@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Core.Events.Types.GameObjects
 {
-    public class DestructionEnded : EventArgs
+    public class StateChangedEventArgs : EventArgs
     {
         public GameObject Object { get; set; }
+        public byte[] State { get; set; }
     }
 }

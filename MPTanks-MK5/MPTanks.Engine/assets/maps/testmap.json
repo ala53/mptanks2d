@@ -1,51 +1,58 @@
 ﻿{
-    "name": "Test map",
-    "author": "ZSB Games & Associates",
-    "size": "5000, 5000",
-    "fogOfWar":  true,
-    "maxPlayers": 20,
-    "whitelistGamemodes": true,
-    "allowedGamemodes": [
-        "TeamDeathMatchGamemode",
-        "DeathMatchGamemode"
-    ],
-    "background": null,
-    "objects": [
-        {
-            "typeName": "SatelliteDishLarge",
-            "rotation": 0,
-            "position": "5, 10",
-            "size": "6, 6",
-            "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
-        },
-        {
-            "typeName": "LargeHouseMultiLevel",
-            "rotation": 0.712,
-            "position": "50, 30",
-            "size": "6, 6",
-            "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
-        }
-    ],
-    "spawns": [
-        {
-            "teamIndex": 0,
-            "spawnPositions": [
-                "11, 50",
-                "15, 25",
-                "1, 0",
-                "21, 33",
-                "31, 5"
-            ]
-        },
-        {
-            "teamIndex": 1,
-            "spawnPositions": [
-                "35, 50",
-                "40, 25",
-                "55, 0",
-                "55, 33",
-                "55, 10"
-            ]
-        }
-    ]
+  "allowedGamemodes": [
+    "TeamDeathMatchGamemode",
+    "DeathMatchGamemode"
+  ],
+  "author": "ZSB Games & Associates",
+  "background": null,
+  "dependencies": [
+    {
+      "author": "ZSB Games",
+      "name": "MPTanks Core Assets",
+      "version": "*"
+    }
+  ],
+  "fogOfWar": true,
+  "maxPlayers": 20,
+  "name": "Test map",
+  "objects": [
+    {
+      "typeName": "SatelliteDishLarge",
+      "rotation": 0,
+      "position": "5, 10",
+      "size": "6, 6",
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+    },
+    {
+      "typeName": "LargeHouseMultiLevel",
+      "rotation": 0.712,
+      "position": "50, 30",
+      "size": "6, 6",
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+    }
+  ],
+  "size": "5000, 5000",
+  "spawns": [
+    {
+      "teamIndex": 0,
+      "spawnPositions": [
+        "11, 50",
+        "15, 25",
+        "1, 0",
+        "21, 33",
+        "31, 5"
+      ]
+    },
+    {
+      "teamIndex": 1,
+      "spawnPositions": [
+        "35, 50",
+        "40, 25",
+        "55, 0",
+        "55, 33",
+        "55, 10"
+      ]
+    }
+  ],
+  "whitelistGamemodes": true
 }

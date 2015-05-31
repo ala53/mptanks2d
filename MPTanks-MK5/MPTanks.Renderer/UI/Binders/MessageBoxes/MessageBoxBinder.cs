@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Rendering.UI.Binders
 {
-    public class MessageBoxBinder : ViewModelBase
+    public class MessageBoxBinder : BinderBase
     {
         private string _header;
         public string Header

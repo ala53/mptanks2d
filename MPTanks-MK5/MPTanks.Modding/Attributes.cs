@@ -89,7 +89,7 @@ namespace MPTanks.Modding
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string Author { get; private set; }
-        public string Version { get; private set; }
+        public ModuleVersion Version { get; private set; }
 
         public ModuleDeclarationAttribute(string name, string description, string author, string version)
         {
@@ -97,6 +97,31 @@ namespace MPTanks.Modding
             Description = description;
             Author = author;
             Version = version;
+        }
+
+        public class ModuleVersion
+        {
+            public int Major { get; set; }
+            public int Minor { get; set; }
+
+            public string Tag { get; set; }
+
+            public static implicit operator ModuleVersion(string data)
+            {
+                var mod = new ModuleVersion();
+                if (data.Split(' ').Length > 0)
+                    mod.Tag = data.Split(' ')[1];
+
+                mod.Major = int.Parse(data.Split('.')[0]);
+                mod.Minor = int.Parse(data.Split('.')[0]);
+
+                return mod;
+            }
+
+            public static implicit operator string(ModuleVersion version)
+            {
+                return version.Major + "." + version.Minor + " " + version.Tag;
+            }
         }
     }
 

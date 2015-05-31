@@ -1,4 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Core.Events.Types;
+using MPTanks.Engine.Core.Events.Types.GameCore;
+using MPTanks.Engine.Core.Events.Types.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +19,9 @@ namespace MPTanks.Engine.Core.Events
         }
 
         #region 'Game' Events
-        private event EventHandler<Types.Game.Tick> _gameTick;
-        public event EventHandler<Types.Game.Tick> OnGameTick
+        private TickEventArgs _tickEventArgs = new TickEventArgs();
+        private event EventHandler<TickEventArgs> _gameTick;
+        public event EventHandler<TickEventArgs> OnGameTick
         {
             add { _gameTick += value; }
             remove { _gameTick -= value; }
@@ -25,13 +29,14 @@ namespace MPTanks.Engine.Core.Events
 
         internal void RaiseOnUpdate(GameTime gameTime)
         {
+            _tickEventArgs.TickTime = gameTime;
             if (_gameTick != null)
-                _gameTick(Game, new Types.Game.Tick() { Game = Game, Time = gameTime });
+                _gameTick(Game, _tickEventArgs);
         }
 
 
-        private event EventHandler<Types.Game.Started> _gameStarted;
-        public event EventHandler<Types.Game.Started> OnGameStarted
+        private event EventHandler _gameStarted;
+        public event EventHandler OnGameStarted
         {
             add { _gameStarted += value; }
             remove { _gameStarted -= value; }
@@ -40,11 +45,12 @@ namespace MPTanks.Engine.Core.Events
         internal void RaiseGameStarted()
         {
             if (_gameStarted != null)
-                _gameStarted(Game, new Types.Game.Started() { Game = Game, StartTime = DateTime.UtcNow });
+                _gameStarted(Game, null);
         }
 
-        private event EventHandler<Types.Game.Ended> _gameEnded;
-        public event EventHandler<Types.Game.Ended> OnGameEnded
+        private EndedEventArgs _gameEndedArgs = new EndedEventArgs();
+        private event EventHandler<EndedEventArgs> _gameEnded;
+        public event EventHandler<EndedEventArgs> OnGameEnded
         {
             add { _gameEnded += value; }
             remove { _gameEnded -= value; }
@@ -52,43 +58,43 @@ namespace MPTanks.Engine.Core.Events
 
         internal void RaiseGameStarted(Gamemodes.Team winningTeam)
         {
+            _gameEndedArgs.WinningTeam = winningTeam;
             if (_gameEnded != null)
-                _gameEnded(Game, new Types.Game.Ended()
-                {
-                    Game = Game,
-                    GameIsDraw = (winningTeam == Gamemodes.Team.Indeterminate),
-                    EndTime = DateTime.Now,
-                    WinningTeam = winningTeam
-                });
+                _gameEnded(Game, _gameEndedArgs);
         }
 
         #endregion
 
         #region 'GameObject' Events
-        private event EventHandler<Types.GameObjects.Destroyed> _gameObjectDestroyed;
-        public event EventHandler<Types.GameObjects.Destroyed> OnGameObjectDestroyed
+        private DestroyedEventArgs _gameObjectDestroyedArgs = new DestroyedEventArgs();
+        private event EventHandler<DestroyedEventArgs> _gameObjectDestroyed;
+        public event EventHandler<DestroyedEventArgs> OnGameObjectDestroyed
         {
             add { _gameObjectDestroyed += value; }
             remove { _gameObjectDestroyed -= value; }
         }
 
-        public void RaiseGameObjectDestroyed(Types.GameObjects.Destroyed destroyedEvent)
+        public void RaiseGameObjectDestroyed(GameObject destroyed, GameObject destroyer = null)
         {
-            if (_gameObjectDestroyed != null)
-                _gameObjectDestroyed(destroyedEvent.DeadObject, destroyedEvent);
-        }
+            _gameObjectDestroyedArgs.Destroyed = destroyed;
+            _gameObjectDestroyedArgs.Destroyer = destroyer;
+            _gameObjectDestroyedArgs.Time = DateTime.UtcNow;
 
-        private event EventHandler<Types.GameObjects.StateChanged> _gameObjectStateChanged;
-        public event EventHandler<Types.GameObjects.StateChanged> OnGameObjectStateChanged
+            if (_gameObjectDestroyed != null)
+                _gameObjectDestroyed(destroyed, _gameObjectDestroyedArgs);
+        }
+        
+        private event EventHandler<StateChangedEventArgs> _gameObjectStateChanged;
+        public event EventHandler<StateChangedEventArgs> OnGameObjectStateChanged
         {
             add { _gameObjectStateChanged += value; }
             remove { _gameObjectStateChanged -= value; }
         }
 
-        public void RaiseGameObjectStateChanged(Types.GameObjects.StateChanged stateChange)
+        public void RaiseGameObjectStateChanged(StateChangedEventArgs args)
         {
             if (_gameObjectStateChanged != null)
-                _gameObjectStateChanged(stateChange.GameObject, stateChange);
+                _gameObjectStateChanged(args.Object, args);
         }
         #endregion
     }

@@ -81,6 +81,7 @@ namespace MPTanks.Clients.GameClient.Menus
 
             ui = new UserInterface(Content, GraphicsDevice);
             ui.SetPage("mainmenu");
+            ui.ActiveBinder.ExitAction = (Action)Exit;
         }
 
         int ct;

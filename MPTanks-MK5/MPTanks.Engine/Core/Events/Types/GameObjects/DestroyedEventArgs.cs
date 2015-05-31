@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Core.Events.Types.GameObjects
 {
-    public class Destroyed : EventArgs
+    public class DestroyedEventArgs
     {
-        public GameObject DeadObject { get; set; }
-        public GameObject Killer { get; set; }
+        public GameObject Destroyed { get; set; }
+        public GameObject Destroyer { get; set; }
+        public DateTime Time { get; set; }
     }
 }

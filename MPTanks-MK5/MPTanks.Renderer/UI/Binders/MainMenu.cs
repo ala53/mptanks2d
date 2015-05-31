@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Rendering.UI.Binders
 {
-    class MainMenu : ViewModelBase
+    public class MainMenu : BinderBase
     {
-        public Action Exit { get; private set; }
+        public Action ExitAction { get; set; }
         private RelayCommand _exitCommand;
         public ICommand ExitCommand
         {
@@ -22,7 +22,18 @@ namespace MPTanks.Rendering.UI.Binders
 
         public MainMenu()
         {
-            _exitCommand = new RelayCommand((obj) => { Exit(); });
+            _exitCommand = new RelayCommand((obj) =>
+            {
+                Owner.UserInterface.ShowMessageBox(
+                    "Exit", "Are you sure you want to exit to desktop?",
+                    UserInterface.MessageBoxType.WarningMessageBox,
+                    UserInterface.MessageBoxButtons.YesNo,
+                    (res) =>
+                    {
+                        if (res == UserInterface.MessageBoxResult.Yes)
+                            ExitAction();
+                    });
+            });
         }
     }
 }
