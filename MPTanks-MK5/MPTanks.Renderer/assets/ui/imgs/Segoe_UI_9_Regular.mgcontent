@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/MPTanks.Renderer/assets/ui/imgs/Segoe_UI_9_Regular.spritefont</SourceFile>
-  <SourceTime>2015-05-30T19:34:30.6080987-07:00</SourceTime>
+  <SourceTime>2015-05-31T12:26:08.9103751-07:00</SourceTime>
   <DestFile>C:/Users/Alastair/Documents/GitHub/mptanks2d/MPTanks-MK5/MPTanks.Renderer/bin/Debug/../../assets/ui/imgs/Segoe_UI_9_Regular.xnb</DestFile>
-  <DestTime>2015-05-30T19:34:42.4833674-07:00</DestTime>
+  <DestTime>2015-05-31T12:26:18.2760524-07:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2015-03-15T20:01:46-07:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

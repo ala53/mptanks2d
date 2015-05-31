@@ -30,14 +30,17 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             _domain = AppDomain.CreateDomain("Live game: " + connectionInfo.FriendlyServerName, null);
             _mtTask = new Thread(() =>
             {
+#if !DEBUG
                 try
                 {
+#endif
                     _domain.Load(typeof(CrossDomainObject).Assembly.FullName);
                     DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
                         typeof(CrossDomainObject).Assembly.FullName,
                         typeof(CrossDomainObject).FullName);
 
                     _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
+#if !DEBUG
                 }
                 catch (Exception ex)
                 {
@@ -45,6 +48,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
                     FailureReason = Strings.ClientMenus.GameCrashedUnknownCause(ex.Message);
 
                 }
+#endif
                 Unload();
             });
             _mtTask.Start();

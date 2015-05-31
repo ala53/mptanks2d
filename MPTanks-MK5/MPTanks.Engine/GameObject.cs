@@ -396,7 +396,7 @@ namespace MPTanks.Engine
 
         private Core.Events.Types.GameObjects.StateChangedEventArgs _stateArgs = 
             new Core.Events.Types.GameObjects.StateChangedEventArgs();
-        public event EventHandler<Core.Events.Types.GameObjects.StateChangedEventArgs> OnStateChanged;
+        public event EventHandler<Core.Events.Types.GameObjects.StateChangedEventArgs> OnStateChanged = delegate { };
 
         public void RaiseStateChangeEvent(byte[] newStateData)
         {

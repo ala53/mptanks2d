@@ -50,7 +50,7 @@ namespace MPTanks.Clients.GameClient
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "xContent";
+            Content.RootDirectory = "assets/mgcontent";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
             graphics.PreferMultiSampling = true;

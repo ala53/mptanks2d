@@ -113,7 +113,6 @@ namespace MPTanks.Engine.Gamemodes
         {
             _args.Gamemode = this;
             _args.State = data;
-            if (OnGamemodeStateChanged != null)
                 OnGamemodeStateChanged(this, _args);
         }
 

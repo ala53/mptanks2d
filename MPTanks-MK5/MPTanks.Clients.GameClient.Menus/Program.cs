@@ -21,10 +21,16 @@ namespace MPTanks.Clients.GameClient.Menus
         [STAThread]
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             using (var gm = new ClientCore())
                 gm.Run();
             var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo() { FriendlyServerName = "LOL" }, new[] { "" });
             game.WaitForExit();
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine(e.ExceptionObject.ToString());
         }
     }
 #endif
