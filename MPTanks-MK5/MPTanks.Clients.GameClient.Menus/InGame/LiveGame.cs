@@ -27,20 +27,24 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         private Action<LiveGame> _exitCallback = (game) => { };
         public LiveGame(Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
+#if !DEBUG
             _domain = AppDomain.CreateDomain("Live game: " + connectionInfo.FriendlyServerName, null);
             _mtTask = new Thread(() =>
             {
-#if !DEBUG
+#endif
+#if DEBUG
+            //In debug mode, don't do domain wrapping
+            DomainProxy = CrossDomainObject.Instance;
+            Clients.GameClient.Program.Main(new string[] { });
+#else
                 try
                 {
-#endif
                     _domain.Load(typeof(CrossDomainObject).Assembly.FullName);
                     DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
                         typeof(CrossDomainObject).Assembly.FullName,
                         typeof(CrossDomainObject).FullName);
 
                     _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
-#if !DEBUG
                 }
                 catch (Exception ex)
                 {
@@ -49,14 +53,18 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
 
                 }
 #endif
-                Unload();
+            Unload();
+#if !DEBUG
             });
             _mtTask.Start();
+#endif
         }
 
         public void WaitForExit()
         {
+#if !DEBUG
             _mtTask.Join();
+#endif
             Unload();
         }
 
@@ -71,9 +79,10 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
+#if !DEBUG
             if (_mtTask.IsAlive)
                 _mtTask.Abort();
-
+#endif
             Unload();
         }
 
@@ -82,7 +91,9 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
+#if !DEBUG
             AppDomain.Unload(_domain);
+#endif
             _exitCallback(this);
             Connected = false;
             ConnectionFailed = true;

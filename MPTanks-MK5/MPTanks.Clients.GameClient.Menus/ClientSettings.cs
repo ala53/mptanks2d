@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPTanks.Engine.Settings;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,14 +8,18 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient.Menus
 {
-    class ClientSettings : GameSettings
+    class ClientSettings : SettingsBase
     {
         private static ClientSettings _instance;
-        public new static ClientSettings Instance
+        public static ClientSettings Instance
         {
             get
             {
-                if (_instance == null) LoadSettings();
+                if (_instance == null)
+                {
+                    _instance = new ClientSettings();
+                    _instance.LoadFromFile(Path.Combine(ConfigDir, "Client Settings.json"));
+                }
                 return _instance;
             }
             set
@@ -22,25 +27,15 @@ namespace MPTanks.Clients.GameClient.Menus
                 _instance = value;
             }
         }
-        #region Load Helper
-        private static void LoadSettings()
-        {
-            _instance = new ClientSettings();
-        }
-
-        #endregion
+        
         #region Save Helper
-        public static void Save()
+        public new static void Save()
         {
-            Instance.SaveChanges();
-        }
-        public void SaveChanges()
-        {
-
+            Instance.Save(Path.Combine(ConfigDir, "Client Settings.json"));
         }
         #endregion
-
-        public override void OnSettingChanged(Engine.Settings.Setting setting)
+        
+        public override void OnSettingChanged(Setting setting)
         {
             Save();
         }

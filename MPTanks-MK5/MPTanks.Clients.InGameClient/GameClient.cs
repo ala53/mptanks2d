@@ -62,13 +62,13 @@ namespace MPTanks.Clients.GameClient
             // graphics.SynchronizeWithVerticalRetrace = false;
             // TargetElapsedTime = TimeSpan.FromMilliseconds(66.3333333);
 
-            MPTanks.Engine.Mods.CoreModLoader.LoadTrustedMods();
+            CoreModLoader.LoadTrustedMods(GameSettings.Instance);
         }
 
         void graphics_DeviceCreated(object sender, EventArgs e)
         {
 
-            eng = new MonoGameEngine(GraphicsDevice, 800, 480); 
+            eng = new MonoGameEngine(GraphicsDevice, 800, 480);
         }
 
         /// <summary>
@@ -190,8 +190,9 @@ namespace MPTanks.Clients.GameClient
                 slow = true;
             else slow = false;
 
-            if (slow) Logger.Debug("Last frame was slow according to real time (" + el.TotalMilliseconds + "ms). Last frame was update " + updateNumber + ", frame " + frameNumber + " GameTime says: " +
-                gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
+            if (slow)
+                Logger.Debug("Last frame was slow according to real time (" + el.TotalMilliseconds + "ms). Last frame was update " + updateNumber + ", frame " + frameNumber + " GameTime says: " +
+          gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
 
             updateNumber++;
             DetectGC();

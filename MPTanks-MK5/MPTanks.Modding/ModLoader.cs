@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MPTanks.Modding.Unpacker;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -7,16 +9,77 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding
 {
-    public class ModLoader
+    public static class ModLoader
     {
-        public static Module Load(string source, bool verifySafe, out string errors, Assembly[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
+        private static Dictionary<string, Module> loadedModFiles = new Dictionary<string, Module>();
+        public static IReadOnlyDictionary<string, Module> LoadedMods { get { return loadedModFiles; } }
+
+        public static Module LoadMod(string modFile, string dllUnpackDir, string assetUnpackDir, string soundUnpackDir, out string errors, bool verifySafe = true)
+        {
+            errors = "";
+            if (loadedModFiles.ContainsKey(modFile))
+                return loadedModFiles[modFile];
+
+            Module output = null;
+            string err = "";
+            try
+            {
+                //Get the header to resolve dependencies
+                var header = ModUnpacker.GetHeader(modFile);
+                var deps = new List<string>();
+                //Resolve the dependencies and get all of their dlls
+                foreach (var dep in header.Dependencies)
+                    deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor, dep.CanBeNewer,
+                        dllUnpackDir, assetUnpackDir, soundUnpackDir, header.Name));
+                //Remove duplicates
+                deps = deps.Distinct().ToList();
+                //Then, unpack the assemblies to the correct directory
+                var dllPaths = ModUnpacker.UnpackDlls(modFile, dllUnpackDir);
+
+                //If it has source code, compile that
+                if (header.CodeFiles.Length > 0)
+                {
+                    string mErr = "";
+                    Load(
+                        ModUnpacker.GetSourceCode(modFile),
+                        verifySafe,
+                        out mErr,
+                        dllPaths,
+                        deps.ToArray()
+                        );
+
+                    err += mErr;
+                }
+                else
+                {
+                    //Otherwise, just do a simple load
+                    string mErr = "";
+                    Load(
+                        dllPaths, verifySafe, out mErr);
+                    err += mErr;
+                }
+                //And finally, unpack assets
+                ModUnpacker.UnpackImages(modFile, assetUnpackDir);
+                ModUnpacker.UnpackSounds(modFile, soundUnpackDir);
+            }
+            catch (Exception ex)
+            {
+                err += ex.ToString() + "\n\n";
+            }
+
+            errors = err;
+            loadedModFiles.Add(modFile, output);
+            return output;
+        }
+
+        public static Module Load(string source, bool verifySafe, out string errors, string[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
         {
             return Load(new[] { source }, verifySafe, out errors, precompiledAssemblies, otherAssemblyReferences);
         }
-        public static Module Load(string[] sources, bool verifySafe, out string errors, Assembly[] precompiledAssemblies, string[] otherAssemblyReferences = null)
+        public static Module Load(string[] sources, bool verifySafe, out string errors, string[] precompiledAssemblies, string[] otherAssemblyReferences = null)
         {
             if (otherAssemblyReferences == null) otherAssemblyReferences = new string[0];
-            if (precompiledAssemblies == null ) precompiledAssemblies = new Assembly[0];
+            if (precompiledAssemblies == null) precompiledAssemblies = new string[0];
 
             var compileErrors = "";
             var asm = Compiliation.Compiler.CompileAssembly(sources, out compileErrors, otherAssemblyReferences);
@@ -39,13 +102,14 @@ namespace MPTanks.Modding
 
         }
 
-        public static Module Load(Assembly asm, bool verifySafe, out string errors)
+        public static Module Load(string asm, bool verifySafe, out string errors)
         {
             return Load(new[] { asm }, verifySafe, out errors);
         }
 
-        public static Module Load(Assembly[] assemblies, bool verifySafe, out string errors)
+        public static Module Load(string[] assemblies, bool verifySafe, out string errors)
         {
+            assemblies = assemblies.Select((a) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, a)).ToArray();
             var safetyCheckErrors = "";
             if (verifySafe)
             {//Scan the IL of the assembly
@@ -62,11 +126,12 @@ namespace MPTanks.Modding
             var builderErrors = "";
             var module = new Module();
 
+
             //Get the declaration
             ModuleDeclarationAttribute moduleDeclaration = null;
             foreach (var asm in assemblies)
             {
-                var decl = FindModuleDeclaration(asm);
+                var decl = FindModuleDeclaration(Assembly.LoadFile(asm));
                 if (decl != null)
                 {
                     moduleDeclaration = decl;
@@ -80,7 +145,13 @@ namespace MPTanks.Modding
                 return null;
             }
 
-            module.Assemblies = assemblies;
+            module.Assemblies = assemblies.Select(a => Assembly.LoadFile(a)).ToArray();
+            //Resolve dependencies
+            module.Dependencies =
+                module.Assemblies.SelectMany(
+                    a => a.GetReferencedAssemblies().Select(
+                        an => Assembly.Load(an))).ToArray();
+            //And get the name
             module.Name = moduleDeclaration.Name;
             module.Description = moduleDeclaration.Description;
             module.Author = moduleDeclaration.Author;
@@ -88,71 +159,97 @@ namespace MPTanks.Modding
 
             //Tanks
             var tanks = new List<TankType>();
-            foreach (var asm in assemblies)
+            foreach (var asm in module.Assemblies)
                 foreach (var tank in ScanTankTypes(asm))
                 {
+#if !DEBUG
                     try
                     {
-                        tanks.Add(new TankType(tank));
-                    }
+#endif
+                    var typ = new TankType(tank);
+                    Inject(typ);
+                    tanks.Add(typ);
+#if !DEBUG
+                }
                     catch (Exception e)
                     {
                         builderErrors += "\n\n\nTank: " + tank.FullName + " has error: " + e.Message;
                     }
+#endif
                 }
             module.Tanks = tanks.ToArray();
 
             //Projectiles
             var projectiles = new List<ProjectileType>();
-            foreach (var asm in assemblies)
+            foreach (var asm in module.Assemblies)
                 foreach (var prj in ScanProjectileTypes(asm))
                 {
+#if !DEBUG
                     try
                     {
-                        projectiles.Add(new ProjectileType(prj, module.Tanks));
+#endif
+                    var typ = new ProjectileType(prj, module.Tanks);
+                    Inject(typ);
+                    projectiles.Add(typ);
+#if !DEBUG
                     }
                     catch (Exception e)
                     {
                         builderErrors += "\n\n\nProjectile: " + prj.FullName + " has error: " + e.Message;
                     }
+#endif
                 }
             module.Projectiles = projectiles.ToArray();
 
             //Map objects
             var mapObjects = new List<MapObjectType>();
-            foreach (var asm in assemblies)
+            foreach (var asm in module.Assemblies)
                 foreach (var mapObject in ScanMapObjectTypes(asm))
                 {
+#if !DEBUG
                     try
                     {
-                        mapObjects.Add(new MapObjectType(mapObject));
+#endif
+                    var typ = new MapObjectType(mapObject);
+                    Inject(typ);
+                    mapObjects.Add(typ);
+#if !DEBUG
                     }
                     catch (Exception e)
                     {
                         builderErrors += "\n\n\nMap object: " + mapObject.FullName + " has error: " + e.Message;
                     }
+#endif
                 }
             module.MapObjects = mapObjects.ToArray();
 
             //Gamemodes
             var gamemodes = new List<GamemodeType>();
-            foreach (var asm in assemblies)
+            foreach (var asm in module.Assemblies)
                 foreach (var gamemode in ScanGamemodeTypes(asm))
                 {
+#if !DEBUG
                     try
                     {
-                        gamemodes.Add(new GamemodeType(gamemode));
+#endif
+                    var typ = new GamemodeType(gamemode);
+                    Inject(typ);
+                    gamemodes.Add(typ);
+#if !DEBUG
                     }
                     catch (Exception e)
                     {
                         builderErrors += "\n\n\nGamemode: " + gamemode.FullName + " has error: " + e.Message;
                     }
+#endif
                 }
             module.Gamemodes = gamemodes.ToArray();
 
             //And call the constructors
-            foreach (var asm in assemblies)
+            foreach (var asm in module.Assemblies)
                 CallStaticCtors(asm);
+
+            //And finally, inject the code
 
             errors = safetyCheckErrors + "\n\n" + builderErrors;
 
@@ -220,6 +317,30 @@ namespace MPTanks.Modding
                     tankTypes.Add(type);
 
             return tankTypes.ToArray();
+        }
+        private static void Inject(TankType type)
+        {
+            var typ = GetTypeHelper.GetType(Settings.TankTypeName);
+            var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
+            method.MakeGenericMethod(type.Type).Invoke(null, null);
+        }
+        private static void Inject(ProjectileType type)
+        {
+            var typ = GetTypeHelper.GetType(Settings.ProjectileTypeName);
+            var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
+            method.MakeGenericMethod(type.Type).Invoke(null, null);
+        }
+        private static void Inject(MapObjectType type)
+        {
+            var typ = GetTypeHelper.GetType(Settings.MapObjectTypeName);
+            var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
+            method.MakeGenericMethod(type.Type).Invoke(null, null);
+        }
+        private static void Inject(GamemodeType type)
+        {
+            var typ = GetTypeHelper.GetType(Settings.GamemodeTypeName);
+            var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
+            method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
     }
 }

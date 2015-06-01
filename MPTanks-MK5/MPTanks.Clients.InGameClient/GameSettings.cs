@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPTanks.Engine.Settings;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,17 +9,20 @@ using System.Threading.Tasks;
 namespace MPTanks.Clients.GameClient
 {
     [Serializable]
-    public class GameSettings : MPTanks.Engine.Settings
+    public class GameSettings : SettingsBase
     {
         public static GameSettings Instance { get; private set; }
 
         static GameSettings()
         {
             Instance = new GameSettings();
+            Instance.LoadFromFile(Path.Combine(ConfigDir, "Game Settings.json"));
         }
 
-        //Where config information is stored
-        public Setting<string> ConfigDir { get; private set; }
+        public override void OnSettingChanged(Setting setting)
+        {
+            Save(Path.Combine(ConfigDir, "Game Settings.json"));
+        }
 
         public Setting<string> GameLogLocation { get; private set; }
 
@@ -41,14 +45,32 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         public Setting<int> MaxInstancesOfOneSoundAllowed { get; private set; }
 
-        public Setting<string[]> AssetAllowedFileExtensions { get; private set; }
+        public Setting<string[]> ImageAllowedFileExtensions { get; private set; }
 
         //Where to look for assets
-        public Setting<string[]> AssetSearchPaths { get; private set; }
+        public Setting<string[]> ImageSearchPaths { get; private set; }
+
+        public Setting<string[]> SoundAllowedFileExtensions { get; private set; }
+
+        //Where to look for assets
+        public Setting<string[]> SoundSearchPaths { get; private set; }
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
         //just leave them in the temp directory where they are removed next time the program opens
         public Setting<string> ModUnpackPath { get; private set; }
+        public Setting<string> ModImagePath { get; private set; }
+        public Setting<string> ModSoundPath { get; private set; }
+        public Setting<string> ModDownloadPath { get; private set; }
+
+        /// <summary>
+        /// A list of mod files (relative or absolute) that should be loaded without 
+        /// Code security verification. AKA trusted mods.
+        /// </summary>
+        public Setting<string[]> CoreMods { get; private set; }
+
+        public static readonly string[] DefaultTrustedMods = new[] {
+                    "MPTanks.Modding.Mods.Core.dll"
+                };
 
         /// <summary>
         /// The scale the rendering runs at relative to the blocks.
@@ -68,10 +90,6 @@ namespace MPTanks.Clients.GameClient
 
         public GameSettings()
         {
-            ConfigDir = new Setting<string>(this, "Save directory",
-                "The directory where configuration information and mods are stored in.",
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D"));
-            
             GameLogLocation = new Setting<string>(this, "Log storage location",
                "Where to store runtime logs for the game. This uses NLog storage conventions." +
                " So, ${basedir} is the program's installation directory.",
@@ -95,16 +113,39 @@ namespace MPTanks.Clients.GameClient
             " If more sounds than that try to play simultaneously, the oldest one will be cut off. Increase" +
             " this if you are hearing audible cutoffs, at the cost of memory usage and performace.", 4);
 
-            AssetAllowedFileExtensions = new Setting<string[]>(this, "Image asset file extensions",
+            ImageAllowedFileExtensions = new Setting<string[]>(this, "Image asset file extensions",
                 "The extensions to search for when trying to load an image, in the correct search order.",
                 new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
+
+            SoundAllowedFileExtensions = new Setting<string[]>(this, "Sound asset file extensions",
+                "The extensions to search for when trying to load a sound, in the correct search order.",
+                new[] { ".ogg", ".wav", ".mp3" });
 
             ModUnpackPath = new Setting<string>(this, "Mod temp directory",
                 "The place to store mods that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into.",
                 Path.Combine(ConfigDir, "tempmodunpack"));
 
-            AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets.",
+            ModSoundPath = new Setting<string>(this, "Mod temp directory for sounds",
+                "The place to store mod sound assets that are used at runtime. In other words, this is the directory" +
+                " that *.mod files are unpacked into.",
+                Path.Combine(ConfigDir, "tempmodunpack", "sounds"));
+
+            ModImagePath = new Setting<string>(this, "Mod temp directory for images",
+                "The place to store mods images that are used at runtime. In other words, this is the directory" +
+                " that *.mod files are unpacked into.",
+                Path.Combine(ConfigDir, "tempmodunpack", "assets"));
+
+            ModDownloadPath = new Setting<string>(this, "Mod download directory", 
+                "The directory to store mods downloaded from servers in.",
+                Path.Combine(ConfigDir, "mods"));
+
+
+            CoreMods = new Setting<string[]>(this, "Core Mods",
+                "The core mods that will be autoinjected into every game without verification." + 
+                "They must be DLL files.", DefaultTrustedMods);
+
+            ImageSearchPaths = new Setting<string[]>(this, "Image search paths", "The paths in which to look for image assets.",
                 new[] {
                     Directory.GetCurrentDirectory(), //current directory
                     Path.Combine(Directory.GetCurrentDirectory(), "assets"),
@@ -112,11 +153,20 @@ namespace MPTanks.Clients.GameClient
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "mapobjects"),
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "other"),
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "tanks"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "mods"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "mods", "modassets"),
                     Path.Combine(ModUnpackPath, "assets"),
                     Path.Combine(ConfigDir, "assets")
+                });
+
+            SoundSearchPaths = new Setting<string[]>(this, "Sound search paths", "The paths in which to look for sounds.",
+                new[] {
+                    Directory.GetCurrentDirectory(), //current directory
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "animations"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds","mapobjects"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "other"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "tanks"),
+                    Path.Combine(ModUnpackPath, "sounds"),
+                    Path.Combine(ConfigDir, "sounds")
                 });
 
             RenderScale = new Setting<float>(this, "Render Scale",

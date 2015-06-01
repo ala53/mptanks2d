@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Settings;
 
 namespace MPTanks.Engine
 {
@@ -61,7 +62,7 @@ namespace MPTanks.Engine
         /// The game mode that dictates the rules for this instance.
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
-        public Settings Settings { get; private set; }
+        public EngineSettings Settings { get; private set; }
         public float Timescale { get; set; }
         #region Game Status
         /// <summary>
@@ -179,10 +180,13 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gameMode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapData, bool skipInit = false)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapData, bool skipInit = false, EngineSettings settings = null)
         {
             Logger = logger;
-            Settings = new MPTanks.Engine.Settings();
+            if (settings == null)
+                Settings = new EngineSettings();
+            else
+                Settings = settings;
             //Safety: call all global Ctors
             ConstructorHelper.CallGlobalCtors();
 

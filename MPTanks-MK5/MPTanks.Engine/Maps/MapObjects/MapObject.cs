@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MPTanks.Engine.Mods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +60,6 @@ namespace MPTanks.Engine.Maps.MapObjects
         #region
         static MapObject()
         {
-            Mods.CoreModLoader.LoadTrustedMods();
         }
         #endregion
     }

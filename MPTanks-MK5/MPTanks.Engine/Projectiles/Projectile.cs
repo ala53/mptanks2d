@@ -81,7 +81,6 @@ namespace MPTanks.Engine.Projectiles
 
         static Projectile()
         {
-            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

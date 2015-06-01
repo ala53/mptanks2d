@@ -156,7 +156,6 @@ namespace MPTanks.Engine.Gamemodes
 
         static Gamemode()
         {
-            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

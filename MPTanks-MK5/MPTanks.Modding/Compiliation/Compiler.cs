@@ -12,7 +12,7 @@ namespace MPTanks.Modding.Compiliation
 {
     public class Compiler
     {
-        public static Assembly CompileAssembly(string[] sourceCode, out string errors, params string[] otherReferences)
+        public static string CompileAssembly(string[] sourceCode, out string errors, params string[] otherReferences)
         {
             errors = "";
 
@@ -44,7 +44,7 @@ namespace MPTanks.Modding.Compiliation
             }
             else
             {
-                return results.CompiledAssembly;
+                return results.PathToAssembly;
             }
         }
     }

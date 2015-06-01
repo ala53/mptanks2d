@@ -8,7 +8,25 @@ namespace MPTanks.Clients.GameClient
 {
     public class CrossDomainObject : MarshalByRefObject
     {
-        public static CrossDomainObject Instance { get; set; }
+        private static CrossDomainObject _inst;
+        public static CrossDomainObject Instance
+        {
+            get
+            {
+                if (_inst == null)
+                {
+                    _inst = new CrossDomainObject
+                    {
+                        
+                    };
+                }
+                return _inst;
+            }
+            set
+            {
+                _inst = value;
+            }
+        }
 
         public CrossDomainObject()
         {

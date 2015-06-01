@@ -105,7 +105,7 @@ namespace MPTanks.Modding.Compiliation.Verification
             "Microsoft.Xna.Framework.Content.ContentManager", //Or load content from the hard drive
         });
 
-        public static bool IsAssemblySafe(Assembly assembly, out string error)
+        public static bool IsAssemblySafe(string assembly, out string error)
         {
             var definition = LoadAssembly(assembly);
             error = "";
@@ -304,7 +304,7 @@ namespace MPTanks.Modding.Compiliation.Verification
         }
 
         #region Loading helper
-        private static AssemblyDefinition LoadAssembly(Assembly asm)
+        private static AssemblyDefinition LoadAssembly(string asm)
         {
             var mStream = new MemoryStream(DllToByteArray(asm));
             var def = AssemblyDefinition.ReadAssembly(mStream);
@@ -312,9 +312,9 @@ namespace MPTanks.Modding.Compiliation.Verification
             return def;
         }
 
-        private static byte[] DllToByteArray(Assembly asm)
+        private static byte[] DllToByteArray(string asm)
         {
-            return File.ReadAllBytes(asm.Location);
+            return File.ReadAllBytes(asm);
         }
 
         #endregion

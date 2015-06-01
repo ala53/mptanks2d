@@ -86,8 +86,6 @@
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapDeserializationClasses.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
-    <Compile Include="Mods\CoreModLoader.cs" />
-    <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Powerups\HealthPowerup.cs" />
     <Compile Include="Powerups\Powerup.cs" />
     <Compile Include="Powerups\PowerupManager.cs" />
@@ -102,7 +100,8 @@
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Settings\EngineSettings.cs" />
+    <Compile Include="Settings\SettingsBase.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundEvents.cs" />

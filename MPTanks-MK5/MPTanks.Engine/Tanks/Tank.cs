@@ -128,7 +128,6 @@ namespace MPTanks.Engine.Tanks
 
         static Tank()
         {
-            Mods.CoreModLoader.LoadTrustedMods();
         }
     }
 }

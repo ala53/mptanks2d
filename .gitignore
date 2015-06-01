@@ -22,8 +22,6 @@ bld/
 [Bb]in/
 [Oo]bj/
 
-#EK UI Gen results
-MPTanks-MK5/MPTanks.Renderer/assets/ui/imgs/
 
 # Visual Studo 2015 cache/options directory
 .vs/

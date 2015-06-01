@@ -15,6 +15,7 @@ namespace MPTanks.Modding
         public string Author { get; internal set; }
         public ModuleDeclarationAttribute.ModuleVersion Version { get; internal set; }
         public Assembly[] Assemblies { get; internal set; }
+        public Assembly[] Dependencies { get; internal set; }
         /// <summary>
         /// A list of the types of tanks
         /// </summary>
