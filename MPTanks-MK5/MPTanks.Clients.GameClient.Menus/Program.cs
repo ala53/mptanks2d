@@ -19,7 +19,7 @@ namespace MPTanks.Clients.GameClient.Menus
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             using (var gm = new ClientCore())
