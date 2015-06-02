@@ -1,4 +1,5 @@
-﻿using MPTanks.ModCompiler.Packer;
+﻿using MPTanks.Engine.Maps;
+using MPTanks.ModCompiler.Packer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +19,7 @@ namespace MPTanks.ModCompiler
         public static List<string> imageAssets = new List<string>();
         public static List<string> soundAssets = new List<string>();
         public static List<string> dependencies = new List<string>();
+        public static List<string> maps = new List<string>();
         public static string author;
         public static string name;
         public static string version;
@@ -25,10 +27,16 @@ namespace MPTanks.ModCompiler
 
         static void Main(string[] args)
         {
-            var options = new Mono.Options.OptionSet()
+            Mono.Options.OptionSet options = null;
+            options = new Mono.Options.OptionSet()
                 .Add("o|out|output=", "The output *.mod file for the compiled mod.", (p) => outputFile = p)
-                .Add<bool>("whitelist:", "Do whitelist verification on the DLLs (mandatory for store upload)",
-                    (w) => whitelistDlls = w)
+                .Add("nowhitelist|nowl", "Disable whitelist verification on the DLLs (mandatory for store upload)",
+                    (w) => whitelistDlls = false)
+                .Add("?|help|h", (a) =>
+                {
+                    options.WriteOptionDescriptions(Console.Out);
+                    Exit(0);
+                })
                 .Add("c|code:",
                     "The executable code (*.dll) or C# source files to pack into the mod.", (p) =>
                     {
@@ -95,7 +103,27 @@ namespace MPTanks.ModCompiler
                     else
                     {
                         Console.WriteLine($"{p} is not a valid sound file");
+                        Exit(-2);
                     }
+                })
+                .Add("map|m:", "A map file to embed in the mod.", (m) =>
+                {
+                    if (!File.Exists(m))
+                    {
+                        Console.WriteLine($"{m} does not exist.");
+                        Exit(-2);
+                    }
+
+                    try
+                    {
+                        Map.LoadMap(File.ReadAllText(m), null);
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"{m} is not a valid map file");
+                        Exit(-2);
+                    }
+
                 })
                 .Add("author=", "The author for the mod", (p) => author = p)
                 .Add("name=", "The display name of the mod", (p) => name = p)
@@ -128,15 +156,15 @@ namespace MPTanks.ModCompiler
             }
             if (imageAssets.Count == 0)
             {
-                Console.WriteLine("Warning! This mod has no images. Make sure references to asset mods are correct!");
+                Console.WriteLine("Warning! This mod has no images. Make sure dependencies on asset mods are correct!");
             }
             if (soundAssets.Count == 0)
             {
-                Console.WriteLine("Warning! This mod has no sounds. Make sure references to asset mods are correct!");
+                Console.WriteLine("Warning! This mod has no sounds. Make sure dependencies on asset mods are correct!");
             }
-            if (imageAssets.Count == 0 && soundAssets.Count == 0 && dlls.Count == 0)
+            if (imageAssets.Count == 0 && soundAssets.Count == 0 && dlls.Count == 0 && maps.Count == 0)
             {
-                Console.WriteLine("Error! This mod is empty! No sound, code, or images are included.");
+                Console.WriteLine("Error! This mod is empty! No sound, code, images, or maps are included.");
                 Exit(-2);
             }
 
@@ -179,6 +207,8 @@ namespace MPTanks.ModCompiler
                     "MAJOR.MINOR [TAG]. The tag is optional, but the major and minor aren't.");
                 Exit(-2);
             }
+
+            //And then actually compile the mod files
         }
 
         static bool CheckDLLSafe(string file)
@@ -190,6 +220,7 @@ namespace MPTanks.ModCompiler
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Could not load assembly: " + file);
                 Console.WriteLine(ex.ToString());
                 return false;
             }
@@ -215,7 +246,7 @@ namespace MPTanks.ModCompiler
                 Console.WriteLine("Source files could not be compiled.");
                 Exit(-2);
             }
-           if (! CheckDLLSafe(asm))
+            if (!CheckDLLSafe(asm))
             {
                 Console.WriteLine("Source files are unsafe.");
                 Exit(-2);

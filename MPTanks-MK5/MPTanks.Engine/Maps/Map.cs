@@ -32,7 +32,7 @@ namespace MPTanks.Engine.Maps
                 _deserialized = MapDeserializationClasses.MapJSON.Load(mapData)
             };
 
-            //Pricess basic
+            //Process basic
             foreach (var team in map._deserialized.Spawns)
             {
                 var ts = new TeamSpawn();

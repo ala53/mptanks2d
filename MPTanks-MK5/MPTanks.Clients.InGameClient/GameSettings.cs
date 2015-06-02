@@ -62,6 +62,8 @@ namespace MPTanks.Clients.GameClient
         public Setting<string> ModSoundPath { get; private set; }
         public Setting<string> ModDownloadPath { get; private set; }
 
+        public Setting<string> UserTankImageDownloadCache { get; private set; }
+
         /// <summary>
         /// A list of mod files (relative or absolute) that should be loaded without 
         /// Code security verification. AKA trusted mods.

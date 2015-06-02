@@ -80,12 +80,14 @@ namespace AssetCompileHelper
         {
             System.IO.File.WriteAllText("asset_md5s.json", Newtonsoft.Json.JsonConvert.SerializeObject(_filesAndMD5s));
         }
-
         private static string CalculateMD5Hash(string input)
+        {
+            return CalculateMD5Hash(System.Text.Encoding.UTF8.GetBytes(input));
+        }
+        private static string CalculateMD5Hash(byte[] inputBytes)
         {
             // step 1, calculate MD5 hash from input
             MD5 md5 = System.Security.Cryptography.MD5.Create();
-            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
             byte[] hash = md5.ComputeHash(inputBytes);
 
             // step 2, convert byte array to hex string

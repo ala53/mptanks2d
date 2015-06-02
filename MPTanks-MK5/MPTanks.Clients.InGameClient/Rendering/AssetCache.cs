@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
@@ -183,13 +182,13 @@ namespace MPTanks.Clients.GameClient.Rendering
         /// <summary>
         /// A list of sprite sheets that LoadSpriteSheet() was called and whether the call was completed.
         /// </summary>
-        private ConcurrentDictionary<string, bool> _sheetsWithLoadCalled = new ConcurrentDictionary<string, bool>();
+        private Dictionary<string, bool> _sheetsWithLoadCalled = new Dictionary<string, bool>();
         private void AsyncLoadSpriteSheet(string sheetName)
         {
             //Do not do duplicate loads
             if (HasSpriteSheetLoadBeenCalled(sheetName)) return;
             //Note that we have called load on it
-            _sheetsWithLoadCalled.GetOrAdd(sheetName, false);
+            _sheetsWithLoadCalled.Add(sheetName, false);
             //And async load
             Task.Run(() =>
             {
@@ -273,7 +272,6 @@ namespace MPTanks.Clients.GameClient.Rendering
                 public int Height = 0;
 
             }
-
             public JSONAnimation[] Animations = null;
             public class JSONAnimation
             {

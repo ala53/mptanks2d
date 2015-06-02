@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Maps.MapDeserializationClasses
 {
-    [JsonObjectAttribute(MemberSerialization.OptOut)]
-    internal class MapJSON
+    [JsonObject(MemberSerialization.OptOut)]
+    public class MapJSON
     {
         public string Name { get; set; }
         public string Author { get; set; }
-        public Vector2 Size { get; set; }
+        public MapVectorJSON Size { get; set; }
         public bool FogOfWar { get; private set; }
         public int MaxPlayers { get; set; }
         public bool WhitelistGamemodes { get; set; }
@@ -25,43 +25,56 @@ namespace MPTanks.Engine.Maps.MapDeserializationClasses
 
         public static MapJSON Load(string data)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<MapJSON>(data);
+            return JsonConvert.DeserializeObject<MapJSON>(data);
         }
     }
 
-    internal class MapModJSON
+    public class MapModJSON
     {
         public string Name { get; set; }
         public string Author { get; set; }
-        /// <summary>
-        /// Version can be *, which means either installed or current version aka whatever
-        /// Version can be 1.0+, which means version 1.0, 1.1, 1.2, 2.0, etc. AKA 1.0 or greater
-        /// Version can be 1.0, which means exactly version 1
-        /// </summary>
-        public string Version { get; set; }
+        public string MinVersion { get; set; }
     }
 
-    internal class BackgroundTileJSON
+    public class BackgroundTileJSON
     {
         public string SpriteName { get; set; }
         public string AssetFileName { get; set; }
         public Color Mask { get; set; }
-        public Vector2 Position { get; set; }
-        public Vector2 Repeat { get; set; }
+        public MapVectorJSON Position { get; set; }
+        public MapVectorJSON Repeat { get; set; }
     }
 
-    internal class MapTeamsJSON
+    public class MapTeamsJSON
     {
         public int TeamIndex { get; set; }
-        public Vector2[] SpawnPositions { get; set; }
+        public MapVectorJSON[] SpawnPositions { get; set; }
     }
 
-    internal class MapObjectJSON
+    public class MapVectorJSON
+    {
+        [JsonProperty("x")]
+        public float X { get; set; }
+        [JsonProperty("y")]
+        public float Y { get; set; }
+
+        public static implicit operator Vector2(MapVectorJSON vec)
+        {
+            return new Vector2(vec.X, vec.Y);
+        }
+
+        public static implicit operator MapVectorJSON(Vector2 vec)
+        {
+            return new MapVectorJSON { X = vec.X, Y = vec.Y };
+        }
+    }
+
+    public class MapObjectJSON
     {
         public string TypeName { get; set; }
         public float Rotation { get; set; }
-        public Vector2 Position { get; set; }
-        public Vector2 Size { get; set; }
+        public MapVectorJSON Position { get; set; }
+        public MapVectorJSON Size { get; set; }
         public Color Mask { get; set; }
     }
 }
