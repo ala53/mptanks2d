@@ -22,8 +22,10 @@ namespace MPTanks.Modding
 
             Module output = null;
             string err = "";
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
             try
             {
+#endif
                 //Get the header to resolve dependencies
                 var header = ModUnpacker.GetHeader(modFile);
                 var deps = new List<string>();
@@ -61,12 +63,13 @@ namespace MPTanks.Modding
                 //And finally, unpack assets
                 ModUnpacker.UnpackImages(modFile, assetUnpackDir);
                 ModUnpacker.UnpackSounds(modFile, soundUnpackDir);
-            }
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
+        }
             catch (Exception ex)
             {
                 err += ex.ToString() + "\n\n";
             }
-
+#endif
             errors = err;
             loadedModFiles.Add(modFile, output);
             return output;
@@ -162,14 +165,16 @@ namespace MPTanks.Modding
             foreach (var asm in module.Assemblies)
                 foreach (var tank in ScanTankTypes(asm))
                 {
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     try
                     {
 #endif
                     var typ = new TankType(tank);
+                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
+                    attrib.Owner = module;
                     Inject(typ);
                     tanks.Add(typ);
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                 }
                     catch (Exception e)
                     {
@@ -184,14 +189,16 @@ namespace MPTanks.Modding
             foreach (var asm in module.Assemblies)
                 foreach (var prj in ScanProjectileTypes(asm))
                 {
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     try
                     {
 #endif
                     var typ = new ProjectileType(prj, module.Tanks);
+                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
+                    attrib.Owner = module;
                     Inject(typ);
                     projectiles.Add(typ);
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     }
                     catch (Exception e)
                     {
@@ -206,14 +213,16 @@ namespace MPTanks.Modding
             foreach (var asm in module.Assemblies)
                 foreach (var mapObject in ScanMapObjectTypes(asm))
                 {
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     try
                     {
 #endif
                     var typ = new MapObjectType(mapObject);
+                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
+                    attrib.Owner = module;
                     Inject(typ);
                     mapObjects.Add(typ);
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     }
                     catch (Exception e)
                     {
@@ -228,14 +237,16 @@ namespace MPTanks.Modding
             foreach (var asm in module.Assemblies)
                 foreach (var gamemode in ScanGamemodeTypes(asm))
                 {
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     try
                     {
 #endif
                     var typ = new GamemodeType(gamemode);
+                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
+                    attrib.Owner = module;
                     Inject(typ);
                     gamemodes.Add(typ);
-#if !DEBUG
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
                     }
                     catch (Exception e)
                     {
@@ -248,6 +259,9 @@ namespace MPTanks.Modding
             //And call the constructors
             foreach (var asm in module.Assemblies)
                 CallStaticCtors(asm);
+
+            //Mark the mod as loaded
+            ModDatabase.AddLoaded(module);
 
             //And finally, inject the code
 

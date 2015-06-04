@@ -11,7 +11,7 @@ using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
-    [MPTanks.Modding.Tank("BasicTankMP", 
+    [Tank("BasicTankMP", "assets/components/basictank.json", 
         DisplayName = "Basic Tank", Description = "Basic Tank",
         RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
@@ -34,12 +34,12 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
         protected override void AddComponents()
         {
-            Components.Add("base", new MPTanks.Engine.Rendering.RenderableComponent()
+            Components.Add("base", new Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(3, 5),
                 Mask = new Color(Color.White, 200)
             });
-            Components.Add("tankFront", new MPTanks.Engine.Rendering.RenderableComponent()
+            Components.Add("tankFront", new Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(3f, 0.25f),
                 Mask = new Color(Color.White, 200),
@@ -48,7 +48,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 SpriteSheetName = Assets.BasicTank.GrillMask.SheetName,
                 Rotation = 0
             });
-            Components.Add("turret", new MPTanks.Engine.Rendering.RenderableComponent()
+            Components.Add("turret", new Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.5f, 2.35f),
                 Mask = new Color(255, 150, 150, 150),
@@ -56,7 +56,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 RotationOrigin = new Vector2(0.25f, 3.5f),
                 Rotation = 0
             });
-            Components.Add("turretBase", new MPTanks.Engine.Rendering.RenderableComponent()
+            Components.Add("turretBase", new Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(2, 2.5f),
                 Mask = new Color(Color.White, 200),
@@ -66,7 +66,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 SpriteSheetName = Assets.BasicTank.TurretBase.SheetName,
                 Rotation = 0
             });
-            Components.Add("turretDoor", new MPTanks.Engine.Rendering.RenderableComponent()
+            Components.Add("turretDoor", new Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(0.65f, 0.65f),
                 Mask = new Color(Color.Gray, 100),

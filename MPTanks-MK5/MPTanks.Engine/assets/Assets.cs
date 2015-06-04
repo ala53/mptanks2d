@@ -8,23 +8,56 @@ namespace MPTanks.Engine.Assets
 {
     public struct SpriteAnimationInfo
     {
-        public readonly string AnimationName;
-        public readonly string SheetName;
+        private readonly string _animationName;
+        private readonly string _sheetName;
         public SpriteAnimationInfo(string animName, string sheetName)
         {
-            AnimationName = animName;
-            SheetName = sheetName;
+            _animationName = animName;
+            _sheetName = sheetName;
+        }
+
+        public string AnimationName
+        {
+            get
+            {
+                return _animationName;
+            }
+        }
+
+        public string SheetName
+        {
+            get
+            {
+                return _sheetName;
+            }
         }
     }
 
     public struct SpriteInfo
     {
-        public readonly string SpriteName;
-        public readonly string SheetName;
+        private readonly string _spriteName;
+        private readonly string _sheetName;
+
+        public string SpriteName
+        {
+            get
+            {
+                return _spriteName;
+            }
+        }
+
+        public string SheetName
+        {
+            get
+            {
+                return _sheetName;
+            }
+        }
+
         public SpriteInfo(string spriteName, string sheetName)
         {
-            SpriteName = spriteName;
-            SheetName = sheetName;
+            this._spriteName = spriteName;
+            _sheetName = sheetName;
         }
 
         public static implicit operator SpriteInfo(SpriteAnimationInfo anim)

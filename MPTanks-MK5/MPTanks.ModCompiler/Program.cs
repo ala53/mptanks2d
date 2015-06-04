@@ -20,6 +20,7 @@ namespace MPTanks.ModCompiler
         public static List<string> soundAssets = new List<string>();
         public static List<string> dependencies = new List<string>();
         public static List<string> maps = new List<string>();
+        public static List<string> components = new List<string>();
         public static string author;
         public static string name;
         public static string version;
@@ -66,6 +67,17 @@ namespace MPTanks.ModCompiler
                             Exit(-2);
                         }
                     })
+                .Add("cmp|componentfile:", "Component JSON files to describe in what way a GameObject should be constructed.",
+                (p) =>
+                {
+                    if (!File.Exists(p))
+                    {
+                        Console.WriteLine($"{p} does not exist.");
+                        Exit(-2);
+                    }
+                    //Check
+                    components.Add(p);
+                })
                 .Add("i|image:", "The image assets to compile. Expects a *.json file to reside with the image",
                 (p) =>
                 {
@@ -161,6 +173,10 @@ namespace MPTanks.ModCompiler
             if (soundAssets.Count == 0)
             {
                 Console.WriteLine("Warning! This mod has no sounds. Make sure dependencies on asset mods are correct!");
+            }
+            if (components.Count == 0)
+            {
+                Console.WriteLine("Warning! This mod has no component files. It is a very bad idea to generate tanks from code alone!");
             }
             if (imageAssets.Count == 0 && soundAssets.Count == 0 && dlls.Count == 0 && maps.Count == 0)
             {

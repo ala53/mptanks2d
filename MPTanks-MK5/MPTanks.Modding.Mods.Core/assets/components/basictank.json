@@ -1,0 +1,64 @@
+﻿{
+  "components": [
+    {
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
+      "name": "base",
+      "offset": { "x": 0, "y": 0 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0, "y": 0 },
+      "scale": 1,
+      "size": { "x": 3, "y": 5 },
+      "visible": true
+    },
+    {
+      "assetName": "grillmask",
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
+      "name": "tankFront",
+      "offset": { "x": 0, "y": 0 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0, "y": 0 },
+      "scale": 1,
+      "size": { "x": 3, "y": 0.25 },
+      "visible": true
+    },
+    {
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 150, "b": 150, "a": 150 },
+      "name": "turret",
+      "offset": { "x": 1.25, "y": -1 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0.25, "y": 3.5 },
+      "scale": 1,
+      "size": { "x": 0.5, "y": 2.35 },
+      "visible": true
+    },
+    {
+      "assetName": "turretbase",
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
+      "name": "turretBase",
+      "offset": { "x": 0.5, "y": 1.5 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 1, "y": 1 },
+      "scale": 1,
+      "size": { "x": 2, "y": 2.5 },
+      "visible": true
+    },
+    {
+      "drawLayer": 0,
+      "mask": { "r": 200, "g": 200, "b": 200, "a": 100 },
+      "name": "turretDoor",
+      "offset": { "x": 0.75, "y": 1.75 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0.75, "y": 0.75 },
+      "scale": 1,
+      "size": { "x": 0.65, "y": 0.65 },
+      "visible": true
+    }
+  ],
+  "name": "Basic Tank",
+  "reflectionName": "BasicTankMP",
+  "sheetName": "assets/basictank2d.png"
+}

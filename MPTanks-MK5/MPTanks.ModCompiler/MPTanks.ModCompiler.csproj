@@ -66,6 +66,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">
+      <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
+      <Name>MPTanks.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MPTanks.Modding\MPTanks.Modding.csproj">
       <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
       <Name>MPTanks.Modding</Name>

@@ -11,7 +11,11 @@ namespace MPTanks.Modding
     {
         static List<ModDatabaseItem> _items = new List<ModDatabaseItem>();
 
-        public static IEnumerable<ModDatabaseItem> Mods { get { return _items; } }
+        public static IReadOnlyList<ModDatabaseItem> Mods { get { return _items; } }
+
+        static List<Module> _loadedModules = new List<Module>();
+
+        public static  IReadOnlyList<Module> LoadedModules { get { return _loadedModules; } }
 
         static ModDatabase()
         {
@@ -69,6 +73,12 @@ namespace MPTanks.Modding
                 itm.File = file;
             }
             Save();
+        }
+
+        public static void AddLoaded(Module module)
+        {
+            if (!_loadedModules.Contains(module))
+                _loadedModules.Add(module);
         }
 
         public static void Remove(string name, int major, int minor)

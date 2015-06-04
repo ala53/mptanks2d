@@ -13,8 +13,8 @@ namespace MPTanks.Modding
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class TankAttribute : GameObjectAttribute
     {
-        public TankAttribute(string reflectionName)
-            : base(reflectionName)
+        public TankAttribute(string reflectionName, string componentsFile)
+            : base(reflectionName, componentsFile)
         {
 
         }
@@ -27,8 +27,8 @@ namespace MPTanks.Modding
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class MapObjectAttribute : GameObjectAttribute
     {
-        public MapObjectAttribute(string reflectionName)
-            : base(reflectionName)
+        public MapObjectAttribute(string reflectionName, string componentsFile)
+            : base(reflectionName, componentsFile)
         {
 
         }
@@ -47,8 +47,8 @@ namespace MPTanks.Modding
         /// The reflection type name of the owner. So, the tank type this projectile is assigned to.
         /// </summary>
         public string OwnerReflectionName { get; set; }
-        public ProjectileAttribute(string reflectionName, string ownerReflectionName)
-            : base(reflectionName)
+        public ProjectileAttribute(string reflectionName, string componentsFile, string ownerReflectionName)
+            : base(reflectionName, componentsFile)
         {
             OwnerReflectionName = ownerReflectionName;
         }
@@ -56,8 +56,8 @@ namespace MPTanks.Modding
 
     public sealed class GamemodeAttribute : GameObjectAttribute
     {
-        public GamemodeAttribute(string reflectionName)
-            : base(reflectionName)
+        public GamemodeAttribute(string reflectionName, string componentsFile)
+            : base(reflectionName, componentsFile)
         {
 
         }
@@ -118,7 +118,7 @@ namespace MPTanks.Modding
                 return mod;
             }
 
-            public static implicit operator string(ModuleVersion version)
+            public static implicit operator string (ModuleVersion version)
             {
                 return version.Major + "." + version.Minor + " " + version.Tag;
             }
@@ -132,14 +132,17 @@ namespace MPTanks.Modding
         /// Creates a new GameObjectAttribute.
         /// </summary>
         /// <param name="reflectionName">The reflection name of the object.</param>
-        public GameObjectAttribute(string reflectionName)
+        /// <param name="componentsFile">The .json file that contains the component lists for the mod</param>
+        public GameObjectAttribute(string reflectionName, string componentsFile)
         {
             ReflectionTypeName = reflectionName;
+            ComponentFile = componentsFile;
         }
         /// <summary>
         /// The reflection type name for the object (from map.json files).
         /// </summary>
         public string ReflectionTypeName { get; private set; }
+        public string ComponentFile { get; private set; }
         /// <summary>
         /// The display name of the object to be shown in error messages or the map editor.
         /// </summary>
@@ -148,5 +151,6 @@ namespace MPTanks.Modding
         /// The description of the object to be shown in the map editor.
         /// </summary>
         public string Description { get; set; }
+        public Module Owner { get; set; }
     }
 }

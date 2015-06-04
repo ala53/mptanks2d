@@ -66,7 +66,7 @@ namespace MPTanks.Engine.Tanks
             InputState = state;
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime time)
+        public override void Update(GameTime time)
         {
             var velocity = InputState.MovementSpeed *
                 MovementSpeed;
