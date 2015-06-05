@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.MasterServer
+namespace MPTanks.Networking.Common.Game
 {
-    class Program
+    class GameStateCreatedObject
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

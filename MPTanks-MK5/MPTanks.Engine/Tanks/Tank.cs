@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Assets;
 
 namespace MPTanks.Engine.Tanks
 {
@@ -14,7 +15,18 @@ namespace MPTanks.Engine.Tanks
         public GamePlayer Player { get; private set; }
         public Team Team { get; internal set; }
         public InputState InputState { get; private set; }
-
+        /// <summary>
+        /// The Asset to show in the UI to describe the current weapon.
+        /// </summary>
+        public SpriteInfo ActiveWeaponUIAsset { get; protected set; }
+        /// <summary>
+        /// The recharge percentage for the active weapon. Alas, this is the # of percent done it is. 
+        /// 100 or greater means it's done charging and the progress bar disappears.
+        /// </summary>
+        public double ActiveWeaponRechargePercentage { get; protected set; }
+        /// <summary>
+        /// The current health level for the tank.
+        /// </summary>
         public int Health { get; protected set; }
 
         protected abstract float RotationSpeed { get; }
