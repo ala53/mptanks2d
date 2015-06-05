@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.MapObjects
 {
-    [Modding.MapObject("LargeHouseMultiLevel", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
+    [Modding.MapObject("LargeHouseMultiLevel", "largehouse.json", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
         DisplayName = "Multi level house")]
     public class MultilevelHouse : MapObject
     {

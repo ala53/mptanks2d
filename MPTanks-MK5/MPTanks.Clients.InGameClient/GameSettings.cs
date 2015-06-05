@@ -45,21 +45,17 @@ namespace MPTanks.Clients.GameClient
         /// </summary>
         public Setting<int> MaxInstancesOfOneSoundAllowed { get; private set; }
 
+        //Where to look for assets
+        public Setting<string[]> AssetSearchPaths { get; private set; }
+
         public Setting<string[]> ImageAllowedFileExtensions { get; private set; }
 
-        //Where to look for assets
-        public Setting<string[]> ImageSearchPaths { get; private set; }
-
         public Setting<string[]> SoundAllowedFileExtensions { get; private set; }
-
-        //Where to look for assets
-        public Setting<string[]> SoundSearchPaths { get; private set; }
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
         //just leave them in the temp directory where they are removed next time the program opens
         public Setting<string> ModUnpackPath { get; private set; }
-        public Setting<string> ModImagePath { get; private set; }
-        public Setting<string> ModSoundPath { get; private set; }
+        public Setting<string> ModAssetPath { get; private set; }
         public Setting<string> ModDownloadPath { get; private set; }
 
         public Setting<string> UserTankImageDownloadCache { get; private set; }
@@ -128,14 +124,9 @@ namespace MPTanks.Clients.GameClient
                 " that *.mod files are unpacked into.",
                 Path.Combine(ConfigDir, "tempmodunpack"));
 
-            ModSoundPath = new Setting<string>(this, "Mod temp directory for sounds",
-                "The place to store mod sound assets that are used at runtime. In other words, this is the directory" +
-                " that *.mod files are unpacked into.",
-                Path.Combine(ConfigDir, "tempmodunpack", "sounds"));
-
-            ModImagePath = new Setting<string>(this, "Mod temp directory for images",
-                "The place to store mods images that are used at runtime. In other words, this is the directory" +
-                " that *.mod files are unpacked into.",
+            ModAssetPath = new Setting<string>(this, "Mod temp directory for assets",
+                "The place to store mods assets that are used at runtime. In other words, this is the directory" +
+                " that *.mod files are unpacked into (but not the code).",
                 Path.Combine(ConfigDir, "tempmodunpack", "assets"));
 
             ModDownloadPath = new Setting<string>(this, "Mod download directory", 
@@ -147,7 +138,7 @@ namespace MPTanks.Clients.GameClient
                 "The core mods that will be autoinjected into every game without verification." + 
                 "They must be DLL files.", DefaultTrustedMods);
 
-            ImageSearchPaths = new Setting<string[]>(this, "Image search paths", "The paths in which to look for image assets.",
+            AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets assets.",
                 new[] {
                     Directory.GetCurrentDirectory(), //current directory
                     Path.Combine(Directory.GetCurrentDirectory(), "assets"),
@@ -157,18 +148,6 @@ namespace MPTanks.Clients.GameClient
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "tanks"),
                     Path.Combine(ModUnpackPath, "assets"),
                     Path.Combine(ConfigDir, "assets")
-                });
-
-            SoundSearchPaths = new Setting<string[]>(this, "Sound search paths", "The paths in which to look for sounds.",
-                new[] {
-                    Directory.GetCurrentDirectory(), //current directory
-                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "animations"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds","mapobjects"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "other"),
-                    Path.Combine(Directory.GetCurrentDirectory(), "assets", "sounds", "tanks"),
-                    Path.Combine(ModUnpackPath, "sounds"),
-                    Path.Combine(ConfigDir, "sounds")
                 });
 
             RenderScale = new Setting<float>(this, "Render Scale",

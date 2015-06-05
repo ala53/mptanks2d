@@ -33,6 +33,8 @@ namespace MPTanks.Modding
         /// </summary>
         public MapObjectType[] MapObjects { get; internal set; }
 
+        internal Dictionary<string, string> assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+        public IReadOnlyDictionary<string,string> Assets { get { return assets; } }
 
         /// <summary>
         /// Injects the mod into the engine by calling the appropriate RegisterType()'s.

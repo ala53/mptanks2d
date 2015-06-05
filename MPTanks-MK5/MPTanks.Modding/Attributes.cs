@@ -56,8 +56,8 @@ namespace MPTanks.Modding
 
     public sealed class GamemodeAttribute : GameObjectAttribute
     {
-        public GamemodeAttribute(string reflectionName, string componentsFile)
-            : base(reflectionName, componentsFile)
+        public GamemodeAttribute(string reflectionName)
+            : base(reflectionName, "Gamemodes do not have renderer components")
         {
 
         }

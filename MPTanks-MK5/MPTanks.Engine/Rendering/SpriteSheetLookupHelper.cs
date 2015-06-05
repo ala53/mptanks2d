@@ -1,46 +1,69 @@
-﻿using System;
+﻿using MPTanks.Modding;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Rendering
 {
     public static class SpriteSheetLookupHelper
     {
-        private static Func<Assembly, GamePlayer, string, string> _tankResolver;
-        private static Func<Assembly, string, string> _assetResolver;
+        private static Func<Module, GamePlayer, string, string> _tankResolver = (m, p, a) =>
+        {
+            //Simple passthrough search
+            if (m.Assets.ContainsKey(a))
+                return m.Assets[a];
+            return null;
+        };
+        private static Func<Module, string, string> _assetResolver = (m, a) =>
+        {
+            if (m.Assets.ContainsKey(a))
+                return m.Assets[a];
+            return null;
+        };
         /// <summary>
         /// Registers the resolver
         /// </summary>
         /// <param name="tankResolver">
-        /// Takes the calling assembly, 
+        /// Takes the calling module, 
         /// the player that the tank belongs to, 
         /// and the requested asset name. 
         /// It then outputs the actual asset name, accounting for multiple mods.</param>
         /// <param name="assetResolver">
-        /// Takes the calling assembly and the requested asset name. 
+        /// Takes the calling module and the requested asset name. 
         /// It then outputs the actual asset name, accounting for multiple mods</param>
         public static void RegisterResolver(
-            Func<Assembly, GamePlayer, string, string> tankResolver, Func<Assembly, string, string> assetResolver)
+            Func<Module, GamePlayer, string, string> tankResolver, Func<Module, string, string> assetResolver)
         {
-            if (_tankResolver == null)
-                _tankResolver = tankResolver;
-            else throw new Exception("Cannot change resolvers post-init.");
-            if (_assetResolver == null)
-                _assetResolver = assetResolver;
-            else throw new Exception("Cannot change resolvers post-init.");
+            _tankResolver = tankResolver;
+            _assetResolver = assetResolver;
         }
-        public static string ResolveAsset(object calling, string asset)
+        public static string ResolveAsset(string moduleName, string asset, GamePlayer player = null)
         {
             if (_tankResolver == null && _assetResolver == null)
                 return asset;
 
-            if (calling.GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                return _tankResolver(calling.GetType().Assembly, ((Tanks.Tank)calling).Player, asset);
+            if (player != null)
+                return _tankResolver(FindModuleByName(moduleName), player, asset);
             else
-                return _assetResolver(calling.GetType().Assembly, asset);
+                return _assetResolver(FindModuleByName(moduleName), asset);
+        }
+
+        private static Dictionary<string, Module> _cachedSearches =
+            new Dictionary<string, Module>(StringComparer.InvariantCultureIgnoreCase);
+
+        private static Module FindModuleByName(string name)
+        {
+            if (_cachedSearches.ContainsKey(name))
+                return _cachedSearches[name];
+            foreach (var mod in ModDatabase.LoadedModules)
+            {
+                if (mod.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _cachedSearches.Add(name, mod);
+                    return mod;
+                }
+            }
+
+            return null;
         }
     }
 }

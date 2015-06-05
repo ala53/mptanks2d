@@ -31,7 +31,7 @@ namespace MPTanks.Modding
                 var deps = new List<string>();
                 //Resolve the dependencies and get all of their dlls
                 foreach (var dep in header.Dependencies)
-                    deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor, dep.CanBeNewer,
+                    deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
                         dllUnpackDir, assetUnpackDir, soundUnpackDir, header.Name));
                 //Remove duplicates
                 deps = deps.Distinct().ToList();

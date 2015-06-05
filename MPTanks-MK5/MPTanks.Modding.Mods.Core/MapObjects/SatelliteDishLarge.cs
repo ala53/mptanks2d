@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.MapObjects
 {
-    [Modding.MapObject("SatelliteDishLarge", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
+    [Modding.MapObject("SatelliteDishLarge", "satellitedish.json", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
         DisplayName = "Satellite Dish (large)")]
     public class SatelliteDishLarge : MapObject
     {

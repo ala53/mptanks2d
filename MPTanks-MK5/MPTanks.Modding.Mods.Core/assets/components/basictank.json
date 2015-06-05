@@ -12,8 +12,8 @@
       "visible": true
     },
     {
-      "assetName": "grillmask",
       "drawLayer": 0,
+      "frameName": "grillmask",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "tankFront",
       "offset": { "x": 0, "y": 0 },
@@ -35,8 +35,8 @@
       "visible": true
     },
     {
-      "assetName": "turretbase",
       "drawLayer": 0,
+      "frameName": "turretbase",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "turretBase",
       "offset": { "x": 0.5, "y": 1.5 },
@@ -60,5 +60,8 @@
   ],
   "name": "Basic Tank",
   "reflectionName": "BasicTankMP",
-  "sheetName": "assets/basictank2d.png"
+  "sheet": {
+    "file": "assets/basictank2d.png",
+    "fromThisMod": true
+  }
 }
