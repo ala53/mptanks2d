@@ -655,7 +655,7 @@ namespace MPTanks.Engine
         {
             var serialized = SerializeStateChangeObject(obj);
             var count = Encoding.UTF8.GetByteCount(serialized);
-            var array = new byte[count + 4];
+            var array = new byte[count + JSONSerializedMagicBytes.Length];
             Array.Copy(Encoding.UTF8.GetBytes(serialized), 0, array, 4, count);
             Array.Copy(JSONSerializedMagicBytes, array, 4);
             RaiseStateChangeEvent(array);
@@ -671,7 +671,9 @@ namespace MPTanks.Engine
             if (BitConverter.ToInt64(stateData, 0) == JSONSerializedMagicNumber)
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(Encoding.UTF8.GetString(stateData, 4, stateData.Length - 4));
+                var obj = DeserializeStateChangeObject(
+                    Encoding.UTF8.GetString(stateData, JSONSerializedMagicBytes.Length, 
+                    stateData.Length - JSONSerializedMagicBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
             else
