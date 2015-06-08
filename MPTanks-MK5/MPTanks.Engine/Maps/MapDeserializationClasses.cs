@@ -56,7 +56,8 @@ namespace MPTanks.Engine.Maps.Serialization
         public string TypeName { get; set; }
         public float Rotation { get; set; }
         public JSONVector Position { get; set; }
-        public JSONVector Size { get; set; }
+        [JsonProperty("size")]
+        public JSONVector DesiredSize { get; set; }
         public Color Mask { get; set; }
     }
 }

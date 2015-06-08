@@ -45,7 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets.cs" />
-    <None Include="assets\components\basictank.json" />
+    <None Include="assets\components\basictank.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
@@ -55,9 +57,15 @@
     <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
-    <None Include="assets\components\basictankmainprojectile.json" />
-    <None Include="assets\components\largehouse.json" />
-    <None Include="assets\components\satellitedish.json" />
+    <None Include="assets\components\basictankmainprojectile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\components\largehouse.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\components\satellitedish.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">

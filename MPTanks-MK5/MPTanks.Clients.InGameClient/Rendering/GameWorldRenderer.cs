@@ -97,7 +97,7 @@ namespace MPTanks.Clients.GameClient.Rendering
                         continue;
 
                     //Compute the global model matrix - the object's position in the world
-                    var modelMatrix = Matrix.Identity *
+                    var modelMatrix = Matrix.CreateScale(new Vector3(obj.Scale, 0)) *
                         Matrix.CreateTranslation(
                             new Vector3(-objSize / 2, 0)) *
                         Matrix.CreateRotationZ(obj.Rotation) *
@@ -110,7 +110,7 @@ namespace MPTanks.Clients.GameClient.Rendering
                         var mask = new Color(component.Mask.ToVector4() * obj.ColorMask.ToVector4());
 
                         //Compute the matrix (space relative to object) and multiply by world
-                        var cmpMatrix = Matrix.CreateScale(component.Scale) *
+                        var cmpMatrix = Matrix.CreateScale(new Vector3(component.Scale, 0)) *
                             Matrix.CreateTranslation(new Vector3(-Scale(component.RotationOrigin), 0)) *
                             Matrix.CreateRotationZ(component.Rotation) *
                             Matrix.CreateTranslation(

@@ -7,9 +7,7 @@
       "offset": { "x": 0, "y": 0 },
       "rotation": 0,
       "rotationOrigin": { "x": 0, "y": 0 },
-      "scale": 1,
-      "size": { "x": 3, "y": 5 },
-      "visible": true
+      "size": { "x": 3, "y": 5 }
     },
     {
       "drawLayer": 0,
@@ -19,9 +17,7 @@
       "offset": { "x": 0, "y": 0 },
       "rotation": 0,
       "rotationOrigin": { "x": 0, "y": 0 },
-      "scale": 1,
-      "size": { "x": 3, "y": 0.25 },
-      "visible": true
+      "size": { "x": 3, "y": 0.25 }
     },
     {
       "drawLayer": 0,
@@ -30,9 +26,7 @@
       "offset": { "x": 1.25, "y": -1 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.25, "y": 3.5 },
-      "scale": 1,
-      "size": { "x": 0.5, "y": 2.35 },
-      "visible": true
+      "size": { "x": 0.5, "y": 2.35 }
     },
     {
       "drawLayer": 0,
@@ -42,9 +36,7 @@
       "offset": { "x": 0.5, "y": 1.5 },
       "rotation": 0,
       "rotationOrigin": { "x": 1, "y": 1 },
-      "scale": 1,
-      "size": { "x": 2, "y": 2.5 },
-      "visible": true
+      "size": { "x": 2, "y": 2.5 }
     },
     {
       "drawLayer": 0,
@@ -53,9 +45,7 @@
       "offset": { "x": 0.75, "y": 1.75 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.75, "y": 0.75 },
-      "scale": 1,
-      "size": { "x": 0.65, "y": 0.65 },
-      "visible": true
+      "size": { "x": 0.65, "y": 0.65 }
     }
   ],
   "name": "Basic Tank",
@@ -84,5 +74,6 @@
     "file": "assets/tanks/basictank2d.png",
     "fromOtherMod": true,
     "modName": "engine_base"
-  }
+  },
+  "size": {"x": 3, "y": 5}
 }

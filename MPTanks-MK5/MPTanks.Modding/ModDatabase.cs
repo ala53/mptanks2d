@@ -15,7 +15,11 @@ namespace MPTanks.Modding
 
         static List<Module> _loadedModules = new List<Module>();
 
-        public static  IReadOnlyList<Module> LoadedModules { get { return _loadedModules; } }
+        public static IReadOnlyList<Module> LoadedModules { get { return _loadedModules; } }
+
+        public static Dictionary<Type, Module> _reverseLookupTable = new Dictionary<Type, Module>();
+
+        public static Dictionary<Type, Module> ReverseTypeTable { get { return _reverseLookupTable; } }
 
         static ModDatabase()
         {
@@ -79,6 +83,18 @@ namespace MPTanks.Modding
         {
             if (!_loadedModules.Contains(module))
                 _loadedModules.Add(module);
+
+            foreach (var tank in module.Tanks)
+                _reverseLookupTable.Add(tank.Type, module);
+
+            foreach (var prj in module.Projectiles)
+                _reverseLookupTable.Add(prj.Type, module);
+
+            foreach (var mapObj in module.MapObjects)
+                _reverseLookupTable.Add(mapObj.Type, module);
+
+            foreach (var mode in module.Gamemodes)
+                _reverseLookupTable.Add(mode.Type, module);
         }
 
         public static void Remove(string name, int major, int minor)

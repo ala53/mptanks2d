@@ -73,11 +73,7 @@ namespace MPTanks.Engine
         {
             get
             {
-                if (_cachedModule == null)
-                    _cachedModule = ((GameObjectAttribute[])(GetType()
-                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
-                          .Owner;
-                return _cachedModule;
+                return ModDatabase.ReverseTypeTable[GetType()];
             }
         }
         #endregion
@@ -216,7 +212,7 @@ namespace MPTanks.Engine
         public Vector2 Size
         {
             get { return _size; }
-            protected set
+            set
             {
                 if (_hasBeenCreated)
                 {
@@ -235,12 +231,15 @@ namespace MPTanks.Engine
                     //And add the new one
                     Body.CreateFixture(rect, this);
                 }
+
                 //And set the internal note
                 _size = value;
             }
         }
-
         #endregion
+        public Vector2 DefaultSize { get; protected set; }
+
+        public Vector2 Scale { get { return Size / DefaultSize; } }
         #region Wrappers for Farseer Settings
         public bool IsStatic
         {
@@ -374,21 +373,24 @@ namespace MPTanks.Engine
                     $"GameObject-{ObjectId}.LoadComponentsFromFile():" +
                     "{deserialized.ReflectionName} does not match {ReflectionName}");
 
+            DefaultSize = deserialized.DefaultSize;
+
             foreach (var cmp in deserialized.Components)
             {
                 string sheet;
                 if (cmp.Sheet.FromOtherMod)
-                    sheet = ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.AssetName);
+                    sheet = ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File);
                 else
-                    sheet = ResolveAsset(cmp.Sheet.AssetName);
+                    sheet = ResolveAsset(cmp.Sheet.File);
 
-                SpriteInfo asset;
-
-                if (cmp.Frame.StartsWith("[animation]"))
-                    asset = new SpriteAnimationInfo(cmp.Frame, sheet);
-                else
-                    asset = new SpriteInfo(cmp.Frame, sheet);
-
+                SpriteInfo asset = new SpriteInfo();
+                if (cmp.Frame != null)
+                {
+                    if (cmp.Frame.StartsWith("[animation]"))
+                        asset = new SpriteAnimationInfo(cmp.Frame, sheet);
+                    else
+                        asset = new SpriteInfo(cmp.Frame, sheet);
+                }
                 _components.Add(cmp.Name, new RenderableComponent
                 {
                     DrawLayer = cmp.DrawLayer,
@@ -396,6 +398,7 @@ namespace MPTanks.Engine
                     Mask = (cmp.Mask == default(Color)) ? Color.White : cmp.Mask,
                     Offset = cmp.Offset,
                     Rotation = cmp.Rotation,
+                    RotationVelocity = cmp.RotationVelocity,
                     RotationOrigin = cmp.RotationOrigin,
                     Scale = cmp.Scale,
                     SheetName = asset.SheetName,
@@ -406,9 +409,9 @@ namespace MPTanks.Engine
             foreach (var asset in deserialized.OtherAssets)
             {
                 if (asset.FromOtherMod)
-                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.AssetName));
+                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
                 else
-                    _assets.Add(asset.Key, ResolveAsset(asset.AssetName));
+                    _assets.Add(asset.Key, ResolveAsset(asset.File));
             }
 
             foreach (var cmp in deserialized.Components)
@@ -416,9 +419,9 @@ namespace MPTanks.Engine
                 if (cmp.Sheet.Key != null && !Components.ContainsKey(cmp.Sheet.Key))
                 {
                     if (cmp.Sheet.FromOtherMod)
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.AssetName));
+                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
                     else
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.AssetName));
+                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
                 }
             }
 
@@ -429,9 +432,9 @@ namespace MPTanks.Engine
                     if (sp.Sheet.Key != null && !Components.ContainsKey(sp.Sheet.Key))
                     {
                         if (sp.Sheet.FromOtherMod)
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.AssetName));
+                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
                         else
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.AssetName));
+                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
                     }
                 }
             }
@@ -445,9 +448,9 @@ namespace MPTanks.Engine
         /// </summary>
         private void LoadBaseComponents()
         {
-            var componentFile = ((GameObjectAttribute[])(GetType()
-                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
-                  .ComponentFile;
+            var attrib = ((GameObjectAttribute[])(GetType()
+                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0];
+            var componentFile = attrib.ComponentFile;
 
             _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
             _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
@@ -470,18 +473,18 @@ namespace MPTanks.Engine
                         if (sprite.Sheet.FromOtherMod)
                             infos.Add(
                                 new SpriteAnimationInfo(sprite.Frame,
-                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.AssetName)));
+                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
                         else
                             infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.AssetName)));
+                                new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
                     }
                     else
                     {
                         if (sprite.Sheet.FromOtherMod)
                             infos.Add(new SpriteInfo(sprite.Frame,
-                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.AssetName)));
+                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
                         else
-                            infos.Add(new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.AssetName)));
+                            infos.Add(new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
                     }
                 }
 
@@ -613,15 +616,27 @@ namespace MPTanks.Engine
             return transformed;
         }
 
-        public void Update(GameTime time)
+        public void Update(GameTime gameTime)
         {
-            UpdateEmitters(time);
-            UpdateInternal(time);
+            UpdateEmitters(gameTime);
 
-            if (TimeAliveMs > LifespanMs) Kill();
+            if (TimeAliveMs > LifespanMs && LifespanMs != 0) Kill();
 
-            TimeAliveMs += (float)time.ElapsedGameTime.TotalMilliseconds;
+            TimeAliveMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             ActivateAtTimeEmitters();
+
+            UpdateRenderableComponentRotations(gameTime);
+
+            UpdateInternal(gameTime);
+        }
+
+        private void UpdateRenderableComponentRotations(GameTime gameTime)
+        {
+            foreach (var cmp in Components)
+            {
+                if (cmp.Value.RotationVelocity > 0)
+                    cmp.Value.Rotation += cmp.Value.RotationVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
         }
 
         protected virtual void UpdateInternal(GameTime gameTime)
@@ -638,9 +653,13 @@ namespace MPTanks.Engine
 
         }
 
+        private bool _killedAlready;
         public void Kill(GameObject destroyer = null, bool authorized = false)
         {
-            Game.RemoveGameObject(this, destroyer, authorized);
+            if (!_killedAlready)
+                Game.RemoveGameObject(this, destroyer, authorized);
+
+            _killedAlready = true;
         }
 
         private bool _hasBeenDeleted;

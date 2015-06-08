@@ -56,6 +56,7 @@ namespace MPTanks.Engine.Maps
             {
                 MapObject obj = MapObject.ReflectiveInitialize(mapObj.TypeName, _game, true, mapObj.Position, mapObj.Rotation);
                 obj.ColorMask = mapObj.Mask;
+                obj.Size = mapObj.DesiredSize;
 
                 _game.AddGameObject(obj, null, true);
             }

@@ -26,43 +26,43 @@ namespace MPTanks.Modding
             try
             {
 #endif
-                //Get the header to resolve dependencies
-                var header = ModUnpacker.GetHeader(modFile);
-                var deps = new List<string>();
-                //Resolve the dependencies and get all of their dlls
-                foreach (var dep in header.Dependencies)
-                    deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
-                        dllUnpackDir, assetUnpackDir, header.Name));
-                //Remove duplicates
-                deps = deps.Distinct().ToList();
-                //Then, unpack the assemblies to the correct directory
-                var dllPaths = ModUnpacker.UnpackDlls(modFile, dllUnpackDir);
+            //Get the header to resolve dependencies
+            var header = ModUnpacker.GetHeader(modFile);
+            var deps = new List<string>();
+            //Resolve the dependencies and get all of their dlls
+            foreach (var dep in header.Dependencies)
+                deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
+                    dllUnpackDir, assetUnpackDir, header.Name));
+            //Remove duplicates
+            deps = deps.Distinct().ToList();
+            //Then, unpack the assemblies to the correct directory
+            var dllPaths = ModUnpacker.UnpackDlls(modFile, dllUnpackDir);
 
-                //If it has source code, compile that
-                if (header.CodeFiles.Length > 0)
-                {
-                    string mErr = "";
-                    Load(
-                        ModUnpacker.GetSourceCode(modFile),
-                        verifySafe,
-                        out mErr,
-                        dllPaths,
-                        deps.ToArray()
-                        );
+            //If it has source code, compile that
+            if (header.CodeFiles.Length > 0)
+            {
+                string mErr = "";
+                Load(
+                    ModUnpacker.GetSourceCode(modFile),
+                    verifySafe,
+                    out mErr,
+                    dllPaths,
+                    deps.ToArray()
+                    );
 
-                    err += mErr;
-                }
-                else
-                {
-                    //Otherwise, just do a simple load
-                    string mErr = "";
-                    Load(
-                        dllPaths, verifySafe, out mErr);
-                    err += mErr;
-                }
-                //And finally, unpack assets
-                ModUnpacker.UnpackImages(modFile, assetUnpackDir);
-                ModUnpacker.UnpackSounds(modFile, assetUnpackDir);
+                err += mErr;
+            }
+            else
+            {
+                //Otherwise, just do a simple load
+                string mErr = "";
+                Load(
+                    dllPaths, verifySafe, out mErr);
+                err += mErr;
+            }
+            //And finally, unpack assets
+            ModUnpacker.UnpackImages(modFile, assetUnpackDir);
+            ModUnpacker.UnpackSounds(modFile, assetUnpackDir);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
         }
             catch (Exception ex)
@@ -194,8 +194,6 @@ namespace MPTanks.Modding
                     {
 #endif
                     var typ = new ProjectileType(prj, module.Tanks);
-                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
-                    attrib.Owner = module;
                     Inject(typ);
                     projectiles.Add(typ);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
@@ -218,8 +216,6 @@ namespace MPTanks.Modding
                     {
 #endif
                     var typ = new MapObjectType(mapObject);
-                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
-                    attrib.Owner = module;
                     Inject(typ);
                     mapObjects.Add(typ);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
@@ -242,8 +238,6 @@ namespace MPTanks.Modding
                     {
 #endif
                     var typ = new GamemodeType(gamemode);
-                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
-                    attrib.Owner = module;
                     Inject(typ);
                     gamemodes.Add(typ);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER

@@ -13,20 +13,21 @@ namespace MPTanks.Engine.Serialization
     /// </summary>
     public class JSONVector
     {
-            [JsonProperty("x")]
-            public float X { get; set; }
-            [JsonProperty("y")]
-            public float Y { get; set; }
+        [JsonProperty("x")]
+        public float X { get; set; }
+        [JsonProperty("y")]
+        public float Y { get; set; }
 
-            public static implicit operator Vector2(JSONVector vec)
-            {
-                return new Vector2(vec.X, vec.Y);
-            }
+        public static implicit operator Vector2(JSONVector vec)
+        {
+            if (vec == null) return default(Vector2);
+            return new Vector2(vec.X, vec.Y);
+        }
 
-            public static implicit operator JSONVector(Vector2 vec)
-            {
-                return new JSONVector { X = vec.X, Y = vec.Y };
-            }
-        
+        public static implicit operator JSONVector(Vector2 vec)
+        {
+            return new JSONVector { X = vec.X, Y = vec.Y };
+        }
+
     }
 }

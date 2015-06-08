@@ -1,1 +1,26 @@
-﻿
+﻿{
+  "components": [
+    {
+      "name": "base",
+      "frame": "baseblock",
+      "size": { "x": 4, "y": 4 }
+    },
+    {
+      "drawLayer": 5,
+      "frame": "dishandrevolver",
+      "name": "dish",
+      "offset": { "x": -1.5, "y": 0.75 },
+      "rotationOrigin": { "x": 3, "y": 1 },
+      "rotationVelocity": 3,
+      "size": { "x": 6, "y": 3.5 }
+    }
+  ],
+  "name": "Large Rotating Satellite Dish",
+  "reflectionName": "SatelliteDishLarge",
+  "size": { "x": 4, "y": 4 },
+  "sheet": {
+    "file": "assets/mapobjects/moving/satellite_dish.png",
+    "fromOtherMod": true,
+    "modName": "engine_base"
+  }
+}

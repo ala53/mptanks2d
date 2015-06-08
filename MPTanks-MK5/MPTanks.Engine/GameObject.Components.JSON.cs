@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace MPTanks.Engine.Serialization
         public string Name { get; set; }
         public string ReflectionName { get; set; }
         public float Lifespan { get; set; }
+        [JsonProperty("size")]
+        public JSONVector DefaultSize { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
         public GameObjectComponentJSON[] Components { get; set; }
         public GameObjectSheetSpecifierJSON[] OtherAssets { get; set; }
@@ -20,29 +23,54 @@ namespace MPTanks.Engine.Serialization
 
         public static GameObjectComponentsJSON Create(string data)
         {
+            //Deserialize
             var me = JsonConvert.DeserializeObject<GameObjectComponentsJSON>(data);
+            //Make sure there are no null references
+            if (me.Components == null) me.Components = new GameObjectComponentJSON[0];
+            if (me.Sheet == null)
+                me.Sheet = new GameObjectSheetSpecifierJSON
+                {
+                    ModName = "engine_base",
+                    File = "assets/null.png",
+                    FromOtherMod = true
+                };
+            if (me.OtherAssets == null) me.OtherAssets = new GameObjectSheetSpecifierJSON[0];
+            if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
+            //Go through the components
             foreach (var cmp in me.Components)
             {
                 if (cmp.Name == null)
-                {
                     throw new Exception("Component missing name");
-                }
+                //Handle unset colors
+                if (cmp.Mask == default(Color))
+                    cmp.Mask = Color.White;
+                //Handle scale being unset
+                if (cmp.Scale == null)
+                    cmp.Scale = Vector2.One;
+                //And again, null ref protection
                 if (cmp.Sheet == null)
                     cmp.Sheet = me.Sheet;
+                if (cmp.Sheet.Reference != null)
+                    cmp.Sheet = me.FindSheet(cmp.Sheet.Reference);
+
             }
             foreach (var cmp in me.Emitters)
             {
+                //Handle namelessness
                 if (cmp.Name == null)
                     throw new Exception("Emitter missing name");
+                //Deal with null refs in the sub-sprites
                 foreach (var sprite in cmp.Sprites)
                 {
                     if (sprite.Sheet == null)
                         sprite.Sheet = me.Sheet;
+                    if (sprite.Sheet.Reference != null)
+                        sprite.Sheet = me.FindSheet(sprite.Sheet.Reference);
                 }
-
+                //Handle activation triggers
                 if (cmp.ActivatesOn == null)
                     cmp.ActivatesOn = "create";
-
+                //And actually deal with the activation triggers
                 if (cmp.ActivatesOn == "create") cmp.SpawnOnCreate = true;
                 else if (cmp.ActivatesOn == "destroy") cmp.SpawnOnDestroy = true;
                 else if (cmp.ActivatesOn == "destroy_ended") cmp.SpawnOnDestroyEnded = true;
@@ -60,7 +88,24 @@ namespace MPTanks.Engine.Serialization
 
             return me;
         }
+
+        private GameObjectSheetSpecifierJSON FindSheet(string name)
+        {
+            foreach (var sheet in OtherAssets)
+                if (sheet.Key != null && name == sheet.Key)
+                    return sheet;
+            foreach (var em in Emitters)
+                foreach (var sp in em.Sprites)
+                    if (sp.Sheet.Key != null && name == sp.Sheet.Key)
+                        return sp.Sheet;
+            foreach (var cmp in Components)
+                if (cmp.Sheet.Key != null && name == cmp.Sheet.Key)
+                    return cmp.Sheet;
+
+            return Sheet;
+        }
     }
+
     class GameObjectComponentJSON
     {
         public int DrawLayer { get; set; }
@@ -68,11 +113,12 @@ namespace MPTanks.Engine.Serialization
         public string Name { get; set; }
         public JSONVector Offset { get; set; }
         public float Rotation { get; set; }
+        public float RotationVelocity { get; set; }
         public JSONVector RotationOrigin { get; set; }
-        public float Scale { get; set; }
+        public JSONVector Scale { get; set; }
         public JSONVector Size { get; set; }
+        [DefaultValue(true)]
         public bool Visible { get; set; }
-
         public string Frame { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
     }
@@ -80,7 +126,9 @@ namespace MPTanks.Engine.Serialization
     {
         public bool FromOtherMod { get; set; }
         public string Key { get; set; }
-        public string AssetName { get; set; }
+        [JsonProperty("ref")]
+        public string Reference { get; set; }
+        public string File { get; set; }
         public string ModName { get; set; }
     }
 

@@ -15,7 +15,8 @@ namespace MPTanks.Engine.Rendering
         /// </summary>
         public Vector2 RotationOrigin { get; set; } = Vector2.Zero;
         public float Rotation { get; set; } = 0;
-        public float Scale { get; set; } = 1;
+        public float RotationVelocity { get; set; } = 0;
+        public Vector2 Scale { get; set; } = new Vector2();
         public Color Mask { get; set; } = Color.White;
         public Vector2 Size { get; set; }
         public bool Visible { get; set; } = true;

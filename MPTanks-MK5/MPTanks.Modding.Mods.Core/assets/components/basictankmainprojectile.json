@@ -8,9 +8,7 @@
       "offset": { "x": -0.125, "y": -0.125 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.25, "y": 0.25 },
-      "scale": 1,
-      "size": { "x": 0.5, "y": 0.5 },
-      "visible": true
+      "size": { "x": 0.5, "y": 0.5 }
     }
   ],
   "emitters": [
@@ -51,67 +49,67 @@
       "sprites": [
         {
           "frame": "puff_0",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_1",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_2",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_3",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_4",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_5",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_6",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_7",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_8",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_9",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_10",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_11",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_12",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_13",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_14",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         },
         {
           "frame": "puff_15",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "sheet": { "ref": "smoke_puffs" }
         }
       ],
       "velocityAndAccelerationTrackRotation": true,
@@ -119,103 +117,44 @@
     },
     {
       "activatesOn": "destroy",
-      "lifespan": 500,
-      "colorChangedByObjectColorMask": true,
+      "colorChangedByObjectColorMask": false,
       "emissionArea": {
-        "h": 0,
+        "h": 0.3,
         "tracksObject": true,
-        "w": 0,
-        "x": 0,
-        "y": 0
+        "w": 0.3,
+        "x": -0.15,
+        "y": -0.15
       },
+      "keepAliveAfterDeath": true,
+      "lifespan": 200,
       "maxAcceleration": { "x": 0, "y": 0 },
-      "maxColorMask": { "r": 255, "g": 200, "b": 255, "a": 127 },
-      "maxFadeInTime": 50,
-      "maxFadeOutTime": 100,
-      "maxLifeSpan": 80,
-      "maxParticlesPerSecond": 280,
-      "maxRotation": 0.15,
-      "maxRotationVelocity": 0.2,
-      "maxSize": { "x": 0.6, "y": 0.6 },
-      "maxVelocity": { "x": 0, "y": 0 },
+      "maxColorMask": { "r": 205, "g": 245, "b": 225, "a": 255 },
+      "maxFadeInTime": 40,
+      "maxFadeOutTime": 75,
+      "maxLifeSpan": 350,
+      "maxParticlesPerSecond": 150,
+      "maxRotation": 6.28,
+      "maxRotationVelocity": 0.5,
+      "maxSize": { "x": 0.3, "y": 0.3 },
+      "maxVelocity": { "x": 4, "y": 4 },
       "minAcceleration": { "x": 0, "y": 0 },
-      "minColorMask": { "r": 235, "g": 185, "b": 235, "a": 127 },
-      "minFadeInTime": 25,
-      "minFadeOutTime": 50,
-      "minLifeSpan": 50,
-      "minParticlesPerSecond": 220,
-      "minRotation": -0.2,
-      "minRotationVelocity": -0.15,
+      "minColorMask": { "r": 225, "g": 255, "b": 255, "a": 127 },
+      "minFadeInTime": 20,
+      "minFadeOutTime": 30,
+      "minLifeSpan": 150,
+      "minParticlesPerSecond": 75,
+      "minRotation": 0,
+      "minRotationVelocity": -0.5,
       "minSize": { "x": 0.2, "y": 0.2 },
-      "minVelocity": { "x": 0, "y": 0 },
-      "name": "spark_emitter",
+      "minVelocity": { "x": 0.25, "y": 0.25 },
+      "name": "explosion_spark_emitter",
       "renderBelowObjects": true,
-      "shrinkInsteadOfFade": true,
-      "sizeScalingUniform": true,
+      "shrinkInsteadOfFade": false,
+      "sizeScalingUniform": false,
       "sprites": [
         {
-          "frame": "puff_0",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_1",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_2",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_3",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_4",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_5",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_6",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_7",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_8",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_9",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_10",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_11",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_12",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_13",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_14",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
-        },
-        {
-          "frame": "puff_15",
-          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+          "frame": "gunsparks",
+          "sheet": { "ref": "basic_tank_sprites" }
         }
       ],
       "velocityAndAccelerationTrackRotation": true,
@@ -223,19 +162,26 @@
     }
   ],
   "lifespan": 3000,
+  "size": { "x": 0.5, "y": 0.5 },
   "name": "Basic Tank Main Projectile",
-  "reflectionName": "BasicTankMPMainProjectile",
-  "sheet": {
-    "file": "assets/animations/basictank_projectile.png",
-    "fromOtherMod": true,
-    "modName": "engine_base"
-  },
   "otherAssets": [
     {
       "file": "assets/tanks/basictank2d.png",
       "fromOtherMod": true,
       "key": "basic_tank_sprites",
       "modName": "engine_base"
+    },
+    {
+      "file": "assets/other/smokepuff.png",
+      "fromOtherMod": true,
+      "key": "smoke_puffs",
+      "modName": "engine_base"
     }
-  ]
+  ],
+  "reflectionName": "BasicTankMPMainProjectile",
+  "sheet": {
+    "file": "assets/animations/basictank_projectile.png",
+    "fromOtherMod": true,
+    "modName": "engine_base"
+  }
 }

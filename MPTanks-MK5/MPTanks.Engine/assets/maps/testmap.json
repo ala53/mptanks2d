@@ -19,38 +19,38 @@
     {
       "typeName": "SatelliteDishLarge",
       "rotation": 0,
-      "position": "5, 10",
-      "size": "6, 6",
+      "position": { "x": 5, "y": 4 },
+      "size": { "x": 6, "y": 6 },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
     },
     {
-      "typeName": "LargeHouseMultiLevel",
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
+      "position": { "x": 50, "y": 30 },
       "rotation": 0.712,
-      "position": "50, 30",
-      "size": "6, 6",
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+      "size": { "x": 6, "y": 6 },
+      "typeName": "LargeHouseMultiLevel"
     }
   ],
-  "size": "5000, 5000",
+  "size": { "x": 5000, "y": 5000 },
   "spawns": [
     {
       "teamIndex": 0,
       "spawnPositions": [
-        "11, 50",
-        "15, 25",
-        "1, 0",
-        "21, 33",
-        "31, 5"
+        { "x": 11, "y": 50 },
+        { "x": 15, "y": 25 },
+        { "x": 1, "y": 0 },
+        { "x": 21, "y": 33 },
+        { "x": 31, "y": 5 }
       ]
     },
     {
       "teamIndex": 1,
       "spawnPositions": [
-        "35, 50",
-        "40, 25",
-        "55, 0",
-        "55, 33",
-        "55, 10"
+        { "x": 35, "y": 50 },
+        { "x": 40, "y": 25 },
+        { "x": 55, "y": 0 },
+        { "x": 55, "y": 33 },
+        { "x": 55, "y": 10 }
       ]
     }
   ],

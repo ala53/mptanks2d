@@ -11,7 +11,7 @@ using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
-    [Tank("BasicTankMP", "assets/components/basictank.json", 
+    [Tank("BasicTankMP", "assets/components/basictank.json",
         DisplayName = "Basic Tank", Description = "Basic Tank",
         RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
@@ -33,7 +33,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         }
 
         private bool canFirePrimary = true;
-        public override void Update(GameTime time)
+        protected override void UpdateInternal(GameTime time)
         {
             //handle turret rotation
             Components["turret"].Rotation = InputState.LookDirection - Rotation;
@@ -46,7 +46,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             if (InputState.FirePressed && InputState.WeaponNumber == 1)
                 FireSecondary();
 
-            base.Update(time);
+            base.UpdateInternal(time);
         }
 
         private void FirePrimary()
@@ -59,7 +59,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 //Spawn a projectile
                 var projectile = MPTanks.Engine.Projectiles.Projectile
                     .ReflectiveInitialize<Projectiles.BasicTank.MainGunProjectile>(
-                    Projectiles.BasicTank.MainGunProjectile.ReflectionTypeName, this, Game,
+                    "BasicTankMPMainProjectile", this, Game,
                     false, TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
 
                 //Fire it in the barrel direction
