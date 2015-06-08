@@ -15,6 +15,7 @@
   ],
   "emitters": [
     {
+      "activatesOn": "create",
       "colorChangedByObjectColorMask": true,
       "emissionArea": {
         "h": 0,
@@ -115,8 +116,113 @@
       ],
       "velocityAndAccelerationTrackRotation": true,
       "velocityRelativeToObject": false
+    },
+    {
+      "activatesOn": "destroy",
+      "lifespan": 500,
+      "colorChangedByObjectColorMask": true,
+      "emissionArea": {
+        "h": 0,
+        "tracksObject": true,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "maxAcceleration": { "x": 0, "y": 0 },
+      "maxColorMask": { "r": 255, "g": 200, "b": 255, "a": 127 },
+      "maxFadeInTime": 50,
+      "maxFadeOutTime": 100,
+      "maxLifeSpan": 80,
+      "maxParticlesPerSecond": 280,
+      "maxRotation": 0.15,
+      "maxRotationVelocity": 0.2,
+      "maxSize": { "x": 0.6, "y": 0.6 },
+      "maxVelocity": { "x": 0, "y": 0 },
+      "minAcceleration": { "x": 0, "y": 0 },
+      "minColorMask": { "r": 235, "g": 185, "b": 235, "a": 127 },
+      "minFadeInTime": 25,
+      "minFadeOutTime": 50,
+      "minLifeSpan": 50,
+      "minParticlesPerSecond": 220,
+      "minRotation": -0.2,
+      "minRotationVelocity": -0.15,
+      "minSize": { "x": 0.2, "y": 0.2 },
+      "minVelocity": { "x": 0, "y": 0 },
+      "name": "spark_emitter",
+      "renderBelowObjects": true,
+      "shrinkInsteadOfFade": true,
+      "sizeScalingUniform": true,
+      "sprites": [
+        {
+          "frame": "puff_0",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_1",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_2",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_3",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_4",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_5",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_6",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_7",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_8",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_9",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_10",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_11",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_12",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_13",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_14",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        },
+        {
+          "frame": "puff_15",
+          "sheet": { "file": "assets/other/smokepuff.png", "fromOtherMod": true, "modName": "engine_base" }
+        }
+      ],
+      "velocityAndAccelerationTrackRotation": true,
+      "velocityRelativeToObject": false
     }
   ],
+  "lifespan": 3000,
   "name": "Basic Tank Main Projectile",
   "reflectionName": "BasicTankMPMainProjectile",
   "sheet": {

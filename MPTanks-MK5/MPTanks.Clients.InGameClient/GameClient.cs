@@ -17,6 +17,7 @@ using MPTanks.Rendering.UI;
 using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Media;
+using MPTanks.Engine.Core;
 #endregion
 
 namespace MPTanks.Clients.GameClient

@@ -8,5 +8,6 @@ namespace MPTanks.Networking.Common.Game
 {
     public class GameState
     {
+
     }
 }

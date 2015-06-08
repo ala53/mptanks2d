@@ -459,7 +459,7 @@ namespace MPTanks.Engine.Rendering.Particles
                     var particle = new Particle()
                     {
                         Acceleration = acceleration,
-                        AssetName = asset.SpriteName,
+                        AssetName = asset.FrameName,
                         SheetName = asset.SheetName,
                         ColorMask = GetRandomBetween(MinColorMask, MaxColorMask),
                         FadeInMs = fadeInTime,

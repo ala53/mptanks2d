@@ -55,6 +55,9 @@
     <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
+    <None Include="assets\components\basictankmainprojectile.json" />
+    <None Include="assets\components\largehouse.json" />
+    <None Include="assets\components\satellitedish.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">

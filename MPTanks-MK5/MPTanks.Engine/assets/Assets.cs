@@ -35,14 +35,14 @@ namespace MPTanks.Engine.Assets
 
     public struct SpriteInfo
     {
-        private readonly string _spriteName;
+        private readonly string _frameName;
         private readonly string _sheetName;
 
-        public string SpriteName
+        public string FrameName
         {
             get
             {
-                return _spriteName;
+                return _frameName;
             }
         }
 
@@ -56,7 +56,7 @@ namespace MPTanks.Engine.Assets
 
         public SpriteInfo(string spriteName, string sheetName)
         {
-            this._spriteName = spriteName;
+            this._frameName = spriteName;
             _sheetName = sheetName;
         }
 

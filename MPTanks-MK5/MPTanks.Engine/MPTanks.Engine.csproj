@@ -61,8 +61,7 @@
     <Compile Include="assets\AssetHelper.cs" />
     <Compile Include="assets\AssetManager.cs" />
     <Compile Include="assets\Assets.cs" />
-    <Compile Include="assets\MapObjects.cs" />
-    <Compile Include="assets\Maps.cs" />
+    <Compile Include="assets\JSONVector.cs" />
     <Compile Include="ConstructorHelper.cs" />
     <Compile Include="Core\Events\Types\GameCore\EndedEventArgs.cs" />
     <Compile Include="Core\Events\Types\GameCore\TickEventArgs.cs" />
@@ -80,15 +79,13 @@
     <Compile Include="Gamemodes\DefaultGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
+    <Compile Include="GameObject.Components.JSON.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GamePlayer.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapDeserializationClasses.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />
-    <Compile Include="Powerups\HealthPowerup.cs" />
-    <Compile Include="Powerups\Powerup.cs" />
-    <Compile Include="Powerups\PowerupManager.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Animations\Animation.cs" />

@@ -59,12 +59,6 @@
     }
   ],
   "name": "Basic Tank",
-  "reflectionName": "BasicTankMP",
-  "sheet": {
-    "file": "assets/tanks/basictank2d.png",
-    "fromOtherMod": true,
-    "modName": "engine_base"
-  },
   "otherAssets": [
     {
       "file": "assets/animations/explosion.png",
@@ -84,5 +78,11 @@
       "key": "explosion3",
       "modName": "engine_base"
     }
-  ]
+  ],
+  "reflectionName": "BasicTankMP",
+  "sheet": {
+    "file": "assets/tanks/basictank2d.png",
+    "fromOtherMod": true,
+    "modName": "engine_base"
+  }
 }

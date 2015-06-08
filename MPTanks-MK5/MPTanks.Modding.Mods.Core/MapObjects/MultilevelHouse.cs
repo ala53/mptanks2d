@@ -52,9 +52,5 @@ namespace MPTanks.Modding.Mods.Core.MapObjects
                 Rotation = 0.24f
             });
         }
-
-        public override void Update(GameTime time)
-        {
-        }
     }
 }

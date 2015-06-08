@@ -12,6 +12,7 @@ namespace MPTanks.Engine.Serialization
     {
         public string Name { get; set; }
         public string ReflectionName { get; set; }
+        public float Lifespan { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
         public GameObjectComponentJSON[] Components { get; set; }
         public GameObjectSheetSpecifierJSON[] OtherAssets { get; set; }
@@ -38,6 +39,23 @@ namespace MPTanks.Engine.Serialization
                     if (sprite.Sheet == null)
                         sprite.Sheet = me.Sheet;
                 }
+
+                if (cmp.ActivatesOn == null)
+                    cmp.ActivatesOn = "create";
+
+                if (cmp.ActivatesOn == "create") cmp.SpawnOnCreate = true;
+                else if (cmp.ActivatesOn == "destroy") cmp.SpawnOnDestroy = true;
+                else if (cmp.ActivatesOn == "destroy_ended") cmp.SpawnOnDestroyEnded = true;
+                else if (cmp.ActivatesOn.StartsWith("t=") && cmp.ActivatesOn.Length > 2)
+                {
+                    float parse = 0;
+                    if (float.TryParse(cmp.ActivatesOn.Substring(2), out parse))
+                    {
+                        cmp.SpawnAtTime = true;
+                        cmp.TimeMsToSpawnAt = parse;
+                    }
+                }
+                else cmp.SpawnOnCreate = true;
             }
 
             return me;
@@ -65,14 +83,31 @@ namespace MPTanks.Engine.Serialization
         public string AssetName { get; set; }
         public string ModName { get; set; }
     }
-    
+
     class GameObjectEmitterJSON
     {
         public string Name { get; set; }
-        public bool Paused { get; set; }
+        /// <summary>
+        /// Can be "create", "destroy", "destroy_ended" "t=[milliseconds]"
+        /// </summary>
+        public string ActivatesOn { get; set; }
+        public bool KeepAliveAfterDeath { get; set; }
         public bool ColorChangedByObjectMask { get; set; }
 
         public EmissionAreaJSON EmissionArea { get; set; }
+
+        [JsonIgnore]
+        public bool SpawnOnCreate { get; set; }
+        [JsonIgnore]
+        public bool SpawnOnDestroyEnded { get; set; }
+        [JsonIgnore]
+        public bool SpawnOnDestroy { get; set; }
+        [JsonIgnore]
+        public bool SpawnAtTime { get; set; }
+        [JsonIgnore]
+        public float TimeMsToSpawnAt { get; set; }
+
+        public float Lifespan { get; set; }
 
         public JSONVector MaxAcceleration { get; set; }
         public Color MaxColorMask { get; set; }

@@ -32,10 +32,6 @@ namespace MPTanks.Engine
         /// </summary>
         public Rendering.Particles.ParticleEngine ParticleEngine { get; private set; }
         /// <summary>
-        /// The manager which spawns in game powerups over time
-        /// </summary>
-        public Powerups.PowerupManager PowerupManager { get; private set; }
-        /// <summary>
         /// The timer manager which lets game objects create timers for their own use
         /// </summary>
         public Timer.Factory TimerFactory { get; private set; }

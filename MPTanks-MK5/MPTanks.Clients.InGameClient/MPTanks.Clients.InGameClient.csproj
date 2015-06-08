@@ -75,7 +75,6 @@
     <Compile Include="Rendering\FXAA.cs" />
     <Compile Include="Rendering\GameWorldRenderer.cs" />
     <Compile Include="Rendering\LoadingScreen.cs" />
-    <Compile Include="Rendering\RectangleF.cs" />
     <Compile Include="Rendering\Renderer.cs" />
     <Compile Include="Rendering\Sprites\Sprite.cs" />
     <Compile Include="Rendering\Sprites\SpriteSheet.cs" />
