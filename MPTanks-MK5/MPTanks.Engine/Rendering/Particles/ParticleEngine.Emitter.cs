@@ -343,6 +343,9 @@ namespace MPTanks.Engine.Rendering.Particles
 
             public Vector2 EmitterVelocity { get; set; }
 
+
+            public bool Paused { get; set; }
+
             private float totalTimeAlive = 0;
             private int totalParticlesCreated = 0;
 
@@ -392,6 +395,8 @@ namespace MPTanks.Engine.Rendering.Particles
 
             public void Update(GameTime gameTime)
             {
+                if (Paused) return;
+
                 //Update the total time
                 totalTimeAlive += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 //Handle being dead

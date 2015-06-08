@@ -14,7 +14,7 @@ namespace MPTanks.Modding
         private static Dictionary<string, Module> loadedModFiles = new Dictionary<string, Module>();
         public static IReadOnlyDictionary<string, Module> LoadedMods { get { return loadedModFiles; } }
 
-        public static Module LoadMod(string modFile, string dllUnpackDir, string assetUnpackDir, string soundUnpackDir, out string errors, bool verifySafe = true)
+        public static Module LoadMod(string modFile, string dllUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true)
         {
             errors = "";
             if (loadedModFiles.ContainsKey(modFile))
@@ -32,7 +32,7 @@ namespace MPTanks.Modding
                 //Resolve the dependencies and get all of their dlls
                 foreach (var dep in header.Dependencies)
                     deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
-                        dllUnpackDir, assetUnpackDir, soundUnpackDir, header.Name));
+                        dllUnpackDir, assetUnpackDir, header.Name));
                 //Remove duplicates
                 deps = deps.Distinct().ToList();
                 //Then, unpack the assemblies to the correct directory
@@ -62,7 +62,7 @@ namespace MPTanks.Modding
                 }
                 //And finally, unpack assets
                 ModUnpacker.UnpackImages(modFile, assetUnpackDir);
-                ModUnpacker.UnpackSounds(modFile, soundUnpackDir);
+                ModUnpacker.UnpackSounds(modFile, assetUnpackDir);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
         }
             catch (Exception ex)

@@ -9,25 +9,25 @@ namespace MPTanks.Engine.Rendering
 {
     public class RenderableComponent
     {
-        public Vector2 Offset = Vector2.Zero;
+        public Vector2 Offset { get; set; } = Vector2.Zero;
         /// <summary>
         /// The origin of the rotation, relative to the offset
         /// </summary>
-        public Vector2 RotationOrigin = Vector2.Zero;
-        public float Rotation = 0;
-        public float Scale = 1;
-        public Color Mask = Color.White;
-        public Vector2 Size;
-        public bool Visible = true;
+        public Vector2 RotationOrigin { get; set; } = Vector2.Zero;
+        public float Rotation { get; set; } = 0;
+        public float Scale { get; set; } = 1;
+        public Color Mask { get; set; } = Color.White;
+        public Vector2 Size { get; set; }
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// The layer that the object draws on. Higher layers are drawn last while lower ones are drawn first.
         /// So, 0 is below 1 which is below 2 which...etc.
         /// </summary>
-        public int DrawLayer;
+        public int DrawLayer { get; set; }
 
-        //And for rendering, we let the engine know what we want to show
-        public string SpriteSheetName;
-        public string AssetName;
+        //And for rendering, we let the renderer know what we want to show
+        public string SheetName { get; set; }
+        public string FrameName { get; set; }
     }
 }

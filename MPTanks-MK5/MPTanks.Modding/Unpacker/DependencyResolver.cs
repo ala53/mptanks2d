@@ -22,8 +22,8 @@ namespace MPTanks.Modding.Unpacker
         /// <param name="soundDir"></param>
         /// <param name="caller"></param>
         /// <returns></returns>
-        public static IEnumerable<string> LoadDependency(string name, int verMajor, int verMinor, bool canBeNewer,
-            string dllDir, string imageDir, string soundDir, string caller)
+        public static IEnumerable<string> LoadDependency(string name, int verMajor, int verMinor,
+            string dllDir, string assetDir, string caller)
         {
             List<string> _dependencyDlls = new List<string>();
 
@@ -45,7 +45,7 @@ namespace MPTanks.Modding.Unpacker
 
             //Resolve and load the dependency
             string errors;
-            var module = ModLoader.LoadMod(dbItem.File, dllDir, imageDir, soundDir, out errors);
+            var module = ModLoader.LoadMod(dbItem.File, dllDir, assetDir, out errors);
 
             if (errors != null)
                 throw new Exception(errors);

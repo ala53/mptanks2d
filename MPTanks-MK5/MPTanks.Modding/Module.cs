@@ -87,22 +87,6 @@ namespace MPTanks.Modding
         /// The minimum number of players required to start a game.
         /// </summary>
         public int MinPlayersCount { get; set; }
-        /// <summary>
-        /// Whether to whitelist or blacklist allowed tank types.
-        /// </summary>
-        public bool WhitelistPlayerTankTypes { get; set; }
-        /// <summary>
-        /// Whether to allow supertanks
-        /// </summary>
-        public bool AllowSuperTanks { get; set; }
-        /// <summary>
-        /// If whitelisted: the allowed player tank types (reflection names)
-        /// </summary>
-        public IEnumerable<string> AllowedPlayerTankTypes { get; set; }
-        /// <summary>
-        /// If blacklisted: the disallowed player tank types (reflection names)
-        /// </summary>
-        public IEnumerable<string> DisallowedPlayerTankTypes { get; set; }
 
         public GamemodeType(Type t)
         {
@@ -115,10 +99,6 @@ namespace MPTanks.Modding
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
             MinPlayersCount = attrib.MinPlayersCount;
-            WhitelistPlayerTankTypes = attrib.WhitelistPlayerTankTypes;
-            AllowSuperTanks = attrib.AllowSuperTanks;
-            AllowedPlayerTankTypes = attrib.AllowedPlayerTankTypes;
-            DisallowedPlayerTankTypes = attrib.DisallowedPlayerTankTypes;
         }
         internal static bool IsGamemodeType(Type t)
         {

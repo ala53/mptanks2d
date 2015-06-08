@@ -1,10 +1,16 @@
 ﻿using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
+using MPTanks.Engine.Core;
 using MPTanks.Engine.Rendering;
+using MPTanks.Engine.Rendering.Particles;
+using MPTanks.Engine.Serialization;
 using MPTanks.Modding;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,20 +88,42 @@ namespace MPTanks.Engine
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }
         public bool IsDestructionCompleted { get; protected set; }
-        protected Dictionary<string, Rendering.RenderableComponent> _components;
-        public virtual IReadOnlyDictionary<string, Rendering.RenderableComponent>
+        protected Dictionary<string, RenderableComponent> _components;
+        public IReadOnlyDictionary<string, RenderableComponent>
             Components
         {
             get
             {
                 if (_components == null)
                 {
-                    _components = new Dictionary<string, Rendering.RenderableComponent>();
+                    _components = new Dictionary<string, RenderableComponent>();
                     //This is the first access so we call the component constructor
-                    AddComponents(_components);
+                    LoadBaseComponents();
                 }
 
                 return _components;
+            }
+        }
+        protected Dictionary<string, string> _assets;
+        public IReadOnlyDictionary<string, string> Assets
+        {
+            get
+            {
+                if (_assets == null)
+                    LoadBaseComponents();
+                return _assets;
+            }
+        }
+        private List<Tuple<ParticleEngine.Emitter, GameObjectEmitterJSON>> _emittersWithData =
+            new List<Tuple<ParticleEngine.Emitter, GameObjectEmitterJSON>>();
+        protected Dictionary<string, ParticleEngine.Emitter> _emitters;
+        public IReadOnlyDictionary<string, ParticleEngine.Emitter> Emitters
+        {
+            get
+            {
+                if (_emitters == null)
+                    LoadBaseComponents();
+                return _emitters;
             }
         }
         #endregion
@@ -321,11 +349,52 @@ namespace MPTanks.Engine
         /// <param name="assetName"></param>
         protected void LoadComponentsFromFile(string assetName)
         {
+            Game.Logger.Log("Loading Components: " + assetName);
+            var deserialized = GameObjectComponentsJSON.Create(File.ReadAllText(assetName));
 
+            Game.Logger.Log("Begin load: " + deserialized.Name);
+
+            if (deserialized.ReflectionName != ReflectionName)
+                Game.Logger.Warning(
+                    $"GameObject[{ObjectId}].LoadComponentsFromFile():" +
+                    "{deserialized.ReflectionName} does not match {ReflectionName}");
+
+            foreach (var cmp in deserialized.Components)
+            {
+                string sheet;
+                if (cmp.Sheet.FromOtherMod)
+                    sheet = ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.AssetName);
+                else
+                    sheet = ResolveAsset(cmp.Sheet.AssetName);
+
+                _components.Add(cmp.Name, new RenderableComponent
+                {
+                    DrawLayer = cmp.DrawLayer,
+                    FrameName = cmp.Frame,
+                    Mask = (cmp.Mask == default(Color)) ? Color.White : cmp.Mask,
+                    Offset = cmp.Offset,
+                    Rotation = cmp.Rotation,
+                    RotationOrigin = cmp.RotationOrigin,
+                    Scale = cmp.Scale,
+                    SheetName = sheet,
+                    Size = cmp.Size,
+                    Visible = cmp.Visible
+                });
+            }
+            foreach (var asset in deserialized.OtherAssets)
+            {
+                if (asset.FromOtherMod)
+                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.AssetName));
+                else
+                    _assets.Add(asset.Key, ResolveAsset(asset.AssetName));
+            }
+
+            CreateEmitters(deserialized.Emitters);
         }
 
         /// <summary>
-        /// Loads the components specified in the file specified in the attribute for this object's type
+        /// Loads the components specified in the file specified in the attribute for this object's type,
+        /// as well as requesting that the user provide theirs
         /// </summary>
         private void LoadBaseComponents()
         {
@@ -333,9 +402,98 @@ namespace MPTanks.Engine
                   .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
                   .ComponentFile;
 
+            _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
+            _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
+
             LoadComponentsFromFile(ResolveAsset(componentFile));
+            AddComponents(_components);
         }
         #endregion
+        #region Emitters 
+        private void CreateEmitters(GameObjectEmitterJSON[] emitters)
+        {
+            foreach (var emitter in emitters)
+            {
+                var infos = new List<SpriteInfo>();
+                foreach (var sprite in emitter.Sprites)
+                {
+                    if (sprite.Frame.StartsWith("[animation]"))
+                    {
+                        if (sprite.Sheet.FromOtherMod)
+                            infos.Add(
+                                new SpriteAnimationInfo(sprite.Frame,
+                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.AssetName)));
+                        else
+                            infos.Add(
+                                new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.AssetName)));
+                    }
+                    else
+                    {
+                        if (sprite.Sheet.FromOtherMod)
+                            infos.Add(new SpriteInfo(sprite.Frame,
+                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.AssetName)));
+                        else
+                            infos.Add(new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.AssetName)));
+                    }
+                }
+
+                var em = Game.ParticleEngine.CreateEmitter(infos.ToArray(),
+                    emitter.MinFadeInTime, emitter.MaxFadeInTime,
+                    emitter.MinFadeOutTime, emitter.MaxFadeOutTime,
+                    emitter.MinLifeSpan, emitter.MaxFadeOutTime,
+                    new RectangleF(
+                    emitter.EmissionArea.X, emitter.EmissionArea.Y,
+                    emitter.EmissionArea.W, emitter.EmissionArea.H),
+                    emitter.MinVelocity, emitter.MaxVelocity,
+                    emitter.MinAcceleration, emitter.MaxAcceleration,
+                    emitter.VelocityAndAccelerationTrackRotation,
+                    emitter.MinSize, emitter.MaxSize,
+                    emitter.MinColorMask, emitter.MaxColorMask,
+                    emitter.MinRotation, emitter.MaxRotation,
+                    emitter.MinRotationVelocity, emitter.MaxRotationVelocity,
+                    emitter.MinParticlesPerSecond, emitter.MaxParticlesPerSecond,
+                    float.PositiveInfinity,
+                    emitter.ShrinkInsteadOfFade,
+                    emitter.SizeScalingUniform,
+                    emitter.RenderBelowObjects,
+                    Vector2.Zero);
+
+                _emitters.Add(emitter.Name, em);
+                _emittersWithData.Add(Tuple.Create(em, emitter));
+            }
+        }
+
+        private void UpdateEmitters(GameTime gameTime)
+        {
+            foreach (var em in _emittersWithData)
+            {
+                if (em.Item2.ColorChangedByObjectMask)
+                {
+                    em.Item1.MinColorMask = new Color(em.Item2.MinColorMask.ToVector4() * ColorMask.ToVector4());
+                    em.Item1.MaxColorMask = new Color(em.Item2.MaxColorMask.ToVector4() * ColorMask.ToVector4());
+                }
+                if (em.Item2.EmissionArea.TracksObject)
+                {
+                    var emissionAreaNew = new RectangleF(
+                        em.Item2.EmissionArea.X + Position.X,
+                        em.Item2.EmissionArea.Y + Position.Y,
+                        em.Item2.EmissionArea.W,
+                        em.Item2.EmissionArea.H);
+
+                    em.Item1.EmissionArea = emissionAreaNew;
+                }
+            }
+        }
+
+        private void DestroyEmitters()
+        {
+            foreach (var emitter in Emitters)
+                emitter.Value.Kill();
+        }
+        
+        #endregion
+
         protected virtual void CreateInternal()
         {
 
@@ -385,8 +543,19 @@ namespace MPTanks.Engine
             return transformed;
         }
 
-        abstract public void Update(GameTime time);
-        public virtual void UpdatePostPhysics(GameTime gameTime)
+        public void Update(GameTime time)
+        {
+            UpdateEmitters(time);
+            UpdateInternal(time);
+        }
+
+        protected abstract void UpdateInternal(GameTime gameTime);
+        public void UpdatePostPhysics(GameTime gameTime)
+        {
+            UpdatePostPhysicsInternal(gameTime);
+        }
+
+        protected virtual void UpdatePostPhysicsInternal(GameTime gameTime)
         {
 
         }
@@ -467,7 +636,7 @@ namespace MPTanks.Engine
 
         protected void RaiseStateChangeEvent(byte[] newStateData)
         {
-            if (OnStateChanged == null || !Game.Authoritative || newStateData == null || newStateData.Length == 0)
+            if (!Game.Authoritative || newStateData == null || newStateData.Length == 0)
                 return;
 
             _stateArgs.Object = this;
@@ -475,7 +644,7 @@ namespace MPTanks.Engine
             OnStateChanged(this, _stateArgs);
         }
 
-        const int JSONSerializedMagicNumber = unchecked((int)0xFA571337); //FAST LEET
+        const long JSONSerializedMagicNumber = unchecked(0x1337FCEDBCCB3010L); 
         byte[] JSONSerializedMagicBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
 
         /// <summary>
@@ -499,7 +668,7 @@ namespace MPTanks.Engine
 
         public void ReceiveStateData(byte[] stateData)
         {
-            if (BitConverter.ToInt32(stateData,0) == JSONSerializedMagicNumber)
+            if (BitConverter.ToInt64(stateData, 0) == JSONSerializedMagicNumber)
             {
                 //Try to deserialize
                 var obj = DeserializeStateChangeObject(Encoding.UTF8.GetString(stateData, 4, stateData.Length - 4));
@@ -513,11 +682,11 @@ namespace MPTanks.Engine
 
         protected object DeserializeStateChangeObject(string obj)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject(obj);
+            return JsonConvert.DeserializeObject(obj);
         }
         protected T DeserializeStateChangeObject<T>(string obj)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(obj);
+            return JsonConvert.DeserializeObject<T>(obj);
         }
 
         protected virtual void ReceiveStateDataInternal(byte[] stateData)

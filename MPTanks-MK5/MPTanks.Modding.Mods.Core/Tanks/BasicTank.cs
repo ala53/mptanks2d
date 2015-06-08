@@ -32,50 +32,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             Size = new Vector2(3, 5);
         }
 
-        protected override void AddComponents()
-        {
-            Components.Add("base", new Engine.Rendering.RenderableComponent()
-            {
-                Size = new Vector2(3, 5),
-                Mask = new Color(Color.White, 200)
-            });
-            Components.Add("tankFront", new Engine.Rendering.RenderableComponent()
-            {
-                Size = new Vector2(3f, 0.25f),
-                Mask = new Color(Color.White, 200),
-                Offset = new Vector2(0, 0),
-                AssetName = Assets.BasicTank.GrillMask.SpriteName,
-                SpriteSheetName = Assets.BasicTank.GrillMask.SheetName,
-                Rotation = 0
-            });
-            Components.Add("turret", new Engine.Rendering.RenderableComponent()
-            {
-                Size = new Vector2(0.5f, 2.35f),
-                Mask = new Color(255, 150, 150, 150),
-                Offset = new Vector2(1.25f, -1f),
-                RotationOrigin = new Vector2(0.25f, 3.5f),
-                Rotation = 0
-            });
-            Components.Add("turretBase", new Engine.Rendering.RenderableComponent()
-            {
-                Size = new Vector2(2, 2.5f),
-                Mask = new Color(Color.White, 200),
-                Offset = new Vector2(0.5f, 1.5f),
-                RotationOrigin = new Vector2(1f, 1f),
-                AssetName = Assets.BasicTank.TurretBase.SpriteName,
-                SpriteSheetName = Assets.BasicTank.TurretBase.SheetName,
-                Rotation = 0
-            });
-            Components.Add("turretDoor", new Engine.Rendering.RenderableComponent()
-            {
-                Size = new Vector2(0.65f, 0.65f),
-                Mask = new Color(Color.Gray, 100),
-                Offset = new Vector2(0.75f, 1.75f),
-                RotationOrigin = new Vector2(0.75f, 0.75f),
-                Rotation = 0
-            });
-        }
-
         private bool canFirePrimary = true;
         public override void Update(GameTime time)
         {

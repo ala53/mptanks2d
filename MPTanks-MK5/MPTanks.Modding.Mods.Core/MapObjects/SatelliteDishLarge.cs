@@ -24,16 +24,16 @@ namespace MPTanks.Modding.Mods.Core.MapObjects
             Components.Add("base", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(4),
-                AssetName = Assets.SatelliteDish.Base.SpriteName,
-                SpriteSheetName = Assets.SatelliteDish.Base.SheetName
+                FrameName = Assets.SatelliteDish.Base.SpriteName,
+                SheetName = Assets.SatelliteDish.Base.SheetName
             });
             Components.Add("dish", new MPTanks.Engine.Rendering.RenderableComponent()
             {
                 Size = new Vector2(6, 3.5f),
                 RotationOrigin = new Vector2(3, 1f),
                 Offset = new Vector2(-1.5f, 0.75f),
-                AssetName = Assets.SatelliteDish.DishAndRevolver.SpriteName,
-                SpriteSheetName = Assets.SatelliteDish.DishAndRevolver.SheetName,
+                FrameName = Assets.SatelliteDish.DishAndRevolver.SpriteName,
+                SheetName = Assets.SatelliteDish.DishAndRevolver.SheetName,
                 DrawLayer = 5 //Dish should always be on top of tanks
             });
         }

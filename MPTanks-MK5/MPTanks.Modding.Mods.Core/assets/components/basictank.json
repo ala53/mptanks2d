@@ -13,7 +13,7 @@
     },
     {
       "drawLayer": 0,
-      "frameName": "grillmask",
+      "frame": "grillmask",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "tankFront",
       "offset": { "x": 0, "y": 0 },
@@ -36,7 +36,7 @@
     },
     {
       "drawLayer": 0,
-      "frameName": "turretbase",
+      "frame": "turretbase",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "turretBase",
       "offset": { "x": 0.5, "y": 1.5 },
@@ -61,7 +61,28 @@
   "name": "Basic Tank",
   "reflectionName": "BasicTankMP",
   "sheet": {
-    "file": "assets/basictank2d.png",
-    "fromThisMod": true
-  }
+    "file": "assets/tanks/basictank2d.png",
+    "fromOtherMod": true,
+    "modName": "engine_base"
+  },
+  "otherAssets": [
+    {
+      "file": "assets/animations/explosion.png",
+      "fromOtherMod": true,
+      "key": "explosion1",
+      "modName": "engine_base"
+    },
+    {
+      "file": "assets/animations/explosion2.png",
+      "fromOtherMod": true,
+      "key": "explosion2",
+      "modName": "engine_base"
+    },
+    {
+      "file": "assets/animations/explosion3.png",
+      "fromOtherMod": true,
+      "key": "explosion3",
+      "modName": "engine_base"
+    }
+  ]
 }

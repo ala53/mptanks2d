@@ -66,33 +66,43 @@ namespace MPTanks.Modding.Unpacker
             zf.Close();
             return dlls.ToArray();
         }
-        public static void UnpackSounds(string modFile, string outputDir)
+        public static string[] UnpackSounds(string modFile, string outputDir)
         {
-            //we unpack by name
+            //we unpack to modFile_modMajor_modMinor_modTag_assetName.ogg
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
+
+            var files = new List<string>();
+
+            foreach (var sound in header.SoundFiles)
+            {
+                var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{sound}.ogg");
+                File.WriteAllBytes(path,
+                    GetData(sound, zf));
+                files.Add(path);
+            }
+            zf.Close();
+            return files.ToArray();
+        }
+        public static string[] UnpackImages(string modFile, string outputDir)
+        {
+            //we unpack by modFile_modMajor_modMinor_modTag_assetName.png
+            var header = GetHeader(modFile);
+            var zf = OpenZip(modFile);
+
+            var files = new List<string>();
 
             foreach (var img in header.AssetFiles)
             {
-                var path = Path.Combine(outputDir, img);
+                var ext = img.Split('.').Last();
+                var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.png");
                 File.WriteAllBytes(path,
                     GetData(img, zf));
+                files.Add(path);
             }
             zf.Close();
-        }
-        public static void UnpackImages(string modFile, string outputDir)
-        {
-            //we unpack by name
-            var header = GetHeader(modFile);
-            var zf = OpenZip(modFile);
 
-            foreach (var snd in header.SoundFiles)
-            {
-                var path = Path.Combine(outputDir, snd);
-                File.WriteAllBytes(path,
-                    GetData(snd, zf));
-            }
-            zf.Close();
+            return files.ToArray();
         }
         public static string[] GetSourceCode(string modFile)
         {

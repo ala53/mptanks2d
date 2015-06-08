@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using MPTanks.Engine.Core;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
@@ -186,7 +187,7 @@ namespace MPTanks.Clients.GameClient.Rendering
                 ScaleForRendering(component.Component.Size.X),
                 ScaleForRendering(component.Component.Size.Y));
             //Get the cached asset
-            var asset = _cache.GetArtAsset(component.Component.SpriteSheetName, component.Component.AssetName, gameTime);
+            var asset = _cache.GetArtAsset(component.Component.SheetName, component.Component.FrameName, gameTime);
             //And draw
             sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, component.ComputedColor);
 

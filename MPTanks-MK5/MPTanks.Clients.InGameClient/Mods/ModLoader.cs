@@ -29,7 +29,7 @@ namespace MPTanks.Clients.GameClient.Mods
             string errors;
             var mod = Modding.ModLoader.LoadMod(
                  modFile, settings.ModUnpackPath,
-                 settings.ModImagePath, settings.ModSoundPath, out errors);
+                 settings.ModAssetPath, out errors);
 
             loaded = mod;
 

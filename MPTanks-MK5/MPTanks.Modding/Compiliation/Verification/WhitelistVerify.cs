@@ -1,13 +1,6 @@
 ﻿using Mono.Cecil;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Compiliation.Verification
 {
@@ -79,6 +72,7 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.IO.Path",
         //Event args
         "System.EventArgs",
+        "System.EventHandler",
         //Helpers
         "System.Random",
         "System.Convert",
@@ -95,14 +89,18 @@ namespace MPTanks.Modding.Compiliation.Verification
         "Lidgren.Network.NetIncomingMessage",
         "Lidgren.Network.NetOutgoingMessage",
         "Lidgren.Network.NetConnection",
+        //Tasks
+        "System.Threading.Tasks"
         });
-
+        
         /// <summary>
         /// Blacklisted types in whitelisted namespaces
         /// </summary>
         private static List<string> BlacklistedTypes = new List<string>(new[] { 
-            "Engine.Logging.ILogger", //Don't let it thrash the HDD
+            "MPTanks.Engine.Logging.ILogger", //Don't let it thrash the HDD
+            "MPTanks.Engine.Settings",
             "Microsoft.Xna.Framework.Content.ContentManager", //Or load content from the hard drive
+
         });
 
         public static bool IsAssemblySafe(string assembly, out string error)

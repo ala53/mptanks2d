@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Modding.Mods.Core.Gamemodes
 {
-    [Modding.Gamemode("TeamDeathMatchGamemode", AllowSuperTanks = true, DisplayName = "Team Deathmatch",
+    [Gamemode("TeamDeathMatchGamemode", DisplayName = "Team Deathmatch",
         Description = "A free-for-all deathmatch", MinPlayersCount = 2)]
     public class TeamDeathMatchGamemode : Gamemode
     {

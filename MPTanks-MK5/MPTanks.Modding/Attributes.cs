@@ -66,21 +66,9 @@ namespace MPTanks.Modding
         /// </summary>
         public int MinPlayersCount { get; set; }
         /// <summary>
-        /// Whether to whitelist or blacklist allowed tank types.
+        /// Whether a player can join an active game and get spawned in or if they will have to wait for the next one.
         /// </summary>
-        public bool WhitelistPlayerTankTypes { get; set; }
-        /// <summary>
-        /// Whether to allow supertanks
-        /// </summary>
-        public bool AllowSuperTanks { get; set; }
-        /// <summary>
-        /// If whitelisted: the allowed player tank types (reflection names)
-        /// </summary>
-        public IEnumerable<string> AllowedPlayerTankTypes { get; set; }
-        /// <summary>
-        /// If blacklisted: the disallowed player tank types (reflection names)
-        /// </summary>
-        public IEnumerable<string> DisallowedPlayerTankTypes { get; set; }
+        public bool PlayersCanJoinMidGame { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]

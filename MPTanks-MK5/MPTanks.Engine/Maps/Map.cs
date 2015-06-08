@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Maps.MapObjects;
+using MPTanks.Engine.Maps.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace MPTanks.Engine.Maps
         private List<MapObject> _objects = new List<MapObject>();
         public IReadOnlyList<MapObject> Objects { get { return _objects; } }
 
-        private MapDeserializationClasses.MapJSON _deserialized;
+        private MapJSON _deserialized;
 
         private Dictionary<int, TeamSpawn> _spawnsByTeam =
             new Dictionary<int, TeamSpawn>();
@@ -29,7 +30,7 @@ namespace MPTanks.Engine.Maps
             var map = new Map()
             {
                 _game = game,
-                _deserialized = MapDeserializationClasses.MapJSON.Load(mapData)
+                _deserialized = MapJSON.Load(mapData)
             };
 
             //Process basic

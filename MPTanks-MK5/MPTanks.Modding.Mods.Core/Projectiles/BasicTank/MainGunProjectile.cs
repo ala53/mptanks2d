@@ -9,6 +9,7 @@ using MPTanks.Engine.Projectiles;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using MPTanks.Engine.Core;
+using MPTanks.Engine.Assets;
 
 namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
 {
@@ -45,14 +46,14 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             Size = new Vector2(0.25f);
             ColorMask = owner.ColorMask;
         }
-
-        protected override void AddComponents()
+        
+        protected override void AddComponents(Dictionary<string, RenderableComponent> components)
         {
 
-            Components.Add("bullet", new MPTanks.Engine.Rendering.RenderableComponent()
+            components.Add("bullet", new RenderableComponent()
             {
-                SpriteSheetName = Assets.BasicTank.MainProjectile.SheetName,
-                AssetName = MPTanks.Engine.Assets.AssetHelper.
+                SheetName = Assets.BasicTank.MainProjectile.SheetName,
+                FrameName = Engine.Assets.AssetHelper.
                     AnimationToString(Assets.BasicTank.MainProjectile, 0, true),
                 Size = new Vector2(0.5f),
                 Rotation = MathHelper.ToRadians(45),
@@ -60,9 +61,11 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
                 Offset = new Vector2(-0.125f),
                 Mask = new Color(Color.White, 0.8f)
             });
+            
 
             // Create the trail emitter
-            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f, MPTanks.Engine.Assets.SmokePuffs.SmokePuffSprites,
+            _trailEmitter = Game.ParticleEngine.CreateEmitter(0.15f,
+                Engine.Assets.SmokePuffs.SmokePuffSprites,
                 new Color(new Color(255, 200, 255, 127).ToVector4() * ColorMask.ToVector4()),
                 new RectangleF(Position.X - 0.125f, Position.Y - 0.125f, 0.25f, 0.25f),
                 new Vector2(0.5f), true, 35, 100, 50, Vector2.Zero, 
@@ -71,6 +74,11 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             _trailEmitter.MaxSize = new Vector2(0.75f);
             ////Add a timer for so we don't exist forever
             _timeoutTimer = Game.TimerFactory.CreateTimer((timer) => Game.RemoveGameObject(this, null), lifespan);
+        }
+
+        protected override void CreateInternal()
+        {
+            base.CreateInternal();
         }
 
         public override void CollidedWithTank(Tank tank)
@@ -92,7 +100,7 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             //Generate the particle emitter
             var explosion = Game.ParticleEngine.CreateEmitter(
                 //         Asset                          Fade in    Fade out
-                new[] { Assets.BasicTank.MainGunSparks }, 20f, 40f, 30, 75,
+                new[] { new SpriteInfo("gun_sparks", Assets["basic_tank_sprites"]) }, 20f, 40f, 30, 75,
                 //Lifespan|Area             Velocity
                 150, 350, rect, new Vector2(0.25f), new Vector2(4),
                 //       Accel            A & V relate to Rotation
@@ -112,7 +120,7 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             return false;
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime time)
+        protected override void UpdateInternal(Microsoft.Xna.Framework.GameTime time)
         {
             //We update the position before physics and the velocity after
             //or we end up drawing the smoke in front of the bullet
@@ -120,7 +128,7 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
                 _trailEmitter.EmissionArea = new RectangleF(Position.X - 0.05f, Position.Y - 0.05f, 0.1f, 0.1f);
 
         }
-        public override void UpdatePostPhysics(GameTime gameTime)
+        protected override void UpdatePostPhysicsInternal(GameTime gameTime)
         {
             //Move the particle emitter
             if (_trailEmitter != null)
