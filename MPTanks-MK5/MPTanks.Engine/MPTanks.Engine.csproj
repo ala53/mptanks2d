@@ -79,8 +79,11 @@
     <Compile Include="Gamemodes\DefaultGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
+    <Compile Include="GameObject.ComponentLoading.cs" />
     <Compile Include="GameObject.Components.JSON.cs" />
     <Compile Include="GameObject.cs" />
+    <Compile Include="GameObject.Events.cs" />
+    <Compile Include="GameObject.Reflection.cs" />
     <Compile Include="GamePlayer.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Maps\Map.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Rendering\SpriteSheetLookupHelper.cs" />
+    <Compile Include="RPC\RemoteProcedureCallHelper.cs" />
     <Compile Include="Settings\EngineSettings.cs" />
     <Compile Include="Settings\SettingsBase.cs" />
     <Compile Include="Sound\Sound.cs" />

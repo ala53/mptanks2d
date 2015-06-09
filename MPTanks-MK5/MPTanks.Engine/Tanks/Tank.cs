@@ -80,6 +80,8 @@ namespace MPTanks.Engine.Tanks
 
         protected override void UpdateInternal(GameTime time)
         {
+            UnsafeDisableEvents();
+
             var velocity = InputState.MovementSpeed *
                 MovementSpeed;
 
@@ -93,13 +95,15 @@ namespace MPTanks.Engine.Tanks
             LinearVelocity = new Vector2((float)x, (float)y);
             AngularVelocity = 0;
             Rotation += (float)rotationAmount;
+
+            UnsafeEnableEvents();
         }
 
 
 
         public override string ToString()
         {
-            return "Player ID: " + Player.Id.ToString();
+            return base.ToString() + ", Player ID: " + Player.Id.ToString();
         }
 
         #region Static initialization

@@ -11,17 +11,19 @@ namespace MPTanks.Networking.Common
     /// </summary>
     public class ActionQueue
     {
-        private List<QueueItem> _items = new List<QueueItem>();
-        public IReadOnlyList<QueueItem> Items { get { return _items; } }
+        private List<QueueFrame> _items = new List<QueueFrame>();
+        public ICollection<QueueFrame> Items { get { return _items; } }
 
-        public class QueueItem
+        public void NextFrame()
         {
-            public Actions.Action Action { get; set; }
-            public int FrameNumber { get; set; }
-            public static QueueItem Get()
-            {
-                return Pool.Get<QueueItem>();
-            }
+            _items.Add(QueueFrame.Get());
+            if (_items.Count > Settings.Instance.MaxActionFrameCount)
+                _items.RemoveAt(_items.Count - 1);
+        }
+
+        public void AddAction(Actions.Action action)
+        {
+            _items[_items.Count - 1].Actions.Add(action);
         }
         public class QueueFrame
         {
@@ -30,7 +32,10 @@ namespace MPTanks.Networking.Common
 
             public static QueueFrame Get()
             {
-                return Pool.Get<QueueFrame>();
+                var frame = Pool.Get<QueueFrame>();
+                frame.FrameNumber = 0;
+                frame.Actions.Clear();
+                return frame;
             }
         }
     }

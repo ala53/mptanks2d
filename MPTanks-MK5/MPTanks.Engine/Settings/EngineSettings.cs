@@ -16,7 +16,7 @@ namespace MPTanks.Engine.Settings
         /// in size.
         /// </summary>
         public Setting<float> PhysicsScale { get; private set; }
-    
+
         public Setting<float> TankDensity { get; private set; }
 
         /// <summary>
@@ -53,6 +53,10 @@ namespace MPTanks.Engine.Settings
         /// If DT is greater than this, multiple steps will be taken rather than a single one.
         /// </summary>
         public Setting<float> ParticleEmitterMaxDeltaTime { get; private set; }
+
+        public Setting<int> MaxStateChangeSize { get; private set; }
+
+        public Setting<float> MaxStateChangeFrequency { get; private set; }
 
         public EngineSettings()
         {
@@ -94,6 +98,13 @@ namespace MPTanks.Engine.Settings
             " can stop some particle rendering bugs due to faulty velocity calculations. Higher values lower" +
             " CPU time needed while lower values increase particle trail accuracy.",
             17f, Setting.SettingDisplayType.TimeMS);
+
+            MaxStateChangeSize = new Setting<int>(this, "Maximum GameObject State Change Size",
+                "The maximum size, in bytes, of a single state change for a GameObject.", 3072);
+
+            MaxStateChangeFrequency = new Setting<float>(this, "Max state change frequency",
+                "The maximum frequency of state changes in milliseconds, basically rate limiting.", 100,
+                Setting.SettingDisplayType.TimeMS); //10 of them per second
         }
     }
 }

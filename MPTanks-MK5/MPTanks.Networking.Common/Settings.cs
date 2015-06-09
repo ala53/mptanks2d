@@ -38,6 +38,8 @@ namespace MPTanks.Networking.Common
 
         public Setting<string> PayServer { get; private set; }
 
+        public Setting<int> MaxActionFrameCount { get; private set; }
+
         public Settings()
         {
             MasterServer = new Setting<string>(this, "Master Server Address",
@@ -60,6 +62,9 @@ namespace MPTanks.Networking.Common
             PayServer = new Setting<string>(this, "Payments Server Address",
                 "The address of the server that ZSB uses for payment processing (buying stuff).",
                 "payments.mptanks.zsbgames.me");
+
+            MaxActionFrameCount = new Setting<int>(this, "Maximum Action Frames Count",
+                "The maximum number of action frames to store at any point", 600);
         }
     }
 }

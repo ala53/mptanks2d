@@ -47,11 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ActionQueue.cs" />
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="ActionQueue.cs" />
+    <Compile Include="Actions\GameEndedAction.cs" />
+    <Compile Include="Actions\GameStartedAction.cs" />
+    <Compile Include="Actions\InputChangedAction.cs" />
+    <Compile Include="Actions\MapObjectCreatedAction.cs" />
+    <Compile Include="Actions\ObjectStateChangedAction.cs" />
+    <Compile Include="Actions\ProjectileCreatedAction.cs" />
+    <Compile Include="Actions\StateChangedAction.cs" />
+    <Compile Include="Actions\TankCreatedAction.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\GameState.cs" />
-    <Compile Include="Game\GameStateCreatedObject.cs" />
-    <Compile Include="Game\GameStateObject.cs" />
     <Compile Include="Game\NetworkDeltaState.cs" />
     <Compile Include="NetworkedGame.cs" />
     <Compile Include="Player.cs" />
