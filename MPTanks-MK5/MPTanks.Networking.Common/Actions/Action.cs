@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Game
+namespace MPTanks.Networking.Common.Actions
 {
-    class GameStateCreatedObject
+    public abstract class Action
     {
     }
 }

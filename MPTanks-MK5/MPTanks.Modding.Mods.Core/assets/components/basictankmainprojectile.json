@@ -2,7 +2,7 @@
   "components": [
     {
       "drawLayer": 0,
-      "frame": "projectileAnim",
+      "frame": "[animation]projectileAnim",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "bullet",
       "offset": { "x": -0.125, "y": -0.125 },
@@ -162,7 +162,6 @@
     }
   ],
   "lifespan": 3000,
-  "size": { "x": 0.5, "y": 0.5 },
   "name": "Basic Tank Main Projectile",
   "otherAssets": [
     {
@@ -183,5 +182,6 @@
     "file": "assets/animations/basictank_projectile.png",
     "fromOtherMod": true,
     "modName": "engine_base"
-  }
+  },
+  "size": { "x": 0.5, "y": 0.5 }
 }

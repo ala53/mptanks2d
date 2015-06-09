@@ -93,18 +93,10 @@ namespace MPTanks.Engine
         public float LifespanMs { get; private set; }
         public bool IsDestructionCompleted { get; protected set; }
         protected Dictionary<string, RenderableComponent> _components;
-        public IReadOnlyDictionary<string, RenderableComponent>
-            Components
+        public IReadOnlyDictionary<string, RenderableComponent> Components
         {
             get
             {
-                if (_components == null)
-                {
-                    _components = new Dictionary<string, RenderableComponent>();
-                    //This is the first access so we call the component constructor
-                    LoadBaseComponents();
-                }
-
                 return _components;
             }
         }
@@ -113,8 +105,6 @@ namespace MPTanks.Engine
         {
             get
             {
-                if (_assets == null)
-                    LoadBaseComponents();
                 return _assets;
             }
         }
@@ -125,8 +115,6 @@ namespace MPTanks.Engine
         {
             get
             {
-                if (_emitters == null)
-                    LoadBaseComponents();
                 return _emitters;
             }
         }
@@ -237,7 +225,7 @@ namespace MPTanks.Engine
             }
         }
         #endregion
-        public Vector2 DefaultSize { get; protected set; }
+        public Vector2 DefaultSize { get; set; }
 
         public Vector2 Scale { get { return Size / DefaultSize; } }
         #region Wrappers for Farseer Settings
@@ -305,6 +293,8 @@ namespace MPTanks.Engine
             _startDensity = density;
             _startBounciness = bounciness;
 
+            LoadBaseComponents();
+
             if (!game.Authoritative && !authorized)
                 game.Logger.Error("Object Created without authorization. Type: " + this.GetType().ToString() + ", ID: " + ObjectId);
         }
@@ -316,6 +306,10 @@ namespace MPTanks.Engine
             {
                 Game.Logger.Fatal("Multiple calls to Create()");
             }
+
+            if (Size == Vector2.Zero)
+                Size = DefaultSize;
+
             _hasBeenCreated = true;
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
             Body = BodyFactory.CreateRectangle(Game.World, Size.X * Game.Settings.PhysicsScale,
@@ -387,7 +381,7 @@ namespace MPTanks.Engine
                 if (cmp.Frame != null)
                 {
                     if (cmp.Frame.StartsWith("[animation]"))
-                        asset = new SpriteAnimationInfo(cmp.Frame, sheet);
+                        asset = new SpriteAnimationInfo(cmp.Frame.Substring("[animation]".Length), sheet);
                     else
                         asset = new SpriteInfo(cmp.Frame, sheet);
                 }
@@ -408,7 +402,7 @@ namespace MPTanks.Engine
             }
             foreach (var asset in deserialized.OtherAssets)
             {
-                if (asset.FromOtherMod)
+                if (asset.FromOtherMod && !_assets.ContainsKey(asset.Key))
                     _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
                 else
                     _assets.Add(asset.Key, ResolveAsset(asset.File));
@@ -416,7 +410,7 @@ namespace MPTanks.Engine
 
             foreach (var cmp in deserialized.Components)
             {
-                if (cmp.Sheet.Key != null && !Components.ContainsKey(cmp.Sheet.Key))
+                if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
                 {
                     if (cmp.Sheet.FromOtherMod)
                         _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
@@ -429,7 +423,7 @@ namespace MPTanks.Engine
             {
                 foreach (var sp in emitter.Sprites)
                 {
-                    if (sp.Sheet.Key != null && !Components.ContainsKey(sp.Sheet.Key))
+                    if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))
                     {
                         if (sp.Sheet.FromOtherMod)
                             _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
@@ -472,11 +466,12 @@ namespace MPTanks.Engine
                     {
                         if (sprite.Sheet.FromOtherMod)
                             infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame,
+                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
                                 ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
                         else
                             infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
+                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
+                                ResolveAsset(sprite.Sheet.File)));
                     }
                     else
                     {
@@ -566,9 +561,10 @@ namespace MPTanks.Engine
         private void ActivateAtTimeEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Item2.SpawnAtTime && emitter.Item2.TimeMsToSpawnAt < TimeAliveMs)
-                    emitter.Item1.Paused = false;
-                else emitter.Item1.Paused = true;
+                if (emitter.Item2.SpawnAtTime)
+                    if (emitter.Item2.TimeMsToSpawnAt < TimeAliveMs)
+                        emitter.Item1.Paused = false;
+                    else emitter.Item1.Paused = true;
         }
         #endregion
 
@@ -677,6 +673,8 @@ namespace MPTanks.Engine
             OnDestroyed(this, _destroyedEventObj);
 
             ActivateOnDestroyEmitters();
+
+            DestroyEmitters();
 
             var canDeleteRightAway = DestroyInternal(destructor);
             if (!Body.IsDisposed && canDeleteRightAway == false)
@@ -813,6 +811,21 @@ namespace MPTanks.Engine
 
         }
 
+        #endregion
+
+        #region RPC
+        protected void RPC(Delegate function, params object[] args)
+        {
+            Game.RPCHelper.Call(this, function, args);
+        }
+        /// <summary>
+        /// Called when an RPC is received
+        /// </summary>
+        /// <param name="call"></param>
+        public virtual void OnReceiveRPC(RPC.RPC call)
+        {
+
+        }
         #endregion
     }
 }

@@ -59,6 +59,7 @@ namespace MPTanks.Engine
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
         public EngineSettings Settings { get; private set; }
+        public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
         public float Timescale { get; set; }
         #region Game Status
         /// <summary>
@@ -98,11 +99,13 @@ namespace MPTanks.Engine
         /// </summary>
         internal int NextObjectId { get { return _nextObjectId++; } }
 
-        private List<GameObject> _gameObjects = new List<GameObject>();
+        private Dictionary<int, GameObject> _gameObjects = new Dictionary<int, GameObject>();
         /// <summary>
         /// All GameObjects currently in game.
         /// </summary>
-        public GameObject[] GameObjects { get { return _gameObjects.ToArray(); } }
+        public IReadOnlyDictionary<int, GameObject> GameObjectsWithIds { get { return _gameObjects; } }
+
+        public IEnumerable<GameObject> GameObjects { get { return _gameObjects.Values; } }
 
         public Core.Events.EventEngine EventEngine { get; private set; }
 
@@ -204,7 +207,8 @@ namespace MPTanks.Engine
             ParticleEngine = new Rendering.Particles.ParticleEngine(this);
             EventEngine = new Core.Events.EventEngine(this);
             SharedRandom = new Random();
-            Diagnostics = new MPTanks.Engine.Diagnostics();
+            Diagnostics = new Diagnostics();
+            RPCHelper = new RPC.RemoteProcedureCallHelper(this);
             LightEngine = new Rendering.Lighting.LightEngine();
             SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
@@ -335,7 +339,7 @@ namespace MPTanks.Engine
             Diagnostics.MonitorCall(() =>
             {
                 //Process individual objects
-                foreach (var obj in _gameObjects)
+                foreach (var obj in GameObjects)
                     if (obj.Alive) //Make sure it is actually "in game"
                         obj.Update(gameTime);
             }, "GameObject.Update() calls", DiagnosticsParent);
@@ -346,7 +350,7 @@ namespace MPTanks.Engine
             Diagnostics.MonitorCall(() =>
             {
                 //Process individual objects
-                foreach (var obj in _gameObjects)
+                foreach (var obj in GameObjects)
                     if (obj.Alive) //Make sure it is actually "in game"
                         obj.UpdatePostPhysics(gameTime);
             }, "GameObject.UpdatePostPhysics() calls", DiagnosticsParent);

@@ -37,7 +37,7 @@ namespace MPTanks.Engine
             }
             else
             {
-                _gameObjects.Add(obj);
+                _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
                 obj.OnStateChanged += HandleGameObjectStateChangedEvent;
                 _isDirty = true; //Mark dirty flag
@@ -59,7 +59,7 @@ namespace MPTanks.Engine
             Logger.LogObjectDestroyed(obj, destructor);
 
             //Sanity checks
-            bool found = _gameObjects.Contains(obj) || _addQueue.Contains(obj);
+            bool found = _gameObjects.ContainsValue(obj) || _addQueue.Contains(obj);
             //We want to prevent people from disposing of the bodies
             if (obj.Body.IsDisposed && found)
                 Logger.Warning("Body already disposed, Trace:\n" + Environment.StackTrace);
@@ -82,7 +82,7 @@ namespace MPTanks.Engine
         {
             foreach (var obj in _addQueue)
             {
-                _gameObjects.Add(obj);
+                _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
                 obj.OnStateChanged += HandleGameObjectStateChangedEvent;
                 _isDirty = true; //Mark the dirty flag
@@ -90,7 +90,7 @@ namespace MPTanks.Engine
 
             foreach (var obj in _removeQueue)
             {
-                _gameObjects.Remove(obj);
+                _gameObjects.Remove(obj.ObjectId);
                 obj.EndDestruction(); //Call final destructor
                 _isDirty = true; //Mark the dirty flag
             }
@@ -125,7 +125,7 @@ namespace MPTanks.Engine
             }
             else
             {
-                _gameObjects.Remove(obj);
+                _gameObjects.Remove(obj.ObjectId);
                 obj.EndDestruction(); //Call final destructor
                 _isDirty = true; //Mark the dirty flag
             }
