@@ -42,7 +42,7 @@ namespace MPTanks.Engine.Serialization
                 if (cmp.Name == null)
                     throw new Exception("Component missing name");
                 //Handle unset colors
-                if (cmp.Mask == default(Color))
+                if (cmp.Mask == null)
                     cmp.Mask = Color.White;
                 //Handle scale being unset
                 if (cmp.Scale == null)
@@ -109,7 +109,7 @@ namespace MPTanks.Engine.Serialization
     class GameObjectComponentJSON
     {
         public int DrawLayer { get; set; }
-        public Color Mask { get; set; }
+        public JSONColor Mask { get; set; }
         public string Name { get; set; }
         public JSONVector Offset { get; set; }
         public float Rotation { get; set; }
@@ -158,7 +158,7 @@ namespace MPTanks.Engine.Serialization
         public float Lifespan { get; set; }
 
         public JSONVector MaxAcceleration { get; set; }
-        public Color MaxColorMask { get; set; }
+        public JSONColor MaxColorMask { get; set; }
         public float MaxFadeInTime { get; set; }
         public float MaxFadeOutTime { get; set; }
         public float MaxLifeSpan { get; set; }
@@ -168,7 +168,7 @@ namespace MPTanks.Engine.Serialization
         public JSONVector MaxSize { get; set; }
         public JSONVector MaxVelocity { get; set; }
         public JSONVector MinAcceleration { get; set; }
-        public Color MinColorMask { get; set; }
+        public JSONColor MinColorMask { get; set; }
         public float MinFadeInTime { get; set; }
         public float MinFadeOutTime { get; set; }
         public float MinLifeSpan { get; set; }

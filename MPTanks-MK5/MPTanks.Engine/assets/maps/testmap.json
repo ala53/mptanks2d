@@ -4,9 +4,20 @@
     "DeathMatchGamemode"
   ],
   "author": "ZSB Games & Associates",
-  "baseColor": {"r": 0, "g": 0, "b": 0, "a": 255};
+  "baseColor": { "r": 0, "g": 0, "b": 0, "a": 255 },
   "background": [
-    {}
+    {
+      "offset": { "x": 0, "y": 0 },
+      "size": { "x": 4, "y": 4 },
+      "frame": "potato_base",
+      "sheet": {
+        "file": "assets/content/base_content.png",
+        "fromOtherMod": true,
+        "modName": "engine_base"
+      },
+      "rotation": 3.141,
+      "rotationOrigin": { "x": 2, "y": 2 }
+    }
   ],
   "dependencies": [
     {
