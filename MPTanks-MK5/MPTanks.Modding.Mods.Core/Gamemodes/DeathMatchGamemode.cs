@@ -84,30 +84,19 @@ namespace MPTanks.Modding.Mods.Core
 
         public override void Update(GameTime gameTime)
         {
-            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => p.Tank.Alive);
-            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => p.Tank.Alive);
+            int pCountAlive = Teams.Count((t) => t.Players[0].Tank.Alive);
 
-            if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue > 0)
-                return; //game still running
+            if (pCountAlive > 1)
+                return; //still running
 
-            //Red team wins
-            if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue == 0)
+            if (pCountAlive == 1)
             {
                 _gameEnded = true;
-                _winner = Teams[0];
+                _winner = Teams.First((t) => t.Players[0].Tank.Alive);
                 return;
             }
 
-            //Blue team wins
-            if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue > 0)
-            {
-                _gameEnded = true;
-                _winner = Teams[1];
-                return;
-            }
-
-            //Tie
-            if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue == 0)
+            if (pCountAlive == 0)
             {
                 _gameEnded = true;
                 _winner = Team.Indeterminate;
