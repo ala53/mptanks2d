@@ -19,17 +19,19 @@ namespace MPTanks.Engine
             new HashSet<GameObject>();
         public void AddGameObject(GameObject obj, GameObject creator = null, bool authorized = false)
         {
-#if DEBUG
-            if (!authorized && !Authoritative)
-                throw new Exception("Unauthorized addition of object");
-#else
             if (!authorized && !Authoritative)
             {
                 Logger.Error("Unauthorized object addition attempted.");
                 return;
             }
-#endif
-            Logger.LogObjectCreated(obj, creator);
+
+            if (creator == null)
+                Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
+                    $"[{obj.ObjectId}]. Authorized: {authorized}");
+            else
+                Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
+                    $"[{obj.ObjectId}]. Created by {creator.GetType().FullName}" +
+                    $"[{creator.ObjectId}]. Authorized: {authorized}");
 
             if (_inUpdateLoop) //In update loop, wait a frame.
             {
@@ -56,7 +58,13 @@ namespace MPTanks.Engine
                 return;
             }
 #endif
-            Logger.LogObjectDestroyed(obj, destructor);
+            if (destructor == null)
+                Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
+                    $"[{obj.ObjectId}]. Authorized: {authorized}");
+            else
+                Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
+                    $"[{obj.ObjectId}]. Destroyed by {destructor.GetType().FullName}" +
+                    $"[{destructor.ObjectId}]. Authorized: {authorized}");
 
             //Sanity checks
             bool found = _gameObjects.ContainsValue(obj) || _addQueue.Contains(obj);

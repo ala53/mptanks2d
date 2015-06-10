@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,14 +11,18 @@ namespace MPTanks.Engine.Serialization
 {
     public class JSONColor
     {
-        [DefaultValue(0)]
-        public float R { get; set; }
-        [DefaultValue(0)]
-        public float G { get; set; }
-        [DefaultValue(0)]
-        public float B { get; set; }
-        [DefaultValue(255)]
-        public float A { get; set; }
+        [JsonProperty("r")]
+        [DefaultValue((byte)0)]
+        public byte R { get; set; }
+        [JsonProperty("g")]
+        [DefaultValue((byte)0)]
+        public byte G { get; set; }
+        [JsonProperty("b")]
+        [DefaultValue((byte)0)]
+        public byte B { get; set; }
+        [JsonProperty("a")]
+        [DefaultValue((byte)255)]
+        public byte A { get; set; }
 
         public static implicit operator Color(JSONColor color)
         {

@@ -22,14 +22,14 @@ namespace MPTanks.Clients.GameClient
 
             CrossDomainObject.Instance.ConnectionFailureCause = "NOCOMMENT";
             //Write down some logging information so we know what happened.
-            Logger.Log("MonoGame: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
+            Logger.Trace("MonoGame Game Class: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
                 typeof(Microsoft.Xna.Framework.Game).Assembly.ToString());
             string dependencies = "Dependencies: ";
             foreach (var dep in typeof(Microsoft.Xna.Framework.Game).Assembly.GetReferencedAssemblies())
                 dependencies += "[" + dep.ToString() + "], ";
-            Logger.Log(dependencies);
+            Logger.Info(dependencies);
 
-            MPTanks.Engine.ConstructorHelper.CallGlobalCtors();
+            Engine.ConstructorHelper.CallGlobalCtors();
             StartGame();
         }
 

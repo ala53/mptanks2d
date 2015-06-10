@@ -9,24 +9,7 @@ namespace MPTanks.Networking.Common
 {
     public class Settings : SettingsBase
     {
-        private static Settings _instance;
-        public static Settings Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new Settings();
-                    _instance.LoadFromFile("Networking Base Settings.json");
-                }
-                return _instance;
-            }
-        }
-
-        public override void OnSettingChanged(Setting setting)
-        {
-            Save("Networking Base Settings.json");
-        }
+        public static Settings Instance { get; private set; } = new Settings("Common Networking.json");
 
         public Setting<string> MasterServer { get; private set; }
 
@@ -40,7 +23,7 @@ namespace MPTanks.Networking.Common
 
         public Setting<int> MaxActionFrameCount { get; private set; }
 
-        public Settings()
+        private Settings(string file) : base(file)
         {
             MasterServer = new Setting<string>(this, "Master Server Address",
                 "The master server to list hosted servers on.",

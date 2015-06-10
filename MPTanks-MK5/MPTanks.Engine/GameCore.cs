@@ -212,7 +212,7 @@ namespace MPTanks.Engine
             LightEngine = new Rendering.Lighting.LightEngine();
             SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
-            Logger.Log(Strings.Engine.GameCreated);
+            Logger.Info(Strings.Engine.GameCreated);
         }
 
         private bool _hasDoneCleanup;
@@ -303,7 +303,7 @@ namespace MPTanks.Engine
             {
                 _gameStarted = true; //Start the game when allowed
                 BeginGame();
-                Logger.Log(Strings.Engine.GameStarted);
+                Logger.Info(Strings.Engine.GameStarted);
             }
 
             RemainingCountdownSeconds = (Settings.TimeToWaitBeforeStartingGame / 1000)

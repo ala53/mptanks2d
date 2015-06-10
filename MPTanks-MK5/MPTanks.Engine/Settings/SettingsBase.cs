@@ -1,11 +1,47 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Settings
 {
     public abstract class SettingsBase
     {
+        private string _file;
+        public SettingsBase(string file)
+        {
+            //Handle raw file names
+            if (!file.Contains(@"\") && !file.Contains("/"))
+                file = Path.Combine(ConfigDir, file);
+
+            _file = file;
+
+            if (File.Exists(file))
+                LoadFromFile(file);
+            else
+                Task.Run(async () =>
+                {
+                    //Wait for the object to be initialized
+                    await Task.Delay(100);
+                    Save(file);
+                });
+        }
+
+        public SettingsBase()
+        {
+
+        }
+
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        { };
+
+        static SettingsBase()
+        {
+            var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            dcr.DefaultMembersSearchFlags = dcr.DefaultMembersSearchFlags | System.Reflection.BindingFlags.NonPublic;
+        }
+
         public static readonly string ConfigDir =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D");
 
@@ -16,23 +52,24 @@ namespace MPTanks.Engine.Settings
         }
         public void Load(string settingsData)
         {
-            Newtonsoft.Json.JsonConvert.PopulateObject(settingsData, this);
+            JsonConvert.PopulateObject(settingsData, this, _settings);
         }
 
         public void Save(string fileToSaveTo)
         {
-            System.IO.File.WriteAllText(fileToSaveTo, Save());
+            File.WriteAllText(fileToSaveTo, Save());
         }
 
         public string Save()
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+            return JsonConvert.SerializeObject(this, Formatting.Indented, _settings);
         }
 
         #region Change helper
         public virtual void OnSettingChanged(Setting setting)
         {
-
+            if (_file != null)
+                Save(_file);
         }
         #endregion
 
@@ -49,10 +86,21 @@ namespace MPTanks.Engine.Settings
 
         public class Setting
         {
-            public virtual string Name { get; protected set; }
-            public virtual string Description { get; protected set; }
-            private Object _val;
-            public virtual Object ObjectValue
+            private string _name;
+            public string Name
+            {
+                get { return _name; }
+                protected set { if (_name == null) _name = value; }
+            }
+            private string _description;
+            public string Description
+            {
+                get { return _description; }
+                protected set { if (_description == null) _description = value; }
+            }
+            private object _val;
+            [JsonIgnore]
+            public virtual object ObjectValue
             {
                 get
                 {
@@ -64,9 +112,13 @@ namespace MPTanks.Engine.Settings
                     SettingsInstance.OnSettingChanged(this);
                 }
             }
+            [JsonIgnore]
             public virtual bool HasWhitelistOfAllowedValues { get; protected set; }
-            public virtual IEnumerable<Object> ObjectAllowedValues { get; protected set; }
+            [JsonIgnore]
+            public virtual IEnumerable<object> ObjectAllowedValues { get; protected set; }
+            [JsonIgnore]
             public virtual SettingDisplayType DisplayType { get; protected set; }
+            [JsonIgnore]
             public SettingsBase SettingsInstance { get; private set; }
 
             protected Setting(SettingsBase instance)
@@ -106,10 +158,11 @@ namespace MPTanks.Engine.Settings
                 set
                 {
                     Value = (T)value;
+                    SettingsInstance.OnSettingChanged(this);
                 }
             }
             public T Value { get; set; }
-
+            [JsonIgnore]
             public IEnumerable<T> AllowedValues
             {
                 get
@@ -123,7 +176,7 @@ namespace MPTanks.Engine.Settings
             {
                 get
                 {
-                    return (IEnumerable<Object>)AllowedValues;
+                    return (IEnumerable<object>)AllowedValues;
                 }
                 protected set
                 {

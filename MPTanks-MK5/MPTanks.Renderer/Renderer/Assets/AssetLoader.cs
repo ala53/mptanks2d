@@ -3,8 +3,6 @@ using MPTanks.Rendering.Renderer.Assets.Sprites;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MPTanks.Rendering.Renderer.Assets
@@ -43,11 +41,11 @@ namespace MPTanks.Rendering.Renderer.Assets
                 if (resolvedFilename == null)
                 {
                     _renderer.Logger.Error("SpriteSheet does not exist: " + sheetName);
-                    _renderer.Logger.Error("Paths searched: " + String.Join(", ", _resolver.SearchPaths));
+                    _renderer.Logger.Error("Paths searched: " + string.Join(", ", _resolver.SearchPaths));
                     return null;
                 }
                 //Check that the matching JSON file exists
-                if (!System.IO.File.Exists(resolvedFilename + ".json"))
+                if (!File.Exists(resolvedFilename + ".json"))
                 {
                     _renderer.Logger.Error("SpriteSheet missing matching JSON file");
                     return null;
@@ -57,7 +55,7 @@ namespace MPTanks.Rendering.Renderer.Assets
                 var texture = LoadTexture(resolvedFilename);
                 //And metadata
                 var metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
-                        System.IO.File.ReadAllText(resolvedFilename + ".json"));
+                        File.ReadAllText(resolvedFilename + ".json"));
 
                 var sprites = new Dictionary<string, Sprite>();
                 var animations = new Dictionary<string, Animation>();
@@ -74,8 +72,7 @@ namespace MPTanks.Rendering.Renderer.Assets
             }
             catch (Exception ex)
             {
-                _renderer.Logger.Error("SpriteSheet load error: " + sheetName);
-                _renderer.Logger.Error(ex.ToString());
+                _renderer.Logger.Error("SpriteSheet load error: " + sheetName, ex);
             }
             return null;
         }

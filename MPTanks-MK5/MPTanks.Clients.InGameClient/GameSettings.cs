@@ -15,13 +15,7 @@ namespace MPTanks.Clients.GameClient
 
         static GameSettings()
         {
-            Instance = new GameSettings();
-            Instance.LoadFromFile(Path.Combine(ConfigDir, "Game Settings.json"));
-        }
-
-        public override void OnSettingChanged(Setting setting)
-        {
-            Save(Path.Combine(ConfigDir, "Game Settings.json"));
+            Instance = new GameSettings("Game Settings.json");
         }
 
         public Setting<string> GameLogLocation { get; private set; }
@@ -85,8 +79,8 @@ namespace MPTanks.Clients.GameClient
         #region Screen Resolution
         public Setting<bool> Fullscreen { get; private set; }
         #endregion
-
-        public GameSettings()
+        private GameSettings(string file)
+            : base(file)
         {
             GameLogLocation = new Setting<string>(this, "Log storage location",
                "Where to store runtime logs for the game. This uses NLog storage conventions." +
@@ -129,13 +123,13 @@ namespace MPTanks.Clients.GameClient
                 " that *.mod files are unpacked into (but not the code).",
                 Path.Combine(ConfigDir, "tempmodunpack", "assets"));
 
-            ModDownloadPath = new Setting<string>(this, "Mod download directory", 
+            ModDownloadPath = new Setting<string>(this, "Mod download directory",
                 "The directory to store mods downloaded from servers in.",
                 Path.Combine(ConfigDir, "mods"));
 
 
             CoreMods = new Setting<string[]>(this, "Core Mods",
-                "The core mods that will be autoinjected into every game without verification." + 
+                "The core mods that will be autoinjected into every game without verification." +
                 "They must be DLL files.", DefaultTrustedMods);
 
             AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets assets.",

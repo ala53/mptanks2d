@@ -58,11 +58,21 @@ namespace MPTanks.Engine.Settings
 
         public Setting<float> MaxStateChangeFrequency { get; private set; }
 
+        public EngineSettings(string file) : base(file)
+        {
+            SetSettings();
+        }
+
         public EngineSettings()
         {
+            SetSettings();
+        }
+
+        private void SetSettings()
+        {
             PhysicsScale = new Setting<float>(this, "Physics Scale",
-                "The scale of the physics engine relative to game world space",
-                0.1f, Setting.SettingDisplayType.Percentage);
+                  "The scale of the physics engine relative to game world space",
+                  0.1f, Setting.SettingDisplayType.Percentage);
 
             TankDensity = new Setting<float>(this, "Tank density",
             "The density of a tank in the physics engine.", 15f);
@@ -105,6 +115,7 @@ namespace MPTanks.Engine.Settings
             MaxStateChangeFrequency = new Setting<float>(this, "Max state change frequency",
                 "The maximum frequency of state changes in milliseconds, basically rate limiting.", 100,
                 Setting.SettingDisplayType.TimeMS); //10 of them per second
+
         }
     }
 }

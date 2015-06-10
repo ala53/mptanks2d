@@ -10,41 +10,13 @@ namespace MPTanks.Clients.GameClient.Menus
 {
     class ClientSettings : SettingsBase
     {
-        private static ClientSettings _instance;
-        public static ClientSettings Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new ClientSettings();
-                    _instance.LoadFromFile(Path.Combine(ConfigDir, "Client Settings.json"));
-                }
-                return _instance;
-            }
-            set
-            {
-                _instance = value;
-            }
-        }
-        
-        #region Save Helper
-        public new static void Save()
-        {
-            Instance.Save(Path.Combine(ConfigDir, "Client Settings.json"));
-        }
-        #endregion
-        
-        public override void OnSettingChanged(Setting setting)
-        {
-            Save();
-        }
+        public static ClientSettings Instance { get; private set; } = new ClientSettings("Client Settings.json");
 
         public Setting<string[]> ModSearchPaths { get; private set; }
 
         public Setting<string> ClientLogLocation { get; private set; }
 
-        public ClientSettings()
+        private ClientSettings(string file) : base(file)
         {
             ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
                 new[] {

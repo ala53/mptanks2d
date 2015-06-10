@@ -118,10 +118,12 @@ namespace MPTanks.Clients.GameClient
 
         private void SetupGame()
         {
-            game = new MPTanks.Engine.GameCore(
+            game = new GameCore(
                 new EngineInterface.FileLogger(),
-                MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
-                System.IO.File.ReadAllText("assets/maps/testmap.json")
+                Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
+                System.IO.File.ReadAllText("assets/maps/testmap.json"),
+                false,
+                new Engine.Settings.EngineSettings("Engine Settings.json")
                 );
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;
@@ -310,7 +312,7 @@ namespace MPTanks.Clients.GameClient
 
             if (Keyboard.GetState().IsKeyDown(Keys.B))
             {
-                Logger.Log(game.Diagnostics.ToString());
+                Logger.Info(game.Diagnostics.ToString());
             }
 
             game.Update(gameTime);

@@ -57,6 +57,7 @@
     <Compile Include="Actions\ProjectileCreatedAction.cs" />
     <Compile Include="Actions\StateChangedAction.cs" />
     <Compile Include="Actions\TankCreatedAction.cs" />
+    <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="Game\NetworkDeltaState.cs" />
@@ -75,6 +76,7 @@
       <Name>Strings</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

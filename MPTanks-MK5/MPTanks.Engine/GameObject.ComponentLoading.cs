@@ -63,15 +63,15 @@ namespace MPTanks.Engine
         /// <param name="assetName"></param>
         protected void LoadComponentsFromFile(string assetName)
         {
-            Game.Logger.Log("Loading Components: " + assetName);
+            Game.Logger.Trace("Loading Components: " + assetName);
             var deserialized = GameObjectComponentsJSON.Create(File.ReadAllText(assetName));
 
-            Game.Logger.Log("Begin load: " + deserialized.Name);
+            Game.Logger.Trace("Begin load: " + deserialized.Name);
 
             if (deserialized.ReflectionName != ReflectionName)
                 Game.Logger.Warning(
                     $"GameObject-{ObjectId}.LoadComponentsFromFile():" +
-                    "{deserialized.ReflectionName} does not match {ReflectionName}");
+                    $"{deserialized.ReflectionName} does not match {ReflectionName}");
 
             DefaultSize = deserialized.DefaultSize;
 
@@ -95,7 +95,7 @@ namespace MPTanks.Engine
                 {
                     DrawLayer = cmp.DrawLayer,
                     FrameName = asset.FrameName,
-                    Mask = (cmp.Mask == default(Color)) ? Color.White : cmp.Mask,
+                    Mask = (cmp.Mask == null) ? Color.White : (Color)cmp.Mask,
                     Offset = cmp.Offset,
                     Rotation = cmp.Rotation,
                     RotationVelocity = cmp.RotationVelocity,
@@ -223,8 +223,8 @@ namespace MPTanks.Engine
             {
                 if (em.Item2.ColorChangedByObjectMask)
                 {
-                    em.Item1.MinColorMask = new Color(em.Item2.MinColorMask.ToVector4() * ColorMask.ToVector4());
-                    em.Item1.MaxColorMask = new Color(em.Item2.MaxColorMask.ToVector4() * ColorMask.ToVector4());
+                    em.Item1.MinColorMask = new Color(((Color)em.Item2.MinColorMask).ToVector4() * ColorMask.ToVector4());
+                    em.Item1.MaxColorMask = new Color(((Color)em.Item2.MaxColorMask).ToVector4() * ColorMask.ToVector4());
                 }
                 if (em.Item2.EmissionArea.TracksObject)
                 {

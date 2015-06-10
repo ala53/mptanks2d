@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MPTanks.Engine.Logging;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,71 +8,84 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Clients.GameClient.EngineInterface
 {
-    class FileLogger : MPTanks.Engine.Logging.ILogger
+    public class FileLogger : ILogger
     {
-
-        public void Log(string message)
+        public void Debug(string message)
         {
-            Logger.Log(message);
+            Logger.Instance.Debug(message);
         }
 
-        public void Warning(string warn)
+        public void Error(Exception ex)
         {
-            Logger.Warning(warn);
+            Logger.Instance.ErrorException("Engine Error", ex);
+        }
+        public void Error(string message, Exception ex)
+        {
+            Logger.Instance.ErrorException(message, ex);
         }
 
-        public void Error(string err)
+        public void Error(string message)
         {
-#if DEBUG
-            throw new Exception(err);
-#else
-            Logger.Error(err);
-#endif
+            Logger.Error(message);
         }
+
+        public void Fatal(Exception ex)
+        {
+            Logger.Instance.FatalException("Engine Fatal", ex);
+            throw ex;
+        }
+        public void Fatal(string message, Exception ex)
+        {
+            Logger.Instance.FatalException(message, ex);
+            throw ex;
+        }
+
 
         public void Fatal(string message)
         {
-#if DEBUG
-            throw new Exception(message);
-#else
-            Logger.Fatal(message);
-#endif
+            Logger.Instance.Fatal(message);
         }
 
-        public void LogObjectCreated(MPTanks.Engine.GameObject obj, MPTanks.Engine.GameObject creator = null, string additionalData = "")
+        public void Info(object data)
         {
-            if (creator == null)
-                Logger.Debug(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ")" +
-                    (additionalData == "" ? "" : ", " + additionalData));
-            else
-                Logger.Debug(obj.GetType().Name + " created (ID " + obj.ObjectId + " - " + obj.ToString() + ") by " +
-                    creator.GetType().Name + " (ID " + creator.ObjectId + " - " + creator.ToString() + ")" +
-                    (additionalData == "" ? "" : ", " + additionalData));
-
+            Info("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 
-        public void LogObjectDamaged(MPTanks.Engine.GameObject damaged, MPTanks.Engine.GameObject damager = null, string additionalData = "")
+        public void Info(string message)
         {
-            if (damager == null)
-                Logger.Debug(damaged.GetType().Name + "(ID " + damaged.ObjectId + " - " + damaged.ToString() +
-                    ") damaged" + (additionalData == "" ? "" : ", " + additionalData));
-            else
-                Logger.Debug(damaged.GetType().Name + "(ID " + damaged.ObjectId +
-                    ") damaged by " + damager.GetType().Name + " (ID " +
-                    damager.ObjectId + " - " + damaged.ToString() +
-                    (additionalData == "" ? ")" : "), " + additionalData));
+            Logger.Instance.Info(message);
         }
 
-        public void LogObjectDestroyed(MPTanks.Engine.GameObject destroyed, MPTanks.Engine.GameObject destroyer = null, string additionalData = "")
+        public void Trace(Exception ex)
         {
-            if (destroyer == null)
-                Logger.Debug(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
-                    ") destroyed" + (additionalData == "" ? "" : ", " + additionalData));
-            else
-                Logger.Debug(destroyed.GetType().Name + "(ID " + destroyed.ObjectId + " - " + destroyed.ToString() +
-                    ") destroyed by " + destroyer.GetType().Name + " (ID " +
-                    destroyer.ObjectId + " - " + destroyer.ToString() +
-                    (additionalData == "" ? ")" : "), " + additionalData));
+            Logger.Instance.TraceException("Engine Trace()", ex);
+        }
+        public void Trace(string message, Exception ex)
+        {
+            Logger.Instance.TraceException(message, ex);
+        }
+
+        public void Trace(object data)
+        {
+            Trace("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
+        }
+
+        public void Trace(string message)
+        {
+            Logger.Instance.Trace(message);
+        }
+
+        public void Warning(string message)
+        {
+            Logger.Instance.Warn(message);
+        }
+
+        public void Warning(object data)
+        {
+            Warning("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
         }
     }
 }
