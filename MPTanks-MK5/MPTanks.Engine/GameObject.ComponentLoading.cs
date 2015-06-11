@@ -64,8 +64,10 @@ namespace MPTanks.Engine
         protected void LoadComponentsFromFile(string assetName)
         {
             Game.Logger.Trace("Loading Components: " + assetName);
-
-            GameObjectComponentsJSON.Create(File.ReadAllText(assetName));
+            if (!_componentJSONCache.ContainsKey(assetName))
+            {
+                _componentJSONCache.Add(assetName, GameObjectComponentsJSON.Create(File.ReadAllText(assetName)));
+            }
             GameObjectComponentsJSON deserialized = _componentJSONCache[assetName];
 
             Game.Logger.Trace("Begin load: " + deserialized.Name);
