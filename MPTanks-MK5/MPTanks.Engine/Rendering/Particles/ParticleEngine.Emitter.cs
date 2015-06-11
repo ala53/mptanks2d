@@ -40,7 +40,8 @@ namespace MPTanks.Engine.Rendering.Particles
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
             Vector2 emitterVelocity = default(Vector2), float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,
+            bool growInsteadOfFadeIn = false, bool shrinkInsteadOfFadeOut = false,
+            bool scaleUniform = false, bool renderBelowObjects = false,
             Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
@@ -56,7 +57,8 @@ namespace MPTanks.Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * min), colorMask.A),
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
-                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
+                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, 
+                       growInsteadOfFadeIn, shrinkInsteadOfFadeOut,
                        scaleUniform, renderBelowObjects, emitterVelocity, diedCallback
                   );
         }
@@ -90,7 +92,8 @@ namespace MPTanks.Engine.Rendering.Particles
             Vector2 velocity = default(Vector2), Vector2 acceleration = default(Vector2),
             Vector2 emitterVelocity = default(Vector2), float rotation = 0,
             float rotationVelocity = 0, float particlesPerSecond = 100, float emitterLifespan = 10000,
-            bool shrinkInsteadOfFadeOut = false, bool scaleUniform = false, bool renderBelowObjects = false,
+            bool growInsteadOfFadeIn = false, bool shrinkInsteadOfFadeOut = false, 
+            bool scaleUniform = false, bool renderBelowObjects = false,
             Action<Emitter> diedCallback = null)
         {
             //fuzziness / 2 is used because fuzziness should be both directions
@@ -106,7 +109,8 @@ namespace MPTanks.Engine.Rendering.Particles
                        new Color(new Color(colorMask.ToVector3() * min), colorMask.A),
                        new Color(new Color(colorMask.ToVector3() * max), colorMask.A),
                        rotation * min, rotation * max, rotationVelocity * min, rotationVelocity * max,
-                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, shrinkInsteadOfFadeOut,
+                       particlesPerSecond * min, particlesPerSecond * max, emitterLifespan, 
+                       growInsteadOfFadeIn, shrinkInsteadOfFadeOut,
                        scaleUniform, renderBelowObjects, emitterVelocity, diedCallback
                   );
         }
@@ -155,7 +159,8 @@ namespace MPTanks.Engine.Rendering.Particles
             float minRotation, float maxRotation,
             float minRotationVelocity, float maxRotationVelocity,
             float minParticlesPerSecond, float maxParticlesPerSecond,
-            float emitterLifespan, bool shrinkInsteadOfFadeOut,
+            float emitterLifespan, 
+            bool growInsteadOfFadeIn, bool shrinkInsteadOfFadeOut,
             bool scaleUniform, bool renderBelowObjects,
             Vector2 emitterVelocity,
             Action<Emitter> diedCallback = null)
@@ -166,6 +171,7 @@ namespace MPTanks.Engine.Rendering.Particles
             em.MaxFadeInMs = maxFadeInTime;
             em.MinFadeOutMs = minFadeOutTime;
             em.MaxFadeOutMs = maxFadeOutTime;
+            em.GrowInsteadOfFadeIn = growInsteadOfFadeIn;
             em.ShrinkInsteadOfFadeOut = shrinkInsteadOfFadeOut;
             em.ScaleUniform = scaleUniform;
             em.RenderBelowObjects = renderBelowObjects;
@@ -331,6 +337,7 @@ namespace MPTanks.Engine.Rendering.Particles
             public Vector2 MinAcceleration { get; set; }
             public Vector2 MaxAcceleration { get; set; }
             public bool CalculateVelocityAndAccelerationRelativeToRotation { get; set; }
+            public bool GrowInsteadOfFadeIn { get; set; }
             public bool ShrinkInsteadOfFadeOut { get; set; }
             public bool ScaleUniform { get; set; }
             public bool RenderBelowObjects { get; set; }
@@ -471,7 +478,8 @@ namespace MPTanks.Engine.Rendering.Particles
                         Size = size,
                         Velocity = velocity,
                         RenderBelowObjects = RenderBelowObjects,
-                        ShinkInsteadOfFade = ShrinkInsteadOfFadeOut
+                        GrowInsteadOfFadeIn = ShrinkInsteadOfFadeOut,
+                        ShinkInsteadOfFadeOut = ShrinkInsteadOfFadeOut
                     };
                     //Move the emitter to the exact location it should be for this particle
                     var exactEmitterDelta = EmitterVelocity *

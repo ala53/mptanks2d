@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MPTanks.Engine.Rendering.Particles
 {
     /// <summary>
-    /// A single in-engine particle, a 80 byte struct.
+    /// A single in-engine particle, a 80-something byte struct.
     /// </summary>
     public struct Particle
     {
@@ -30,7 +30,8 @@ namespace MPTanks.Engine.Rendering.Particles
         public Color ColorMask;
         public float Rotation;
         public float RotationVelocity;
-        public bool ShinkInsteadOfFade;
+        public bool GrowInsteadOfFadeIn;
+        public bool ShinkInsteadOfFadeOut;
         public Vector2 OriginalSize;
         /// <summary>
         /// Do not use. Private to particle engine.

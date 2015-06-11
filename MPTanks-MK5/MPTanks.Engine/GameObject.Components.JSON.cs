@@ -267,7 +267,8 @@ namespace MPTanks.Engine.Serialization
 
 
         public bool RenderBelowObjects { get; set; }
-        public bool ShrinkInsteadOfFade { get; set; }
+        public bool ShrinkInsteadOfFadeOut { get; set; }
+        public bool GrowInsteadOfFadeIn { get; set; }
         public bool SizeScalingUniform { get; set; }
         public SpriteJSON[] Sprites { get; set; }
         public bool VelocityAndAccelerationTrackRotation { get; set; }

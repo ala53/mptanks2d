@@ -9,9 +9,6 @@ using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MPTanks.Engine
 {
@@ -57,6 +54,9 @@ namespace MPTanks.Engine
         {
         }
 
+
+        private static Dictionary<string, GameObjectComponentsJSON> _componentJSONCache =
+            new Dictionary<string, GameObjectComponentsJSON>();
         /// <summary>
         /// Loads the components from the specified asset and adds them to the internal dictionary.
         /// </summary>
@@ -64,7 +64,9 @@ namespace MPTanks.Engine
         protected void LoadComponentsFromFile(string assetName)
         {
             Game.Logger.Trace("Loading Components: " + assetName);
-            var deserialized = GameObjectComponentsJSON.Create(File.ReadAllText(assetName));
+
+            GameObjectComponentsJSON.Create(File.ReadAllText(assetName));
+            GameObjectComponentsJSON deserialized = _componentJSONCache[assetName];
 
             Game.Logger.Trace("Begin load: " + deserialized.Name);
 
@@ -73,6 +75,7 @@ namespace MPTanks.Engine
                     $"GameObject-{ObjectId}.LoadComponentsFromFile():" +
                     $"{deserialized.ReflectionName} does not match {ReflectionName}");
 
+            LifespanMs = deserialized.Lifespan;
             DefaultSize = deserialized.DefaultSize;
 
             foreach (var cmp in deserialized.Components)
@@ -238,7 +241,8 @@ namespace MPTanks.Engine
                     emitter.MinRotationVelocity, emitter.MaxRotationVelocity,
                     emitter.MinParticlesPerSecond, emitter.MaxParticlesPerSecond,
                     emitter.Lifespan == 0 ? float.PositiveInfinity : emitter.Lifespan,
-                    emitter.ShrinkInsteadOfFade,
+                    emitter.GrowInsteadOfFadeIn,
+                    emitter.ShrinkInsteadOfFadeOut,
                     emitter.SizeScalingUniform,
                     emitter.RenderBelowObjects,
                     Vector2.Zero);

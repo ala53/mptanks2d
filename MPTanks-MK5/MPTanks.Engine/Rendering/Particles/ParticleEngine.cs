@@ -82,7 +82,7 @@ namespace MPTanks.Engine.Rendering.Particles
                 {
                     var percentFadedOut =
                         ((part.LifespanMs - part.TotalTimeAlreadyAlive)) / part.FadeOutMs;
-                    if (part.ShinkInsteadOfFade)
+                    if (part.ShinkInsteadOfFadeOut)
                     {
                         part.Size = part.OriginalSize * percentFadedOut;
                     }
@@ -95,8 +95,16 @@ namespace MPTanks.Engine.Rendering.Particles
                 //If the particle is still fading in
                 if (part.FadeInMs > part.TotalTimeAlreadyAlive && part.FadeInMs > 0)
                 {
-                    var percentFadedIn = part.TotalTimeAlreadyAlive / part.FadeInMs;
-                    part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedIn);
+                    if (part.GrowInsteadOfFadeIn)
+                    {
+                        var percentFadedIn = part.TotalTimeAlreadyAlive / part.FadeInMs;
+                        part.Size = part.OriginalSize * percentFadedIn;
+                    }
+                    else
+                    {
+                        var percentFadedIn = part.TotalTimeAlreadyAlive / part.FadeInMs;
+                        part.ColorMask = new Color(part.ColorMask, part.Alpha * percentFadedIn);
+                    }
                 }
 
                 part.NonCenteredPosition += (part.Velocity * deltaScale); //And move it in world space

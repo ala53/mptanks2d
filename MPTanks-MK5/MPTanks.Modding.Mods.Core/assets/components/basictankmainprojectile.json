@@ -44,7 +44,8 @@
       "minVelocity": { "x": 0, "y": 0 },
       "name": "trail_emitter",
       "renderBelowObjects": true,
-      "shrinkInsteadOfFade": true,
+      "shrinkInsteadOfFadeOut": false,
+      "growInsteadOfFadeIn": true,
       "sizeScalingUniform": true,
       "sprites": [
         {
