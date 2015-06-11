@@ -390,7 +390,7 @@ namespace MPTanks.Clients.GameClient
             frameNumber++;
             game.Diagnostics.BeginMeasurement("Rendering");
             timer.Restart(); //Stat tracking
-            GraphicsDevice.Clear(Color.Red);
+            GraphicsDevice.Clear(Color.Black);
 
             if (!loading || loadingScreen.IsSlidingOut)
             { //in game

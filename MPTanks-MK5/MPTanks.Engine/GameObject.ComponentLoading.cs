@@ -2,6 +2,7 @@
 using MPTanks.Engine.Assets;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Rendering;
+using MPTanks.Engine.Rendering.Animations;
 using MPTanks.Engine.Rendering.Particles;
 using MPTanks.Engine.Serialization;
 using MPTanks.Modding;
@@ -19,31 +20,30 @@ namespace MPTanks.Engine
         #region Associated Properties
 
         protected Dictionary<string, RenderableComponent> _components;
-        public IReadOnlyDictionary<string, RenderableComponent> Components
+        public IReadOnlyDictionary<string, RenderableComponent> Components { get { return _components; } }
+        #region Emitters
+        private List<EmitterData> _emittersWithData =
+            new List<EmitterData>();
+
+        private struct EmitterData
         {
-            get
-            {
-                return _components;
-            }
+            public ParticleEngine.Emitter AttachedEmitter { get; set; }
+            public GameObjectEmitterJSON Information { get; set; }
         }
-        protected Dictionary<string, string> _assets;
-        public IReadOnlyDictionary<string, string> Assets
-        {
-            get
-            {
-                return _assets;
-            }
-        }
-        private List<Tuple<ParticleEngine.Emitter, GameObjectEmitterJSON>> _emittersWithData =
-            new List<Tuple<ParticleEngine.Emitter, GameObjectEmitterJSON>>();
         protected Dictionary<string, ParticleEngine.Emitter> _emitters;
-        public IReadOnlyDictionary<string, ParticleEngine.Emitter> Emitters
-        {
-            get
-            {
-                return _emitters;
-            }
-        }
+        public IReadOnlyDictionary<string, ParticleEngine.Emitter> Emitters { get { return _emitters; } }
+        #endregion
+        #region Assets
+        protected Dictionary<string, string> _assets;
+        public IReadOnlyDictionary<string, string> Assets { get { return _assets; } }
+        protected Dictionary<string, SpriteInfo> _sprites;
+        public IReadOnlyDictionary<string, SpriteInfo> Sprites { get { return _sprites; } }
+        #endregion
+        protected Dictionary<string, SpriteAnimationInfo> _animatedSprites;
+        public IReadOnlyDictionary<string, SpriteAnimationInfo> AnimatedSprites { get { return _animatedSprites; } }
+
+        protected Dictionary<string, Animation> _animations;
+        public IReadOnlyDictionary<string, Animation> Animations { get { return _animations; } }
         #endregion
 
         /// <summary>
@@ -139,6 +139,36 @@ namespace MPTanks.Engine
                 }
             }
 
+            foreach (var sprite in deserialized.OtherSprites)
+            {
+                if (sprite.IsAnimation)
+                {
+                    if (sprite.Sheet.FromOtherMod)
+                    {
+                        _animatedSprites.Add(sprite.Key,
+                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
+                        _sprites.Add(sprite.Key,
+                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
+                    }
+                    else
+                    {
+                        _animatedSprites.Add(sprite.Key,
+                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
+                        _sprites.Add(sprite.Key,
+                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
+                    }
+                }
+                else
+                {
+                    if (sprite.Sheet.FromOtherMod)
+                        _sprites.Add(sprite.Key,
+                            new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
+                    else
+                        _sprites.Add(sprite.Key,
+                            new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
+                }
+            }
+
             CreateEmitters(deserialized.Emitters);
         }
 
@@ -155,6 +185,9 @@ namespace MPTanks.Engine
             _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
             _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
+            _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
 
             LoadComponentsFromFile(ResolveAsset(componentFile));
             AddComponents(_components);
@@ -213,7 +246,7 @@ namespace MPTanks.Engine
                 em.Paused = true;
 
                 _emitters.Add(emitter.Name, em);
-                _emittersWithData.Add(Tuple.Create(em, emitter));
+                _emittersWithData.Add(new EmitterData { AttachedEmitter = em, Information = emitter });
             }
         }
 
@@ -221,20 +254,20 @@ namespace MPTanks.Engine
         {
             foreach (var em in _emittersWithData)
             {
-                if (em.Item2.ColorChangedByObjectMask)
+                if (em.Information.ColorChangedByObjectMask)
                 {
-                    em.Item1.MinColorMask = new Color(((Color)em.Item2.MinColorMask).ToVector4() * ColorMask.ToVector4());
-                    em.Item1.MaxColorMask = new Color(((Color)em.Item2.MaxColorMask).ToVector4() * ColorMask.ToVector4());
+                    em.AttachedEmitter.MinColorMask = new Color(((Color)em.Information.MinColorMask).ToVector4() * ColorMask.ToVector4());
+                    em.AttachedEmitter.MaxColorMask = new Color(((Color)em.Information.MaxColorMask).ToVector4() * ColorMask.ToVector4());
                 }
-                if (em.Item2.EmissionArea.TracksObject)
+                if (em.Information.EmissionArea.TracksObject)
                 {
                     var emissionAreaNew = new RectangleF(
-                        em.Item2.EmissionArea.X + Position.X,
-                        em.Item2.EmissionArea.Y + Position.Y,
-                        em.Item2.EmissionArea.W,
-                        em.Item2.EmissionArea.H);
+                        em.Information.EmissionArea.X + Position.X,
+                        em.Information.EmissionArea.Y + Position.Y,
+                        em.Information.EmissionArea.W,
+                        em.Information.EmissionArea.H);
 
-                    em.Item1.EmissionArea = emissionAreaNew;
+                    em.AttachedEmitter.EmissionArea = emissionAreaNew;
                 }
             }
         }
@@ -242,35 +275,35 @@ namespace MPTanks.Engine
         private void DestroyEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (!emitter.Item2.KeepAliveAfterDeath)
-                    emitter.Item1.Kill();
+                if (!emitter.Information.KeepAliveAfterDeath)
+                    emitter.AttachedEmitter.Kill();
         }
 
         private void ActivateOnCreateEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Item2.SpawnOnCreate)
-                    emitter.Item1.Paused = false;
+                if (emitter.Information.SpawnOnCreate)
+                    emitter.AttachedEmitter.Paused = false;
         }
         private void ActivateOnDestroyEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Item2.SpawnOnDestroy)
-                    emitter.Item1.Paused = false;
+                if (emitter.Information.SpawnOnDestroy)
+                    emitter.AttachedEmitter.Paused = false;
         }
         private void ActivateOnDestroyEndedEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Item2.SpawnOnDestroyEnded)
-                    emitter.Item1.Paused = false;
+                if (emitter.Information.SpawnOnDestroyEnded)
+                    emitter.AttachedEmitter.Paused = false;
         }
         private void ActivateAtTimeEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Item2.SpawnAtTime)
-                    if (emitter.Item2.TimeMsToSpawnAt < TimeAliveMs)
-                        emitter.Item1.Paused = false;
-                    else emitter.Item1.Paused = true;
+                if (emitter.Information.SpawnAtTime)
+                    if (emitter.Information.TimeMsToSpawnAt < TimeAliveMs)
+                        emitter.AttachedEmitter.Paused = false;
+                    else emitter.AttachedEmitter.Paused = true;
         }
     }
 }

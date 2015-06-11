@@ -1,4 +1,17 @@
 ﻿{
+  "animations": [
+    {
+      "name": "death_explosion",
+      "activatesOn": "destroy",
+      "position": { "x": 0, "y": 0 },
+      "tracksObject": true,
+      "size": { "x": 0, "y": 0 },
+      "assets": [
+        {
+        }
+      ]
+    }
+  ],
   "components": [
     {
       "drawLayer": 0,
@@ -11,7 +24,7 @@
     },
     {
       "drawLayer": 0,
-      "frame": "grillmask",
+      "frame": "[ref]grillmask",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "tankFront",
       "offset": { "x": 0, "y": 0 },
@@ -69,11 +82,38 @@
       "modName": "engine_base"
     }
   ],
+  "otherSprites": [
+    {
+      "key": "explosion1",
+      "frame": "explosionAnim",
+      "isAnimation": true,
+      "sheet": { "ref": "explosion1" }
+    },
+    {
+      "key": "explosion2",
+      "frame": "explosionAnim2",
+      "isAnimation": true,
+      "sheet": { "ref": "explosion2" }
+    },
+    {
+      "key": "explosion3",
+      "frame": "explosionAnim3",
+      "isAnimation": true,
+      "sheet": { "ref": "explosion3" }
+    },
+    {
+      "key": "grillmask",
+      "frame": "grillmask",
+      "sheet": { "ref": "main_sheet" }
+    }
+  ],
   "reflectionName": "BasicTankMP",
   "sheet": {
+    "key": "main_sheet",
     "file": "assets/tanks/basictank2d.png",
     "fromOtherMod": true,
     "modName": "engine_base"
   },
-  "size": {"x": 3, "y": 5}
+  "removeAfter": 500,
+  "size": { "x": 3, "y": 5 }
 }

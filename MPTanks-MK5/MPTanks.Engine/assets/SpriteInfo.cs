@@ -56,7 +56,7 @@ namespace MPTanks.Engine.Assets
 
         public SpriteInfo(string spriteName, string sheetName)
         {
-            this._frameName = spriteName;
+            _frameName = spriteName;
             _sheetName = sheetName;
         }
 
@@ -64,6 +64,10 @@ namespace MPTanks.Engine.Assets
         {
             return new SpriteInfo(
                 Rendering.Animations.Animation.AnimationAsString(anim.AnimationName, anim.SheetName, 0, true), "");
+        }
+        public static explicit operator SpriteAnimationInfo(SpriteInfo anim)
+        {
+            return new SpriteAnimationInfo(anim.FrameName.Split(',')[2], anim.FrameName.Split(',')[1]);
         }
     }
 }

@@ -424,7 +424,7 @@ namespace MPTanks.Engine.Rendering.Particles
                 for (var i = 0; i < numberOfParticlesToCreate; i++)
                 {
                     //Get one of the allowed assets (randomly)
-                    var asset = Assets.AssetHelper.ChooseRandom(Sprites);
+                    var asset = Helpers.ChooseRandom(Sprites);
                     var fadeOutTime = GetRandomBetween(MinFadeOutMs, MaxFadeOutMs);
                     var fadeInTime = GetRandomBetween(MinFadeInMs, MaxFadeInMs);
 

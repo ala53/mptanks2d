@@ -58,9 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="assets\AssetHelper.cs" />
-    <Compile Include="assets\AssetManager.cs" />
-    <Compile Include="assets\Assets.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="assets\SpriteInfo.cs" />
     <Compile Include="assets\JSONColor.cs" />
     <Compile Include="assets\JSONVector.cs" />
     <Compile Include="ConstructorHelper.cs" />

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Assets;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
@@ -16,6 +17,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         RequiresMatchingOnOtherTeam = false)]
     public class BasicTank : Tank
     {
+        private string[] _explosions = { "explosion1", "explosion2", "explosion3" };
+
         protected override float RotationSpeed
         {
             get { return 0.05f; }
@@ -102,19 +105,19 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
         protected override bool DestroyInternal(GameObject destructor = null)
         {
-            var si = MPTanks.Engine.Assets.AssetHelper.GetRandomExplosionAnimation();
-            var anim = new MPTanks.Engine.Rendering.Animations.Animation(
-                     si.AnimationName, Position, new Vector2(10), si.SheetName);
+            var si = AnimatedSprites[Helpers.ChooseRandom(_explosions)];
+            var anim = new Engine.Rendering.Animations.Animation(
+                    si.AnimationName, Position, new Vector2(10), si.SheetName);
 
             Game.AnimationEngine.AddAnimation(anim);
 
-            Game.TimerFactory.CreateReccuringTimer((Action<Timer>)((timer) =>
+            Game.TimerFactory.CreateReccuringTimer((timer) =>
             {
                 if (timer.ElapsedMilliseconds > 500)
                     Game.TimerFactory.RemoveTimer(timer);
 
                 anim.Position = Position;
-            }), 1);
+            }, 1);
 
             if (Game.Authoritative)
                 Game.TimerFactory.CreateTimer((timer) => IsDestructionCompleted = true, 500);

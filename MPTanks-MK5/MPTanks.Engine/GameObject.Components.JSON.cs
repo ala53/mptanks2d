@@ -14,12 +14,20 @@ namespace MPTanks.Engine.Serialization
         public string Name { get; set; }
         public string ReflectionName { get; set; }
         public float Lifespan { get; set; }
+        /// <summary>
+        /// The number of milliseconds to wait after death to remove the object from the game.
+        /// </summary>
+        public float RemoveAfter { get; set; }
         [JsonProperty("size")]
         public JSONVector DefaultSize { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
         public GameObjectComponentJSON[] Components { get; set; }
         public GameObjectSheetSpecifierJSON[] OtherAssets { get; set; }
         public GameObjectEmitterJSON[] Emitters { get; set; }
+        public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
+
+        private static Dictionary<string, GameObjectComponentsJSON> _cache =
+            new Dictionary<string, GameObjectComponentsJSON>();
 
         public static GameObjectComponentsJSON Create(string data)
         {
@@ -31,11 +39,26 @@ namespace MPTanks.Engine.Serialization
                 me.Sheet = new GameObjectSheetSpecifierJSON
                 {
                     ModName = "engine_base",
-                    File = "assets/null.png",
+                    File = "assets/empty.png",
                     FromOtherMod = true
                 };
             if (me.OtherAssets == null) me.OtherAssets = new GameObjectSheetSpecifierJSON[0];
             if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
+            if (me.OtherSprites == null) me.OtherSprites = new GameObjectSpriteSpecifierJSON[0];
+
+            //Sprites
+            foreach (var sp in me.OtherSprites)
+            {
+                sp.IsAnimation = sp.IsAnimation || sp.Frame.StartsWith("[animation]");
+                if (sp.Frame.StartsWith("[animation]"))
+                    sp.Frame = sp.Frame.Substring("[animation]".Length);
+
+                if (sp.Sheet == null) sp.Sheet = me.Sheet;
+
+                if (sp.Sheet.Reference != null)
+                    sp.Sheet = me.FindSheet(sp.Sheet.Reference);
+            }
+
             //Go through the components
             foreach (var cmp in me.Components)
             {
@@ -47,6 +70,15 @@ namespace MPTanks.Engine.Serialization
                 //Handle scale being unset
                 if (cmp.Scale == null)
                     cmp.Scale = Vector2.One;
+                if (cmp.Frame != null && cmp.Frame.StartsWith("[ref]"))
+                {
+                    var sprite = me.FindSprite(cmp.Frame.Substring("[ref]".Length));
+                    if (sprite.IsAnimation)
+                        cmp.Frame = "[animation]" + sprite.Frame;
+                    else cmp.Frame = sprite.Frame;
+                    cmp.Sheet = sprite.Sheet;
+                }
+
                 //And again, null ref protection
                 if (cmp.Sheet == null)
                     cmp.Sheet = me.Sheet;
@@ -66,7 +98,16 @@ namespace MPTanks.Engine.Serialization
                         sprite.Sheet = me.Sheet;
                     if (sprite.Sheet.Reference != null)
                         sprite.Sheet = me.FindSheet(sprite.Sheet.Reference);
+                    if (sprite.Frame != null && sprite.Frame.StartsWith("[ref]"))
+                    {
+                        var spr = me.FindSprite(sprite.Frame.Substring("[ref]".Length));
+                        if (spr.IsAnimation)
+                            sprite.Frame = "[animation]" + sprite.Frame;
+                        else sprite.Frame = sprite.Frame;
+                        sprite.Sheet = sprite.Sheet;
+                    }
                 }
+
                 //Handle activation triggers
                 if (cmp.ActivatesOn == null)
                     cmp.ActivatesOn = "create";
@@ -89,20 +130,58 @@ namespace MPTanks.Engine.Serialization
             return me;
         }
 
+        public static GameObjectComponentsJSON CreateFromFile(string file)
+        {
+            var me = Create(System.IO.File.ReadAllText(file));
+            _cache.Add(file, me);
+            return me;
+        }
+
         private GameObjectSheetSpecifierJSON FindSheet(string name)
         {
             foreach (var sheet in OtherAssets)
-                if (sheet.Key != null && name == sheet.Key)
-                    return sheet;
+                if (sheet.Key != null &&
+                    sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    if (sheet.Reference == null)
+                        return sheet;
+                    else return FindSheet(sheet.Reference);
+
             foreach (var em in Emitters)
                 foreach (var sp in em.Sprites)
-                    if (sp.Sheet.Key != null && name == sp.Sheet.Key)
-                        return sp.Sheet;
+                    if (sp.Sheet != null && sp.Sheet.Key != null &&
+                        sp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                        if (sp.Sheet.Reference == null)
+                            return sp.Sheet;
+                        else return FindSheet(sp.Sheet.Reference);
             foreach (var cmp in Components)
-                if (cmp.Sheet.Key != null && name == cmp.Sheet.Key)
-                    return cmp.Sheet;
+                if (cmp.Sheet != null && cmp.Sheet.Key != null &&
+                    cmp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    if (cmp.Sheet.Reference == null)
+                        return cmp.Sheet;
+                    else return FindSheet(cmp.Sheet.Reference);
+            foreach (var sp in OtherSprites)
+                if (sp.Sheet != null && sp.Sheet.Key != null &&
+                    sp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    if (sp.Sheet.Reference == null)
+                        return sp.Sheet;
+                    else return FindSheet(sp.Sheet.Reference);
 
             return Sheet;
+        }
+
+        private GameObjectSpriteSpecifierJSON FindSprite(string name)
+        {
+            foreach (var sprite in OtherSprites)
+            {
+                if (sprite.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    return sprite;
+            }
+            return new GameObjectSpriteSpecifierJSON
+            {
+                Key = "ERROR_NOT_FOUND",
+                Frame = null,
+                Sheet = Sheet
+            };
         }
     }
 
@@ -130,6 +209,14 @@ namespace MPTanks.Engine.Serialization
         public string Reference { get; set; }
         public string File { get; set; }
         public string ModName { get; set; }
+    }
+
+    class GameObjectSpriteSpecifierJSON
+    {
+        public string Frame { get; set; }
+        public string Key { get; set; }
+        public bool IsAnimation { get; set; }
+        public GameObjectSheetSpecifierJSON Sheet { get; set; }
     }
 
     class GameObjectEmitterJSON
