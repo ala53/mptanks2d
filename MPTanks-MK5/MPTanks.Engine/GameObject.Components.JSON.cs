@@ -26,9 +26,6 @@ namespace MPTanks.Engine.Serialization
         public GameObjectEmitterJSON[] Emitters { get; set; }
         public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
 
-        private static Dictionary<string, GameObjectComponentsJSON> _cache =
-            new Dictionary<string, GameObjectComponentsJSON>();
-
         public static GameObjectComponentsJSON Create(string data)
         {
             //Deserialize
@@ -127,13 +124,6 @@ namespace MPTanks.Engine.Serialization
                 else cmp.SpawnOnCreate = true;
             }
 
-            return me;
-        }
-
-        public static GameObjectComponentsJSON CreateFromFile(string file)
-        {
-            var me = Create(System.IO.File.ReadAllText(file));
-            _cache.Add(file, me);
             return me;
         }
 
