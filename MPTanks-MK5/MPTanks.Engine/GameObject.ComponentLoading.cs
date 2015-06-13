@@ -78,6 +78,7 @@ namespace MPTanks.Engine
                     $"{deserialized.ReflectionName} does not match {ReflectionName}");
 
             LifespanMs = deserialized.Lifespan;
+            PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
 
             foreach (var cmp in deserialized.Components)

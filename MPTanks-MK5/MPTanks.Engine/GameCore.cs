@@ -340,7 +340,6 @@ namespace MPTanks.Engine
             {
                 //Process individual objects
                 foreach (var obj in GameObjects)
-                    if (obj.Alive) //Make sure it is actually "in game"
                         obj.Update(gameTime);
             }, "GameObject.Update() calls", DiagnosticsParent);
 

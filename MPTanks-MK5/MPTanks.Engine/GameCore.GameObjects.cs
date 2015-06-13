@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Tanks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -167,5 +169,31 @@ namespace MPTanks.Engine
         {
             EventEngine.RaiseGameObjectStateChanged(args);
         }
+
+        #region Helpers for object creation
+        public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0)
+        {
+            var tank = Tank.ReflectiveInitialize(reflectionName, player, player.Team, this, Authoritative);
+            tank.Position = position;
+            tank.Rotation = rotation;
+            AddGameObject(tank, null, Authoritative);
+            return tank;
+        }
+        public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, Vector2 position = default(Vector2), float rotation = 0)
+        {
+            var projectile = Projectiles.Projectile.ReflectiveInitialize(
+                reflectionName, spawner, this, Authoritative, position, rotation);
+            projectile.Position = position;
+            projectile.Rotation = rotation;
+            AddGameObject(projectile, null, Authoritative);
+            return projectile;
+        }
+        public Maps.MapObjects.MapObject AddMapObject(string reflectionName , Vector2 position = default(Vector2), float rotation = 0)
+        {
+            var obj = Maps.MapObjects.MapObject.ReflectiveInitialize(reflectionName, this, Authoritative, position, rotation);
+            AddGameObject(obj, null, Authoritative);
+            return obj;
+        }
+        #endregion
     }
 }

@@ -99,7 +99,13 @@ namespace MPTanks.Engine.Tanks
             UnsafeEnableEvents();
         }
 
-
+        protected Projectiles.Projectile SpawnProjectile(string name, Vector2 position = default(Vector2), float rotation = 0, Vector2 velocity = default(Vector2), float angularVelocity = 0)
+        {
+            var prj = Game.AddProjectile(name, this, position, rotation);
+            prj.LinearVelocity = velocity;
+            prj.AngularVelocity = angularVelocity;
+            return prj;
+        }
 
         public override string ToString()
         {

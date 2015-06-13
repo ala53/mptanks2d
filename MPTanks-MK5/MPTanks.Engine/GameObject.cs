@@ -18,6 +18,7 @@ namespace MPTanks.Engine
         public Body Body { get; private set; }
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }
+        public bool Authoritative { get { return Game.Authoritative; } }
         /// <summary>
         /// The number of milliseconds that the object has been alive
         /// </summary>
@@ -26,6 +27,7 @@ namespace MPTanks.Engine
         /// The lifespan in milliseconds of the object
         /// </summary>
         public float LifespanMs { get; private set; }
+        public float PostDeathExistenceTime { get; private set; }
         public bool IsDestructionCompleted { get; protected set; }
         #endregion
 
@@ -369,11 +371,14 @@ namespace MPTanks.Engine
 
             DestroyEmitters();
 
-            var canDeleteRightAway = DestroyInternal(destructor);
-            if (!Body.IsDisposed && canDeleteRightAway == false)
+            var mustWaitToDelete = DestroyInternal(destructor) || PostDeathExistenceTime > 0; 
+            if (!Body.IsDisposed && !mustWaitToDelete)
                 Body.Dispose(); //Kill the physics body if allowed to delete
 
-            return canDeleteRightAway;
+            if (PostDeathExistenceTime > 0)
+                Game.TimerFactory.CreateTimer(timer => IsDestructionCompleted = true, PostDeathExistenceTime);
+
+            return mustWaitToDelete;
         }
         /// <summary>
         /// Does object destruction logic. Return true if you would like to defer destruction until IsDestructionCompleted = true.

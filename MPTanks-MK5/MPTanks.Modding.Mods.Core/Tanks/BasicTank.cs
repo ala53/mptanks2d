@@ -36,6 +36,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         }
 
         private bool canFirePrimary = true;
+        private bool canFireSecondary = true;
+        private bool canFireTertiary = true;
         protected override void UpdateInternal(GameTime time)
         {
             //handle turret rotation
@@ -43,12 +45,13 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             Components["turretBase"].Rotation = InputState.LookDirection - Rotation;
             Components["turretDoor"].Rotation = InputState.LookDirection - Rotation;
 
-
-            if (InputState.FirePressed && InputState.WeaponNumber == 0)
-                FirePrimary();
-            if (InputState.FirePressed && InputState.WeaponNumber == 1)
-                FireSecondary();
-
+            if (Alive && Authoritative)
+            {
+                if (InputState.FirePressed && InputState.WeaponNumber == 0)
+                    FirePrimary();
+                if (InputState.FirePressed && InputState.WeaponNumber == 1)
+                    FireSecondary();
+            }
             base.UpdateInternal(time);
         }
 
@@ -56,23 +59,12 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         {
             if (!canFirePrimary)
                 return;
-            if (Game.Authoritative) // If we are able to be create game objects AKA we're authoritative, make the projectile
-            {
-                var rotation = InputState.LookDirection;
-                //Spawn a projectile
-                var projectile = MPTanks.Engine.Projectiles.Projectile
-                    .ReflectiveInitialize<Projectiles.BasicTank.MainGunProjectile>(
-                    "BasicTankMPMainProjectile", this, Game,
-                    false, TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation);
-
-                //Fire it in the barrel direction
-                const float velocity = 60f;
-                var x = velocity * (float)Math.Sin(rotation);
-                var y = velocity * -(float)Math.Cos(rotation);
-                projectile.LinearVelocity = new Vector2(x, y);
-                //Add to the game world
-                Game.AddGameObject(projectile, this);
-            }
+            const float velocity = 60f;
+            var rotation = InputState.LookDirection;
+            //Spawn a projectile
+            SpawnProjectile("BasicTankMPMainProjectile",
+                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
+                velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
 
             //Reload timer
             canFirePrimary = false;
@@ -80,27 +72,37 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         }
         private void FireSecondary()
         {
-            if (!canFirePrimary)
+            if (!canFireSecondary)
                 return;
+            const float velocity = 60f;
+            var rotation = InputState.LookDirection;
+            //Spawn a projectile
+            SpawnProjectile("BasicTankMPMainProjectile",
+                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
+                velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
 
-            if (Game.Authoritative) //Once again, check that we've got the power
+            //Reload timer
+            canFireSecondary = false;
+            Game.TimerFactory.CreateTimer((timer) => canFireSecondary = true, 500);
+        }
+
+        private void FireTertiary()
+        {
+            if (!canFireTertiary)
+                return;
+            if (Game.Authoritative) // If we are able to be create game objects AKA we're authoritative, make the projectile
             {
+                const float velocity = 60f;
                 var rotation = InputState.LookDirection;
                 //Spawn a projectile
-                var projectile = new Projectiles.BasicTank.MainGunProjectile(
-                    this, Game, false,
-                    TransformPoint(new Vector2(1.5f, -1f), rotation, true), rotation);
-                //Fire it in the barrel direction
-                const float velocity = 7f;
-                var x = velocity * (float)Math.Sin(rotation);
-                var y = velocity * -(float)Math.Cos(rotation);
-                projectile.LinearVelocity = new Vector2((float)x, (float)y);
-                //Add to the game world
-                Game.AddGameObject(projectile, this);
+                SpawnProjectile("BasicTankMPMainProjectile",
+                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
+                    velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
             }
+
             //Reload timer
-            canFirePrimary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
+            canFireTertiary = false;
+            Game.TimerFactory.CreateTimer((timer) => canFireTertiary = true, 500);
         }
 
         protected override bool DestroyInternal(GameObject destructor = null)
@@ -118,9 +120,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
                 anim.Position = Position;
             }, 1);
-
-            if (Game.Authoritative)
-                Game.TimerFactory.CreateTimer((timer) => IsDestructionCompleted = true, 500);
 
             return true;
         }
