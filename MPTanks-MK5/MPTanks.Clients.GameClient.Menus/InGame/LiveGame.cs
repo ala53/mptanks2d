@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPTanks.Engine.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,42 +28,43 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         private Action<LiveGame> _exitCallback = (game) => { };
         public LiveGame(Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
-#if !GAME_SANDBOX_DISABLE
-            _domain = AppDomain.CreateDomain("Live game: " + connectionInfo.FriendlyServerName, null);
-            _mtTask = new Thread(() =>
+            if (GlobalSettings.Debug)
             {
-                try
-                {
-                    _domain.Load(typeof(CrossDomainObject).Assembly.FullName);
-                    DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
-                        typeof(CrossDomainObject).Assembly.FullName,
-                        typeof(CrossDomainObject).FullName);
-
-                    _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
-                }
-                catch (Exception ex)
-                {
-                    ConnectionFailed = true;
-                    FailureReason = Strings.ClientMenus.GameCrashedUnknownCause(ex.Message);
-
-                }
+                //In debug mode, don't do domain wrapping
+                DomainProxy = CrossDomainObject.Instance;
+                Clients.GameClient.Program.Main(new string[] { });
                 Unload();
-            });
-            _mtTask.Start();
-#else 
-            //In debug mode, don't do domain wrapping
-            DomainProxy = CrossDomainObject.Instance;
-            Clients.GameClient.Program.Main(new string[] { });
-            Unload();
-#endif
+            }
+            else
+            {
+                _domain = AppDomain.CreateDomain("Live game: " + connectionInfo.FriendlyServerName, null);
+                _mtTask = new Thread(() =>
+                {
+                    try
+                    {
+                        _domain.Load(typeof(CrossDomainObject).Assembly.FullName);
+                        DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
+                            typeof(CrossDomainObject).Assembly.FullName,
+                            typeof(CrossDomainObject).FullName);
+
+                        _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
+                    }
+                    catch (Exception ex)
+                    {
+                        ConnectionFailed = true;
+                        FailureReason = Strings.ClientMenus.GameCrashedUnknownCause(ex.Message);
+
+                    }
+                    Unload();
+                });
+                _mtTask.Start();
+            }
         }
 
         public void WaitForExit()
         {
-#if !GAME_SANDBOX_DISABLE
-            _mtTask.Join();
-#endif
-            Unload();
+            if (GlobalSettings.Debug) Unload();
+            else _mtTask.Join();
         }
 
         public void RegisterExitCallback(Action<LiveGame> callback)
@@ -76,10 +78,9 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
-#if !GAME_SANDBOX_DISABLE
-            if (_mtTask.IsAlive)
+            if (!GlobalSettings.Debug && _mtTask.IsAlive)
                 _mtTask.Abort();
-#endif
+
             Unload();
         }
 
@@ -88,9 +89,8 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
-#if !GAME_SANDBOX_DISABLE
-            AppDomain.Unload(_domain);
-#endif
+            if (!GlobalSettings.Debug) AppDomain.Unload(_domain);
+
             _exitCallback(this);
             Connected = false;
             ConnectionFailed = true;

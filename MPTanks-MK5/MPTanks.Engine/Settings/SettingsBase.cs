@@ -39,11 +39,9 @@ namespace MPTanks.Engine.Settings
         static SettingsBase()
         {
             if (File.Exists("configpath.txt"))
-#if DEBUG
-                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
-#else
-                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
-#endif
+                if (GlobalSettings.Debug) ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
+                else ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
+
             var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
             dcr.DefaultMembersSearchFlags = dcr.DefaultMembersSearchFlags | System.Reflection.BindingFlags.NonPublic;
         }

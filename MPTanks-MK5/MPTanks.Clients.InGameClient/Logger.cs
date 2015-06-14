@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MPTanks.Engine.Settings;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace MPTanks.Clients.GameClient
         static Logger()
         {
             var config = new NLog.Config.LoggingConfiguration();
-            var st = GameSettings.Instance.GameLogLocation;
             var fileTarget =
                 new NLog.Targets.Wrappers.AsyncTargetWrapper(
                     new NLog.Targets.FileTarget()
@@ -31,11 +31,9 @@ namespace MPTanks.Clients.GameClient
                     10000, NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction.Grow);
 
             config.AddTarget("logfile", fileTarget);
-#if DEBUG
-            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Debug, fileTarget));
-#else
-            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Info, fileTarget));
-#endif
+
+                config.LoggingRules.Add(new NLog.Config.LoggingRule("*", 
+                    NLog.LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
 
             NLog.LogManager.Configuration = config;
 

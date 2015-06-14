@@ -18,6 +18,7 @@ using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Media;
 using MPTanks.Engine.Core;
+using MPTanks.Engine.Settings;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -152,10 +153,9 @@ namespace MPTanks.Clients.GameClient
 
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
-#if DEBUG
-            if (e.Key == Keys.F7)
+            if (GlobalSettings.Debug && e.Key == Keys.F7)
                 Debugger.Break();
-#endif
+
             if (e.Key == Keys.F11)
             {
                 graphics.ToggleFullScreen();

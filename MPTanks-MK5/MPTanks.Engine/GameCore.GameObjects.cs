@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Settings;
 using MPTanks.Engine.Tanks;
 using System;
 using System.Collections.Generic;
@@ -50,16 +51,20 @@ namespace MPTanks.Engine
 
         public void RemoveGameObject(GameObject obj, GameObject destructor = null, bool authorized = false)
         {
-#if DEBUG
-            if (!authorized && !Authoritative)
-                throw new Exception("Unauthorized removal of object");
-#else
-            if (!authorized && !Authoritative)
+            if (GlobalSettings.Debug)
             {
-                Logger.Error("Unauthorized object destruction attempted.");
-                return;
+                if (!authorized && !Authoritative)
+                    throw new Exception("Unauthorized removal of object");
             }
-#endif
+            else
+            {
+                if (!authorized && !Authoritative)
+                {
+                    Logger.Error("Unauthorized object destruction attempted.");
+                    return;
+                }
+            }
+
             if (destructor == null)
                 Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
                     $"[{obj.ObjectId}]. Authorized: {authorized}");

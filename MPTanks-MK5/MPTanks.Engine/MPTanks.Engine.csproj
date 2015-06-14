@@ -104,6 +104,7 @@
     <Compile Include="Rendering\SpriteSheetLookupHelper.cs" />
     <Compile Include="RPC\RemoteProcedureCallHelper.cs" />
     <Compile Include="Settings\EngineSettings.cs" />
+    <Compile Include="Settings\GlobalSettings.cs" />
     <Compile Include="Settings\SettingsBase.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundEngine.cs" />

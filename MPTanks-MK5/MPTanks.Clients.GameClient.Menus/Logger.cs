@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MPTanks.Engine.Settings;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,9 @@ namespace MPTanks.Clients.GameClient.Menus
     public static class Logger
     {
         private static NLog.Logger logger;
+
+        public static NLog.Logger Instance { get { return logger; } }
+
         static Logger()
         {
             var config = new NLog.Config.LoggingConfiguration();
@@ -26,51 +31,82 @@ namespace MPTanks.Clients.GameClient.Menus
                     10000, NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction.Grow);
 
             config.AddTarget("logfile", fileTarget);
-#if DEBUG
-            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Debug, fileTarget));
-#else
-            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", NLog.LogLevel.Info, fileTarget));
-#endif
+
+            config.LoggingRules.Add(new NLog.Config.LoggingRule("*",
+                NLog.LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
 
             NLog.LogManager.Configuration = config;
 
             logger = NLog.LogManager.GetLogger("Client");
         }
-        public static void Log(string info)
+        public static void Debug(string message)
         {
-            logger.Info(info);
+            Instance.Debug(message);
         }
 
-        public static void Error(string err)
+        public static void Error(Exception ex)
         {
-            logger.Error(err);
-            logger.Trace(GetStackTrace());
+            Instance.ErrorException("Severe Error/Exception", ex);
         }
 
-        public static void Warning(string warn)
+        public static void Error(string message)
         {
-            logger.Warn(warn);
+            Error(message);
         }
 
-        public static void Fatal(string fatal)
+        public static void Fatal(Exception ex)
         {
-            logger.Fatal(fatal);
-            logger.Trace(GetStackTrace());
+            Instance.FatalException("Fatal Exception", ex);
+            AppDomain.Unload(AppDomain.CurrentDomain);
+            throw ex;
         }
 
-        public static void Debug(string dbg)
+        public static void Fatal(string message)
         {
-#if DEBUG //Don't remove, compiler optimization. If we're not in debug mode, we don't need this info
-            //so we have it as dead code which the compiler (hopefully) removes
-            logger.Debug(dbg);
-#endif
+            Instance.Fatal(message);
         }
 
+        public static void Info(object data)
+        {
+            Info("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
+        }
+
+        public static void Info(string message)
+        {
+            Instance.Info(message);
+        }
+
+        public static void Trace(Exception ex)
+        {
+            Instance.TraceException("Code Trace", ex);
+        }
+
+        public static void Trace(object data)
+        {
+            Trace("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
+        }
+
+        public static void Trace(string message)
+        {
+            Instance.Trace(message);
+        }
+
+        public static void Warning(string message)
+        {
+            Instance.Warn(message);
+        }
+
+        public static void Warning(object data)
+        {
+            Warning("[" + data.GetType().AssemblyQualifiedName + "]\n" +
+                JsonConvert.SerializeObject(data, Formatting.Indented));
+        }
 
         private static string GetStackTrace()
         {
             return Environment.StackTrace;
         }
     }
-
 }
