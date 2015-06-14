@@ -23,6 +23,8 @@ namespace MPTanks.Networking.Common
 
         public Setting<int> MaxActionFrameCount { get; private set; }
 
+        public Setting<float> MaxNetworkDelayMs { get; private set; }
+
         private Settings(string file) : base(file)
         {
             MasterServer = new Setting<string>(this, "Master Server Address",
@@ -48,6 +50,10 @@ namespace MPTanks.Networking.Common
 
             MaxActionFrameCount = new Setting<int>(this, "Maximum Action Frames Count",
                 "The maximum number of action frames to store at any point", 600);
+
+            MaxNetworkDelayMs = new Setting<float>(this, "Maximum network delay for batching",
+                "The maximum number of milliseconds that the action queue can be delayed (in milliseconds) " +
+                "to batch messages together. This improves bandwidth usage a lot but increases latency.", 30);
         }
     }
 }

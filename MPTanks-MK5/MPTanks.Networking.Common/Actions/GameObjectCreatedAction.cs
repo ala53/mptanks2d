@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions
 {
-    public class TankCreatedAction
+    class GameObjectCreatedAction
     {
-        public static TankCreatedAction Get()
-        {
-            return Pool.Get<TankCreatedAction>();
-        }
     }
 }

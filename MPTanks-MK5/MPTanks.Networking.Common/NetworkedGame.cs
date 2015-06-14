@@ -20,8 +20,8 @@ namespace MPTanks.Networking.Common
         /// </summary>
         public int MaxFramesPerSecond { get; set; }
         public GameState CurrentGameState { get { return _pooledGameState; } }
-        public MPTanks.Engine.GameCore Game { get; private set; }
-        public MPTanks.Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
+        public Engine.GameCore Game { get; private set; }
+        public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
         #endregion
         #region Timing Management
         private double totalMilliseconds;

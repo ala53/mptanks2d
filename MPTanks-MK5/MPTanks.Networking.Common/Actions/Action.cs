@@ -8,5 +8,9 @@ namespace MPTanks.Networking.Common.Actions
 {
     public abstract class Action
     {
+        enum Type
+        {
+
+        }
     }
 }

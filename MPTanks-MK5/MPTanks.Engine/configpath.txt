@@ -1,0 +1,2 @@
+﻿%CD%
+%USERPROFILE%\Documents\My Games\MP Tanks 2D
