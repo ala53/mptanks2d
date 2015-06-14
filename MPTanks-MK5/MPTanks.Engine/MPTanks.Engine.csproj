@@ -80,7 +80,7 @@
     <Compile Include="Gamemodes\DefaultGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
-    <Compile Include="GameObject.ComponentLoading.cs" />
+    <Compile Include="GameObject.Components.cs" />
     <Compile Include="GameObject.Components.JSON.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameObject.Events.cs" />
@@ -131,6 +131,11 @@
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
       <Name>Strings</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="configpath.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
