@@ -6,6 +6,7 @@ using EmptyKeys.UserInterface.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MPTanks.Clients.GameClient.Menus.InGame;
 using MPTanks.Rendering.UI;
 using System;
 
@@ -82,6 +83,10 @@ namespace MPTanks.Clients.GameClient.Menus
             ui = new UserInterface(Content, GraphicsDevice);
             ui.SetPage("mainmenu");
             ui.ActiveBinder.ExitAction = (Action)Exit;
+            ui.ActiveBinder.HostAction = (Action)(() =>
+            {
+                var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo(), new string[] { });
+            });
         }
 
         int ct;

@@ -12,13 +12,48 @@ namespace MPTanks.Rendering.UI.Binders
     {
         public Action ExitAction { get; set; }
         private RelayCommand _exitCommand;
-        public ICommand ExitCommand
+        public ICommand ExitCommand { get { return _exitCommand; } }
+
+        private Action _hostAction;
+        public Action HostAction
         {
-            get
+            get { return _hostAction; }
+            set
             {
-                return _exitCommand;
+                _hostAction = value;
+                _hostCommand = new RelayCommand((o) => _hostAction());
             }
         }
+        private RelayCommand _hostCommand;
+        public ICommand HostGameCommand { get { return _hostCommand; } }
+
+
+        private Action _joinAction;
+        public Action JoinAction
+        {
+            get { return _hostAction; }
+            set
+            {
+                _joinAction = value;
+                _joinCommand = new RelayCommand((o) => _joinAction());
+            }
+        }
+        private RelayCommand _joinCommand;
+        public ICommand JoinGameCommand { get { return _joinCommand; } }
+
+
+        private Action _settingsAction;
+        public Action SettingsAction
+        {
+            get { return _hostAction; }
+            set
+            {
+                _settingsAction = value;
+                _settingsCommand = new RelayCommand((o) => _settingsAction());
+            }
+        }
+        private RelayCommand _settingsCommand;
+        public ICommand SettingsCommand { get { return _settingsCommand; } }
 
         public MainMenu()
         {
@@ -34,6 +69,10 @@ namespace MPTanks.Rendering.UI.Binders
                             ExitAction();
                     });
             });
+
+            HostAction = delegate { };
+            JoinAction = delegate { };
+            SettingsAction = delegate { };
         }
     }
 }
