@@ -254,7 +254,7 @@ namespace MPTanks.Engine
             //Call the event
             RaiseOnCreated();
 
-            ActivateOnCreateEmitters();
+            InvokeTrigger("create");
 
             //And call the internal function
             CreateInternal();
@@ -367,7 +367,7 @@ namespace MPTanks.Engine
             //Call the event
             RaiseOnDestroyed(destructor);
 
-            ActivateOnDestroyEmitters();
+            InvokeTrigger("destroy");
 
             DestroyEmitters();
 
@@ -401,7 +401,7 @@ namespace MPTanks.Engine
             Alive = false;
             EndDestructionInternal(); //And call the destructor logic
 
-            ActivateOnDestroyEndedEmitters();
+            InvokeTrigger("destroy_ended");
             RaiseOnDestructionEnded();
         }
 

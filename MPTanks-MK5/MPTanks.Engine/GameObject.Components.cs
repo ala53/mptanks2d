@@ -9,6 +9,7 @@ using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace MPTanks.Engine
 {
@@ -199,7 +200,7 @@ namespace MPTanks.Engine
             AddComponents(_components);
         }
 
-
+        #region Emitters
         private void CreateEmitters(GameObjectEmitterJSON[] emitters)
         {
             foreach (var emitter in emitters)
@@ -286,22 +287,11 @@ namespace MPTanks.Engine
                     emitter.AttachedEmitter.Kill();
         }
 
-        private void ActivateOnCreateEmitters()
+        private void TriggerEmitters(string trigger)
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Information.SpawnOnCreate)
-                    emitter.AttachedEmitter.Paused = false;
-        }
-        private void ActivateOnDestroyEmitters()
-        {
-            foreach (var emitter in _emittersWithData)
-                if (emitter.Information.SpawnOnDestroy)
-                    emitter.AttachedEmitter.Paused = false;
-        }
-        private void ActivateOnDestroyEndedEmitters()
-        {
-            foreach (var emitter in _emittersWithData)
-                if (emitter.Information.SpawnOnDestroyEnded)
+                if (emitter.Information.SpawnIsTriggered &&
+                    emitter.Information.TriggerName.Equals(trigger, StringComparison.InvariantCultureIgnoreCase))
                     emitter.AttachedEmitter.Paused = false;
         }
         private void ActivateAtTimeEmitters()
@@ -312,5 +302,31 @@ namespace MPTanks.Engine
                         emitter.AttachedEmitter.Paused = false;
                     else emitter.AttachedEmitter.Paused = true;
         }
+
+        #endregion
+
+        #region Triggers
+        protected void InvokeTrigger(string triggerName)
+        {
+            TriggerEmitters(triggerName);
+            //Look for a function with the name and signature of "void On[TriggerName]() {}"
+            try
+            {
+                var method = GetType().GetMethod("on" + triggerName,
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public |
+                    BindingFlags.Instance |
+                    BindingFlags.IgnoreCase);
+
+                if (method != null)
+                    method.Invoke(this, null);
+            }
+            catch (Exception ex)
+            {
+                Game.Logger.Error($"GameObject (ID {ObjectId}): Tried to call \"On{triggerName}\" as triggered" +
+                    " but the call failed.", ex);
+            }
+        }
+        #endregion
     }
 }

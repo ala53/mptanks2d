@@ -109,10 +109,7 @@ namespace MPTanks.Engine.Serialization
                 if (cmp.ActivatesOn == null)
                     cmp.ActivatesOn = "create";
                 //And actually deal with the activation triggers
-                if (cmp.ActivatesOn == "create") cmp.SpawnOnCreate = true;
-                else if (cmp.ActivatesOn == "destroy") cmp.SpawnOnDestroy = true;
-                else if (cmp.ActivatesOn == "destroy_ended") cmp.SpawnOnDestroyEnded = true;
-                else if (cmp.ActivatesOn.StartsWith("t=") && cmp.ActivatesOn.Length > 2)
+                if (cmp.ActivatesOn.StartsWith("t=") && cmp.ActivatesOn.Length > 2)
                 {
                     float parse = 0;
                     if (float.TryParse(cmp.ActivatesOn.Substring(2), out parse))
@@ -121,7 +118,11 @@ namespace MPTanks.Engine.Serialization
                         cmp.TimeMsToSpawnAt = parse;
                     }
                 }
-                else cmp.SpawnOnCreate = true;
+                else
+                {
+                    cmp.SpawnIsTriggered = true;
+                    cmp.TriggerName = cmp.ActivatesOn.ToLower();
+                }
             }
 
             return me;
@@ -222,11 +223,9 @@ namespace MPTanks.Engine.Serialization
         public EmissionAreaJSON EmissionArea { get; set; }
 
         [JsonIgnore]
-        public bool SpawnOnCreate { get; set; }
+        public bool SpawnIsTriggered { get; set; }
         [JsonIgnore]
-        public bool SpawnOnDestroyEnded { get; set; }
-        [JsonIgnore]
-        public bool SpawnOnDestroy { get; set; }
+        public string TriggerName { get; set; }
         [JsonIgnore]
         public bool SpawnAtTime { get; set; }
         [JsonIgnore]
