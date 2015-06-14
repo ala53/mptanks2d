@@ -26,7 +26,10 @@ namespace MPTanks.Engine.Projectiles
             base.CreateInternal();
         }
 
-        abstract public void CollidedWithTank(Tanks.Tank tank);
+        public virtual void CollidedWithTank(Tanks.Tank tank)
+        {
+            Kill(tank);
+        }
 
         #region Static initialization
         private static Dictionary<string, Type> _prjTypes =

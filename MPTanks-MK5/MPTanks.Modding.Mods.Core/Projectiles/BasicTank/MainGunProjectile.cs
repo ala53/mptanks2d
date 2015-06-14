@@ -30,16 +30,6 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             ColorMask = owner.ColorMask;
         }
 
-        protected override void CreateInternal()
-        {
-            base.CreateInternal();
-        }
-
-        public override void CollidedWithTank(Tank tank)
-        {
-            Game.RemoveGameObject(this, tank);
-        }
-
         protected override bool DestroyInternal(GameObject destroyer = null)
         {
             var cMask = ColorMask;
