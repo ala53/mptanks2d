@@ -37,7 +37,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             private set
             {
-                SetProperty<string>(ref _addrLabel, value, "AddressLabel");
+                SetProperty(ref _addrLabel, value, nameof(AddressLabel));
             }
         }
 
@@ -66,7 +66,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty<Visibility>(ref _failureAreaVisibility, value, "FailureAreaVisibility");
+                SetProperty(ref _failureAreaVisibility, value, nameof(FailureAreaVisibility));
             }
         }
 
@@ -79,7 +79,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty<Visibility>(ref _cancelAreaVisibility, value, "CancelAreaVisibility");
+                SetProperty(ref _cancelAreaVisibility, value, nameof(CancelAreaVisibility));
             }
         }
         #endregion
@@ -122,7 +122,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty<string>(ref _failureReason, value, "FailureReason");
+                SetProperty(ref _failureReason, value, nameof(FailureReason));
             }
         }
 
@@ -174,7 +174,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty<ICommand>(ref _cancelCommand, value, "CancelButtonCommand");
+                SetProperty(ref _cancelCommand, value, nameof(CancelButtonCommand));
             }
         }
 
@@ -187,7 +187,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty<ICommand>(ref _returnCommand, value, "ReturnButtonCommand");
+                SetProperty(ref _returnCommand, value, nameof(ReturnButtonCommand));
             }
         }
         #endregion

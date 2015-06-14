@@ -20,7 +20,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _header, value, "Header");
+                SetProperty(ref _header, value, nameof(Header));
             }
         }
         private string _content;
@@ -32,7 +32,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _content, value, "Content");
+                SetProperty(ref _content, value, nameof(Content));
             }
         }
 
@@ -90,7 +90,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             private set
             {
-                SetProperty(ref _cancelBtn, value, "CancelButtonVisibility");
+                SetProperty(ref _cancelBtn, value, nameof(CancelButtonVisibility));
             }
         }
 
@@ -103,7 +103,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             private set
             {
-                SetProperty(ref _okBtn, value, "OkButtonVisibility");
+                SetProperty(ref _okBtn, value, nameof(OkButtonVisibility));
             }
         }
 
@@ -116,7 +116,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             private set
             {
-                SetProperty(ref _yesBtn, value, "YesButtonVisibility");
+                SetProperty(ref _yesBtn, value, nameof(YesButtonVisibility));
             }
         }
 
@@ -129,7 +129,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             private set
             {
-                SetProperty(ref _noBtn, value, "NoButtonVisibility");
+                SetProperty(ref _noBtn, value, nameof(NoButtonVisibility));
             }
         }
 
@@ -142,7 +142,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _okCommand, value, "OkCommand");
+                SetProperty(ref _okCommand, value, nameof(OkCommand));
             }
         }
 
@@ -155,7 +155,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _cancelCommand, value, "CancelCommand");
+                SetProperty(ref _cancelCommand, value, nameof(CancelCommand));
             }
         }
 
@@ -168,7 +168,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _yesCommand, value, "YesCommand");
+                SetProperty(ref _yesCommand, value, nameof(YesCommand));
             }
         }
 
@@ -181,7 +181,7 @@ namespace MPTanks.Rendering.UI.Binders
             }
             set
             {
-                SetProperty(ref _noCommand, value, "NoCommand");
+                SetProperty(ref _noCommand, value, nameof(NoCommand));
             }
         }
 
