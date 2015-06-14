@@ -26,28 +26,62 @@ namespace MPTanks.Engine
             new Color() { PackedValue = BitConverter.ToUInt32(arr, 0) };
         #endregion
 
-        public static void CopyFrom(this byte[] arr1, byte[] source, int offset) =>
+        public static void SetContents(this byte[] arr1, byte[] source, int offset) =>
             Array.Copy(source, 0, arr1, offset, source.Length);
 
-        public static void CopyFrom(this byte[] arr1, int obj, int offset)
+        public static void SetContents(this byte[] arr1, int obj, int offset)
         {
             var source = BitConverter.GetBytes(obj);
             Array.Copy(source, 0, arr1, offset, source.Length);
         }
-        public static void CopyFrom(this byte[] arr1, float obj, int offset)
+        public static void SetContents(this byte[] arr1, float obj, int offset)
         {
             var source = BitConverter.GetBytes(obj);
             Array.Copy(source, 0, arr1, offset, source.Length);
         }
-        public static void CopyFrom(this byte[] arr1, Color obj, int offset)
+        public static void SetContents(this byte[] arr1, Color obj, int offset)
         {
             var source = ToByteArray(obj);
             Array.Copy(source, 0, arr1, offset, source.Length);
         }
-        public static void CopyFrom(this byte[] arr1, Vector2 obj, int offset)
+        public static void SetContents(this byte[] arr1, Vector2 obj, int offset)
         {
             var source = ToByteArray(obj);
             Array.Copy(source, 0, arr1, offset, source.Length);
+        }
+
+        public static T GetValue<T>(this byte[] src, int offset)
+        {
+            if (typeof(T) == typeof(int))
+                return (T)(object)GetInt(src, offset);
+            if (typeof(T) == typeof(uint))
+                return (T)(object)BitConverter.ToUInt32(src, offset);
+
+            if (typeof(T) == typeof(Vector2))
+                return (T)(object)GetVector(src, offset);
+            if (typeof(T) == typeof(Color))
+                return (T)(object)GetInt(src, offset);
+            if (typeof(T) == typeof(float))
+                return (T)(object)GetFloat(src, offset);
+            if (typeof(T) == typeof(double))
+                return (T)(object)BitConverter.ToDouble(src, offset);
+
+            if (typeof(T) == typeof(long))
+                return (T)(object)BitConverter.ToInt64(src, offset);
+            if (typeof(T) == typeof(ulong))
+                return (T)(object)BitConverter.ToUInt64(src, offset);
+
+            if (typeof(T) == typeof(short))
+                return (T)(object)BitConverter.ToInt16(src, offset);
+            if (typeof(T) == typeof(ushort))
+                return (T)(object)BitConverter.ToUInt16(src, offset);
+
+            if (typeof(T) == typeof(byte))
+                return (T)(object)src[offset];
+            if (typeof(T) == typeof(sbyte))
+                return (T)(object)(sbyte)src[offset];
+
+            throw new Exception("Not allowed");
         }
 
         public static Vector2 GetVector(byte[] src, int offset)

@@ -12,5 +12,6 @@ namespace MPTanks.Modding
         public const string GamemodeTypeName = EngineNS + ".Gamemodes.Gamemode";
         public const string MapObjectTypeName = EngineNS + ".Maps.MapObjects.MapObject";
         public const string ProjectileTypeName = EngineNS + ".Projectiles.Projectile";
+        public const string GameObjectTypeName = EngineNS + ".GameObject";
     }
 }

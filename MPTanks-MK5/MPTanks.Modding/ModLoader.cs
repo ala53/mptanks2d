@@ -81,25 +81,28 @@ namespace MPTanks.Modding
         }
         public static Module Load(string[] sources, bool verifySafe, out string errors, string[] precompiledAssemblies, string[] otherAssemblyReferences = null)
         {
+            //Null ref protection
             if (otherAssemblyReferences == null) otherAssemblyReferences = new string[0];
             if (precompiledAssemblies == null) precompiledAssemblies = new string[0];
 
+            //Then compile everything
             var compileErrors = "";
             var asm = Compiliation.Compiler.CompileAssembly(sources, out compileErrors, otherAssemblyReferences);
             var mbuilderrors = "";
 
+            //Catch failures
             if (asm == null)
             {
 
                 errors = "Compiliation failed \n\n\n" + compileErrors;
                 return null;
             }
-
+            //Otherwise, build the list of both pre-built (dependency) assemblies + this one
             var assemblies = precompiledAssemblies.ToList();
             assemblies.Add(asm);
-
+            //Build the module
             var module = Load(assemblies.ToArray(), verifySafe, out mbuilderrors);
-
+            //Mark the errors
             errors = compileErrors + "\n\n\n" + mbuilderrors;
             return module;
 
@@ -112,10 +115,18 @@ namespace MPTanks.Modding
 
         public static Module Load(string[] assemblies, bool verifySafe, out string errors)
         {
-            assemblies = assemblies.Select((a) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, a)).ToArray();
+            //Make sure that all of the assemblies have absolute paths (if not, we will crash when loading.
+            assemblies = assemblies.Select((a) =>
+            {
+                if (a.Contains(@"\") || a.Contains("/"))
+                    return a;
+                else
+                    return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, a);
+            }).ToArray();
+            //Check that all assemblies conform to the white list by scanning the IL
             var safetyCheckErrors = "";
             if (verifySafe)
-            {//Scan the IL of the assembly
+            {
                 foreach (var asm in assemblies)
                 {
                     if (!Compiliation.Verification.WhitelistVerify.IsAssemblySafe(asm, out safetyCheckErrors))
@@ -126,6 +137,7 @@ namespace MPTanks.Modding
                 }
             }
 
+            //Then move on to building the module
             var builderErrors = "";
             var module = new Module();
 
@@ -137,8 +149,20 @@ namespace MPTanks.Modding
                 var decl = FindModuleDeclaration(Assembly.LoadFile(asm));
                 if (decl != null)
                 {
-                    moduleDeclaration = decl;
-                    break;
+                    //Check that it hasn't already been loaded
+                    //If it is, we probably are looking at the wrong attribute (probably the
+                    //declaration of a loaded dependency)
+                    bool canBreak = true;
+                    foreach (var mod in ModDatabase.LoadedModules)
+                        if (mod.Name.Equals(moduleDeclaration.Name, StringComparison.InvariantCultureIgnoreCase) &&
+                            mod.Version.Major == moduleDeclaration.Version.Major
+                            && mod.Version.Minor == moduleDeclaration.Version.Minor)
+                            canBreak = false;
+                    if (canBreak)
+                    {
+                        moduleDeclaration = decl;
+                        break;
+                    }
                 }
             }
             if (moduleDeclaration == null)
@@ -147,7 +171,7 @@ namespace MPTanks.Modding
                 errors = safetyCheckErrors + "\n\n\n" + builderErrors;
                 return null;
             }
-
+            //Load all of the assemblies
             module.Assemblies = assemblies.Select(a => Assembly.LoadFile(a)).ToArray();
             //Resolve dependencies
             module.Dependencies =
@@ -170,8 +194,6 @@ namespace MPTanks.Modding
                     {
 #endif
                     var typ = new TankType(tank);
-                    var attrib = (GameObjectAttribute)typ.Type.GetCustomAttribute(typeof(GameObjectAttribute), true);
-                    attrib.Owner = module;
                     Inject(typ);
                     tanks.Add(typ);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
@@ -227,6 +249,28 @@ namespace MPTanks.Modding
 #endif
                 }
             module.MapObjects = mapObjects.ToArray();
+
+            //Other Gameobjects
+            var gameObjects = new List<GameObjectType>();
+            foreach (var asm in module.Assemblies)
+                foreach (var gameObject in ScanOtherGameObjectTypes(asm))
+                {
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
+                    try
+                    {
+#endif
+                    var typ = new GameObjectType(gameObject);
+                    Inject(typ);
+                    gameObjects.Add(typ);
+#if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
+                    }
+                    catch (Exception e)
+                    {
+                        builderErrors += "\n\n\nMap object: " + mapObject.FullName + " has error: " + e.Message;
+                    }
+#endif
+                }
+            module.GameObjects = gameObjects.ToArray();
 
             //Gamemodes
             var gamemodes = new List<GamemodeType>();
@@ -289,7 +333,7 @@ namespace MPTanks.Modding
 
             return null;
         }
-
+        #region Type scanning
         private static Type[] ScanProjectileTypes(Assembly asm)
         {
             var projectileTypes = new List<Type>();
@@ -326,6 +370,20 @@ namespace MPTanks.Modding
 
             return tankTypes.ToArray();
         }
+        private static Type[] ScanOtherGameObjectTypes(Assembly asm)
+        {
+            var types = new List<Type>();
+            foreach (var type in asm.GetTypes())
+                if (GameObjectType.IsGameObjectType(type) &&
+                    !TankType.IsTankType(type) &&
+                    !ProjectileType.IsProjectileType(type) &&
+                    !MapObjectType.IsMapObjectType(type))
+                    types.Add(type);
+
+            return types.ToArray();
+        }
+        #endregion
+        #region Type Injection
         private static void Inject(TankType type)
         {
             var typ = GetTypeHelper.GetType(Settings.TankTypeName);
@@ -350,5 +408,12 @@ namespace MPTanks.Modding
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
+        private static void Inject(GameObjectType type)
+        {
+            var typ = GetTypeHelper.GetType(Settings.GameObjectTypeName);
+            var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
+            method.MakeGenericMethod(type.Type).Invoke(null, null);
+        }
+        #endregion
     }
 }

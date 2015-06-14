@@ -10,17 +10,34 @@ namespace MPTanks.Engine.Core.Timing
 
     public class Timer
     {
-        public double ElapsedMilliseconds { get; private set; }
+
+        public static Timer Default { get { return new Timer { Completed = true }; } }
+        public float ElapsedMilliseconds { get; set; }
         public Action<Timer> Callback { get; private set; }
         public object UserData { get; private set; }
-        public double Interval { get; private set; }
+        public float Interval { get; set; }
         public bool Repeat { get; private set; }
 
         public bool Completed { get; private set; }
 
+        public Factory Creator { get; private set; }
+
         private Timer()
         {
 
+        }
+
+        public Timer Reset()
+        {
+            Creator.ResetTimer(this);
+            return this;
+        }
+
+        public Timer Complete()
+        {
+            ElapsedMilliseconds += Interval;
+            Callback(this);
+            return this;
         }
 
         public class Factory
@@ -33,21 +50,22 @@ namespace MPTanks.Engine.Core.Timing
             private List<Timer> timersToRemove = new List<Timer>();
             private List<Timer> timersToAdd = new List<Timer>();
 
-            public Timer CreateTimer(Action<Timer> callback, double milliseconds, object userdata = null)
+            public Timer CreateTimer(Action<Timer> callback, float timeout, object userdata = null)
             {
-                if (milliseconds < 0)
-                    milliseconds = 0;
+                if (timeout < 0)
+                    timeout = 0;
 
                 var timer = new Timer()
                 {
                     Callback = callback,
-                    Completed = (milliseconds == 0),
-                    Interval = milliseconds,
+                    Completed = (timeout == 0),
+                    Interval = timeout,
                     Repeat = false,
-                    UserData = userdata
+                    UserData = userdata,
+                    Creator = this
                 };
 
-                if (milliseconds == 0)
+                if (timeout == 0)
                 {
                     callback(timer);
                     timer.Completed = true;
@@ -60,7 +78,12 @@ namespace MPTanks.Engine.Core.Timing
                 return timer;
             }
 
-            public Timer CreateReccuringTimer(Action<Timer> callback, double interval, object userdata = null)
+            public Timer CreateTimer(float timeout, object userdata = null)
+            {
+                return CreateTimer((t) => { }, timeout, userdata);
+            }
+
+            public Timer CreateReccuringTimer(Action<Timer> callback, float interval, object userdata = null)
             {
                 if (interval == 0 || interval < 0)
                     throw new ArgumentException("Cannot have infinitely fast tickrate");
@@ -90,12 +113,25 @@ namespace MPTanks.Engine.Core.Timing
                 }
             }
 
+            public void ResetTimer(Timer timer)
+            {
+                bool found = timers.Contains(timer);
+
+                timer.ElapsedMilliseconds = 0;
+                timer.Completed = false;
+
+                if (!found)
+                    if (inUpdateLoop)
+                        timersToAdd.Add(timer);
+                    else timers.Add(timer);
+            }
+
             public void Update(GameTime gameTime)
             {
                 inUpdateLoop = true;
                 foreach (var timer in timers)
                 {
-                    timer.ElapsedMilliseconds += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    timer.ElapsedMilliseconds += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (timer.ElapsedMilliseconds > timer.Interval)
                     {
                         timer.Callback(timer); //Invoke the callback

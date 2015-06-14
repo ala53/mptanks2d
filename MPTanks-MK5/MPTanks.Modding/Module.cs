@@ -32,49 +32,14 @@ namespace MPTanks.Modding
         /// A list of the types of mapobjects
         /// </summary>
         public MapObjectType[] MapObjects { get; internal set; }
+        /// <summary>
+        /// A list of the types of mapobjects
+        /// </summary>
+        public GameObjectType[] GameObjects { get; internal set; }
 
         internal Dictionary<string, string> assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         public IReadOnlyDictionary<string,string> Assets { get { return assets; } }
-
-        /// <summary>
-        /// Injects the mod into the engine by calling the appropriate RegisterType()'s.
-        /// </summary>
-        public void Inject()
-        {
-            if (Activated) return; //No multiple initialization
-            Activated = true;
-            foreach (var tank in Tanks)
-            {
-                var type = GetTypeHelper.GetType(Settings.TankTypeName);
-                var method = type.GetMethod("RegisterType", BindingFlags.NonPublic | BindingFlags.Static);
-                var generic = method.MakeGenericMethod(tank.Type);
-                generic.Invoke(null, null);
-            }
-
-            foreach (var prj in Projectiles)
-            {
-                var type = GetTypeHelper.GetType(Settings.ProjectileTypeName);
-                var method = type.GetMethod("RegisterType", BindingFlags.NonPublic | BindingFlags.Static);
-                var generic = method.MakeGenericMethod(prj.Type);
-                generic.Invoke(null, null);
-            }
-
-            foreach (var gamemode in Gamemodes)
-            {
-                var type = GetTypeHelper.GetType(Settings.GamemodeTypeName);
-                var method = type.GetMethod("RegisterType", BindingFlags.NonPublic | BindingFlags.Static);
-                var generic = method.MakeGenericMethod(gamemode.Type);
-                generic.Invoke(null, null);
-            }
-
-            foreach (var mapObj in MapObjects)
-            {
-                var type = GetTypeHelper.GetType(Settings.MapObjectTypeName);
-                var method = type.GetMethod("RegisterType", BindingFlags.NonPublic | BindingFlags.Static);
-                var generic = method.MakeGenericMethod(mapObj.Type);
-                generic.Invoke(null, null);
-            }
-        }
+        
     }
 
     public class GamemodeType
@@ -190,6 +155,31 @@ namespace MPTanks.Modding
         internal static bool IsMapObjectType(Type t)
         {
             var prj = GetTypeHelper.GetType(Settings.MapObjectTypeName);
+
+            return t.IsSubclassOf(prj);
+        }
+    }
+
+    public class GameObjectType
+    {
+        public Type Type { get; set; }
+        public string ReflectionTypeName { get; set; }
+        public string DisplayName { get; set; }
+        public GameObjectType(Type t)
+        {
+            var attrib = t.GetCustomAttribute<GameObjectAttribute>(true);
+            if (attrib == null)
+                throw new Exception(t.FullName + " is missing [GameObjectAttribute]");
+
+            Type = t;
+            ReflectionTypeName = attrib.ReflectionTypeName;
+            DisplayName = attrib.DisplayName;
+
+        }
+
+        internal static bool IsGameObjectType(Type t)
+        {
+            var prj = GetTypeHelper.GetType(Settings.GameObjectTypeName);
 
             return t.IsSubclassOf(prj);
         }

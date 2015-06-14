@@ -33,17 +33,18 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         {
             Health = 150;
             Size = new Vector2(3, 5);
-        }
 
-        private bool canFirePrimary = true;
-        private bool canFireSecondary = true;
-        private bool canFireTertiary = true;
-        private float primaryRemainingRechargeTime = 0;
-        private float secondaryRemainingRechargeTime = 0;
-        private float tertiaryRemainingRechargeTime = 0;
+            primaryTimer = game.TimerFactory.CreateTimer(primaryRechargeTime).Complete();
+            secondaryTimer = game.TimerFactory.CreateTimer(secondaryRechargeTime).Complete();
+            tertiaryTimer = game.TimerFactory.CreateTimer(tertiaryRechargeTime).Complete();
+        }
         const float primaryRechargeTime = 500;
         const float secondaryRechargeTime = 2000;
         const float tertiaryRechargeTime = 3000;
+        private Timer primaryTimer;
+        private Timer secondaryTimer;
+        private Timer tertiaryTimer;
+
         protected override void UpdateInternal(GameTime time)
         {
             //handle turret rotation
@@ -63,7 +64,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
         private void FirePrimary()
         {
-            if (!canFirePrimary)
+            if (!primaryTimer.Completed)
                 return;
             const float velocity = 60f;
             var rotation = InputState.LookDirection;
@@ -72,13 +73,14 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
                 velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
 
-            //Reload timer
-            canFirePrimary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, primaryRechargeTime);
+            //and reload
+            primaryTimer.Reset();
+
+            RaiseStateChangeEvent("weapon 1 fired");
         }
         private void FireSecondary()
         {
-            if (!canFireSecondary)
+            if (!secondaryTimer.Completed)
                 return;
             const float velocity = 60f;
             var rotation = InputState.LookDirection;
@@ -87,14 +89,15 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
                 velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
 
-            //Reload timer
-            canFireSecondary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFireSecondary = true, secondaryRemainingRechargeTime);
+            //reload
+            secondaryTimer.Reset();
+
+            RaiseStateChangeEvent("weapon 2 fired");
         }
 
         private void FireTertiary()
         {
-            if (!canFireTertiary)
+            if (!tertiaryTimer.Completed)
                 return;
             if (Game.Authoritative) // If we are able to be create game objects AKA we're authoritative, make the projectile
             {
@@ -106,9 +109,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                     velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
             }
 
-            //Reload timer
-            canFireTertiary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFireTertiary = true, tertiaryRechargeTime);
+            //and reload
+            tertiaryTimer.Reset();
 
             RaiseStateChangeEvent("weapon 3 fired");
         }
@@ -131,6 +133,32 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             return true;
         }
-        
+
+        protected override void ReceiveStateDataInternal(string state)
+        {
+            if (state == "weapon 1 fired")
+                primaryTimer.Reset();
+            else if (state == "weapon 2 fired")
+                secondaryTimer.Reset();
+            else if (state == "weapon 3 fired")
+                tertiaryTimer.Reset();
+        }
+
+        protected override byte[] GetPrivateStateData()
+        {
+            var data = new byte[4 + 4 + 4];
+            data.SetContents(primaryTimer.ElapsedMilliseconds, 0);
+            data.SetContents(secondaryTimer.ElapsedMilliseconds, 4);
+            data.SetContents(tertiaryTimer.ElapsedMilliseconds, 8);
+
+            return data;
+        }
+
+        protected override void SetFullStateInternal(byte[] state)
+        {
+            primaryTimer.ElapsedMilliseconds = state.GetValue<float>(0);
+            secondaryTimer.ElapsedMilliseconds = state.GetValue<float>(4);
+            tertiaryTimer.ElapsedMilliseconds = state.GetValue<float>(8);
+        }
     }
 }

@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameObject.Serialization.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="assets\SpriteInfo.cs" />
     <Compile Include="assets\JSONColor.cs" />
@@ -115,6 +116,7 @@
     <None Include="assets\maps\testmap.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="Helpers.Serialization.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

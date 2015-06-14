@@ -70,32 +70,32 @@ namespace MPTanks.Engine
                 2 + reflectionNameBytes.Length + 1 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4 + 4 + 4 + privateState.Length];
             int offset = 0;
 
-            coreData.CopyFrom(reflectionNameBytes.Length, offset); offset += 4;
-            coreData.CopyFrom(reflectionNameBytes, offset); offset += reflectionNameBytes.Length;
+            coreData.SetContents(reflectionNameBytes.Length, offset); offset += 4;
+            coreData.SetContents(reflectionNameBytes, offset); offset += reflectionNameBytes.Length;
 
-            coreData.CopyFrom(new[] { (byte)GetSerializationType() }, offset++);
+            coreData.SetContents(new[] { (byte)GetSerializationType() }, offset++);
 
             if (GetSerializationType() == __SerializationGameObjectType.Tank)
-                coreData.CopyFrom(((Tanks.Tank)this).Player.Id.ToByteArray(), offset);
-            else coreData.CopyFrom(new byte[16], offset);
+                coreData.SetContents(((Tanks.Tank)this).Player.Id.ToByteArray(), offset);
+            else coreData.SetContents(new byte[16], offset);
             offset += 16;
 
-            coreData.CopyFrom(new[] { (byte)(IsSensor ? 1 : 0) }, offset++);
-            coreData.CopyFrom(new[] { (byte)(IsStatic ? 1 : 0) }, offset++);
+            coreData.SetContents(new[] { (byte)(IsSensor ? 1 : 0) }, offset++);
+            coreData.SetContents(new[] { (byte)(IsStatic ? 1 : 0) }, offset++);
 
-            coreData.CopyFrom(ObjectId, offset); offset += 4;
-            coreData.CopyFrom(ColorMask.PackedValue, offset); offset += 4;
-            coreData.CopyFrom(TimeAliveMs, offset); offset += 4;
+            coreData.SetContents(ObjectId, offset); offset += 4;
+            coreData.SetContents(ColorMask.PackedValue, offset); offset += 4;
+            coreData.SetContents(TimeAliveMs, offset); offset += 4;
 
-            coreData.CopyFrom(Size, offset); offset += 8;
-            coreData.CopyFrom(Position, offset); offset += 8;
-            coreData.CopyFrom(LinearVelocity, offset); offset += 8;
+            coreData.SetContents(Size, offset); offset += 8;
+            coreData.SetContents(Position, offset); offset += 8;
+            coreData.SetContents(LinearVelocity, offset); offset += 8;
 
-            coreData.CopyFrom(Rotation, offset); offset += 4;
-            coreData.CopyFrom(AngularVelocity, offset); offset += 4;
+            coreData.SetContents(Rotation, offset); offset += 4;
+            coreData.SetContents(AngularVelocity, offset); offset += 4;
 
-            coreData.CopyFrom(privateState.Length, offset); offset += 4;
-            coreData.CopyFrom(privateState, offset);
+            coreData.SetContents(privateState.Length, offset); offset += 4;
+            coreData.SetContents(privateState, offset);
 
             return coreData;
         }
