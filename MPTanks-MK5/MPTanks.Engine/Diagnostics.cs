@@ -21,27 +21,19 @@ namespace MPTanks.Engine
         private Dictionary<string, Measurement> _rootNodes =
             new Dictionary<string, Measurement>();
         public IReadOnlyDictionary<string, Measurement> Roots { get { return _rootNodes; } }
-
-        private Dictionary<string, Stopwatch> _monitors = new Dictionary<string, Stopwatch>();
-
         public bool IsMeasuring(string name, params string[] ownerHierarchy)
         {
-            if (ownerHierarchy.Length == 0)
-            {
-                if (_monitors.ContainsKey(name))
-                {
-                    return _monitors[name].IsRunning;
-                }
-            }
-
-            var ownerName = String.Join("_", ownerHierarchy.Reverse());
-            if (_monitors.ContainsKey(ownerName + "_" + name))
-                return _monitors[ownerName + "_" + name].IsRunning;
-
-            return false;
+            return GetMeasurement(name, ownerHierarchy).Stopwatch.IsRunning;
 
         }
         public Measurement BeginMeasurement(string name, params string[] ownerHierarchy)
+        {
+            var m = GetMeasurement(name, ownerHierarchy);
+            BeginMonitor(m);
+            return m;
+        }
+
+        private Measurement GetMeasurement(string name, params string[] ownerHierarchy)
         {
             Measurement owner = null;
             //Build the tree
@@ -51,9 +43,7 @@ namespace MPTanks.Engine
             }
 
             //Get my node
-            var m = CreateOrGetSubNode(name, owner);
-            BeginMonitor(m);
-            return m;
+            return CreateOrGetSubNode(name, owner);
         }
 
         private Measurement CreateOrGetSubNode(string name, Measurement parent = null)
@@ -80,17 +70,11 @@ namespace MPTanks.Engine
 
         private void BeginMonitor(Measurement measurement)
         {
-            if (!_monitors.ContainsKey(measurement.GetUID()))
-            {
-                _monitors.Add(measurement.GetUID(), Stopwatch.StartNew());
-            }
-            else
-            {
-                if (_monitors[measurement.GetUID()].IsRunning)
-                    throw new Exception("Already monitoring");
+            if (measurement.Stopwatch.IsRunning)
+                throw new Exception("Already monitoring");
 
-                _monitors[measurement.GetUID()].Restart();
-            }
+            measurement.Stopwatch.Restart();
+
         }
 
         #region Function monitor helpers
@@ -170,26 +154,68 @@ namespace MPTanks.Engine
             EndMeasurement(measurement);
         }
         #endregion
+        #region Loop monitor helpers
+        public void MonitorForEach<T>(IList<T> items, Action<T> itemIterator, string name, params string[] ownerHierarchy)
+        {
+            BeginMeasurement(name, ownerHierarchy);
+
+            var timings = new long[items.Count];
+            var iterationAverage = GetMeasurement(name + " (Loop Body Average)", ownerHierarchy);
+            iterationAverage.Stopwatch.Restart();
+
+            for (var i = 0; i < items.Count; i++)
+            {
+                iterationAverage.Stopwatch.Restart();
+                itemIterator(items[i]);
+                timings[i] = iterationAverage.Stopwatch.ElapsedTicks;
+            }
+            EndMeasurement(name, ownerHierarchy);
+
+            iterationAverage.AddMeasurement(new TimeSpan((long)timings.Average()));
+        }
+        public void MonitorForEach<T>(IEnumerable<T> items, Action<T> itemIterator, string name, params string[] ownerHierarchy)
+        {
+            MonitorCall(() =>
+            {
+                foreach (var itm in items) itemIterator(itm);
+            }, name, ownerHierarchy);
+        }
+
+        public void MonitorWhile(Action loopBody, Func<bool> breakEvaluator, string name, params string[] ownerHierarchy)
+        {
+            BeginMeasurement(name, ownerHierarchy);
+
+            var bodyTimes = new List<long>();
+            var breakEvaluationTimes = new List<long>();
+            var bodyMeasurement = GetMeasurement(name + " (Loop body)");
+            var breakEvalautionMeasurement = GetMeasurement(name + " (Head/Break evaluator)");
+
+            while (true)
+            {
+                breakEvalautionMeasurement.Stopwatch.Restart();
+                var shouldBreak = breakEvaluator();
+                breakEvaluationTimes.Add(breakEvalautionMeasurement.Stopwatch.ElapsedTicks);
+                if (shouldBreak) break;
+
+                bodyMeasurement.Stopwatch.Restart();
+                loopBody();
+                bodyTimes.Add(bodyMeasurement.Stopwatch.ElapsedTicks);
+            }
+            EndMeasurement(name, ownerHierarchy);
+
+            bodyMeasurement.AddMeasurement(new TimeSpan((long)bodyTimes.Average()));
+            breakEvalautionMeasurement.AddMeasurement(new TimeSpan((long)breakEvaluationTimes.Average()));
+        }
+        #endregion
 
         public void EndMeasurement(Measurement measurement)
         {
-            _monitors[measurement.GetUID()].Stop();
-            measurement.AddMeasurement(_monitors[measurement.GetUID()].Elapsed);
+            measurement.Stopwatch.Stop();
+            measurement.AddMeasurement(measurement.Stopwatch.Elapsed);
         }
 
-        public void EndMeasurement(string name, params string[] ownerHierarchy)
-        {
-            Measurement owner = null;
-            //Build the tree
-            for (var i = ownerHierarchy.Length - 1; i >= 0; i--)
-            {
-                owner = CreateOrGetSubNode(ownerHierarchy[i], owner);
-            }
-
-            //Get my node
-            var m = CreateOrGetSubNode(name, owner);
-            EndMeasurement(m);
-        }
+        public void EndMeasurement(string name, params string[] ownerHierarchy) =>
+            EndMeasurement(GetMeasurement(name, ownerHierarchy));
 
         public override string ToString()
         {
@@ -205,7 +231,7 @@ namespace MPTanks.Engine
 
         private void RecursiveGetSubNodes(Measurement m, StringBuilder sb, int depth)
         {
-            var tabs = new String('\t', depth);
+            var tabs = new string('\t', depth);
             foreach (var mx in m.Submeasurements)
             {
                 sb.AppendLine(tabs + mx.Value.ToString());
@@ -220,6 +246,7 @@ namespace MPTanks.Engine
             private Dictionary<string, Measurement> _sub = new Dictionary<string, Measurement>();
             public IReadOnlyDictionary<string, Measurement> Submeasurements { get { return _sub; } }
             public Measurement Owner { get; private set; }
+            internal Stopwatch Stopwatch { get; private set; }
 #if TRACK_ALL_MEASUREMENTS
             private List<TimeSpan> _all = new List<TimeSpan>(1000);
 #else
@@ -261,6 +288,7 @@ namespace MPTanks.Engine
             {
                 uid = Guid.NewGuid().ToString();
                 Name = name;
+                Stopwatch = new Stopwatch();
                 if (owner != null)
                     owner._sub.Add(name, this);
 

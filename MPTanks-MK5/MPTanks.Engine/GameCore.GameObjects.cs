@@ -171,7 +171,12 @@ namespace MPTanks.Engine
         }
 
         #region Helpers for object creation
-        public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0)
+        public Tank AddTank(string reflectionName, GamePlayer player, bool authorized)
+        {
+            return AddTank(reflectionName, player, Vector2.Zero, 0, authorized);
+        }
+
+        public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
             var tank = Tank.ReflectiveInitialize(reflectionName, player, player.Team, this, Authoritative);
             tank.Position = position;
@@ -179,7 +184,12 @@ namespace MPTanks.Engine
             AddGameObject(tank, null, Authoritative);
             return tank;
         }
-        public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, Vector2 position = default(Vector2), float rotation = 0)
+
+        public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, bool authorized)
+        {
+            return AddProjectile(reflectionName, spawner, Vector2.Zero, 0, authorized);
+        }
+        public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
             var projectile = Projectiles.Projectile.ReflectiveInitialize(
                 reflectionName, spawner, this, Authoritative, position, rotation);
@@ -188,9 +198,26 @@ namespace MPTanks.Engine
             AddGameObject(projectile, null, Authoritative);
             return projectile;
         }
-        public Maps.MapObjects.MapObject AddMapObject(string reflectionName , Vector2 position = default(Vector2), float rotation = 0)
+        public Maps.MapObjects.MapObject AddMapObject(string reflectionName, bool authorized)
+        {
+            return AddMapObject(reflectionName, Vector2.Zero, 0, authorized);
+        }
+        public Maps.MapObjects.MapObject AddMapObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
             var obj = Maps.MapObjects.MapObject.ReflectiveInitialize(reflectionName, this, Authoritative, position, rotation);
+            AddGameObject(obj, null, Authoritative);
+            return obj;
+        }
+
+        public GameObject AddGameObject(string reflectionName, bool authorized)
+        {
+            return AddGameObject(reflectionName, Vector2.Zero, 0, authorized);
+        }
+        public GameObject AddGameObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
+        {
+            var obj = GameObject.ReflectiveInitialize(reflectionName, this, Authoritative);
+            obj.Position = position;
+            obj.Rotation = rotation;
             AddGameObject(obj, null, Authoritative);
             return obj;
         }

@@ -38,6 +38,12 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         private bool canFirePrimary = true;
         private bool canFireSecondary = true;
         private bool canFireTertiary = true;
+        private float primaryRemainingRechargeTime = 0;
+        private float secondaryRemainingRechargeTime = 0;
+        private float tertiaryRemainingRechargeTime = 0;
+        const float primaryRechargeTime = 500;
+        const float secondaryRechargeTime = 2000;
+        const float tertiaryRechargeTime = 3000;
         protected override void UpdateInternal(GameTime time)
         {
             //handle turret rotation
@@ -68,7 +74,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             //Reload timer
             canFirePrimary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, 500);
+            Game.TimerFactory.CreateTimer((timer) => canFirePrimary = true, primaryRechargeTime);
         }
         private void FireSecondary()
         {
@@ -83,7 +89,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             //Reload timer
             canFireSecondary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFireSecondary = true, 500);
+            Game.TimerFactory.CreateTimer((timer) => canFireSecondary = true, secondaryRemainingRechargeTime);
         }
 
         private void FireTertiary()
@@ -102,7 +108,9 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             //Reload timer
             canFireTertiary = false;
-            Game.TimerFactory.CreateTimer((timer) => canFireTertiary = true, 500);
+            Game.TimerFactory.CreateTimer((timer) => canFireTertiary = true, tertiaryRechargeTime);
+
+            RaiseStateChangeEvent("weapon 3 fired");
         }
 
         protected override bool DestroyInternal(GameObject destructor = null)
@@ -123,5 +131,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             return true;
         }
+        
     }
 }

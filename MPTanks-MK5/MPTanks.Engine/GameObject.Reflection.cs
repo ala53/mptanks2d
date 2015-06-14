@@ -1,4 +1,6 @@
 ﻿using MPTanks.Modding;
+using System;
+using System.Collections.Generic;
 
 namespace MPTanks.Engine
 {
@@ -58,5 +60,25 @@ namespace MPTanks.Engine
             }
         }
         #endregion
+
+        private static Dictionary<string, Type> _types = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+        private static void RegisterType<T>() where T : GameObject
+        {
+            //get the name
+            var name = ((GameObjectAttribute)(typeof(T).
+                GetCustomAttributes(typeof(GameObjectAttribute), true))[0]).ReflectionTypeName;
+            if (_types.ContainsKey(name)) throw new Exception("Already registered!");
+
+            _types.Add(name.ToLower(), typeof(T));
+        }
+
+        public static T ReflectiveInitialize<T>
+            (string reflectionName, GameCore game, bool authorized = false) where T : GameObject =>
+            (T)ReflectiveInitialize(reflectionName, game, authorized);
+
+        public static GameObject ReflectiveInitialize(string reflectionName, GameCore game, bool authorized = false)
+        {
+            return (GameObject)Activator.CreateInstance(_types[reflectionName], game, authorized);
+        }
     }
 }

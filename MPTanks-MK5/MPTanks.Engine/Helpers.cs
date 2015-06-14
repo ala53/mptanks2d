@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine
 {
-    public static class Helpers
+    public static partial class Helpers
     {
         private static Random _rand = new Random();
 

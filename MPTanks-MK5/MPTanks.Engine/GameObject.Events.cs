@@ -24,20 +24,32 @@ namespace MPTanks.Engine
         protected bool RaiseStateChangeEvent(byte[] newStateData)
         {
             if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
-                || newStateData.Length > Game.Settings.MaxStateChangeSize || 
+                || newStateData.Length > Game.Settings.MaxStateChangeSize ||
                 (TimeAliveMs - _lastStateChange) < Game.Settings.MaxStateChangeFrequency ||
                 !_eventsEnabled)
                 return false;
 
             _stateArgs.Object = this;
             _stateArgs.State = newStateData;
-                OnStateChanged(this, _stateArgs);
+            OnStateChanged(this, _stateArgs);
 
             return true;
         }
 
+        protected bool RaiseStateChangeEvent(string state)
+        {
+            var count = Encoding.UTF8.GetByteCount(state);
+            var array = new byte[count + stringSerializedMagicBytes.Length];
+            Array.Copy(Encoding.UTF8.GetBytes(state), 0, array, stringSerializedMagicBytes.Length, count);
+            Array.Copy(stringSerializedMagicBytes, array, stringSerializedMagicBytes.Length);
+            return RaiseStateChangeEvent(array);
+        }
+
         const long JSONSerializedMagicNumber = unchecked(0x1337FCEDBCCB3010L);
         byte[] JSONSerializedMagicBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
+
+        const long stringSerializedMagicNumber = unchecked(0x1337E3EECACB3010L);
+        byte[] stringSerializedMagicBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
 
         /// <summary>
         /// Serializes the object to JSON before sending it.
@@ -48,8 +60,8 @@ namespace MPTanks.Engine
             var serialized = SerializeStateChangeObject(obj);
             var count = Encoding.UTF8.GetByteCount(serialized);
             var array = new byte[count + JSONSerializedMagicBytes.Length];
-            Array.Copy(Encoding.UTF8.GetBytes(serialized), 0, array, 4, count);
-            Array.Copy(JSONSerializedMagicBytes, array, 4);
+            Array.Copy(Encoding.UTF8.GetBytes(serialized), 0, array, JSONSerializedMagicBytes.Length, count);
+            Array.Copy(JSONSerializedMagicBytes, array, JSONSerializedMagicBytes.Length);
             return RaiseStateChangeEvent(array);
         }
 
@@ -73,6 +85,14 @@ namespace MPTanks.Engine
                 var obj = DeserializeStateChangeObject(
                     Encoding.UTF8.GetString(stateData, JSONSerializedMagicBytes.Length,
                     stateData.Length - JSONSerializedMagicBytes.Length));
+                ReceiveStateDataInternal(obj);
+            }
+            else if (stateData.Length > stringSerializedMagicBytes.Length &&
+               BitConverter.ToInt64(stateData, 0) == stringSerializedMagicNumber)
+            {
+                //Try to deserialize
+                var obj = Encoding.UTF8.GetString(stateData, stringSerializedMagicBytes.Length,
+                    stateData.Length - stringSerializedMagicBytes.Length);
                 ReceiveStateDataInternal(obj);
             }
             else
@@ -100,6 +120,11 @@ namespace MPTanks.Engine
 
         }
 
+        protected virtual void ReceiveStateDataInternal(string state)
+        {
+
+        }
+        
         protected void UnsafeDisableEvents()
         {
             _eventsEnabled = false;

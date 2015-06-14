@@ -336,23 +336,14 @@ namespace MPTanks.Engine
 
             Diagnostics.MonitorCall(() => AnimationEngine.Update(gameTime), "Animation Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() =>
-            {
-                //Process individual objects
-                foreach (var obj in GameObjects)
-                        obj.Update(gameTime);
-            }, "GameObject.Update() calls", DiagnosticsParent);
+            Diagnostics.MonitorForEach(GameObjects, o => o.Update(gameTime),
+                "GameObject.Update() calls", DiagnosticsParent);
 
             Diagnostics.MonitorCall(() => World.Step((float)gameTime.ElapsedGameTime.TotalSeconds),
                 "Physics step", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() =>
-            {
-                //Process individual objects
-                foreach (var obj in GameObjects)
-                    if (obj.Alive) //Make sure it is actually "in game"
-                        obj.UpdatePostPhysics(gameTime);
-            }, "GameObject.UpdatePostPhysics() calls", DiagnosticsParent);
+            Diagnostics.MonitorForEach(GameObjects, o => o.UpdatePostPhysics(gameTime),
+                "GameObject.UpdatePostPhysics() calls", DiagnosticsParent);
 
             Diagnostics.MonitorCall(() => ParticleEngine.Update(gameTime), "Particle Updates", DiagnosticsParent);
 
