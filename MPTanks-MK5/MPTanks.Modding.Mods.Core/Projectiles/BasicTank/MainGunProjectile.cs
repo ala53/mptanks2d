@@ -36,22 +36,13 @@ namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
             if (destroyer != null && destroyer.ColorMask != Color.Black)
                 cMask = destroyer.ColorMask;
 
+            //Set the color of the spark emitter to the color of the gameObject we hit.
             Emitters["explosion_spark_emitter"].MinColorMask =
                new Color(Emitters["explosion_spark_emitter"].MinColorMask.ToVector4() * cMask.ToVector4());
             Emitters["explosion_spark_emitter"].MaxColorMask =
                new Color(Emitters["explosion_spark_emitter"].MaxColorMask.ToVector4() * cMask.ToVector4());
 
             return false;
-        }
-
-        protected override void UpdateInternal(GameTime time)
-        {
-
-        }
-        protected override void UpdatePostPhysicsInternal(GameTime gameTime)
-        {
-            if (Emitters["trail_emitter"] != null)
-                Emitters["trail_emitter"].EmitterVelocity = LinearVelocity;
         }
     }
 }
