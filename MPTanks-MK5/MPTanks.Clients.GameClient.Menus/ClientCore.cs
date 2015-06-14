@@ -78,9 +78,9 @@ namespace MPTanks.Clients.GameClient.Menus
         /// </summary>
         protected override void LoadContent()
         {
-            this.IsMouseVisible = true;
+            IsMouseVisible = true;
 
-            ui = new UserInterface(Content, GraphicsDevice);
+            ui = new UserInterface(Content, this);
             ui.SetPage("mainmenu");
             ui.ActiveBinder.ExitAction = (Action)Exit;
             ui.ActiveBinder.HostAction = (Action)(() =>

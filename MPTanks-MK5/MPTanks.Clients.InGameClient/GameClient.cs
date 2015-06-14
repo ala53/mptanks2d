@@ -150,7 +150,7 @@ namespace MPTanks.Clients.GameClient
         {
             // TODO: Unload any non ContentManager content here
         }
-
+        
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
             if (GlobalSettings.Debug && e.Key == Keys.F7)

@@ -47,6 +47,7 @@ namespace MPTanks.Rendering.UI
         private ContentManager _content;
         private UserInterfacePage _page;
         private GraphicsDevice _graphics;
+        private Game _game;
         private EmptyKeys.UserInterface.Engine _engine;
         private List<MessageBox> _messageBoxes = new List<MessageBox>();
         private UserInterfacePage _activeMessageBox;
@@ -61,13 +62,14 @@ namespace MPTanks.Rendering.UI
             }
         }
 
-        public UserInterface(ContentManager contentManager, GraphicsDevice gd)
+        public UserInterface(ContentManager contentManager, Game game)
         {
-            _engine = new MonoGameEngine(gd, gd.Viewport.Width, gd.Viewport.Height);
+            _graphics = game.GraphicsDevice;
+            _game = game;
+            _engine = new MonoGameEngine(_graphics, _graphics.Viewport.Width, _graphics.Viewport.Height);
             _content = new ContentManager(contentManager.ServiceProvider, "assets/ui/imgs");
             SpriteFont font = _content.Load<SpriteFont>("Segoe_UI_12_Regular");
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
-            _graphics = gd;
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
         }
 
@@ -95,12 +97,20 @@ namespace MPTanks.Rendering.UI
             }
 
             if (_activePage != null)
-                _activePage.Update(gameTime);
+                _activePage.Update(gameTime, _game.IsActive);
         }
         public void Draw(GameTime gameTime)
         {
-            if (_activePage != null)
-                _activePage.Draw(gameTime);
+            try
+            {
+                if (_activePage != null)
+                    _activePage.Draw(gameTime);
+            }
+            catch
+            {
+                _engine = new MonoGameEngine(_graphics, _graphics.Viewport.Width, _graphics.Viewport.Height);
+                CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
+            }
         }
 
         private float GetPercentageStepForTransition(GameTime gameTime)

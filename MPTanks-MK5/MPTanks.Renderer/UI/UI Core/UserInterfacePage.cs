@@ -28,9 +28,10 @@ namespace MPTanks.Rendering.UI
             Page.DataContext = Binder;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime, bool isActiveWindow)
         {
-            Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
+            if (isActiveWindow)
+                Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
             Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
         public virtual void Draw(GameTime gameTime)

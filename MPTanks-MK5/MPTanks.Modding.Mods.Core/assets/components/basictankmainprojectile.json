@@ -5,7 +5,7 @@
       "frame": "[animation]projectileAnim",
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "bullet",
-      "offset": { "x": -0.125, "y": -0.125 },
+      "offset": { "x": 0, "y": 0 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.25, "y": 0.25 },
       "size": { "x": 0.5, "y": 0.5 }

@@ -28,7 +28,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         private Action<LiveGame> _exitCallback = (game) => { };
         public LiveGame(Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
-            if (GlobalSettings.Debug)
+            if (!ClientSettings.Instance.SandboxGames)
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
@@ -63,7 +63,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
 
         public void WaitForExit()
         {
-            if (GlobalSettings.Debug) Unload();
+            if (!ClientSettings.Instance.SandboxGames) Unload();
             else _mtTask.Join();
         }
 
@@ -78,7 +78,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
-            if (!GlobalSettings.Debug && _mtTask.IsAlive)
+            if (ClientSettings.Instance.SandboxGames && _mtTask.IsAlive)
                 _mtTask.Abort();
 
             Unload();
@@ -89,7 +89,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (_closed) return;
             _closed = true;
 
-            if (!GlobalSettings.Debug) AppDomain.Unload(_domain);
+            if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
 
             _exitCallback(this);
             Connected = false;
