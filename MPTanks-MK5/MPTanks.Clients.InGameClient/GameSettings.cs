@@ -81,11 +81,13 @@ namespace MPTanks.Clients.GameClient
         #endregion
         private GameSettings(string file)
             : base(file)
+        { }
+        protected override void SetDefaults()
         {
             GameLogLocation = new Setting<string>(this, "Log storage location",
-               "Where to store runtime logs for the game. This uses NLog storage conventions." +
-               " So, ${basedir} is the program's installation directory.",
-               Path.Combine(ConfigDir, "gamelogs", "game.log"));
+                   "Where to store runtime logs for the game. This uses NLog storage conventions." +
+                   " So, ${basedir} is the program's installation directory.",
+                   Path.Combine(ConfigDir, "gamelogs", "game.log"));
 
             MaxParticlesToRender = new Setting<int>(this, "Max particles allowed on screen",
             "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +

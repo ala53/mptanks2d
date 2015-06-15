@@ -17,6 +17,10 @@ namespace MPTanks.Engine.Settings
 
         private GlobalSettings(string file) : base(file)
         {
+        }
+
+        protected override void SetDefaults()
+        {
 #if DEBUG
             DebugMode = new Setting<bool>(this, "Debug mode", "Whether to run the game in a debugging mode. The equivalent of #if DEBUG.", true);
 #else

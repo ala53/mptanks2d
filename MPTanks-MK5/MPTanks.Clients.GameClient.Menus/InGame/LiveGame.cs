@@ -64,8 +64,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         public void Run()
         {
             if (!ClientSettings.Instance.SandboxGames)
-                Task.Run(() =>
-                    Clients.GameClient.Program.Main(new string[] { }));
+                Clients.GameClient.Program.Main(new string[] { });
 
             _clearedToRun = true;
         }

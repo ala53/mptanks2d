@@ -18,7 +18,9 @@ namespace MPTanks.Clients.GameClient.Menus
 
         public Setting<bool> SandboxGames { get; private set; }
 
-        private ClientSettings(string file) : base(file)
+        public ClientSettings(string file) : base(file) { }
+
+        protected override void SetDefaults()
         {
             ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
                 new[] {

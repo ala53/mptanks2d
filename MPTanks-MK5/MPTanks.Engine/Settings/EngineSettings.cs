@@ -60,15 +60,13 @@ namespace MPTanks.Engine.Settings
 
         public EngineSettings(string file) : base(file)
         {
-            SetSettings();
         }
 
         public EngineSettings()
         {
-            SetSettings();
         }
 
-        private void SetSettings()
+        protected override void SetDefaults()
         {
             PhysicsScale = new Setting<float>(this, "Physics Scale",
                   "The scale of the physics engine relative to game world space",

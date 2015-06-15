@@ -27,6 +27,10 @@ namespace MPTanks.Networking.Common
 
         private Settings(string file) : base(file)
         {
+        }
+
+        protected override void SetDefaults()
+        {
             MasterServer = new Setting<string>(this, "Master Server Address",
                 "The master server to list hosted servers on.",
                 "master.mptanks.zsbgames.me");

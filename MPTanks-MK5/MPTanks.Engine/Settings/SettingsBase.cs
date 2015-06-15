@@ -20,19 +20,20 @@ namespace MPTanks.Engine.Settings
             _file = file;
 
             if (File.Exists(file))
+            {
+                SetDefaults();
                 LoadFromFile(file);
+            }
             else
-                Task.Run(async () =>
-                {
-                    //Wait for the object to be initialized
-                    await Task.Delay(100);
-                    Save(file);
-                });
+            {
+                SetDefaults();
+                Save(file);
+            }
         }
 
         public SettingsBase()
         {
-
+            SetDefaults();
         }
 
         private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
@@ -63,6 +64,8 @@ namespace MPTanks.Engine.Settings
         {
             JsonConvert.PopulateObject(settingsData, this, _settings);
         }
+
+        protected abstract void SetDefaults();
 
         public void Save(string fileToSaveTo)
         {
@@ -153,23 +156,6 @@ namespace MPTanks.Engine.Settings
                 /// ToString() is called.
                 /// </summary>
                 Object
-            }
-        }
-
-        public class JSONSerializerResolver : DefaultContractResolver
-        {
-            protected override List<MemberInfo> GetSerializableMembers(Type objectType)
-            {
-                var properties = objectType.GetProperties(
-                    BindingFlags.GetProperty | BindingFlags.SetProperty |
-                    BindingFlags.Public | BindingFlags.NonPublic);
-                var fields = objectType.GetFields(
-                    BindingFlags.GetField | BindingFlags.SetField |
-                    BindingFlags.Public | BindingFlags.NonPublic);
-                var list = new List<MemberInfo>();
-                list.AddRange(properties);
-                list.AddRange(fields);
-                return list;
             }
         }
 
