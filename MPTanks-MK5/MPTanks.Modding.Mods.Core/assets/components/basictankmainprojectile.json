@@ -114,7 +114,7 @@
         }
       ],
       "velocityAndAccelerationTrackRotation": true,
-      "velocityRelativeToObject": false
+      "velocityRelativeToObject": true
     },
     {
       "activatesOn": "destroy",

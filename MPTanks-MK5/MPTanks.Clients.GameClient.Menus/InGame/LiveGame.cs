@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine.Settings;
+﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +28,10 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         private Thread _mtTask;
         private bool _clearedToRun;
         private Action<LiveGame> _exitCallback = (game) => { };
-        public LiveGame(Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
+        private ClientCore _client;
+        public LiveGame(ClientCore client, Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
+            _client = client;
             if (!ClientSettings.Instance.SandboxGames)
             {
                 //In debug mode, don't do domain wrapping
@@ -47,6 +50,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
                             typeof(CrossDomainObject).Assembly.FullName,
                             typeof(CrossDomainObject).FullName);
                         while (!_clearedToRun) Thread.Sleep(50);
+                        SetStartWindowParams();
                         _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
                     }
                     catch (Exception ex)
@@ -61,11 +65,27 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             }
         }
 
+        private void SetStartWindowParams()
+        {
+            DomainProxy.WindowPositionX = _client.Window.Position.X;
+            DomainProxy.WindowPositionY = _client.Window.Position.Y;
+            DomainProxy.WindowWidth = _client.WindowSize.X;
+            DomainProxy.WindowHeight = _client.WindowSize.Y;
+        }
+
+        private void SetReturnWindowParams()
+        {
+            _client.QueuePositionAndSizeSet(DomainProxy.WindowPositionX, DomainProxy.WindowPositionY,
+            DomainProxy.WindowWidth, DomainProxy.WindowHeight);
+        }
+
         public void Run()
         {
             if (!ClientSettings.Instance.SandboxGames)
+            {
+                SetStartWindowParams();
                 Clients.GameClient.Program.Main(new string[] { });
-
+            }
             _clearedToRun = true;
         }
 
@@ -98,6 +118,8 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             _closed = true;
 
             _clearedToRun = false;
+
+            SetReturnWindowParams();
 
             if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
 

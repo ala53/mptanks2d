@@ -26,6 +26,11 @@ namespace MPTanks.Clients.GameClient.Menus
         private bool sizeDirty = true;
         UserInterface ui;
 
+        public Point WindowSize
+        {
+            get { return new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight); }
+        }
+
         public ClientCore()
             : base()
         {
@@ -36,6 +41,23 @@ namespace MPTanks.Clients.GameClient.Menus
             Window.ClientSizeChanged += Window_ClientSizeChanged;
             Window.AllowUserResizing = true;
 
+        }
+
+        public void Resize(int newWidth, int newHeight)
+        {
+            graphics.PreferredBackBufferHeight = newWidth;
+            graphics.PreferredBackBufferWidth = newHeight;
+            sizeDirty = true;
+        }
+
+        private int _queuedX, _queuedY, _queuedWidth, _queuedHeight;
+        private bool _hasQueuedSizeChange;
+        public void QueuePositionAndSizeSet(int x, int y, int width, int height)
+        {
+            _queuedX = x; _queuedY = y;
+            _queuedWidth = width;
+            _queuedHeight = height;
+            _hasQueuedSizeChange = true;
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -70,7 +92,7 @@ namespace MPTanks.Clients.GameClient.Menus
 
             base.Initialize();
         }
-        
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -84,7 +106,7 @@ namespace MPTanks.Clients.GameClient.Menus
             ui.ActiveBinder.ExitAction = (Action)Exit;
             ui.ActiveBinder.HostAction = (Action)(() =>
             {
-                var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo(), new string[] { });
+                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo(), new string[] { });
                 game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
                 ui.SetPage("mainmenuplayerisingamepage");
                 game.Run();
@@ -119,6 +141,15 @@ namespace MPTanks.Clients.GameClient.Menus
                 graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 graphics.ApplyChanges();
                 sizeDirty = false;
+            }
+
+            if (_hasQueuedSizeChange)
+            {
+                Window.Position = new Point(_queuedX, _queuedY);
+                graphics.PreferredBackBufferWidth = _queuedWidth;
+                graphics.PreferredBackBufferHeight = _queuedHeight;
+                _hasQueuedSizeChange = false;
+                graphics.ApplyChanges();
             }
 
             ui.Update(gameTime);

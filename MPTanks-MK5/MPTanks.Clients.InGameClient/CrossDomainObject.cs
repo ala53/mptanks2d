@@ -35,8 +35,8 @@ namespace MPTanks.Clients.GameClient
 
         public int WindowPositionX { get; set; }
         public int WindowPositionY { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int WindowWidth { get; set; }
+        public int WindowHeight { get; set; }
 
         public bool ShouldBeGameHost { get; set; }
         public bool GameHostIsLanGame { get; set; }

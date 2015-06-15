@@ -60,6 +60,8 @@ namespace MPTanks.Clients.GameClient
             graphics.DeviceCreated += graphics_DeviceCreated;
 
             Window.AllowUserResizing = true;
+
+
             // IsMouseVisible = true;
             // IsFixedTimeStep = false;
             // graphics.SynchronizeWithVerticalRetrace = false;
@@ -71,6 +73,14 @@ namespace MPTanks.Clients.GameClient
         void graphics_DeviceCreated(object sender, EventArgs e)
         {
 
+            //Set startup properties from crossdomainobject
+            graphics.PreferredBackBufferWidth = CrossDomainObject.Instance.WindowWidth;
+            graphics.PreferredBackBufferHeight = CrossDomainObject.Instance.WindowHeight;
+            Window.Position = new Point(
+                CrossDomainObject.Instance.WindowPositionX,
+                CrossDomainObject.Instance.WindowPositionY);
+            _graphicsDeviceIsDirty = true;
+            //And the UI renderer
             eng = new MonoGameEngine(GraphicsDevice, 800, 480);
         }
 
@@ -150,6 +160,10 @@ namespace MPTanks.Clients.GameClient
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
+            CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
+            CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
+            CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
         }
         
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
