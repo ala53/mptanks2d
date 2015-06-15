@@ -103,6 +103,7 @@
     <Compile Include="Rendering\Particles\ParticleEngine.Emitter.cs" />
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
+    <Compile Include="Rendering\RenderableComponentGroup.cs" />
     <Compile Include="Rendering\SpriteSheetLookupHelper.cs" />
     <Compile Include="RPC\RemoteProcedureCallHelper.cs" />
     <Compile Include="Settings\EngineSettings.cs" />

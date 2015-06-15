@@ -12,6 +12,16 @@
       ]
     }
   ],
+  "componentGroups": [
+    {
+      "key": "turret",
+      "components": [
+        "turret",
+        "turretBase",
+        "turretDoor"
+      ]
+    }
+  ],
   "components": [
     {
       "drawLayer": 0,
@@ -107,16 +117,13 @@
       "sheet": { "ref": "main_sheet" }
     }
   ],
-  "componentGroups": [
-
-  ],
   "reflectionName": "BasicTankMP",
+  "removeAfter": 500,
   "sheet": {
     "key": "main_sheet",
     "file": "assets/tanks/basictank2d.png",
     "fromOtherMod": true,
     "modName": "engine_base"
   },
-  "removeAfter": 500,
   "size": { "x": 3, "y": 5 }
 }
