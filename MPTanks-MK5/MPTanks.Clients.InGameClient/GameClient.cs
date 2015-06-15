@@ -122,13 +122,13 @@ namespace MPTanks.Clients.GameClient
         {
             game = new GameCore(
                 new NLogLogger(Logger.Instance),
-                Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
+                Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
                 System.IO.File.ReadAllText("assets/maps/testmap.json"),
                 false,
                 new EngineSettings("Engine Settings.json")
                 );
             game.Authoritative = true;
-            //game.FriendlyFireEnabled = true;
+            game.FriendlyFireEnabled = true;
 
             player1Id = Guid.NewGuid();
             player2Id = Guid.NewGuid();

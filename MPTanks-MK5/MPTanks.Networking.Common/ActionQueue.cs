@@ -12,7 +12,7 @@ namespace MPTanks.Networking.Common
     public class ActionQueue
     {
         private List<QueueFrame> _items = new List<QueueFrame>();
-        public ICollection<QueueFrame> Items { get { return _items; } }
+        public IReadOnlyList<QueueFrame> Items { get { return _items; } }
 
         public void NextFrame()
         {

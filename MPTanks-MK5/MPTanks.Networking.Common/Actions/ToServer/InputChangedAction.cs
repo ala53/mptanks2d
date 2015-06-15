@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Actions
+namespace MPTanks.Networking.Common.Actions.ToServer
 {
-    public class InputChangedAction
+    public class InputChangedAction : Action
     {
         public static InputChangedAction Get()
         {

@@ -56,6 +56,10 @@
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MPTanks.Networking.Common\MPTanks.Networking.Common.csproj">
+      <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
+      <Name>MPTanks.Networking.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MPTanks.Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
       <Name>Strings</Name>

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Actions
+namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class GameEndedAction
+    public class GameEndedAction : Action
     {
         public static GameEndedAction Get()
         {

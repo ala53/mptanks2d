@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Actions
+namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public abstract class Action
+    public class OtherPlayerReadyToStartChangedAction : ActionBase
     {
-        enum Type
-        {
-
-        }
     }
 }

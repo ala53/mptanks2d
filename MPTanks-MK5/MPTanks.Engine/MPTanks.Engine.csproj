@@ -87,6 +87,8 @@
     <Compile Include="GameObject.Reflection.cs" />
     <Compile Include="GamePlayer.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\NLogLogger.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapDeserializationClasses.cs" />
     <Compile Include="Maps\MapObjects\MapObject.cs" />

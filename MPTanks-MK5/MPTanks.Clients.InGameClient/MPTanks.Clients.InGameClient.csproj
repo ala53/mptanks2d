@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="GameSettings.cs" />
     <Compile Include="CrossDomainObject.cs" />
-    <Compile Include="EngineInterface\FileLogger.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Mods\CoreModLoader.cs" />
