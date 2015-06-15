@@ -43,6 +43,7 @@ namespace MPTanks.Engine.Serialization
             if (me.OtherAssets == null) me.OtherAssets = new GameObjectSheetSpecifierJSON[0];
             if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
             if (me.OtherSprites == null) me.OtherSprites = new GameObjectSpriteSpecifierJSON[0];
+            if (me.ComponentGroups == null) me.ComponentGroups = new GameObjectComponentGroupJSON[0];
 
             //Sprites
             foreach (var sp in me.OtherSprites)
