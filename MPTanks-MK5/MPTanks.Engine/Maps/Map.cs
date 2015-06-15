@@ -62,6 +62,7 @@ namespace MPTanks.Engine.Maps
             }
         }
 
+        private Random random = new Random();
         /// <summary>
         /// Gets a spawn position, by team
         /// </summary>
@@ -77,10 +78,11 @@ namespace MPTanks.Engine.Maps
                         spawn.ToggleInUse(true);
                         return spawn.Position;
                     }
-                return SpawnsByTeam[teamIndex].Positions[0].Position;
+                return SpawnsByTeam[teamIndex].Positions[random.Next(0, SpawnsByTeam[teamIndex].Positions.Count - 1)].Position;
             }
 
-            return SpawnsByTeam[0].Positions[0].Position;
+            var teamToSpawnOn = SpawnsByTeam[random.Next(0, SpawnsByTeam.Count - 1)];
+            return teamToSpawnOn.Positions[random.Next(0, teamToSpawnOn.Positions.Count - 1)].Position;
         }
 
         /// <summary>
