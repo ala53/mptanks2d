@@ -70,8 +70,7 @@ namespace MPTanks.Clients.GameClient.Menus
 
             base.Initialize();
         }
-
-        private bool _bl;
+        
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -120,15 +119,6 @@ namespace MPTanks.Clients.GameClient.Menus
                 graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 graphics.ApplyChanges();
                 sizeDirty = false;
-            }
-
-            if (_bl)
-            {
-                if (opacity <= 0)
-                    opacity = 0;
-                else
-                    opacity -= 0.05f;
-
             }
 
             ui.Update(gameTime);

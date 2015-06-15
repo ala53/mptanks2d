@@ -19,6 +19,7 @@ using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Media;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Settings;
+using MPTanks.Engine.Logging;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -120,11 +121,11 @@ namespace MPTanks.Clients.GameClient
         private void SetupGame()
         {
             game = new GameCore(
-                new EngineInterface.FileLogger(),
+                new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 System.IO.File.ReadAllText("assets/maps/testmap.json"),
                 false,
-                new Engine.Settings.EngineSettings("Engine Settings.json")
+                new EngineSettings("Engine Settings.json")
                 );
             game.Authoritative = true;
             //game.FriendlyFireEnabled = true;

@@ -173,13 +173,17 @@ namespace MPTanks.Engine
         #endregion
         private bool _skipInit;
 
+        public GameCore(ILogger logger, string gamemodeReflectionName, string mapData, bool skipInit = false, EngineSettings settings = null)
+            : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), mapData, skipInit, settings)
+        { }
+
         /// <summary>
         /// Creates a new GameCore instance.
         /// </summary>
         /// <param name="logger"></param>
-        /// <param name="gameMode"></param>
+        /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gameMode, string mapData, bool skipInit = false, EngineSettings settings = null)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string mapData, bool skipInit = false, EngineSettings settings = null)
         {
             Logger = logger;
             if (settings == null)
@@ -196,7 +200,7 @@ namespace MPTanks.Engine
             Map = Maps.Map.LoadMap(mapData, this);
 
             //Set up the game mode internally
-            Gamemode = gameMode;
+            Gamemode = gamemode;
             Gamemode.SetGame(this);
 
             //Initialize game

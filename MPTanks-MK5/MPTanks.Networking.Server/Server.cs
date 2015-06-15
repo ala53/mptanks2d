@@ -9,7 +9,7 @@ namespace MPTanks.Networking.Server
 {
     public class Server
     {
-        private MPTanks.Engine.GameCore game = new MPTanks.Engine.GameCore(new Logger(), MPTanks.Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"), "");
+        private Engine.GameCore game = new Engine.GameCore(new Logger(), "TeamDeathMatchGamemode", "");
         public void Open()
         {
         }

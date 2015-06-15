@@ -1,49 +1,53 @@
-﻿using MPTanks.Engine.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.EngineInterface
+namespace MPTanks.Engine.Logging
 {
-    public class FileLogger : ILogger
+    public class NLogLogger : ILogger
     {
+        public NLog.Logger LoggerInstance { get; private set; }
+        public NLogLogger(NLog.Logger instance)
+        {
+            LoggerInstance = instance;
+        }
         public void Debug(string message)
         {
-            Logger.Instance.Debug(message);
+            LoggerInstance.Debug(message);
         }
 
         public void Error(Exception ex)
         {
-            Logger.Instance.ErrorException("Engine Error", ex);
+            LoggerInstance.ErrorException("Engine Error", ex);
         }
         public void Error(string message, Exception ex)
         {
-            Logger.Instance.ErrorException(message, ex);
+            LoggerInstance.ErrorException(message, ex);
         }
 
         public void Error(string message)
         {
-            Logger.Error(message);
+            LoggerInstance.Error(message);
         }
 
         public void Fatal(Exception ex)
         {
-            Logger.Instance.FatalException("Engine Fatal", ex);
+            LoggerInstance.FatalException("Engine Fatal", ex);
             throw ex;
         }
         public void Fatal(string message, Exception ex)
         {
-            Logger.Instance.FatalException(message, ex);
+            LoggerInstance.FatalException(message, ex);
             throw ex;
         }
 
 
         public void Fatal(string message)
         {
-            Logger.Instance.Fatal(message);
+            LoggerInstance.Fatal(message);
         }
 
         public void Info(object data)
@@ -54,16 +58,16 @@ namespace MPTanks.Clients.GameClient.EngineInterface
 
         public void Info(string message)
         {
-            Logger.Instance.Info(message);
+            LoggerInstance.Info(message);
         }
 
         public void Trace(Exception ex)
         {
-            Logger.Instance.TraceException("Engine Trace()", ex);
+            LoggerInstance.TraceException("Engine Trace()", ex);
         }
         public void Trace(string message, Exception ex)
         {
-            Logger.Instance.TraceException(message, ex);
+            LoggerInstance.TraceException(message, ex);
         }
 
         public void Trace(object data)
@@ -74,12 +78,12 @@ namespace MPTanks.Clients.GameClient.EngineInterface
 
         public void Trace(string message)
         {
-            Logger.Instance.Trace(message);
+            LoggerInstance.Trace(message);
         }
 
         public void Warning(string message)
         {
-            Logger.Instance.Warn(message);
+            LoggerInstance.Warn(message);
         }
 
         public void Warning(object data)

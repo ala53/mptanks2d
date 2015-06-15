@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Logging;
 using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -19,10 +21,18 @@ namespace MPTanks.Networking.Common
         /// The max frame rate to run the internal tick counter at
         /// </summary>
         public int MaxFramesPerSecond { get; set; }
-        public GameState CurrentGameState { get { return _pooledGameState; } }
+        public GameState CurrentGameState { get { return _currentGameState; } }
         public Engine.GameCore Game { get; private set; }
         public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
+        public bool Authoritative { get { return Game.Authoritative; } }
         #endregion
+
+        public NetworkedGame(bool authoritative, Gamemode gamemode, string mapData, Engine.Settings.EngineSettings settings = null)
+        {
+            Game = new Engine.GameCore(new NullLogger(), gamemode, mapData, !authoritative, settings);
+            Game.Authoritative = authoritative;
+        }
+
         #region Timing Management
         private double totalMilliseconds;
         private GameTime _gt = new GameTime();
@@ -40,7 +50,7 @@ namespace MPTanks.Networking.Common
         }
         #endregion
         #region Game state ticking
-        private GameState _pooledGameState = new GameState();
+        private GameState _currentGameState = new GameState();
         private GameState _lastGameState = new GameState();
         private GameState _nextGameState = new GameState();
         private void TickGameState(GameTime gameTime)
