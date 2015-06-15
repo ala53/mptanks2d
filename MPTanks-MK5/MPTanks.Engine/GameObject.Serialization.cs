@@ -18,7 +18,7 @@ namespace MPTanks.Engine
         }
         public static GameObject CreateFromSerializationInformation(GameCore game, byte[] serializationData, bool authorized = true)
         {
-            var nameLength = Helpers.GetInt(serializationData, 0);
+            var nameLength = Helpers.GetValue<ushort>(serializationData, 0);
             var name = Encoding.UTF8.GetString(serializationData, 4, nameLength);
             var type = (__SerializationGameObjectType)serializationData[nameLength + 4];
             var guid = new Guid(serializationData.Slice(nameLength + 4 + 1, 16));
@@ -37,6 +37,23 @@ namespace MPTanks.Engine
 
             return obj;
         }
+
+        const int _headerSizeExcludingString =
+            2 // length of reflection name
+            + 1 //gameobject type
+            + 16 //guid of player or projectile's creator
+            + 1 //is sensor
+            + 1 // is static
+            + 2 //id
+            + 4 //color mask
+            + 4 //time object was alive
+            + 8 // size
+            + 8 //position
+            + 8 //linear velocity
+            + 4 //rotation
+            + 4 //rotation velocity
+            + 2 //private data size
+            ;
 
         /// <summary>
         /// Gets the full state of the object, ergo.
@@ -67,10 +84,10 @@ namespace MPTanks.Engine
             var privateState = GetPrivateStateData();
             var reflectionNameBytes = Encoding.UTF8.GetBytes(ReflectionName);
             var coreData = new byte[
-                2 + reflectionNameBytes.Length + 1 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4 + 4 + 4 + privateState.Length];
+                _headerSizeExcludingString + reflectionNameBytes.Length + privateState.Length];
             int offset = 0;
 
-            coreData.SetContents(reflectionNameBytes.Length, offset); offset += 4;
+            coreData.SetContents((ushort)reflectionNameBytes.Length, offset); offset += 4;
             coreData.SetContents(reflectionNameBytes, offset); offset += reflectionNameBytes.Length;
 
             coreData.SetContents(new[] { (byte)GetSerializationType() }, offset++);
@@ -83,7 +100,7 @@ namespace MPTanks.Engine
             coreData.SetContents(new[] { (byte)(IsSensor ? 1 : 0) }, offset++);
             coreData.SetContents(new[] { (byte)(IsStatic ? 1 : 0) }, offset++);
 
-            coreData.SetContents(ObjectId, offset); offset += 4;
+            coreData.SetContents(ObjectId, offset); offset += 2;
             coreData.SetContents(ColorMask.PackedValue, offset); offset += 4;
             coreData.SetContents(TimeAliveMs, offset); offset += 4;
 
@@ -94,7 +111,7 @@ namespace MPTanks.Engine
             coreData.SetContents(Rotation, offset); offset += 4;
             coreData.SetContents(AngularVelocity, offset); offset += 4;
 
-            coreData.SetContents(privateState.Length, offset); offset += 4;
+            coreData.SetContents((ushort)privateState.Length, offset); offset += 4;
             coreData.SetContents(privateState, offset);
 
             return coreData;
@@ -116,31 +133,31 @@ namespace MPTanks.Engine
 
         public void SetFullState(byte[] state)
         {
-            var reflectionNameLength = Helpers.GetInt(state, 0);
-            SetStateHeader(state.Slice(0, 2 + reflectionNameLength + 1 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4 + 4));
+            var reflectionNameLength = Helpers.GetValue<ushort>(state, 0);
+            SetStateHeader(state);
             var contentsLength =
-                Helpers.GetInt(state, 2 + reflectionNameLength + 1 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4 + 4);
-            SetFullStateInternal(state.Slice(
-                2 + reflectionNameLength + 1 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4 + 4 + 4, contentsLength));
+                Helpers.GetInt(state, _headerSizeExcludingString - 2);
+            SetFullStateInternal(state.Slice( _headerSizeExcludingString, contentsLength));
         }
 
 
         private void SetStateHeader(byte[] header)
         {
-            var nameLength = Helpers.GetInt(header, 0);
-            var name = Encoding.UTF8.GetString(header, 4, nameLength);
-            var type = (__SerializationGameObjectType)header[nameLength + 4];
-            var guid = new Guid(header.Slice(nameLength + 4 + 1, 16));
-            var isSensor = header[nameLength + 4 + 1 + 16] == 1;
-            var isStatic = header[nameLength + 4 + 1 + 1 + 16] == 1;
-            var id = Helpers.GetInt(header, nameLength + 4 + 1 + 16 + 1 + 1);
-            var color = Helpers.GetColor(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4);
-            var timeAlive = Helpers.GetFloat(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4);
-            var size = Helpers.GetVector(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4 + 4 + 4);
-            var position = Helpers.GetVector(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 8);
-            var linVel = Helpers.GetVector(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4 + 4 + 8 + 8);
-            var rot = Helpers.GetFloat(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8);
-            var rotVel = Helpers.GetFloat(header, nameLength + 4 + 1 + 16 + 1 + 1 + 4 + 4 + 4 + 8 + 8 + 8 + 4);
+            var offset = 0;
+            var nameLength = Helpers.GetValue<ushort>(header, offset);offset += 2;
+            var name = Encoding.UTF8.GetString(header, offset, nameLength); offset += nameLength;
+            var type = (__SerializationGameObjectType)header[offset++];
+            var guid = new Guid(header.Slice(offset, 16)); offset += 16;
+            var isSensor = header[offset++] == 1;
+            var isStatic = header[offset++] == 1;
+            var id = Helpers.GetValue<ushort>(header, offset) ;offset += 2;
+            var color = Helpers.GetColor(header, offset); offset += 4;
+            var timeAlive = Helpers.GetFloat(header, offset); offset += 4;
+            var size = Helpers.GetVector(header, offset); offset += 8;
+            var position = Helpers.GetVector(header, offset); offset += 8;
+            var linVel = Helpers.GetVector(header, offset); offset += 8;
+            var rot = Helpers.GetFloat(header, offset); offset += 4;
+            var rotVel = Helpers.GetFloat(header, offset); offset += 4;
 
             IsSensor = isSensor;
             IsStatic = isStatic;

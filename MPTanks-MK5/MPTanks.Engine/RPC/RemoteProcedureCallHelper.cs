@@ -53,7 +53,7 @@ namespace MPTanks.Engine.RPC
     }
     public class RPC
     {
-        public int TargetObject { get; set; }
+        public ushort TargetObject { get; set; }
         public string Type { get; set; }
         public string Method { get; set; }
         public string SerializedArgs { get; set; }

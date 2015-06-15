@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Common
         /// The max frame rate to run the internal tick counter at
         /// </summary>
         public int MaxFramesPerSecond { get; set; }
-        public GameState CurrentGameState { get { return _currentGameState; } }
+        public FullGameState CurrentGameState { get { return _currentGameState; } }
         public Engine.GameCore Game { get; private set; }
         public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
         public bool Authoritative { get { return Game.Authoritative; } }
@@ -50,9 +50,9 @@ namespace MPTanks.Networking.Common
         }
         #endregion
         #region Game state ticking
-        private GameState _currentGameState = new GameState();
-        private GameState _lastGameState = new GameState();
-        private GameState _nextGameState = new GameState();
+        private FullGameState _currentGameState = new FullGameState();
+        private FullGameState _lastGameState = new FullGameState();
+        private FullGameState _nextGameState = new FullGameState();
         private void TickGameState(GameTime gameTime)
         {
             Diagnostics.BeginMeasurement("TickGameState()", "Network Core");

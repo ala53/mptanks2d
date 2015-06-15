@@ -34,6 +34,21 @@ namespace MPTanks.Engine
             var source = BitConverter.GetBytes(obj);
             Array.Copy(source, 0, arr1, offset, source.Length);
         }
+        public static void SetContents(this byte[] arr1, uint obj, int offset)
+        {
+            var source = BitConverter.GetBytes(obj);
+            Array.Copy(source, 0, arr1, offset, source.Length);
+        }
+        public static void SetContents(this byte[] arr1, ushort obj, int offset)
+        {
+            var source = BitConverter.GetBytes(obj);
+            Array.Copy(source, 0, arr1, offset, source.Length);
+        }
+        public static void SetContents(this byte[] arr1, short obj, int offset)
+        {
+            var source = BitConverter.GetBytes(obj);
+            Array.Copy(source, 0, arr1, offset, source.Length);
+        }
         public static void SetContents(this byte[] arr1, float obj, int offset)
         {
             var source = BitConverter.GetBytes(obj);

@@ -14,7 +14,7 @@ namespace MPTanks.Engine
     {
         #region Basic Properties
         public Color ColorMask { get; set; }
-        public int ObjectId { get; private set; }
+        public ushort ObjectId { get; private set; }
         public Body Body { get; private set; }
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }
@@ -205,9 +205,9 @@ namespace MPTanks.Engine
         private bool _startIsStatic;
         private bool _startIsSensor;
         #endregion
-        public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, int id = -1)
+        public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, ushort id = ushort.MaxValue)
         {
-            if (id == -1)
+            if (id == ushort.MaxValue)
                 ObjectId = game.NextObjectId;
             else
                 ObjectId = id;

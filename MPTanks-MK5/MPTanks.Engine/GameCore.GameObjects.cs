@@ -186,6 +186,7 @@ namespace MPTanks.Engine
             var tank = Tank.ReflectiveInitialize(reflectionName, player, player.Team, this, Authoritative);
             tank.Position = position;
             tank.Rotation = rotation;
+            player.Tank = tank;
             AddGameObject(tank, null, Authoritative);
             return tank;
         }

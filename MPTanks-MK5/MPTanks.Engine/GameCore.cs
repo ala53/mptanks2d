@@ -97,11 +97,11 @@ namespace MPTanks.Engine
         /// The physics world that the game runs in.
         /// </summary>
         internal FarseerPhysics.Dynamics.World World { get; private set; }
-        private int _nextObjectId = 0;
+        private ushort _nextObjectId = 0;
         /// <summary>
         /// The next available object id to use
         /// </summary>
-        internal int NextObjectId { get { return _nextObjectId++; } }
+        internal ushort NextObjectId { get { return _nextObjectId++; } }
 
         private Dictionary<int, GameObject> _gameObjects = new Dictionary<int, GameObject>();
         /// <summary>

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Game
 {
-    class NetworkDeltaState
+    public struct FullObjectState
     {
+
     }
 }
