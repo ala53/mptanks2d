@@ -28,8 +28,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         {
             get { return 50; }
         }
-        public BasicTank(GamePlayer player, Team team, GameCore game, bool authorized = false)
-            : base(player, team, game, authorized)
+        public BasicTank(GamePlayer player, GameCore game, bool authorized = false)
+            : base(player, game, authorized)
         {
             Health = 150;
             Size = new Vector2(3, 5);

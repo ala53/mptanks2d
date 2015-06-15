@@ -13,7 +13,7 @@ namespace MPTanks.Engine.Tanks
     public abstract class Tank : GameObject
     {
         public GamePlayer Player { get; private set; }
-        public Team Team { get; internal set; }
+        public Team Team { get { return Player.Team; } }
         public InputState InputState { get; private set; }
         /// <summary>
         /// The Asset to show in the UI to describe the current weapon.
@@ -32,11 +32,10 @@ namespace MPTanks.Engine.Tanks
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
 
-        public Tank(GamePlayer player, Team team, GameCore game, bool authorized)
+        public Tank(GamePlayer player, GameCore game, bool authorized)
             : base(game, authorized, game.Settings.TankDensity, 0, default(Vector2), 0)
         {
             Player = player;
-            Team = team;
         }
 
         private bool _killed = false;
@@ -116,20 +115,20 @@ namespace MPTanks.Engine.Tanks
         private static Dictionary<string, Type> _tankTypes =
             new Dictionary<string, Type>();
 
-        public static Tank ReflectiveInitialize(string tankName, GamePlayer player, Team team, GameCore game, bool authorized, byte[] state = null)
+        public static Tank ReflectiveInitialize(string tankName, GamePlayer player, GameCore game, bool authorized, byte[] state = null)
         {
             if (!_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Tank type does not exist.");
 
-            var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], player, team, game, authorized);
+            var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], player, game, authorized);
             if (state != null) inst.ReceiveStateData(state);
 
             return inst;
         }
 
-        public static T ReflectiveInitialize<T>(string tankName, GamePlayer player, Team team, GameCore game, bool authorized, byte[] state = null)
+        public static T ReflectiveInitialize<T>(string tankName, GamePlayer player, GameCore game, bool authorized, byte[] state = null)
             where T : Tank
         {
-            return (T)ReflectiveInitialize(tankName, player, team, game, authorized, state);
+            return (T)ReflectiveInitialize(tankName, player, game, authorized, state);
         }
 
         private static void RegisterType<T>() where T : Tank

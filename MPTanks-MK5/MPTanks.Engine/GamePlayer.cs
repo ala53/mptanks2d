@@ -10,18 +10,18 @@ namespace MPTanks.Engine
 {
     public class GamePlayer
     {
-        public string SelectedTankReflectionName { get; set; }
-        public bool HasSelectedTankYet { get; set; }
-        public Guid Id { get; set; }
-        public object UserData { get; private set; }
-        public string[] AllowedTankTypes { get; set; }
-        public Tanks.Tank Tank { get; set; }
-        public Team Team { get; set; }
-        public GameCore Game { get; set; }
-        public Vector2 SpawnPoint { get; set; }
+        public virtual string SelectedTankReflectionName { get; set; }
+        public virtual bool HasSelectedTankYet { get; set; }
+        public virtual Guid Id { get; set; }
+        public virtual object UserData { get; private set; }
+        public virtual string[] AllowedTankTypes { get; set; }
+        public virtual Tanks.Tank Tank { get; set; }
+        public virtual Team Team { get; set; }
+        public virtual GameCore Game { get; set; }
+        public virtual Vector2 SpawnPoint { get; set; }
 
         private string _name;
-        public string Name
+        public virtual string Name
         {
             get
             {
@@ -39,14 +39,15 @@ namespace MPTanks.Engine
         /// <summary>
         /// Respawns a player in the game
         /// </summary>
-        public void Respawn(bool authorized = false)
+        public virtual Tanks.Tank Respawn(bool authorized = false)
         {
             if (Game.GameObjects.Contains(Tank))
                 Game.RemoveGameObject(Tank);
 
-            Tank = Tanks.Tank.ReflectiveInitialize(SelectedTankReflectionName, this, this.Team, Game, authorized);
+            Tank = Tanks.Tank.ReflectiveInitialize(SelectedTankReflectionName, this, Game, authorized);
             Tank.Position = SpawnPoint;
             Game.AddGameObject(Tank);
+            return Tank;
         }
     }
 }

@@ -183,7 +183,7 @@ namespace MPTanks.Engine
 
         public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-            var tank = Tank.ReflectiveInitialize(reflectionName, player, player.Team, this, Authoritative);
+            var tank = Tank.ReflectiveInitialize(reflectionName, player, this, Authoritative);
             tank.Position = position;
             tank.Rotation = rotation;
             player.Tank = tank;

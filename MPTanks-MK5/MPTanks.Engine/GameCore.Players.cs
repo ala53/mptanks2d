@@ -93,8 +93,7 @@ namespace MPTanks.Engine
 
             foreach (var player in Players)
             {
-                //TODO
-                var tank = MPTanks.Engine.Tanks.Tank.ReflectiveInitialize("BasicTankMP", player, player.Team, this, false);
+                var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
                 tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
 
                 tank.ColorMask = player.Team.TeamColor;

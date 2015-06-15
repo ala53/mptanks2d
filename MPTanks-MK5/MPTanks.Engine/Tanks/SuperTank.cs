@@ -9,8 +9,8 @@ namespace MPTanks.Engine.Tanks
 {
     public abstract class SuperTank : Tank
     {
-        public SuperTank(GamePlayer player, Team team,  GameCore game, bool authorized)
-            : base(player, team, game, authorized)
+        public SuperTank(GamePlayer player, GameCore game, bool authorized)
+            : base(player, game, authorized)
         {
 
         }
