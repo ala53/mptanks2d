@@ -1,5 +1,6 @@
 ﻿using MPTanks.Engine.Settings;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,11 +34,11 @@ namespace MPTanks.Clients.GameClient.Menus
             config.AddTarget("logfile", fileTarget);
 
             config.LoggingRules.Add(new NLog.Config.LoggingRule("*",
-                NLog.LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
+                LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
 
-            NLog.LogManager.Configuration = config;
+            LogManager.Configuration = config;
 
-            logger = NLog.LogManager.GetLogger("Client");
+            logger = LogManager.GetLogger("Client");
         }
         public static void Debug(string message)
         {
@@ -46,7 +47,7 @@ namespace MPTanks.Clients.GameClient.Menus
 
         public static void Error(Exception ex)
         {
-            Instance.ErrorException("Severe Error/Exception", ex);
+            Instance.Error(ex, "Severe Error/Exception");
             if (GlobalSettings.Debug)
                 throw ex;
         }
@@ -60,14 +61,14 @@ namespace MPTanks.Clients.GameClient.Menus
 
         public static void Error(string message, Exception ex)
         {
-            Instance.ErrorException(message, ex);
+            Instance.Error(ex, message);
             if (GlobalSettings.Debug)
                 throw ex;
         }
 
         public static void Fatal(Exception ex)
         {
-            Instance.FatalException("Fatal Exception", ex);
+            Instance.Fatal(ex, "Fatal Exception");
             throw ex;
         }
 
@@ -78,7 +79,7 @@ namespace MPTanks.Clients.GameClient.Menus
 
         public static void Fatal(string message, Exception ex)
         {
-            Instance.FatalException(message, ex);
+            Instance.Fatal(ex, message);
             if (GlobalSettings.Debug)
                 throw ex;
         }
@@ -96,12 +97,12 @@ namespace MPTanks.Clients.GameClient.Menus
 
         public static void Trace(Exception ex)
         {
-            Instance.TraceException("Code Trace", ex);
+            Instance.Trace(ex, "Code Trace");
         }
 
         public static void Trace(string message, Exception ex)
         {
-            Instance.TraceException(message, ex);
+            Instance.Trace(ex, message);
         }
 
         public static void Trace(object data)

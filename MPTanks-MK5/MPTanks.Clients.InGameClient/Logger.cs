@@ -46,7 +46,7 @@ namespace MPTanks.Clients.GameClient
 
         public static void Error(Exception ex)
         {
-            Instance.ErrorException("Severe Error/Exception", ex);
+            Instance.Error(ex, "Severe Error/Exception");
             if (GlobalSettings.Debug)
                 throw ex;
         }
@@ -60,14 +60,14 @@ namespace MPTanks.Clients.GameClient
 
         public static void Error(string message, Exception ex)
         {
-            Instance.ErrorException(message, ex);
+            Instance.Error(ex, message);
             if (GlobalSettings.Debug)
                 throw ex;
         }
 
         public static void Fatal(Exception ex)
         {
-            Instance.FatalException("Fatal Exception", ex);
+            Instance.Fatal(ex, "Fatal Exception");
             throw ex;
         }
 
@@ -78,7 +78,7 @@ namespace MPTanks.Clients.GameClient
 
         public static void Fatal(string message, Exception ex)
         {
-            Instance.FatalException(message, ex);
+            Instance.Fatal(ex, message);
             if (GlobalSettings.Debug)
                 throw ex;
         }
@@ -96,12 +96,12 @@ namespace MPTanks.Clients.GameClient
 
         public static void Trace(Exception ex)
         {
-            Instance.TraceException("Code Trace", ex);
+            Instance.Trace(ex, "Code Trace");
         }
 
         public static void Trace(string message, Exception ex)
         {
-            Instance.TraceException(message, ex);
+            Instance.Trace(ex, message);
         }
 
         public static void Trace(object data)

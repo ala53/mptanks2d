@@ -21,11 +21,11 @@ namespace MPTanks.Engine.Logging
 
         public void Error(Exception ex)
         {
-            LoggerInstance.ErrorException("Engine Error", ex);
+            LoggerInstance.Error(ex, "Engine Error");
         }
         public void Error(string message, Exception ex)
         {
-            LoggerInstance.ErrorException(message, ex);
+            LoggerInstance.Error(ex, message);
         }
 
         public void Error(string message)
@@ -35,12 +35,12 @@ namespace MPTanks.Engine.Logging
 
         public void Fatal(Exception ex)
         {
-            LoggerInstance.FatalException("Engine Fatal", ex);
+            LoggerInstance.Fatal(ex, "Engine Fatal");
             throw ex;
         }
         public void Fatal(string message, Exception ex)
         {
-            LoggerInstance.FatalException(message, ex);
+            LoggerInstance.Fatal(ex, message);
             throw ex;
         }
 
@@ -63,11 +63,11 @@ namespace MPTanks.Engine.Logging
 
         public void Trace(Exception ex)
         {
-            LoggerInstance.TraceException("Engine Trace()", ex);
+            LoggerInstance.Trace(ex, "Engine Trace()");
         }
         public void Trace(string message, Exception ex)
         {
-            LoggerInstance.TraceException(message, ex);
+            LoggerInstance.Trace(ex, message);
         }
 
         public void Trace(object data)
