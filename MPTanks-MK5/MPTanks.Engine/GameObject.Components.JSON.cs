@@ -21,6 +21,7 @@ namespace MPTanks.Engine.Serialization
         [JsonProperty("size")]
         public JSONVector DefaultSize { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
+        public GameObjectComponentGroupJSON[] ComponentGroups { get; set; }
         public GameObjectComponentJSON[] Components { get; set; }
         public GameObjectSheetSpecifierJSON[] OtherAssets { get; set; }
         public GameObjectEmitterJSON[] Emitters { get; set; }
@@ -125,6 +126,21 @@ namespace MPTanks.Engine.Serialization
                 }
             }
 
+            //And finally, resolve component groups
+            foreach (var grp in me.ComponentGroups)
+            {
+                var cmps = new List<GameObjectComponentJSON>();
+                foreach (var cmp in grp.ComponentStrings)
+                    foreach (var component in me.Components)
+                    {
+                        if (component.Name.Equals(cmp, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            cmps.Add(component);
+                            break;
+                        }
+                    }
+            }
+
             return me;
         }
 
@@ -174,6 +190,15 @@ namespace MPTanks.Engine.Serialization
                 Sheet = Sheet
             };
         }
+    }
+
+    class GameObjectComponentGroupJSON
+    {
+        public string Key { get; set; }
+        [JsonProperty("components")]
+        public string[] ComponentStrings { get; set; }
+        [JsonIgnore]
+        public GameObjectComponentJSON[] Components { get; set; }
     }
 
     class GameObjectComponentJSON

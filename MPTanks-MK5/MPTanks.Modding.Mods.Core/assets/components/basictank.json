@@ -107,6 +107,9 @@
       "sheet": { "ref": "main_sheet" }
     }
   ],
+  "componentGroups": [
+
+  ],
   "reflectionName": "BasicTankMP",
   "sheet": {
     "key": "main_sheet",

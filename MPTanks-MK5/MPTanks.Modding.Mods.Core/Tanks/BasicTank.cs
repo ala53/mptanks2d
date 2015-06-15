@@ -48,9 +48,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
         protected override void UpdateInternal(GameTime time)
         {
             //handle turret rotation
-            Components["turret"].Rotation = InputState.LookDirection - Rotation;
-            Components["turretBase"].Rotation = InputState.LookDirection - Rotation;
-            Components["turretDoor"].Rotation = InputState.LookDirection - Rotation;
+            ComponentGroups["turret"].Rotation = InputState.LookDirection - Rotation;
 
             if (Alive && Authoritative)
             {

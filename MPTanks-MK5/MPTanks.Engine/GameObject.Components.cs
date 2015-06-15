@@ -16,9 +16,12 @@ namespace MPTanks.Engine
     public partial class GameObject
     {
         #region Associated Properties
-
+        #region Components
         protected Dictionary<string, RenderableComponent> _components;
         public IReadOnlyDictionary<string, RenderableComponent> Components { get { return _components; } }
+        protected Dictionary<string, RenderableComponentGroup> _groups;
+        public IReadOnlyDictionary<string, RenderableComponentGroup> ComponentGroups { get { return _groups; } }
+        #endregion
         #region Emitters
         private List<EmitterData> _emittersWithData =
             new List<EmitterData>();
@@ -31,6 +34,7 @@ namespace MPTanks.Engine
         protected Dictionary<string, ParticleEngine.Emitter> _emitters;
         public IReadOnlyDictionary<string, ParticleEngine.Emitter> Emitters { get { return _emitters; } }
         #endregion
+
         #region Assets
         protected Dictionary<string, string> _assets;
         public IReadOnlyDictionary<string, string> Assets { get { return _assets; } }
@@ -58,6 +62,8 @@ namespace MPTanks.Engine
 
         private static Dictionary<string, GameObjectComponentsJSON> _componentJSONCache =
             new Dictionary<string, GameObjectComponentsJSON>();
+
+        #region Loading
         /// <summary>
         /// Loads the components from the specified asset and adds them to the internal dictionary.
         /// </summary>
@@ -82,7 +88,19 @@ namespace MPTanks.Engine
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
 
-            foreach (var cmp in deserialized.Components)
+
+
+           
+            LoadComponents(deserialized.Components);
+            LoadComponentGroups(deserialized.ComponentGroups);
+            LoadKeyedAssets(deserialized.OtherAssets, deserialized.Components, deserialized.Emitters);
+            LoadOtherSprites(deserialized.OtherSprites);
+            LoadEmitters(deserialized.Emitters);
+        }
+
+        private void LoadComponents(GameObjectComponentJSON[] components)
+        {
+            foreach (var cmp in components)
             {
                 string sheet;
                 if (cmp.Sheet.FromOtherMod)
@@ -113,15 +131,23 @@ namespace MPTanks.Engine
                     Visible = cmp.Visible
                 });
             }
-            foreach (var asset in deserialized.OtherAssets)
-            {
-                if (asset.FromOtherMod && !_assets.ContainsKey(asset.Key))
-                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
-                else
-                    _assets.Add(asset.Key, ResolveAsset(asset.File));
-            }
+        }
 
-            foreach (var cmp in deserialized.Components)
+        private void LoadComponentGroups(GameObjectComponentGroupJSON[] groups)
+        {
+            foreach (var group in groups)
+            {
+                var rGroup = new RenderableComponentGroup();
+                rGroup.Components = new RenderableComponent[group.ComponentStrings.Length];
+                for (var i = 0; i < rGroup.Components.Length; i++)
+                    rGroup.Components[i] = Components[group.ComponentStrings[i]];
+                _groups.Add(group.Key, rGroup);
+            }
+        }
+
+        private void LoadKeyedAssets(GameObjectSheetSpecifierJSON[] assets, GameObjectComponentJSON[] components, GameObjectEmitterJSON[] emitters)
+        {
+            foreach (var cmp in components)
             {
                 if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
                 {
@@ -132,7 +158,7 @@ namespace MPTanks.Engine
                 }
             }
 
-            foreach (var emitter in deserialized.Emitters)
+            foreach (var emitter in emitters)
             {
                 foreach (var sp in emitter.Sprites)
                 {
@@ -146,7 +172,18 @@ namespace MPTanks.Engine
                 }
             }
 
-            foreach (var sprite in deserialized.OtherSprites)
+            foreach (var asset in assets)
+            {
+                if (asset.FromOtherMod && !_assets.ContainsKey(asset.Key))
+                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
+                else
+                    _assets.Add(asset.Key, ResolveAsset(asset.File));
+            }
+        }
+
+        private void LoadOtherSprites(GameObjectSpriteSpecifierJSON[] sprites)
+        {
+            foreach (var sprite in sprites)
             {
                 if (sprite.IsAnimation)
                 {
@@ -175,33 +212,9 @@ namespace MPTanks.Engine
                             new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
                 }
             }
-
-            CreateEmitters(deserialized.Emitters);
         }
 
-        /// <summary>
-        /// Loads the components specified in the file specified in the attribute for this object's type,
-        /// as well as requesting that the user provide theirs
-        /// </summary>
-        private void LoadBaseComponents()
-        {
-            var attrib = ((GameObjectAttribute[])(GetType()
-                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0];
-            var componentFile = attrib.ComponentFile;
-
-            _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
-            _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
-            _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
-            _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
-            _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
-
-            LoadComponentsFromFile(ResolveAsset(componentFile));
-            AddComponents(_components);
-        }
-
-        #region Emitters
-        private void CreateEmitters(GameObjectEmitterJSON[] emitters)
+        private void LoadEmitters(GameObjectEmitterJSON[] emitters)
         {
             foreach (var emitter in emitters)
             {
@@ -257,6 +270,30 @@ namespace MPTanks.Engine
                 _emittersWithData.Add(new EmitterData { AttachedEmitter = em, Information = emitter });
             }
         }
+        #endregion
+
+        /// <summary>
+        /// Loads the components specified in the file specified in the attribute for this object's type,
+        /// as well as requesting that the user provide theirs
+        /// </summary>
+        private void LoadBaseComponents()
+        {
+            var attrib = ((GameObjectAttribute[])(GetType()
+                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0];
+            var componentFile = attrib.ComponentFile;
+
+            _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
+            _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
+            _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
+
+            LoadComponentsFromFile(ResolveAsset(componentFile));
+            AddComponents(_components);
+        }
+
+        #region Emitters
 
         private void UpdateEmitters(GameTime gameTime)
         {
@@ -328,6 +365,9 @@ namespace MPTanks.Engine
                     " but the call failed.", ex);
             }
         }
+        #endregion
+
+        #region Component Groups 
         #endregion
     }
 }
