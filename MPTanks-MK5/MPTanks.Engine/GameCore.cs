@@ -27,6 +27,10 @@ namespace MPTanks.Engine
         /// </summary>
         public Rendering.Animations.AnimationEngine AnimationEngine { get; private set; }
         /// <summary>
+        /// The game time, accounting for slow motion, that the game is currently at.
+        /// </summary>
+        public float TimeMilliseconds { get; private set; }
+        /// <summary>
         /// The particle system for the game. Use this for short lived objects that
         /// do not need fine grain control. Once created, you have no control over the particle.
         /// </summary>
@@ -330,7 +334,7 @@ namespace MPTanks.Engine
         {
             var hasControlOfParent = !Diagnostics.IsMeasuring(DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.BeginMeasurement(DiagnosticsParent);
-
+            
             Diagnostics.BeginMeasurement("Begin UpdateInGame()", DiagnosticsParent);
 
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
@@ -360,6 +364,8 @@ namespace MPTanks.Engine
 
             Diagnostics.EndMeasurement("Begin UpdateInGame()", DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.EndMeasurement(DiagnosticsParent);
+
+            TimeMilliseconds += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         }
     }
 }

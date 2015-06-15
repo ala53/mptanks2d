@@ -21,14 +21,14 @@ namespace MPTanks.Networking.Common
                 _items.RemoveAt(_items.Count - 1);
         }
 
-        public void AddAction(Actions.Action action)
+        public void AddAction(Actions.ActionBase action)
         {
             _items[_items.Count - 1].Actions.Add(action);
         }
         public class QueueFrame
         {
             public int FrameNumber { get; set; }
-            public List<Actions.Action> Actions { get; set; }
+            public List<Actions.ActionBase> Actions { get; set; }
 
             public static QueueFrame Get()
             {

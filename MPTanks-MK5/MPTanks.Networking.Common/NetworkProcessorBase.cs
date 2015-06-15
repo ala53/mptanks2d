@@ -1,4 +1,6 @@
-﻿using MPTanks.Networking.Common.Actions;
+﻿using MPTanks.Engine;
+using MPTanks.Engine.Settings;
+using MPTanks.Networking.Common.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,9 +35,47 @@ namespace MPTanks.Networking.Common
             _toServerActionTypes.Add(_currentMessageTypeId++, actionType);
         }
 
+        private List<__MessageRaw> _messagesParsed = new List<__MessageRaw>();
         public void ProcessMessages(byte[] messagesData)
         {
+            _messagesParsed.Clear();
+            for (var i = 0; i < messagesData.Length;)
+            {
+                try
+                {
+                    var pkt = new __MessageRaw();
+                    pkt.PacketId = messagesData[i++];
+                    pkt.ContentsLength = BitConverter.ToUInt16(messagesData, i);
+                    i += 2;
+                    pkt.Contents = messagesData.Slice(i, pkt.ContentsLength);
+                    i += pkt.ContentsLength;
 
+                    _messagesParsed.Add(pkt);
+                }
+                catch (Exception ex)
+                {
+                    if (GlobalSettings.Debug) throw ex;
+                }
+            }
+
+            foreach (var message in _messagesParsed)
+            {
+                try
+                {
+                    ProcessMessage(message.PacketId, message.Contents);
+                }
+                catch (Exception ex)
+                {
+                    if (GlobalSettings.Debug) throw ex;
+                }
+            }
+        }
+
+        private struct __MessageRaw
+        {
+            public byte PacketId;
+            public ushort ContentsLength;
+            public byte[] Contents;
         }
 
         public void ProcessMessage(byte id, byte[] data)

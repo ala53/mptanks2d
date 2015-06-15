@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class GameStartedAction : Action
+    public class GameStartedAction : ActionBase
     {
         public static GameStartedAction Get()
         {

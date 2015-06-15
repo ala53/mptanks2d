@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToServer
 {
-    public class InputChangedAction : Action
+    public class InputChangedAction : ActionBase
     {
         public static InputChangedAction Get()
         {

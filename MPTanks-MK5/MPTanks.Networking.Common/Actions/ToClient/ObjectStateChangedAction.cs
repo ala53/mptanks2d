@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class ObjectStateChangedAction : Action
+    public class ObjectStateChangedAction : ActionBase
     {
         public static ObjectStateChangedAction Get()
         {

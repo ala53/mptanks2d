@@ -8,6 +8,7 @@ namespace MPTanks.Networking.Common.Actions
 {
     public abstract class ActionBase
     {
+        public float GameTimeMilliseconds { get; set; }
         static ActionBase()
         {
             RegisterToClientActionType(typeof(ToClient.FullGameStateSentAction));
@@ -37,18 +38,15 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));
             RegisterToServerActionType(typeof(ToServer.RequestFullServerStateAction));
         }
-
-        private static byte _currentPacketTypeId = 0;
-        private Dictionary<byte, Type> _toClientTypes = new Dictionary<byte, Type>();
-        private Dictionary<byte, Type> _toServerTypes = new Dictionary<byte, Type>();
+        
         public static void RegisterToClientActionType(Type actionType)
         {
-
+            NetworkProcessorBase.RegisterToClientActionType(actionType);
         }
 
         public static void RegisterToServerActionType(Type actionType)
         {
-
+            NetworkProcessorBase.RegisterToServerActionType(actionType);
         }
     }
 }

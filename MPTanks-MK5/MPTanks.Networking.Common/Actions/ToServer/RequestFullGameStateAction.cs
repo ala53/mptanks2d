@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToServer
 {
-    public class RequestFullGameStateAction : Action
+    public class RequestFullGameStateAction : ActionBase
     {
     }
 }

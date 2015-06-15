@@ -47,14 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
-    <Compile Include="Actions\ToClient\FullGameStateAction.cs" />
+    <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
+    <Compile Include="Actions\ToClient\GameCountdownStartedAction.cs" />
     <Compile Include="Actions\ToClient\GameCreatedAction.cs" />
     <Compile Include="Actions\ToClient\GameEndedAction.cs" />
+    <Compile Include="Actions\ToClient\GamemodeFullStateSentAction.cs" />
     <Compile Include="Actions\ToClient\GameObjectCreatedAction.cs" />
+    <Compile Include="Actions\ToClient\GameObjectDestroyedAction.cs" />
     <Compile Include="Actions\ToClient\GameStartedAction.cs" />
-    <Compile Include="Actions\ToClient\PlayerAllowedTankTypesAction.cs" />
+    <Compile Include="Actions\ToClient\GameWaitingForPlayersAction.cs" />
+    <Compile Include="Actions\ToClient\OtherPlayerReadyToStartChangedAction.cs" />
+    <Compile Include="Actions\ToClient\OtherPlayerSelectedTankAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerKilledAction.cs" />
+    <Compile Include="Actions\ToClient\PlayersListSentAction.cs" />
     <Compile Include="Actions\ToServer\FireProjectileAction.cs" />
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />
@@ -65,11 +73,14 @@
     <Compile Include="Actions\ToClient\TeamsCreatedAction.cs" />
     <Compile Include="Actions\ToServer\PlayerTankTypeSelectedAction.cs" />
     <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />
+    <Compile Include="Actions\ToServer\RequestFullServerStateAction.cs" />
     <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\GameState.cs" />
     <Compile Include="Game\NetworkDeltaState.cs" />
+    <Compile Include="MessageBase.cs" />
     <Compile Include="NetworkedGame.cs" />
+    <Compile Include="NetworkProcessorBase.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -78,6 +89,10 @@
     <ProjectReference Include="..\MPTanks.Engine\MPTanks.Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MPTanks.Modding\MPTanks.Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>MPTanks.Modding</Name>
     </ProjectReference>
     <ProjectReference Include="..\MPTanks.Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>

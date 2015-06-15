@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class GamemodeStateChangedAction : Action
+    public class GamemodeStateChangedAction : ActionBase
     {
         public static  GamemodeStateChangedAction Get()
         {
