@@ -275,6 +275,7 @@ namespace MPTanks.Engine
                         em.Information.EmissionArea.W,
                         em.Information.EmissionArea.H);
 
+                    em.AttachedEmitter.EmitterVelocity = LinearVelocity;
                     em.AttachedEmitter.EmissionArea = emissionAreaNew;
                 }
             }
