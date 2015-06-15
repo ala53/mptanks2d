@@ -39,12 +39,12 @@ namespace MPTanks.Engine
         }
 
         const int _headerSizeExcludingString =
-            2 // length of reflection name
+              2 //id
+            + 2 // length of reflection name
             + 1 //gameobject type
             + 16 //guid of player or projectile's creator
             + 1 //is sensor
             + 1 // is static
-            + 2 //id
             + 4 //color mask
             + 4 //time object was alive
             + 8 // size
@@ -87,6 +87,8 @@ namespace MPTanks.Engine
                 _headerSizeExcludingString + reflectionNameBytes.Length + privateState.Length];
             int offset = 0;
 
+            coreData.SetContents(ObjectId, offset); offset += 2;
+
             coreData.SetContents((ushort)reflectionNameBytes.Length, offset); offset += 4;
             coreData.SetContents(reflectionNameBytes, offset); offset += reflectionNameBytes.Length;
 
@@ -100,7 +102,6 @@ namespace MPTanks.Engine
             coreData.SetContents(new[] { (byte)(IsSensor ? 1 : 0) }, offset++);
             coreData.SetContents(new[] { (byte)(IsStatic ? 1 : 0) }, offset++);
 
-            coreData.SetContents(ObjectId, offset); offset += 2;
             coreData.SetContents(ColorMask.PackedValue, offset); offset += 4;
             coreData.SetContents(TimeAliveMs, offset); offset += 4;
 
@@ -137,20 +138,20 @@ namespace MPTanks.Engine
             SetStateHeader(state);
             var contentsLength =
                 Helpers.GetInt(state, _headerSizeExcludingString - 2);
-            SetFullStateInternal(state.Slice( _headerSizeExcludingString, contentsLength));
+            SetFullStateInternal(state.Slice(_headerSizeExcludingString, contentsLength));
         }
 
 
         private void SetStateHeader(byte[] header)
         {
             var offset = 0;
-            var nameLength = Helpers.GetValue<ushort>(header, offset);offset += 2;
+            var id = Helpers.GetValue<ushort>(header, offset); offset += 2;
+            var nameLength = Helpers.GetValue<ushort>(header, offset); offset += 2;
             var name = Encoding.UTF8.GetString(header, offset, nameLength); offset += nameLength;
             var type = (__SerializationGameObjectType)header[offset++];
             var guid = new Guid(header.Slice(offset, 16)); offset += 16;
             var isSensor = header[offset++] == 1;
             var isStatic = header[offset++] == 1;
-            var id = Helpers.GetValue<ushort>(header, offset) ;offset += 2;
             var color = Helpers.GetColor(header, offset); offset += 4;
             var timeAlive = Helpers.GetFloat(header, offset); offset += 4;
             var size = Helpers.GetVector(header, offset); offset += 8;

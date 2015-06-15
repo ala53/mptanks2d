@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lidgren.Network;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class GamemodeStateChangedAction : ActionBase
     {
-        public static  GamemodeStateChangedAction Get()
+        public GamemodeStateChangedAction(NetIncomingMessage message) : base(message)
         {
-            return Pool.Get<GamemodeStateChangedAction>();
+
+        }
+
+        public override void Serialize(NetOutgoingMessage message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

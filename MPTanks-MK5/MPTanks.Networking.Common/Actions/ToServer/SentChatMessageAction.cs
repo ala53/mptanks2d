@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Actions.ToClient
+namespace MPTanks.Networking.Common.Actions.ToServer
 {
-    public class OtherPlayerSelectedTankAction : ActionBase
+    public class SentChatMessageAction : ActionBase
     {
-        public OtherPlayerSelectedTankAction(NetIncomingMessage message) : base(message)
+        public SentChatMessageAction(NetIncomingMessage message) : base(message)
         {
 
         }

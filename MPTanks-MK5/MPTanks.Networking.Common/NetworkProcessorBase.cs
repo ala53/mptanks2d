@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine;
+﻿using Lidgren.Network;
+using MPTanks.Engine;
 using MPTanks.Engine.Settings;
 using MPTanks.Networking.Common.Actions;
 using System;
@@ -11,6 +12,9 @@ namespace MPTanks.Networking.Common
 {
     public abstract class NetworkProcessorBase
     {
+        public virtual NetPeer Peer { get; protected set; }
+        
+        #region Message Processing
         private static byte _currentMessageTypeId = 0;
         private static Dictionary<byte, Type> _toServerMessageTypes = new Dictionary<byte, Type>();
         private static Dictionary<byte, Type> _toClientMessageTypes = new Dictionary<byte, Type>();
@@ -35,78 +39,54 @@ namespace MPTanks.Networking.Common
             _toServerActionTypes.Add(_currentMessageTypeId++, actionType);
         }
 
-        private List<__MessageRaw> _messagesParsed = new List<__MessageRaw>();
-        public void ProcessMessages(byte[] messagesData)
+        public void ProcessMessages(NetIncomingMessage messageBlock)
         {
-            _messagesParsed.Clear();
-            for (var i = 0; i < messagesData.Length;)
-            {
-                try
-                {
-                    var pkt = new __MessageRaw();
-                    pkt.PacketId = messagesData[i++];
-                    pkt.ContentsLength = BitConverter.ToUInt16(messagesData, i);
-                    i += 2;
-                    pkt.Contents = messagesData.Slice(i, pkt.ContentsLength);
-                    i += pkt.ContentsLength;
+            //Layout:
+            //Message count: 2 bytes
+            //message 1 type id
+            // message 2 type id
+            //...
+            //message one contents
+            //message 2 contents
 
-                    _messagesParsed.Add(pkt);
-                }
-                catch (Exception ex)
-                {
-                    if (GlobalSettings.Debug) throw ex;
-                }
-            }
+            var msgCount = messageBlock.ReadUInt16();
+            var msgIds = messageBlock.ReadBytes(msgCount);
 
-            foreach (var message in _messagesParsed)
-            {
-                try
-                {
-                    ProcessMessage(message.PacketId, message.Contents);
-                }
-                catch (Exception ex)
-                {
-                    if (GlobalSettings.Debug) throw ex;
-                }
-            }
+            foreach (var msgId in msgIds)
+                ProcessMessage(msgId, messageBlock);
         }
 
-        private struct __MessageRaw
-        {
-            public byte PacketId;
-            public ushort ContentsLength;
-            public byte[] Contents;
-        }
-
-        public void ProcessMessage(byte id, byte[] data)
+        public void ProcessMessage(byte id, NetIncomingMessage message)
         {
             if (_toServerMessageTypes.ContainsKey(id))
             {
-                var obj = (MessageBase)Activator.CreateInstance(_toServerMessageTypes[id], data);
+                var obj = (MessageBase)Activator.CreateInstance(_toServerMessageTypes[id], message);
                 ProcessToServerMessage(obj);
             }
             else if (_toClientMessageTypes.ContainsKey(id))
             {
-                var obj = (MessageBase)Activator.CreateInstance(_toClientMessageTypes[id], data);
-                ProcessToClientMessage(obj);
+                var obj = (MessageBase)Activator.CreateInstance(_toClientMessageTypes[id], message);
+                ProcessToClientMessage(message.SenderConnection, obj);
             }
             else if (_toServerActionTypes.ContainsKey(id))
             {
-                var obj = (ActionBase)Activator.CreateInstance(_toServerActionTypes[id], data);
+                var obj = (ActionBase)Activator.CreateInstance(_toServerActionTypes[id], message);
                 ProcessToServerAction(obj);
             }
             else if (_toClientActionTypes.ContainsKey(id))
             {
-                var obj = (ActionBase)Activator.CreateInstance(_toClientActionTypes[id], data);
-                ProcessToClientAction(obj);
+                var obj = (ActionBase)Activator.CreateInstance(_toClientActionTypes[id], message);
+                ProcessToClientAction(message.SenderConnection, obj);
             }
         }
 
         public abstract void ProcessToServerMessage(MessageBase message);
-        public abstract void ProcessToClientMessage(MessageBase message);
+        public abstract void ProcessToClientMessage(NetConnection client, MessageBase message);
 
         public abstract void ProcessToServerAction(ActionBase action);
 
-        public abstract void ProcessToClientAction(ActionBase action);
+        public abstract void ProcessToClientAction(NetConnection client, ActionBase action);
+
+        #endregion  
     }
 }

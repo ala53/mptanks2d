@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Lidgren.Network, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Linux\Lidgren.Network.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
@@ -50,19 +54,19 @@
     <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
-    <Compile Include="Actions\ToClient\GameCountdownStartedAction.cs" />
     <Compile Include="Actions\ToClient\GameCreatedAction.cs" />
     <Compile Include="Actions\ToClient\GameEndedAction.cs" />
     <Compile Include="Actions\ToClient\GamemodeFullStateSentAction.cs" />
     <Compile Include="Actions\ToClient\GameObjectCreatedAction.cs" />
     <Compile Include="Actions\ToClient\GameObjectDestroyedAction.cs" />
     <Compile Include="Actions\ToClient\GameStartedAction.cs" />
-    <Compile Include="Actions\ToClient\GameWaitingForPlayersAction.cs" />
+    <Compile Include="Actions\ToClient\GameStatusChangedAction.cs" />
     <Compile Include="Actions\ToClient\OtherPlayerReadyToStartChangedAction.cs" />
     <Compile Include="Actions\ToClient\OtherPlayerSelectedTankAction.cs" />
     <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
     <Compile Include="Actions\ToClient\PlayerKilledAction.cs" />
     <Compile Include="Actions\ToClient\PlayersListSentAction.cs" />
+    <Compile Include="Actions\ToClient\SentChatMessageAction.cs" />
     <Compile Include="Actions\ToServer\FireProjectileAction.cs" />
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />
@@ -73,7 +77,7 @@
     <Compile Include="Actions\ToClient\TeamsCreatedAction.cs" />
     <Compile Include="Actions\ToServer\PlayerTankTypeSelectedAction.cs" />
     <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />
-    <Compile Include="Actions\ToServer\RequestFullServerStateAction.cs" />
+    <Compile Include="Actions\ToServer\SentChatMessageAction.cs" />
     <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\DeltaGameState.cs" />

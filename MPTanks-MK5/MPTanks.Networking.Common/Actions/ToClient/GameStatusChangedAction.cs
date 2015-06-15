@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class OtherPlayerSelectedTankAction : ActionBase
+    public class GameStatusChangedAction : ActionBase
     {
-        public OtherPlayerSelectedTankAction(NetIncomingMessage message) : base(message)
+        public GameStatusChangedAction(NetIncomingMessage message):base(message)
         {
 
         }

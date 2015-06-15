@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lidgren.Network;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class GameStartedAction : ActionBase
     {
-        public static GameStartedAction Get()
+        public GameStartedAction(NetIncomingMessage message) : base(message)
         {
-            return Pool.Get<GameStartedAction>();
+
+        }
+
+        public override void Serialize(NetOutgoingMessage message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

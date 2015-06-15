@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions
 {
-    public abstract class ActionBase
+    public abstract class ActionBase : MessageBase
     {
         public float GameTimeMilliseconds { get; set; }
         static ActionBase()
         {
             RegisterToClientActionType(typeof(ToClient.FullGameStateSentAction));
-            RegisterToClientActionType(typeof(ToClient.GameCountdownStartedAction));
             RegisterToClientActionType(typeof(ToClient.GameCreatedAction));
             RegisterToClientActionType(typeof(ToClient.GameEndedAction));
             RegisterToClientActionType(typeof(ToClient.GamemodeFullStateSentAction));
@@ -20,7 +19,7 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.GameObjectCreatedAction));
             RegisterToClientActionType(typeof(ToClient.GameObjectDestroyedAction));
             RegisterToClientActionType(typeof(ToClient.GameStartedAction));
-            RegisterToClientActionType(typeof(ToClient.GameWaitingForPlayersAction));
+            RegisterToClientActionType(typeof(ToClient.GameStatusChangedAction));
             RegisterToClientActionType(typeof(ToClient.ObjectStateChangedAction));
             RegisterToClientActionType(typeof(ToClient.OtherPlayerReadyToStartChangedAction));
             RegisterToClientActionType(typeof(ToClient.OtherPlayerSelectedTankAction));
@@ -30,15 +29,18 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.PlayerLeftAction));
             RegisterToClientActionType(typeof(ToClient.PlayersListSentAction));
             RegisterToClientActionType(typeof(ToClient.PlayerTankAssignedAction));
+            RegisterToClientActionType(typeof(ToClient.SentChatMessageAction));
             RegisterToClientActionType(typeof(ToClient.TeamsCreatedAction));
 
             RegisterToServerActionType(typeof(ToServer.FireProjectileAction));
             RegisterToServerActionType(typeof(ToServer.InputChangedAction));
             RegisterToServerActionType(typeof(ToServer.PlayerTankTypeSelectedAction));
             RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));
-            RegisterToServerActionType(typeof(ToServer.RequestFullServerStateAction));
+            RegisterToServerActionType(typeof(ToServer.SentChatMessageAction));
         }
         
+        public ActionBase(Lidgren.Network.NetIncomingMessage message) { }
+
         public static void RegisterToClientActionType(Type actionType)
         {
             NetworkProcessorBase.RegisterToClientActionType(actionType);

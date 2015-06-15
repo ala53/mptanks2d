@@ -8,7 +8,7 @@ namespace MPTanks.Networking.Common
 {
     public abstract class MessageBase
     {
-        public MessageBase(byte[] data)
+        public MessageBase(Lidgren.Network.NetIncomingMessage message)
         {
 
         }
@@ -18,7 +18,7 @@ namespace MPTanks.Networking.Common
 
         }
 
-        public abstract byte[] Serialize();
+        public abstract void Serialize(Lidgren.Network.NetOutgoingMessage message);
         
     }
 }
