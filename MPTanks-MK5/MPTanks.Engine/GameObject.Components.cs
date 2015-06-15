@@ -285,6 +285,7 @@ namespace MPTanks.Engine
             _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
             _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
+            _groups = new Dictionary<string, RenderableComponentGroup>(StringComparer.InvariantCultureIgnoreCase);
             _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
             _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
             _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
