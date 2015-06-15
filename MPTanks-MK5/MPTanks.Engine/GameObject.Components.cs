@@ -90,7 +90,7 @@ namespace MPTanks.Engine
 
 
 
-           
+
             LoadComponents(deserialized.Components);
             LoadComponentGroups(deserialized.ComponentGroups);
             LoadKeyedAssets(deserialized.OtherAssets, deserialized.Components, deserialized.Emitters);
@@ -149,35 +149,38 @@ namespace MPTanks.Engine
         {
             foreach (var cmp in components)
             {
-                if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
-                {
-                    if (cmp.Sheet.FromOtherMod)
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
-                    else
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
-                }
+                if (!_assets.ContainsKey(cmp.Sheet.Key))
+                    if (cmp.Sheet.Key != null)
+                    {
+                        if (cmp.Sheet.FromOtherMod)
+                            _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
+                        else
+                            _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
+                    }
             }
 
             foreach (var emitter in emitters)
             {
                 foreach (var sp in emitter.Sprites)
                 {
-                    if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))
+                    if (sp.Sheet.Key != null)
                     {
-                        if (sp.Sheet.FromOtherMod)
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
-                        else
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
+                        if (!_assets.ContainsKey(sp.Sheet.Key))
+                            if (sp.Sheet.FromOtherMod)
+                                _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
+                            else
+                                _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
                     }
                 }
             }
 
             foreach (var asset in assets)
             {
-                if (asset.FromOtherMod && !_assets.ContainsKey(asset.Key))
-                    _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
-                else
-                    _assets.Add(asset.Key, ResolveAsset(asset.File));
+                if (!_assets.ContainsKey(asset.Key))
+                    if (asset.FromOtherMod)
+                        _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
+                    else
+                        _assets.Add(asset.Key, ResolveAsset(asset.File));
             }
         }
 
