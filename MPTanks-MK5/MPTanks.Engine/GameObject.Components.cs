@@ -149,34 +149,29 @@ namespace MPTanks.Engine
         {
             foreach (var cmp in components)
             {
-                if (!_assets.ContainsKey(cmp.Sheet.Key))
-                    if (cmp.Sheet.Key != null)
-                    {
-                        if (cmp.Sheet.FromOtherMod)
-                            _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
-                        else
-                            _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
-                    }
+                if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
+                    if (cmp.Sheet.FromOtherMod)
+                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
+                    else
+                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
             }
 
             foreach (var emitter in emitters)
             {
                 foreach (var sp in emitter.Sprites)
                 {
-                    if (sp.Sheet.Key != null)
-                    {
-                        if (!_assets.ContainsKey(sp.Sheet.Key))
-                            if (sp.Sheet.FromOtherMod)
-                                _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
-                            else
-                                _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
-                    }
+                    if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))
+                        if (sp.Sheet.FromOtherMod)
+                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
+                        else
+                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
                 }
+
             }
 
             foreach (var asset in assets)
             {
-                if (!_assets.ContainsKey(asset.Key))
+                if (asset.Key != null && !_assets.ContainsKey(asset.Key))
                     if (asset.FromOtherMod)
                         _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
                     else
