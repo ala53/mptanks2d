@@ -47,23 +47,40 @@ namespace MPTanks.Clients.GameClient
         public static void Error(Exception ex)
         {
             Instance.ErrorException("Severe Error/Exception", ex);
+            if (GlobalSettings.Debug)
+                throw ex;
         }
 
         public static void Error(string message)
         {
             Error(message);
+            if (GlobalSettings.Debug)
+                throw new Exception(message);
+        }
+
+        public static void Error(string message, Exception ex)
+        {
+            Instance.ErrorException(message, ex);
+            if (GlobalSettings.Debug)
+                throw ex;
         }
 
         public static void Fatal(Exception ex)
         {
             Instance.FatalException("Fatal Exception", ex);
-            AppDomain.Unload(AppDomain.CurrentDomain);
             throw ex;
         }
 
         public static void Fatal(string message)
         {
             Instance.Fatal(message);
+        }
+
+        public static void Fatal(string message, Exception ex)
+        {
+            Instance.FatalException(message, ex);
+            if (GlobalSettings.Debug)
+                throw ex;
         }
 
         public static void Info(object data)
@@ -80,6 +97,11 @@ namespace MPTanks.Clients.GameClient
         public static void Trace(Exception ex)
         {
             Instance.TraceException("Code Trace", ex);
+        }
+
+        public static void Trace(string message, Exception ex)
+        {
+            Instance.TraceException(message, ex);
         }
 
         public static void Trace(object data)
@@ -102,11 +124,6 @@ namespace MPTanks.Clients.GameClient
         {
             Warning("[" + data.GetType().AssemblyQualifiedName + "]\n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
-        }
-
-        private static string GetStackTrace()
-        {
-            return Environment.StackTrace;
         }
     }
 }

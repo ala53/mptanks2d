@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace MPTanks.Engine.Settings
 {
@@ -44,8 +46,6 @@ namespace MPTanks.Engine.Settings
 #else
                 ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
 #endif
-            var dcr = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            dcr.DefaultMembersSearchFlags = dcr.DefaultMembersSearchFlags | System.Reflection.BindingFlags.NonPublic;
         }
 
         //We only look one place for the setting for this: configpath.txt in the current directory
@@ -84,11 +84,11 @@ namespace MPTanks.Engine.Settings
 
         public IEnumerable<Setting> GetAllSettings()
         {
-            foreach (var field in this.GetType().GetFields())
+            foreach (var field in GetType().GetFields())
                 if (field.FieldType.IsSubclassOf(typeof(Setting)) || field.FieldType == typeof(Setting))
                     yield return (Setting)field.GetValue(this);
 
-            foreach (var property in this.GetType().GetProperties())
+            foreach (var property in GetType().GetProperties())
                 if (property.PropertyType.IsSubclassOf(typeof(Setting)) || property.PropertyType == typeof(Setting))
                     yield return (Setting)property.GetValue(this);
         }
@@ -153,6 +153,23 @@ namespace MPTanks.Engine.Settings
                 /// ToString() is called.
                 /// </summary>
                 Object
+            }
+        }
+
+        public class JSONSerializerResolver : DefaultContractResolver
+        {
+            protected override List<MemberInfo> GetSerializableMembers(Type objectType)
+            {
+                var properties = objectType.GetProperties(
+                    BindingFlags.GetProperty | BindingFlags.SetProperty |
+                    BindingFlags.Public | BindingFlags.NonPublic);
+                var fields = objectType.GetFields(
+                    BindingFlags.GetField | BindingFlags.SetField |
+                    BindingFlags.Public | BindingFlags.NonPublic);
+                var list = new List<MemberInfo>();
+                list.AddRange(properties);
+                list.AddRange(fields);
+                return list;
             }
         }
 

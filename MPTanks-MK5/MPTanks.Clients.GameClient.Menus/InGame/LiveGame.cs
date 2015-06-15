@@ -25,6 +25,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
 
         private AppDomain _domain;
         private Thread _mtTask;
+        private bool _clearedToRun;
         private Action<LiveGame> _exitCallback = (game) => { };
         public LiveGame(Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
@@ -32,7 +33,6 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
-                Clients.GameClient.Program.Main(new string[] { });
                 Unload();
             }
             else
@@ -46,7 +46,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
                         DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
                             typeof(CrossDomainObject).Assembly.FullName,
                             typeof(CrossDomainObject).FullName);
-
+                        while (!_clearedToRun) Thread.Sleep(50);
                         _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
                     }
                     catch (Exception ex)
@@ -61,10 +61,19 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             }
         }
 
+        public void Run()
+        {
+            if (!ClientSettings.Instance.SandboxGames)
+                Task.Run(() =>
+                    Clients.GameClient.Program.Main(new string[] { }));
+
+            _clearedToRun = true;
+        }
+
         public void WaitForExit()
         {
-            if (!ClientSettings.Instance.SandboxGames) Unload();
-            else _mtTask.Join();
+            if (ClientSettings.Instance.SandboxGames) _mtTask.Join();
+            Close();
         }
 
         public void RegisterExitCallback(Action<LiveGame> callback)
@@ -88,6 +97,8 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
         {
             if (_closed) return;
             _closed = true;
+
+            _clearedToRun = false;
 
             if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
 
