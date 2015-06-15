@@ -93,6 +93,9 @@ namespace MPTanks.Engine
 
             foreach (var player in Players)
             {
+                if (!player.HasSelectedTankYet)
+                    player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
+
                 var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
                 tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
 

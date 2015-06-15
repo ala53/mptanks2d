@@ -26,24 +26,37 @@ namespace MPTanks.Engine.Gamemodes
                 //to get the static property and then we cache the delegate before returning the data for the 
                 //reflectiontypename property
                 if (_cachedReflectionInfo == null)
-                    _cachedReflectionInfo = ((MPTanks.Modding.GameObjectAttribute)(GetType().
-                         GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+                    _cachedReflectionInfo = ((Modding.GameObjectAttribute)(GetType().
+                         GetCustomAttributes(typeof(Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
 
                 //call the delegate
                 return _cachedReflectionInfo;
             }
         }
 
-        private int _cachedPlrCt = -799023;
+        private int? _cachedPlrCt;
         public int MinPlayerCount
         {
             get
             {
-                if (_cachedPlrCt == -799023)
-                    _cachedPlrCt = ((MPTanks.Modding.GamemodeAttribute)(GetType().
-                         GetCustomAttributes(typeof(MPTanks.Modding.GamemodeAttribute), true))[0]).MinPlayersCount;
+                if (_cachedPlrCt == null)
+                    _cachedPlrCt = ((Modding.GamemodeAttribute)(GetType().
+                         GetCustomAttributes(typeof(Modding.GamemodeAttribute), true))[0]).MinPlayersCount;
 
-                return _cachedPlrCt;
+                return _cachedPlrCt.Value;
+            }
+        }
+
+        private string _defaultTankReflectionName;
+        public string DefaultTankTypeReflectionName
+        {
+            get
+            {
+                if (_defaultTankReflectionName == null)
+                    _defaultTankReflectionName = ((Modding.GamemodeAttribute)(GetType().
+                         GetCustomAttributes(typeof(Modding.GamemodeAttribute), true))[0]).DefaultTankTypeReflectionName;
+
+                return _defaultTankReflectionName;
             }
         }
 

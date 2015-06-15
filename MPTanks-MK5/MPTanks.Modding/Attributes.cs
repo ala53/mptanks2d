@@ -65,6 +65,12 @@ namespace MPTanks.Modding
         /// The minimum number of players required to start a game.
         /// </summary>
         public int MinPlayersCount { get; set; }
+
+        /// <summary>
+        /// The default tank type to use when a player does not select their tank type after X milliseconds.
+        /// </summary>
+        public string DefaultTankTypeReflectionName { get; set; } = "BasicTankMP";
+
         /// <summary>
         /// Whether a player can join an active game and get spawned in or if they will have to wait for the next one.
         /// </summary>

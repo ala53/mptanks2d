@@ -78,7 +78,6 @@
     <Compile Include="GameCore.GameObjects.cs" />
     <Compile Include="GameCore.Maps.cs" />
     <Compile Include="GameCore.Players.cs" />
-    <Compile Include="Gamemodes\DefaultGamemode.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\Team.cs" />
     <Compile Include="GameObject.Components.cs" />
