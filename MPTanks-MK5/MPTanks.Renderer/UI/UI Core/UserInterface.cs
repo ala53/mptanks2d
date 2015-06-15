@@ -73,10 +73,33 @@ namespace MPTanks.Rendering.UI
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
         }
 
-        public UserInterfacePage SetPage(string page)
+        private Dictionary<string, UserInterfacePage> _pageCache =
+            new Dictionary<string, UserInterfacePage>(StringComparer.InvariantCultureIgnoreCase);
+        /// <summary>
+        /// Sets the current UI page.
+        /// </summary>
+        /// <param name="page">The Page's file name (excluding extension)</param>
+        /// <param name="shouldRecreatePage">Whether to use the cached instance of the page or recreate it.</param>
+        /// <returns></returns>
+        public UserInterfacePage SetPage(string page, bool shouldRecreatePage = false)
         {
-            UIPage = new UserInterfacePage(page);
-            return UIPage;
+            if (shouldRecreatePage)
+            {
+                var pg = new UserInterfacePage(page);
+                _pageCache[page] = pg;
+                UIPage = pg;
+                return UIPage;
+            }
+            else
+            {
+                if (_pageCache.ContainsKey(page))
+                {
+                    UIPage = _pageCache[page];
+                    CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
+                    return UIPage;
+                }
+                else return SetPage(page, true);
+            }
         }
 
         private int currentWidth;
@@ -218,6 +241,8 @@ namespace MPTanks.Rendering.UI
             var newPage = new UserInterfacePage(UIPage.Page.GetType().Name);
             ViewModelBase binder = _page.Binder;
             ViewModelBase newBinder = newPage.Binder;
+            //Update the page cache
+            _pageCache[UIPage.Page.GetType().Name] = newPage;
 
             foreach (var property in binder.GetType().GetProperties(
                 System.Reflection.BindingFlags.Instance |
