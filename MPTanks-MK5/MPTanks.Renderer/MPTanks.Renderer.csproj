@@ -90,6 +90,7 @@
     <Compile Include="UI\ConnectingToServerPage.xaml.cs" />
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
+    <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />

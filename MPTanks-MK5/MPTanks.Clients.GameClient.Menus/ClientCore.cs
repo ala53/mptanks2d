@@ -86,20 +86,10 @@ namespace MPTanks.Clients.GameClient.Menus
             ui.ActiveBinder.HostAction = (Action)(() =>
             {
                 var game = new LiveGame(new Networking.Common.Connection.ConnectionInfo(), new string[] { });
+                game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
+                ui.SetPage("mainmenuplayerisingamepage");
+                game.Run();
             });
-        }
-
-        int ct;
-        private void v()
-        {
-            if (ct++ < 10)
-            {
-                ui.ShowMessageBox("Message" + ct, "ssssssssssssssssssssssssssssssssssssssssssssssss",
-                   (UserInterface.MessageBoxType)(ct % 3), (UserInterface.MessageBoxButtons)(ct % 6), (r) =>
-                   {
-                       v();
-                   });
-            }
         }
 
         private void ExitEvent(object parameter)
