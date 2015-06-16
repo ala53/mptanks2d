@@ -47,22 +47,16 @@ namespace MPTanks.Clients.GameClient
         public static void Error(Exception ex)
         {
             Instance.Error(ex, "Severe Error/Exception");
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Error(string message)
         {
             Error(message);
-            if (GlobalSettings.Debug)
-                throw new Exception(message);
         }
 
         public static void Error(string message, Exception ex)
         {
             Instance.Error(ex, message);
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Fatal(Exception ex)
@@ -79,8 +73,6 @@ namespace MPTanks.Clients.GameClient
         public static void Fatal(string message, Exception ex)
         {
             Instance.Fatal(ex, message);
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Info(object data)

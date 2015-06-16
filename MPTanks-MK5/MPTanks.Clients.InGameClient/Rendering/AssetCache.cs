@@ -204,12 +204,11 @@ namespace MPTanks.Clients.GameClient.Rendering
                     catch (Exception e)
                     {
                         //If something goes wrong...log it 
-                        Logger.Error("Texture Load Failed! File: " + sheetName);
+                        Logger.Error($"Texture Load Failed! {sheetName}");
                         Logger.Error(e.ToString());
                     }
                     finally
                     {
-                        //Flag the load as complete 
                         _sheetsWithLoadCalled[sheetName] = true;
                     }
                 });
@@ -217,6 +216,8 @@ namespace MPTanks.Clients.GameClient.Rendering
 
         private void AsyncLoadFunction(string sheetName)
         {
+            if (!File.Exists(sheetName) || !File.Exists(sheetName + ".json"))
+                throw new FileNotFoundException($"{sheetName} or {sheetName}.json does not exist.");
             sheetName = AssetResolver.Resolve(sheetName);
             //Open a file stream to the sheet
             FileStream fStream = null;
@@ -225,7 +226,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             var texture = Texture2D.FromStream(_game.GraphicsDevice, fStream);
             //Parse the Sprite sheet's metadata (from a file named *.*.json)
             var sheet = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
-                System.IO.File.ReadAllText(sheetName + ".json"));
+                File.ReadAllText(sheetName + ".json"));
 
             //Build the sprite tree from the metadata
             var sprites = new Dictionary<string, Rectangle>();

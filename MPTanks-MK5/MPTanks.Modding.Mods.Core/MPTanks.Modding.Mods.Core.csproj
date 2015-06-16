@@ -123,7 +123,7 @@
     <None Include="assets\animations\explosion3.png.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\mapobjects\housetexturebasic.json">
+    <None Include="assets\mapobjects\housetexturebasic.png.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\mapobjects\moving\satellite_dish.png.json">
