@@ -165,7 +165,7 @@ namespace MPTanks.Clients.GameClient
             CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
             CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
         }
-        
+
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
             if (GlobalSettings.Debug && e.Key == Keys.F7)

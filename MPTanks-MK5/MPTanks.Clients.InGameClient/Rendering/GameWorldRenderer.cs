@@ -34,7 +34,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             _viewRect = view;
         }
 
-        public override void Render(Microsoft.Xna.Framework.Graphics.SpriteBatch sb, GameTime gameTime)
+        public override void Render(SpriteBatch sb, GameTime gameTime)
         {
             _game.Diagnostics.BeginMeasurement("Compute view matrix", "World rendering", "Rendering");
             const float overdraw = 0.15f;
@@ -67,7 +67,7 @@ namespace MPTanks.Clients.GameClient.Rendering
 
             //Draw game objects
             _game.Diagnostics.BeginMeasurement("Draw Objects", "World rendering", "Rendering");
-            DrawObjects(_boundsRect, gameTime, sb);
+            // DrawObjects(_boundsRect, gameTime, sb);
             _game.Diagnostics.EndMeasurement("Draw Objects", "World rendering", "Rendering");
 
             //And animations

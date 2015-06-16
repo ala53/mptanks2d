@@ -12,5 +12,11 @@ namespace MPTanks.Networking.Server.Chat
         /// The characters that a command must start with to be treated as a command
         /// </summary>
         public string CommandMarker { get; private set; }
+
+        public void SendMessage(ServerPlayer playerFrom, ServerPlayer playerTo, string message)
+        {
+
+        }
+
     }
 }

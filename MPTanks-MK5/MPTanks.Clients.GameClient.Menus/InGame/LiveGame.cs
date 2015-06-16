@@ -57,7 +57,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
                     {
                         ConnectionFailed = true;
                         FailureReason = Strings.ClientMenus.GameCrashedUnknownCause(ex.Message);
-
+                        Logger.Error("Live game crashed!", ex);
                     }
                     Unload();
                 });

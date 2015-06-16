@@ -1,4 +1,5 @@
 ﻿#region Using Statements
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace MPTanks.Clients.GameClient
         [STAThread]
         public static void Main(string[] args)
         {
+            if (!GlobalSettings.Debug)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             CrossDomainObject.Instance.ConnectionFailureCause = "NOCOMMENT";

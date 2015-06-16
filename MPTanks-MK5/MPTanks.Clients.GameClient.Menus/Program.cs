@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 using MPTanks.Clients.GameClient.Menus;
 using MPTanks.Clients.GameClient.Menus.InGame;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,11 @@ namespace MPTanks.Clients.GameClient.Menus
         [STAThread]
         public static void Main()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            if (!GlobalSettings.Debug)
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            Logger.Info("Initialized.");
+
             using (var gm = new ClientCore())
                 gm.Run();
         }
@@ -29,7 +34,7 @@ namespace MPTanks.Clients.GameClient.Menus
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e.ExceptionObject.ToString());
-            Logger.Fatal("Unhandled fatal exception at AppDomain level.", (Exception)e.ExceptionObject); 
+            Logger.Fatal("Unhandled fatal exception at AppDomain level.", (Exception)e.ExceptionObject);
         }
     }
 #endif

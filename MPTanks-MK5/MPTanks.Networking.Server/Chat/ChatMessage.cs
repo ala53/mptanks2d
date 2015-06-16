@@ -8,6 +8,7 @@ namespace MPTanks.Networking.Server.Chat
 {
     public class ChatMessage
     {
-        public Guid From { get; private set; }
+        public Guid From { get; set; }
+        public Guid To { get; set; }
     }
 }

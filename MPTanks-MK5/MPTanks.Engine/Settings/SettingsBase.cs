@@ -157,6 +157,11 @@ namespace MPTanks.Engine.Settings
                 /// </summary>
                 Object
             }
+
+            public override string ToString()
+            {
+                return $"(Setting {Name}) {ObjectValue.ToString()}";
+            }
         }
 
         public class Setting<T> : Setting
