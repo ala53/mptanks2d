@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Settings;
+using System.Runtime.CompilerServices;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
@@ -214,6 +215,7 @@ namespace MPTanks.Clients.GameClient.Rendering
                 });
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         private void AsyncLoadFunction(string sheetName)
         {
             if (!File.Exists(sheetName) || !File.Exists(sheetName + ".json"))
