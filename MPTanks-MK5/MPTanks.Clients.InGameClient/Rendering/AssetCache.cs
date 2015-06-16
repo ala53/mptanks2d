@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Settings;
 
 namespace MPTanks.Clients.GameClient.Rendering
 {
@@ -190,54 +191,63 @@ namespace MPTanks.Clients.GameClient.Rendering
             //Note that we have called load on it
             _sheetsWithLoadCalled.Add(sheetName, false);
             //And async load
-            Task.Run(() =>
-            {
-                try
+            if (GlobalSettings.Debug)
+                AsyncLoadFunction(sheetName);
+            else
+                Task.Run(() =>
                 {
-                    sheetName = AssetResolver.Resolve(sheetName);
-                    //Open a file stream to the sheet
-                    FileStream fStream = null;
-                    fStream = System.IO.File.OpenRead(sheetName);
-                    //And upload to the GPU
-                    var texture = Texture2D.FromStream(_game.GraphicsDevice, fStream);
-                    //Parse the Sprite sheet's metadata (from a file named *.*.json)
-                    var sheet = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
-                        System.IO.File.ReadAllText(sheetName + ".json"));
 
-                    //Build the sprite tree from the metadata
-                    var sprites = new Dictionary<string, Rectangle>();
-                    foreach (var sprite in sheet.Sprites)
-                        sprites.Add(sprite.Name, new Rectangle(
-                            sprite.X, sprite.Y, sprite.Width, sprite.Height));
-
-                    //Load animations, if any
-                    Dictionary<string, Animation.Animation> _animations = null;
-                    if (sheet.Animations != null)
+                    try
                     {
-                        _animations = new Dictionary<string, Animation.Animation>();
-                        foreach (var anim in sheet.Animations) //Go through each and create the animation object
-                            _animations.Add(anim.Name,
-                                new Animation.Animation(anim.Friendly, anim.Frames, anim.FrameRate));
+                        AsyncLoadFunction(sheetName);
                     }
+                    catch (Exception e)
+                    {
+                        //If something goes wrong...log it 
+                        Logger.Error("Texture Load Failed! File: " + sheetName);
+                        Logger.Error(e.ToString());
+                    }
+                    finally
+                    {
+                        //Flag the load as complete 
+                        _sheetsWithLoadCalled[sheetName] = true;
+                    }
+                });
+        }
 
-                    //And build the spritesheet
-                    var spriteSheet = new SpriteSheet(sheet.Name, texture, sprites, _animations);
-                    spriteSheets.Add(sheetName, spriteSheet); //And add it to the global table
+        private void AsyncLoadFunction(string sheetName)
+        {
+            sheetName = AssetResolver.Resolve(sheetName);
+            //Open a file stream to the sheet
+            FileStream fStream = null;
+            fStream = System.IO.File.OpenRead(sheetName);
+            //And upload to the GPU
+            var texture = Texture2D.FromStream(_game.GraphicsDevice, fStream);
+            //Parse the Sprite sheet's metadata (from a file named *.*.json)
+            var sheet = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
+                System.IO.File.ReadAllText(sheetName + ".json"));
 
-                    fStream.Dispose(); //And finally, dispose of the file stream
-                }
-                catch (Exception e)
-                {
-                    //If something goes wrong...log it 
-                    Logger.Error("Texture Load Failed! File: " + sheetName);
-                    Logger.Error(e.ToString());
-                }
-                finally
-                {
-                    //Flag the load as complete 
-                    _sheetsWithLoadCalled[sheetName] = true;
-                }
-            });
+            //Build the sprite tree from the metadata
+            var sprites = new Dictionary<string, Rectangle>();
+            foreach (var sprite in sheet.Sprites)
+                sprites.Add(sprite.Name, new Rectangle(
+                    sprite.X, sprite.Y, sprite.Width, sprite.Height));
+
+            //Load animations, if any
+            Dictionary<string, Animation.Animation> _animations = null;
+            if (sheet.Animations != null)
+            {
+                _animations = new Dictionary<string, Animation.Animation>();
+                foreach (var anim in sheet.Animations) //Go through each and create the animation object
+                    _animations.Add(anim.Name,
+                        new Animation.Animation(anim.Friendly, anim.Frames, anim.FrameRate));
+            }
+
+            //And build the spritesheet
+            var spriteSheet = new SpriteSheet(sheet.Name, texture, sprites, _animations);
+            spriteSheets.Add(sheetName, spriteSheet); //And add it to the global table
+
+            fStream.Dispose(); //And finally, dispose of the file stream
         }
 
         private bool HasSpriteSheetLoadBeenCalled(string sheetName)

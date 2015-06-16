@@ -67,7 +67,7 @@ namespace MPTanks.Clients.GameClient.Rendering
 
             //Draw game objects
             _game.Diagnostics.BeginMeasurement("Draw Objects", "World rendering", "Rendering");
-            // DrawObjects(_boundsRect, gameTime, sb);
+            DrawObjects(_boundsRect, gameTime, sb);
             _game.Diagnostics.EndMeasurement("Draw Objects", "World rendering", "Rendering");
 
             //And animations
