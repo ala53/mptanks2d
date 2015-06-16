@@ -42,11 +42,11 @@ namespace MPTanks.Engine.RPC
                  System.Reflection.BindingFlags.NonPublic |
                  System.Reflection.BindingFlags.Instance);
 
-            method.Invoke(_game.GameObjectsWithIds[call.TargetObject],
+            method.Invoke(_game.GameObjectsById[call.TargetObject],
                 (object[])JsonConvert.DeserializeObject(
                 call.SerializedArgs, Type.GetType(call.ArgumentsType), _settings));
 
-            _game.GameObjectsWithIds[call.TargetObject].OnReceiveRPC(call);
+            _game.GameObjectsById[call.TargetObject].OnReceiveRPC(call);
         }
 
         public event EventHandler<RPC> OnRPCCreated = delegate { };

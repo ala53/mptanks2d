@@ -101,13 +101,21 @@ namespace MPTanks.Engine
         /// <summary>
         /// The next available object id to use
         /// </summary>
-        internal ushort NextObjectId { get { return _nextObjectId++; } }
+        internal ushort NextObjectId
+        {
+            get
+            {
+                while (GameObjectsById.ContainsKey(++_nextObjectId)) ;
+
+                return _nextObjectId;
+            }
+        }
 
         private Dictionary<int, GameObject> _gameObjects = new Dictionary<int, GameObject>();
         /// <summary>
         /// All GameObjects currently in game.
         /// </summary>
-        public IReadOnlyDictionary<int, GameObject> GameObjectsWithIds { get { return _gameObjects; } }
+        public IReadOnlyDictionary<int, GameObject> GameObjectsById { get { return _gameObjects; } }
 
         public IEnumerable<GameObject> GameObjects { get { return _gameObjects.Values; } }
 
@@ -334,7 +342,7 @@ namespace MPTanks.Engine
         {
             var hasControlOfParent = !Diagnostics.IsMeasuring(DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.BeginMeasurement(DiagnosticsParent);
-            
+
             Diagnostics.BeginMeasurement("Begin UpdateInGame()", DiagnosticsParent);
 
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state

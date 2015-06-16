@@ -10,7 +10,7 @@ namespace MPTanks.Engine.Settings
     {
 
         /// <summary>
-        /// The physics engine runs at 1/10 scale for some idiotic reason.
+        /// The physics engine runs best at 1/10 scale for some idiotic reason.
         /// Basically, that means that a 3x5 tank is 0.3x0.5 blocks because
         /// Box2D a.k.a. Farseer works best with objects between 0.1 and 10 units
         /// in size.
@@ -21,7 +21,7 @@ namespace MPTanks.Engine.Settings
 
         /// <summary>
         /// Number of milliseconds after GameCore initialization to wait before starting
-        /// the game because we want all of the setup to be done and for people to be connected.
+        /// the game (because we want all of the people to get to choose their tanks).
         /// </summary>
         public Setting<float> TimeToWaitBeforeStartingGame { get; private set; }
 
