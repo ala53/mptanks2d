@@ -1,0 +1,16 @@
+{
+  "name": "LoginServer",
+  "version": "0.0.0",
+  "description": "LoginServer",
+  "main": "app.js",
+  "author": {
+    "name": "Alastair",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "3.4.4",
+    "jade": "*",
+    "mongodb": "^2.0.34",
+    "stylus": "*"
+  }
+}
