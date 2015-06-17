@@ -16,7 +16,7 @@ namespace MPTanks.Networking.Common.Game
         {
         }
 
-        public static void Create(FullGameState baseState, FullGameState newState)
+        public static void Create(PseudoFullGameWorldState baseState, PseudoFullGameWorldState newState)
         {
 
         }

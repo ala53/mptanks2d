@@ -10,6 +10,13 @@ namespace MPTanks.Engine.Helpers
 {
     public static partial class SerializationHelpers
     {
+
+        const int JSONSerializedMagicNumber = unchecked(0x1337FCED);
+        public static readonly byte[] JSONSerilizationBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
+
+        const int stringSerializedMagicNumber = unchecked(0x1338E3EE);
+        public static readonly byte[] StringSerializationBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
+
         public static readonly byte[] EmptyByteArray = new byte[0];
         public static readonly byte TrueByte = 1;
         public static readonly byte FalseByte = 0;
@@ -33,6 +40,12 @@ namespace MPTanks.Engine.Helpers
 
         public static void SetContents(this byte[] arr1, byte[] source, int offset) =>
             Array.Copy(source, 0, arr1, offset, source.Length);
+
+        public static void SetByteArray(this byte[] arr1, byte[] source, int offset)
+        {
+            arr1.SetContents((ushort)source.Length, offset);
+            arr1.SetContents(source, offset + 2);
+        }
 
         public static void SetContents(this byte[] arr1, int obj, int offset)
         {
@@ -150,6 +163,9 @@ namespace MPTanks.Engine.Helpers
             if (typeof(T) == typeof(Half))
                 return (T)(object)(new Half() { value = BitConverter.ToUInt16(src, offset) });
 
+            if (typeof(T) == typeof(Guid))
+                return (T)(object)src.GetGuid(offset);
+
             return UnsafeRead<T>(src.Slice(offset, Marshal.SizeOf(typeof(T))));
         }
 
@@ -165,8 +181,10 @@ namespace MPTanks.Engine.Helpers
             return theStructure;
         }
 
-        public static byte[] ToByteArray<T>(this T value) where T : struct
+        public static byte[] ToByteArray(this object value)
         {
+            if (!value.GetType().IsValueType)
+                throw new Exception("Must be a value type (struct)");
             var size = Marshal.SizeOf(value);
             var arr = new byte[size];
             var ptr = Marshal.AllocHGlobal(size);
@@ -201,6 +219,17 @@ namespace MPTanks.Engine.Helpers
         public static uint GetUInt(this byte[] src, int offset) => BitConverter.ToUInt32(src, offset);
         public static long GetLong(this byte[] src, int offset) => BitConverter.ToInt64(src, offset);
         public static ulong GetULong(this byte[] src, int offset) => BitConverter.ToUInt64(src, offset);
+        public static Guid GetGuid(this byte[] src, int offset) => new Guid(src.Slice(offset, 16));
+
+        public static byte[] GetByteArray(this byte[] src, int offset, int? count = null)
+        {
+            if (count == null)
+            {
+                count = src.GetUShort(offset);
+                offset += 2;
+            }
+            return src.Slice(offset, count.Value);
+        }
 
         public static bool SequenceBegins(this byte[] arr, byte[] other, int offset = 0)
         {
@@ -220,51 +249,59 @@ namespace MPTanks.Engine.Helpers
             return Encoding.UTF8.GetString(src, offset, length.Value);
         }
 
-        public static byte[] GetBytes(byte[] src, int offset, int count)
+        public static byte[] GetBytes(byte[] src, int offset, int? count = null)
         {
-            var bytes = new byte[count];
-            Array.Copy(src, offset, bytes, 0, count);
+            if (count == null)
+            {
+                count = src.GetUShort(offset);
+                offset += 2;
+            }
+            var bytes = new byte[count.Value];
+            Array.Copy(src, offset, bytes, 0, count.Value);
             return bytes;
         }
 
-        public static byte[] AllocateArray(bool shouldCopy = false, params object[] contents)
+        public static byte[] AllocateArray(bool shouldCopyContentsIntoArray, params object[] contents)
         {
             int size = 0;
             foreach (var obj in contents)
             {
                 if (obj.GetType() == typeof(ulong)) size += 8;
-                if (obj.GetType() == typeof(long)) size += 8;
+                else if (obj.GetType() == typeof(long)) size += 8;
 
-                if (obj.GetType() == typeof(uint)) size += 4;
-                if (obj.GetType() == typeof(int)) size += 4;
+                else if (obj.GetType() == typeof(uint)) size += 4;
+                else if (obj.GetType() == typeof(int)) size += 4;
 
-                if (obj.GetType() == typeof(ushort)) size += 2;
-                if (obj.GetType() == typeof(short)) size += 2;
+                else if (obj.GetType() == typeof(ushort)) size += 2;
+                else if (obj.GetType() == typeof(short)) size += 2;
 
-                if (obj.GetType() == typeof(byte)) size += 1;
-                if (obj.GetType() == typeof(sbyte)) size += 1;
+                else if (obj.GetType() == typeof(byte)) size += 1;
+                else if (obj.GetType() == typeof(sbyte)) size += 1;
 
-                if (obj.GetType() == typeof(bool)) size += 1;
+                else if (obj.GetType() == typeof(bool)) size += 1;
 
-                if (obj.GetType() == typeof(float)) size += 4;
-                if (obj.GetType() == typeof(double)) size += 8;
-                if (obj.GetType() == typeof(Half)) size += 2;
+                else if (obj.GetType() == typeof(float)) size += 4;
+                else if (obj.GetType() == typeof(double)) size += 8;
+                else if (obj.GetType() == typeof(Half)) size += 2;
 
-                if (obj.GetType() == typeof(Vector2)) size += 8;
-                if (obj.GetType() == typeof(HalfVector2)) size += 4;
-                if (obj.GetType() == typeof(Color)) size += 4;
+                else if (obj.GetType() == typeof(Vector2)) size += 8;
+                else if (obj.GetType() == typeof(HalfVector2)) size += 4;
+                else if (obj.GetType() == typeof(Color)) size += 4;
 
-                if (obj.GetType() == typeof(string))
+                else if (obj.GetType() == typeof(Guid)) size += 16;
+
+                else if (obj.GetType() == typeof(string))
                 {
                     size += 2; //header
                     size += Encoding.UTF8.GetByteCount((string)obj);
                 }
-                if (obj.GetType() == typeof(byte[])) size += ((byte[])obj).Length;
+                else if (obj.GetType() == typeof(byte[])) size += ((byte[])obj).Length + 2;
+                else if (obj.GetType().IsValueType) size += ToByteArray(obj).Length;
             }
 
             var arr = new byte[size];
 
-            if (shouldCopy)
+            if (shouldCopyContentsIntoArray)
             {
                 int offset = 0;
                 foreach (var obj in contents)
@@ -274,99 +311,111 @@ namespace MPTanks.Engine.Helpers
                         arr.SetContents((ulong)obj, offset);
                         offset += 8;
                     }
-                    if (obj.GetType() == typeof(long))
+                    else if (obj.GetType() == typeof(long))
                     {
                         arr.SetContents((long)obj, offset);
                         offset += 8;
                     }
 
-                    if (obj.GetType() == typeof(uint))
+                    else if (obj.GetType() == typeof(uint))
                     {
                         arr.SetContents((uint)obj, offset);
                         offset += 4;
                     }
-                    if (obj.GetType() == typeof(int))
+                    else if (obj.GetType() == typeof(int))
                     {
                         arr.SetContents((int)obj, offset);
                         offset += 4;
                     }
 
-                    if (obj.GetType() == typeof(ushort))
+                    else if (obj.GetType() == typeof(ushort))
                     {
                         arr.SetContents((ushort)obj, offset);
                         offset += 2;
                     }
-                    if (obj.GetType() == typeof(short))
+                    else if (obj.GetType() == typeof(short))
                     {
                         arr.SetContents((short)obj, offset);
                         offset += 2;
                     }
 
-                    if (obj.GetType() == typeof(byte))
+                    else if (obj.GetType() == typeof(byte))
                     {
                         arr[offset] = (byte)obj;
                         offset += 1;
                     }
 
-                    if (obj.GetType() == typeof(byte))
+                    else if (obj.GetType() == typeof(byte))
                     {
                         arr[offset] = (bool)obj ? (byte)1 : (byte)0;
                         offset += 1;
                     }
 
-                    if (obj.GetType() == typeof(float))
+                    else if (obj.GetType() == typeof(float))
                     {
                         arr.SetContents((float)obj, offset);
                         offset += 4;
                     }
-                    if (obj.GetType() == typeof(double))
+                    else if (obj.GetType() == typeof(double))
                     {
                         arr.SetContents((double)obj, offset);
                         offset += 8;
                     }
-                    if (obj.GetType() == typeof(Half))
+                    else if (obj.GetType() == typeof(Half))
                     {
                         arr.SetContents((Half)obj, offset);
                         offset += 2;
                     }
 
-                    if (obj.GetType() == typeof(Vector2))
+                    else if (obj.GetType() == typeof(Vector2))
                     {
                         arr.SetContents((Vector2)obj, offset);
                         offset += 8;
                     }
-                    if (obj.GetType() == typeof(HalfVector2))
+                    else if (obj.GetType() == typeof(HalfVector2))
                     {
                         arr.SetContents((HalfVector2)obj, offset);
                         offset += 4;
                     }
-                    if (obj.GetType() == typeof(Color))
+                    else if (obj.GetType() == typeof(Color))
                     {
                         arr.SetContents((Color)obj, offset);
                         offset += 4;
                     }
 
-                    if (obj.GetType() == typeof(string))
+                    else if (obj.GetType() == typeof(string))
                     {
                         arr.SetContents((string)obj, offset);
                         offset += 2; //header
                         offset += Encoding.UTF8.GetByteCount((string)obj);
                     }
-                    if (obj.GetType() == typeof(byte[]))
+                    else if (obj.GetType() == typeof(byte[]))
                     {
-                        arr.SetContents((byte[])obj, offset);
-                        offset += ((byte[])obj).Length;
+                        arr.SetByteArray((byte[])obj, offset);
+                        offset += ((byte[])obj).Length + 2;
+                    }
+                    else if (obj.GetType().IsValueType)
+                    {
+                        var data = obj.ToByteArray();
+                        arr.SetContents(data, offset);
+                        offset += data.Length;
                     }
                 }
             }
             return arr;
         }
 
-        public static byte[] MergeArrays(byte[] arr1, byte[] arr2)
+        public static byte[] MergeArrays(byte[] arr1, byte[] arr2, bool addLengthHeader = false)
         {
-            var arr3 = new byte[arr1.Length + arr2.Length];
+            var arr3 = new byte[arr1.Length + arr2.Length + (addLengthHeader ? 2 : 0)];
             Array.Copy(arr1, arr3, arr1.Length);
-            Array.Copy(arr2, 0, arr3, arr1.Length, arr2.Length);
+            if (addLengthHeader)
+            {
+                arr3.SetValue((ushort)arr2.Length, arr1.Length);
+                Array.Copy(arr2, 0, arr3, arr1.Length + 2, arr2.Length);
+            }
+            else
+                Array.Copy(arr2, 0, arr3, arr1.Length, arr2.Length);
             return arr3;
         }
 

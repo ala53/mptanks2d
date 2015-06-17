@@ -39,19 +39,9 @@ namespace MPTanks.Engine
 
         protected bool RaiseStateChangeEvent(string state)
         {
-            var count = Encoding.UTF8.GetByteCount(state);
-            var array = new byte[count + stringSerializedMagicBytes.Length];
-            array.SetContents(stringSerializedMagicBytes, 0);
-            array.SetContents(state, stringSerializedMagicBytes.Length);
-            return RaiseStateChangeEvent(array);
+            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
+                SerializationHelpers.StringSerializationBytes, state));
         }
-
-        const long JSONSerializedMagicNumber = unchecked(0x1337FCEDBCCB3010L);
-        byte[] JSONSerializedMagicBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
-
-        const long stringSerializedMagicNumber = unchecked(0x1337E3EECACB3010L);
-        byte[] stringSerializedMagicBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
-
         /// <summary>
         /// Serializes the object to JSON before sending it.
         /// </summary>
@@ -59,11 +49,8 @@ namespace MPTanks.Engine
         protected bool RaiseStateChangeEvent(object obj)
         {
             var serialized = SerializeStateChangeObject(obj);
-            var count = Encoding.UTF8.GetByteCount(serialized);
-            var array = new byte[count + JSONSerializedMagicBytes.Length];
-            array.SetContents(JSONSerializedMagicBytes, 0);
-            array.SetContents(serialized, JSONSerializedMagicBytes.Length);
-            return RaiseStateChangeEvent(array);
+            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
+                SerializationHelpers.JSONSerilizationBytes, serialized));
         }
 
         private JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
@@ -72,23 +59,23 @@ namespace MPTanks.Engine
             TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
             TypeNameHandling = TypeNameHandling.All
         };
-        protected string SerializeStateChangeObject(object obj)
+        protected virtual string SerializeStateChangeObject(object obj)
         {
             return JsonConvert.SerializeObject(obj, Formatting.None, _serializerSettingsForStateChange);
         }
 
         public void ReceiveStateData(byte[] stateData)
         {
-            if (stateData.SequenceBegins(JSONSerializedMagicBytes))
+            if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(stateData.GetString(stringSerializedMagicBytes.Length));
+                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerilizationBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
-            else if (stateData.SequenceBegins(stringSerializedMagicBytes))
+            else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))
             {
                 //Try to deserialize
-                var obj = stateData.GetString(stringSerializedMagicBytes.Length);
+                var obj = stateData.GetString(SerializationHelpers.StringSerializationBytes.Length);
                 ReceiveStateDataInternal(obj);
             }
             else
@@ -97,11 +84,11 @@ namespace MPTanks.Engine
             }
         }
 
-        protected object DeserializeStateChangeObject(string obj)
+        protected virtual object DeserializeStateChangeObject(string obj)
         {
             return JsonConvert.DeserializeObject(obj);
         }
-        protected T DeserializeStateChangeObject<T>(string obj)
+        protected virtual T DeserializeStateChangeObject<T>(string obj)
         {
             return JsonConvert.DeserializeObject<T>(obj);
         }
@@ -120,7 +107,7 @@ namespace MPTanks.Engine
         {
 
         }
-        
+
         protected void UnsafeDisableEvents()
         {
             _eventsEnabled = false;

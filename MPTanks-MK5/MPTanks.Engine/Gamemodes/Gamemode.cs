@@ -142,17 +142,10 @@ namespace MPTanks.Engine.Gamemodes
         protected bool RaiseStateChangeEvent(string state)
         {
             var count = Encoding.UTF8.GetByteCount(state);
-            var array = new byte[count + stringSerializedMagicBytes.Length];
-            Array.Copy(Encoding.UTF8.GetBytes(state), 0, array, stringSerializedMagicBytes.Length, count);
-            Array.Copy(stringSerializedMagicBytes, array, stringSerializedMagicBytes.Length);
-            return RaiseStateChangeEvent(array);
+            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
+                SerializationHelpers.StringSerializationBytes,
+                state));
         }
-
-        const long JSONSerializedMagicNumber = unchecked(0x1337FCEDBCCB3010L);
-        byte[] JSONSerializedMagicBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
-
-        const long stringSerializedMagicNumber = unchecked(0x1337E3EECACB3010L);
-        byte[] stringSerializedMagicBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
 
         /// <summary>
         /// Serializes the object to JSON before sending it.
@@ -161,11 +154,9 @@ namespace MPTanks.Engine.Gamemodes
         protected bool RaiseStateChangeEvent(object obj)
         {
             var serialized = SerializeStateChangeObject(obj);
-            var count = Encoding.UTF8.GetByteCount(serialized);
-            var array = new byte[count + JSONSerializedMagicBytes.Length];
-            Array.Copy(Encoding.UTF8.GetBytes(serialized), 0, array, JSONSerializedMagicBytes.Length, count);
-            Array.Copy(JSONSerializedMagicBytes, array, JSONSerializedMagicBytes.Length);
-            return RaiseStateChangeEvent(array);
+            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
+                SerializationHelpers.JSONSerilizationBytes,
+                serialized));
         }
 
         private JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
@@ -181,21 +172,16 @@ namespace MPTanks.Engine.Gamemodes
 
         public void ReceiveStateData(byte[] stateData)
         {
-            if (stateData.Length > JSONSerializedMagicBytes.Length &&
-                BitConverter.ToInt64(stateData, 0) == JSONSerializedMagicNumber)
+            if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(
-                    Encoding.UTF8.GetString(stateData, JSONSerializedMagicBytes.Length,
-                    stateData.Length - JSONSerializedMagicBytes.Length));
+                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerilizationBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
-            else if (stateData.Length > stringSerializedMagicBytes.Length &&
-               BitConverter.ToInt64(stateData, 0) == stringSerializedMagicNumber)
+            else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))
             {
                 //Try to deserialize
-                var obj = Encoding.UTF8.GetString(stateData, stringSerializedMagicBytes.Length,
-                    stateData.Length - stringSerializedMagicBytes.Length);
+                var obj = stateData.GetString(SerializationHelpers.StringSerializationBytes.Length);
                 ReceiveStateDataInternal(obj);
             }
             else
@@ -239,13 +225,14 @@ namespace MPTanks.Engine.Gamemodes
             // 4 byte respawn time milliseconds
             // 1 bytes winning team id
             // 1 byte teams count
-            //    for each team
-            // 1 byte team id
-            // 4 byte team color 
-            // 2 byte team name length
-            // variable team name string
-            // 2 byte team objective length
-            // variable team objective string
+            //        for each team
+            //          2 byte team object size
+            //          1 byte team id
+            //          4 byte team color 
+            //          2 byte team name length
+            //          variable team name string
+            //          2 byte team objective length
+            //          variable team objective string
             // 2 byte private size
             // variable private data
 
@@ -257,18 +244,19 @@ namespace MPTanks.Engine.Gamemodes
                 privateStateBytes = (byte[])privateStateObject;
             else if (privateStateObject.GetType() == typeof(string))
             {
-                privateStateBytes = new byte[stringSerializedMagicBytes.Length +
-                    Encoding.UTF8.GetByteCount((string)privateStateObject)];
-
-                privateStateBytes.SetContents(stringSerializedMagicBytes, 0);
+                privateStateBytes = SerializationHelpers.AllocateArray(true,
+                    SerializationHelpers.StringSerializationBytes,
+                    privateStateObject
+                    );
             }
             else
             {
                 var serialized = SerializeStateChangeObject(privateStateObject);
-                privateStateBytes = new byte[JSONSerializedMagicBytes.Length +
-                    Encoding.UTF8.GetByteCount(serialized)];
 
-                privateStateBytes.SetContents(JSONSerializedMagicBytes, 0);
+                privateStateBytes = SerializationHelpers.AllocateArray(true,
+                    SerializationHelpers.JSONSerilizationBytes,
+                    serialized
+                    );
             }
 
             //then encode the header
@@ -282,12 +270,10 @@ namespace MPTanks.Engine.Gamemodes
                 (byte)Teams.Length);
 
             foreach (var team in Teams)
-                header = SerializationHelpers.MergeArrays(header, EncodeTeam(team));
+                header = SerializationHelpers.MergeArrays(header, EncodeTeam(team), true);
 
             //And then the contents
-            header = SerializationHelpers.MergeArrays(header, BitConverter.GetBytes((ushort)privateStateBytes.Length));
-
-            return SerializationHelpers.MergeArrays(header, privateStateBytes);
+            return SerializationHelpers.MergeArrays(header, privateStateBytes, true);
         }
 
         private byte[] EncodeTeam(Team team)
@@ -305,7 +291,7 @@ namespace MPTanks.Engine.Gamemodes
         /// <returns></returns>
         protected virtual object GetPrivateStateData()
         {
-            return new byte[] { };
+            return SerializationHelpers.EmptyByteArray;
         }
 
         public void SetFullState(byte[] stateData)
