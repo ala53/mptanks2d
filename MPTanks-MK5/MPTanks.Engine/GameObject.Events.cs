@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Settings;
 using Newtonsoft.Json;
 using System;
 using System.Text;
@@ -65,6 +66,14 @@ namespace MPTanks.Engine
         }
 
         public void ReceiveStateData(byte[] stateData)
+        {
+            if (GlobalSettings.Debug)
+                ProcessReceiveStateData(stateData);
+            else
+                try { ProcessReceiveStateData(stateData); } catch { ReceiveStateDataInternal(stateData); }
+        }
+
+        private void ProcessReceiveStateData(byte[] stateData)
         {
             if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
             {

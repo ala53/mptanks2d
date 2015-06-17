@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Settings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -172,6 +173,14 @@ namespace MPTanks.Engine.Gamemodes
 
         public void ReceiveStateData(byte[] stateData)
         {
+            if (GlobalSettings.Debug)
+                ProcessReveiveStateData(stateData);
+            else
+                try { ProcessReveiveStateData(stateData); } catch { ReceiveStateDataInternal(stateData); }
+        }
+
+        private void ProcessReveiveStateData(byte[] stateData)
+        {
             if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
             {
                 //Try to deserialize
@@ -296,10 +305,32 @@ namespace MPTanks.Engine.Gamemodes
 
         public void SetFullState(byte[] stateData)
         {
-            SetFullStateInternal(stateData);
+            int offset = 0;
+            SetFullStateHeader(stateData, ref offset);
+
+            var privateState = stateData.GetByteArray(offset);
+
+            if (GlobalSettings.Debug)
+                ProcessSetFullStatePrivateData(privateState);
+            else
+                try { ProcessSetFullStatePrivateData(privateState); } catch { SetFullStateInternal(privateState); }
         }
 
 
+        private void ProcessSetFullStatePrivateData(byte[] privateState)
+        {
+            if (privateState.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
+                SetFullStateInternal(DeserializeStateChangeObject(
+                    privateState.GetString(SerializationHelpers.JSONSerilizationBytes.Length)));
+            else if (privateState.SequenceBegins(SerializationHelpers.StringSerializationBytes))
+                SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
+            else SetFullStateInternal(privateState);
+        }
+
+        private void SetFullStateHeader(byte[] header, ref int offset)
+        {
+
+        }
 
         protected virtual void SetFullStateInternal(byte[] stateData)
         {

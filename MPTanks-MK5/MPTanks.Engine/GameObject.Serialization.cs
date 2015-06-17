@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,6 +140,14 @@ namespace MPTanks.Engine
 
             var privateState = state.GetByteArray(offset);
 
+            if (GlobalSettings.Debug)
+                ProcessSetFullStatePrivateData(privateState);
+            else
+                try { ProcessSetFullStatePrivateData(privateState); } catch { SetFullStateInternal(privateState); }
+        }
+
+        private void ProcessSetFullStatePrivateData(byte[] privateState)
+        {
             if (privateState.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
                 SetFullStateInternal(DeserializeStateChangeObject(
                     privateState.GetString(SerializationHelpers.JSONSerilizationBytes.Length)));
@@ -146,7 +155,6 @@ namespace MPTanks.Engine
                 SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
             else SetFullStateInternal(privateState);
         }
-
 
         private void SetStateHeader(byte[] header, ref int offset)
         {
