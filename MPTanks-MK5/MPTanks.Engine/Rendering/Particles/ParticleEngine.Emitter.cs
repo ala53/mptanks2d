@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Helpers;
 
 namespace MPTanks.Engine.Rendering.Particles
 {
@@ -431,7 +432,7 @@ namespace MPTanks.Engine.Rendering.Particles
                 for (var i = 0; i < numberOfParticlesToCreate; i++)
                 {
                     //Get one of the allowed assets (randomly)
-                    var asset = Helpers.ChooseRandom(Sprites);
+                    var asset = BasicHelpers.ChooseRandom(Sprites);
                     var fadeOutTime = GetRandomBetween(MinFadeOutMs, MaxFadeOutMs);
                     var fadeInTime = GetRandomBetween(MinFadeInMs, MaxFadeInMs);
 

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Engine
+namespace MPTanks.Engine.Helpers
 {
-    public static partial class Helpers
+    public static partial class BasicHelpers
     {
         private static Random _rand = new Random();
 

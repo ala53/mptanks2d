@@ -166,6 +166,9 @@ namespace MPTanks.Engine
             }
             set
             {
+                if (IsStatic != value)
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsStatic);
+
                 if (_hasBeenCreated)
                     Body.IsStatic = value;
                 else

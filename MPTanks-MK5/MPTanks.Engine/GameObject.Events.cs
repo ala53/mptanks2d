@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Text;
@@ -40,8 +41,8 @@ namespace MPTanks.Engine
         {
             var count = Encoding.UTF8.GetByteCount(state);
             var array = new byte[count + stringSerializedMagicBytes.Length];
-            Array.Copy(Encoding.UTF8.GetBytes(state), 0, array, stringSerializedMagicBytes.Length, count);
-            Array.Copy(stringSerializedMagicBytes, array, stringSerializedMagicBytes.Length);
+            array.SetContents(stringSerializedMagicBytes, 0);
+            array.SetContents(state, stringSerializedMagicBytes.Length);
             return RaiseStateChangeEvent(array);
         }
 
@@ -60,8 +61,8 @@ namespace MPTanks.Engine
             var serialized = SerializeStateChangeObject(obj);
             var count = Encoding.UTF8.GetByteCount(serialized);
             var array = new byte[count + JSONSerializedMagicBytes.Length];
-            Array.Copy(Encoding.UTF8.GetBytes(serialized), 0, array, JSONSerializedMagicBytes.Length, count);
-            Array.Copy(JSONSerializedMagicBytes, array, JSONSerializedMagicBytes.Length);
+            array.SetContents(JSONSerializedMagicBytes, 0);
+            array.SetContents(serialized, JSONSerializedMagicBytes.Length);
             return RaiseStateChangeEvent(array);
         }
 
@@ -78,21 +79,16 @@ namespace MPTanks.Engine
 
         public void ReceiveStateData(byte[] stateData)
         {
-            if (stateData.Length > JSONSerializedMagicBytes.Length &&
-                BitConverter.ToInt64(stateData, 0) == JSONSerializedMagicNumber)
+            if (stateData.SequenceBegins(JSONSerializedMagicBytes))
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(
-                    Encoding.UTF8.GetString(stateData, JSONSerializedMagicBytes.Length,
-                    stateData.Length - JSONSerializedMagicBytes.Length));
+                var obj = DeserializeStateChangeObject(stateData.GetString(stringSerializedMagicBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
-            else if (stateData.Length > stringSerializedMagicBytes.Length &&
-               BitConverter.ToInt64(stateData, 0) == stringSerializedMagicNumber)
+            else if (stateData.SequenceBegins(stringSerializedMagicBytes))
             {
                 //Try to deserialize
-                var obj = Encoding.UTF8.GetString(stateData, stringSerializedMagicBytes.Length,
-                    stateData.Length - stringSerializedMagicBytes.Length);
+                var obj = stateData.GetString(stringSerializedMagicBytes.Length);
                 ReceiveStateDataInternal(obj);
             }
             else
@@ -158,7 +154,9 @@ namespace MPTanks.Engine
             Rotation,
             LinearVelocity,
             AngularVelocity,
-            Size
+            Size,
+            IsSensor,
+            IsStatic
         }
 
         private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type)

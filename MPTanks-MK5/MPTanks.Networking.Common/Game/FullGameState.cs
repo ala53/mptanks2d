@@ -1,4 +1,6 @@
 ﻿using MPTanks.Engine;
+using MPTanks.Engine.Logging;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +12,38 @@ namespace MPTanks.Networking.Common.Game
     public class FullGameState
     {
         public List<FullObjectState> ObjectStates { get; set; }
-        public ActionQueue ActionsSinceStateChanged { get; set; }
+        public string MapData { get; set; }
+        public string GamemodeReflectionName { get; set; }
+        public float CurrentGameTimeMilliseconds { get; set; }
         public byte[] GamemodeState { get; set; }
-        public int StateId { get; set; }
+        public List<FullStatePlayer> Players { get; set; }
 
-        public void Apply(GameCore game)
+        public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null)
         {
+            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
+            game.Gamemode.FullState = GamemodeState;
+            //Add the players and teams
 
+            //Add all of the game objects
+            foreach (var fullState in ObjectStates)
+                GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+
+            //Do this with reflection because we want to keep the api private
+            typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds),
+                System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.NonPublic
+                | System.Reflection.BindingFlags.SetProperty).SetValue(game, CurrentGameTimeMilliseconds);
+
+
+
+            return game;
         }
 
-        public static void Create(GameCore game)
+        public static FullGameState Create(GameCore game)
         {
+            var state = new FullGameState();
 
+            return state;
         }
     }
 }

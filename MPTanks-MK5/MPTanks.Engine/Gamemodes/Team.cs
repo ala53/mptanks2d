@@ -9,9 +9,9 @@ namespace MPTanks.Engine.Gamemodes
 {
     public class Team
     {
-        private static Team _null = new Team() { TeamName = "Null" };
+        private static Team _null = new Team() { TeamId = -1, TeamName = "Null" };
         public static Team Null { get { return _null; } }
-        private static Team _tied = new Team() { TeamName = "Indeterminate" };
+        private static Team _tied = new Team() { TeamId = -2, TeamName = "Indeterminate" };
         /// <summary>
         /// The team to flag as a tie or when no one wins.
         /// </summary>

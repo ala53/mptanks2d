@@ -9,6 +9,7 @@ using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Assets;
+using MPTanks.Engine.Helpers;
 
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
@@ -115,7 +116,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
         protected override bool DestroyInternal(GameObject destructor = null)
         {
-            var si = AnimatedSprites[Helpers.ChooseRandom(_explosions)];
+            var si = AnimatedSprites[BasicHelpers.ChooseRandom(_explosions)];
             var anim = new Engine.Rendering.Animations.Animation(
                     si.AnimationName, Position, new Vector2(10), si.SheetName);
 
@@ -142,7 +143,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 tertiaryTimer.Reset();
         }
 
-        protected override byte[] GetPrivateStateData()
+        protected override object GetPrivateStateData()
         {
             var data = new byte[4 + 4 + 4];
             data.SetContents(primaryTimer.ElapsedMilliseconds, 0);

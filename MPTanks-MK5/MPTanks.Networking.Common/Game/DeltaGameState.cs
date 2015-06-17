@@ -12,9 +12,8 @@ namespace MPTanks.Networking.Common.Game
         public List<DeltaObjectState> DeltaObjectStates { get; set; }
         public ActionQueue ActionsSinceStateChanged { get; set; }
 
-        public void Apply(GameCore game, FullGameState baseState)
+        public void Apply(GameCore game)
         {
-            var fullState = new FullGameState();
         }
 
         public static void Create(FullGameState baseState, FullGameState newState)

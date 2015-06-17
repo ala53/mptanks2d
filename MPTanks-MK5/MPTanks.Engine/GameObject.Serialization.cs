@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace MPTanks.Engine
 {
     public partial class GameObject
     {
+        public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
         private enum __SerializationGameObjectType : byte
         {
             GameObject,
@@ -16,9 +18,9 @@ namespace MPTanks.Engine
             Projectile,
             MapObject
         }
-        public static GameObject CreateFromSerializationInformation(GameCore game, byte[] serializationData, bool authorized = true)
+        public static GameObject CreateAndAddFromSerializationInformation(GameCore game, byte[] serializationData, bool authorized = true)
         {
-            var nameLength = Helpers.GetValue<ushort>(serializationData, 0);
+            var nameLength = SerializationHelpers.GetValue<ushort>(serializationData, 0);
             var name = Encoding.UTF8.GetString(serializationData, 4, nameLength);
             var type = (__SerializationGameObjectType)serializationData[nameLength + 4];
             var guid = new Guid(serializationData.Slice(nameLength + 4 + 1, 16));
@@ -81,7 +83,29 @@ namespace MPTanks.Engine
             /////Then, there's the data from the instance
             //4 byte byte count
             //variable Private state data bytes
-            var privateState = GetPrivateStateData();
+            var privateStateObject = GetPrivateStateData();
+            byte[] privateState;
+
+            //Figure out what the final output should be (encoded object, string, or plain byte array)
+            if (privateStateObject.GetType() == typeof(byte[]))
+                privateState = (byte[])privateStateObject;
+            else if (privateStateObject.GetType() == typeof(string))
+            {
+                privateState = new byte[stringSerializedMagicBytes.Length +
+                    Encoding.UTF8.GetByteCount((string)privateStateObject)];
+
+                privateState.SetContents(stringSerializedMagicBytes, 0);
+            }
+            else
+            {
+                var serialized = SerializeStateChangeObject(privateStateObject);
+                privateState = new byte[JSONSerializedMagicBytes.Length +
+                    Encoding.UTF8.GetByteCount(serialized)];
+
+                privateState.SetContents(JSONSerializedMagicBytes, 0);
+            }
+
+            //Write the byte array
             var reflectionNameBytes = Encoding.UTF8.GetBytes(ReflectionName);
             var coreData = new byte[
                 _headerSizeExcludingString + reflectionNameBytes.Length + privateState.Length];
@@ -130,35 +154,47 @@ namespace MPTanks.Engine
             return __SerializationGameObjectType.GameObject;
         }
 
-        protected virtual byte[] GetPrivateStateData() => new byte[] { };
+        /// <summary>
+        /// Return a byte array for optimal performance, or either a string or other random object for ease of use.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual object GetPrivateStateData() => SerializationHelpers.EmptyByteArray;
 
         public void SetFullState(byte[] state)
         {
-            var reflectionNameLength = Helpers.GetValue<ushort>(state, 0);
+            var reflectionNameLength = SerializationHelpers.GetValue<ushort>(state, 0);
             SetStateHeader(state);
             var contentsLength =
-                Helpers.GetInt(state, _headerSizeExcludingString - 2);
-            SetFullStateInternal(state.Slice(_headerSizeExcludingString, contentsLength));
+                SerializationHelpers.GetInt(state, _headerSizeExcludingString + reflectionNameLength - 2);
+
+            var privateState = state.Slice(_headerSizeExcludingString + reflectionNameLength, contentsLength);
+
+            if (privateState.SequenceBegins(JSONSerializedMagicBytes))
+                SetFullStateInternal(DeserializeStateChangeObject(
+                    privateState.GetString(JSONSerializedMagicBytes.Length)));
+            else if (privateState.SequenceBegins(stringSerializedMagicBytes))
+                SetFullStateInternal(privateState.GetString(stringSerializedMagicBytes.Length));
+            else SetFullStateInternal(privateState);
         }
 
 
         private void SetStateHeader(byte[] header)
         {
             var offset = 0;
-            var id = Helpers.GetValue<ushort>(header, offset); offset += 2;
-            var nameLength = Helpers.GetValue<ushort>(header, offset); offset += 2;
+            var id = SerializationHelpers.GetValue<ushort>(header, offset); offset += 2;
+            var nameLength = SerializationHelpers.GetValue<ushort>(header, offset); offset += 2;
             var name = Encoding.UTF8.GetString(header, offset, nameLength); offset += nameLength;
             var type = (__SerializationGameObjectType)header[offset++];
             var guid = new Guid(header.Slice(offset, 16)); offset += 16;
             var isSensor = header[offset++] == 1;
             var isStatic = header[offset++] == 1;
-            var color = Helpers.GetColor(header, offset); offset += 4;
-            var timeAlive = Helpers.GetFloat(header, offset); offset += 4;
-            var size = Helpers.GetVector(header, offset); offset += 8;
-            var position = Helpers.GetVector(header, offset); offset += 8;
-            var linVel = Helpers.GetVector(header, offset); offset += 8;
-            var rot = Helpers.GetFloat(header, offset); offset += 4;
-            var rotVel = Helpers.GetFloat(header, offset); offset += 4;
+            var color = SerializationHelpers.GetColor(header, offset); offset += 4;
+            var timeAlive = SerializationHelpers.GetFloat(header, offset); offset += 4;
+            var size = SerializationHelpers.GetVector(header, offset); offset += 8;
+            var position = SerializationHelpers.GetVector(header, offset); offset += 8;
+            var linVel = SerializationHelpers.GetVector(header, offset); offset += 8;
+            var rot = SerializationHelpers.GetFloat(header, offset); offset += 4;
+            var rotVel = SerializationHelpers.GetFloat(header, offset); offset += 4;
 
             IsSensor = isSensor;
             IsStatic = isStatic;
@@ -172,7 +208,17 @@ namespace MPTanks.Engine
             AngularVelocity = rotVel;
         }
 
-        protected virtual void SetFullStateInternal(byte[] state)
+        protected virtual void SetFullStateInternal(byte[] stateData)
+        {
+
+        }
+
+        protected virtual void SetFullStateInternal(string state)
+        {
+
+        }
+
+        protected virtual void SetFullStateInternal(dynamic state)
         {
 
         }

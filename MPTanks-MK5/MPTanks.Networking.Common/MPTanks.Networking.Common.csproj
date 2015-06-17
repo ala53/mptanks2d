@@ -84,6 +84,8 @@
     <Compile Include="Game\FullObjectState.cs" />
     <Compile Include="Game\FullGameState.cs" />
     <Compile Include="Game\DeltaObjectState.cs" />
+    <Compile Include="Game\FullStatePlayer.cs" />
+    <Compile Include="Game\FullStateTeam.cs" />
     <Compile Include="MessageBase.cs" />
     <Compile Include="NetworkedGame.cs" />
     <Compile Include="NetworkProcessorBase.cs" />

@@ -223,7 +223,7 @@ namespace MPTanks.Clients.GameClient.Rendering
             sheetName = AssetResolver.Resolve(sheetName);
             //Open a file stream to the sheet
             FileStream fStream = null;
-            fStream = System.IO.File.OpenRead(sheetName);
+            fStream = File.OpenRead(sheetName);
             //And upload to the GPU
             var texture = Texture2D.FromStream(_game.GraphicsDevice, fStream);
             //Parse the Sprite sheet's metadata (from a file named *.*.json)
