@@ -174,12 +174,17 @@ namespace MPTanks.Engine.Gamemodes
         public void ReceiveStateData(byte[] stateData)
         {
             if (GlobalSettings.Debug)
-                ProcessReveiveStateData(stateData);
+                ProcessReceiveStateData(stateData);
             else
-                try { ProcessReveiveStateData(stateData); } catch { ReceiveStateDataInternal(stateData); }
+                try { ProcessReceiveStateData(stateData); }
+                catch (Exception ex)
+                {
+                    Game.Logger.Error($"Gamemode state parsing failed! Gamemode name: {ReflectionName}", ex);
+                    ReceiveStateDataInternal(stateData);
+                }
         }
 
-        private void ProcessReveiveStateData(byte[] stateData)
+        private void ProcessReceiveStateData(byte[] stateData)
         {
             if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
             {
@@ -313,7 +318,12 @@ namespace MPTanks.Engine.Gamemodes
             if (GlobalSettings.Debug)
                 ProcessSetFullStatePrivateData(privateState);
             else
-                try { ProcessSetFullStatePrivateData(privateState); } catch { SetFullStateInternal(privateState); }
+                try { ProcessSetFullStatePrivateData(privateState); }
+                catch (Exception ex)
+                {
+                    Game.Logger.Error($"Gamemode full state parsing failed! Gamemode name: {ReflectionName}", ex);
+                    SetFullStateInternal(privateState);
+                }
         }
 
 

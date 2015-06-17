@@ -136,14 +136,19 @@ namespace MPTanks.Engine
             var reflectionNameLength = SerializationHelpers.GetValue<ushort>(state, 0);
             int offset = 0;
             SetStateHeader(state, ref offset);
-            
+
 
             var privateState = state.GetByteArray(offset);
 
             if (GlobalSettings.Debug)
                 ProcessSetFullStatePrivateData(privateState);
             else
-                try { ProcessSetFullStatePrivateData(privateState); } catch { SetFullStateInternal(privateState); }
+                try { ProcessSetFullStatePrivateData(privateState); }
+                catch (Exception ex)
+                {
+                    Game.Logger.Error($"GameObject full state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
+                    SetFullStateInternal(privateState);
+                }
         }
 
         private void ProcessSetFullStatePrivateData(byte[] privateState)

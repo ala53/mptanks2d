@@ -70,7 +70,12 @@ namespace MPTanks.Engine
             if (GlobalSettings.Debug)
                 ProcessReceiveStateData(stateData);
             else
-                try { ProcessReceiveStateData(stateData); } catch { ReceiveStateDataInternal(stateData); }
+                try { ProcessReceiveStateData(stateData); }
+                catch (Exception ex)
+                {
+                    Game.Logger.Error($"GameObject partial state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
+                    ReceiveStateDataInternal(stateData);
+                }
         }
 
         private void ProcessReceiveStateData(byte[] stateData)
