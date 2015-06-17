@@ -62,7 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameObject.Serialization.cs" />
-    <Compile Include="Helpers.cs" />
+    <Compile Include="Helpers\HalfFloat.cs" />
+    <Compile Include="Helpers\HalfVector2.cs" />
+    <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="assets\SpriteInfo.cs" />
     <Compile Include="assets\JSONColor.cs" />
     <Compile Include="assets\JSONVector.cs" />
@@ -122,7 +124,8 @@
     <None Include="assets\maps\testmap.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="Helpers.Serialization.cs" />
+    <Compile Include="Helpers\Helpers.Serialization.cs" />
+    <Compile Include="Helpers\HalfFloat.Helper.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

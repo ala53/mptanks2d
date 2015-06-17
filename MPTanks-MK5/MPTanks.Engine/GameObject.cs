@@ -187,6 +187,9 @@ namespace MPTanks.Engine
             }
             set
             {
+                if (IsSensor != value)
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsSensor);
+
                 if (_hasBeenCreated)
                 {
                     Body.IsSensor = value;

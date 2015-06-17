@@ -292,7 +292,11 @@ namespace MPTanks.Engine.Gamemodes
 
         private byte[] EncodeTeam(Team team)
         {
-
+            return SerializationHelpers.AllocateArray(true,
+                (byte)team.TeamId,
+                team.TeamColor,
+                team.TeamName,
+                team.Objective);
         }
 
         /// <summary>
