@@ -156,7 +156,8 @@ namespace MPTanks.Engine
             AngularVelocity,
             Size,
             IsSensor,
-            IsStatic
+            IsStatic,
+            Restitution,
         }
 
         private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type)

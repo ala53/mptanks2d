@@ -199,19 +199,39 @@ namespace MPTanks.Engine
                     _startIsSensor = value;
             }
         }
+
+        public float Restitution
+        {
+            get
+            {
+                if (_hasBeenCreated)
+                    return Body.Restitution;
+                else return _startRestitution;
+            }
+            set
+            {
+                if (Restitution != value)
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Restitution);
+
+                if (_hasBeenCreated)
+                    Body.Restitution = value;
+                else _startRestitution = value;
+            }
+        }
+        
         #endregion
 
         #region Places to store settings pre-initialization
         private Vector2 _startPosition;
         private float _startDensity;
-        private float _startBounciness;
+        private float _startRestitution;
         private float _startRotation;
         private Vector2 _startVelocity;
         private float _startAngularVelocity;
         private bool _startIsStatic;
         private bool _startIsSensor;
         #endregion
-        public GameObject(GameCore game, bool authorized, float density = 1, float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0, ushort id = ushort.MaxValue)
+        public GameObject(GameCore game, bool authorized, float density = 1, float restitution = 0.1f, Vector2 position = default(Vector2), float rotation = 0, ushort id = ushort.MaxValue)
         {
             if (id == ushort.MaxValue)
                 ObjectId = game.NextObjectId;
@@ -223,7 +243,7 @@ namespace MPTanks.Engine
             _startPosition = position;
             _startRotation = rotation;
             _startDensity = density;
-            _startBounciness = bounciness;
+            _startRestitution = restitution;
 
             LoadBaseComponents();
 
@@ -247,7 +267,7 @@ namespace MPTanks.Engine
             Body = BodyFactory.CreateRectangle(Game.World, Size.X * Game.Settings.PhysicsScale,
                  Size.Y * Game.Settings.PhysicsScale, _startDensity, Vector2.Zero, _startRotation,
                  BodyType.Dynamic, this);
-            Body.Restitution = _startBounciness;
+            Body.Restitution = _startRestitution;
             Body.OnCollision += Body_OnCollision;
             //And initialize the object
             Alive = true;
