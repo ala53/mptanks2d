@@ -214,7 +214,7 @@ namespace MPTanks.Clients.GameClient
 
             updateNumber++;
             DetectGC();
-            if (game.IsCountingDownToStart)
+            if (game.GameStatus == GameCore.CurrentGameStatus.CountingDownToStart)
             {
                 loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
                 loadingScreen.Maximum = game.Settings.TimeToWaitBeforeStartingGame / 1000;
@@ -258,7 +258,7 @@ namespace MPTanks.Clients.GameClient
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
                 SetupGame(); //Start anew
 
-            if (game.IsGameRunning)
+            if (game.GameStatus == GameCore.CurrentGameStatus.GameRunning)
             {
                 game.Diagnostics.BeginMeasurement("Input processing");
                 var iState = new InputState();
@@ -444,7 +444,7 @@ namespace MPTanks.Clients.GameClient
             base.Draw(gameTime);
             game.Diagnostics.EndMeasurement("Base.Draw()", "Rendering");
             game.Diagnostics.EndMeasurement("Rendering");
-            if (physicsMs + renderMs > 10 && game.IsGameRunning)
+            if (physicsMs + renderMs > 10 && game.GameStatus == GameCore.CurrentGameStatus.GameRunning)
             {
                 Logger.Debug("Frame took too long! (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
                 Logger.Debug("\n\n\n" + game.Diagnostics.ToString());
@@ -499,20 +499,20 @@ namespace MPTanks.Clients.GameClient
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used");
 
-            if (game.IsGameRunning)
+            if (game.Running)
             {
                 _bldr.Append(", Timescale: " + (int)timescale + "/" + limit);
             }
 
             _bldr.Append("\nStatus: ");
 
-            if (game.IsCountingDownToStart)
+            if (game.CountingDown)
                 _bldr.Append("starting game");
-            if (game.IsWaitingForPlayers)
+            if (game.WaitingForPlayers)
                 _bldr.Append(" waiting for players");
-            if (game.IsGameRunning)
+            if (game.Running)
                 _bldr.Append(" running");
-            if (game.Gamemode.GameEnded)
+            if (game.GameEnded)
                 _bldr.Append(" ended");
 
             if (game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)

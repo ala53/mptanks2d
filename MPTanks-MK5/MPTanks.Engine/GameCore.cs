@@ -14,6 +14,36 @@ namespace MPTanks.Engine
 {
     public partial class GameCore
     {
+        #region 
+        public bool Running
+        {
+            get
+            {
+                return GameStatus == CurrentGameStatus.GameRunning || 
+                    GameStatus == CurrentGameStatus.GameEndedStillRunning;
+            }
+        }
+        public bool CountingDown { get { return GameStatus == CurrentGameStatus.CountingDownToStart; } }
+        public bool GameEnded
+        {
+            get
+            {
+                return GameStatus == CurrentGameStatus.GameEndedStillRunning ||
+                    GameStatus == CurrentGameStatus.GameEnded;
+            }
+        }
+        public bool WaitingForPlayers { get { return GameStatus == CurrentGameStatus.WaitingForPlayers; } }
+        public CurrentGameStatus GameStatus { get; private set; }
+        public enum CurrentGameStatus : byte
+        {
+            WaitingForPlayers,
+            WaitingForPlayersToSelectTanks,
+            CountingDownToStart,
+            GameRunning,
+            GameEndedStillRunning,
+            GameEnded
+        }
+        #endregion
         #region Properties
         /// <summary>
         /// Gets or sets whether this instance is just another client or it is the server.
@@ -66,23 +96,7 @@ namespace MPTanks.Engine
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
         public float Timescale { get; set; }
         #region Game Status
-        /// <summary>
-        /// Gets whether the game is waiting for players or if it has started.
-        /// </summary>
-        public bool IsWaitingForPlayers { get { return !HasEnoughPlayersToStart(); } }
-        private bool _gameStarted = false;
-        public bool IsGameRunning
-        {
-            get
-            {
-                bool running = _gameStarted;
-                if (Gamemode.GameEnded)
-                    running = IsStillInPostGamePhysicsPhase();
-                return running;
-            }
-        }
         public float RemainingCountdownSeconds { get; private set; }
-        public bool IsCountingDownToStart { get { return RemainingCountdownSeconds > 0; } }
         #endregion
         private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
         public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
@@ -207,7 +221,7 @@ namespace MPTanks.Engine
 
             _skipInit = skipInit;
             if (skipInit)
-                _gameStarted = true;
+                GameStatus = CurrentGameStatus.GameRunning;
 
             Map = Maps.Map.LoadMap(mapData, this);
 
@@ -264,28 +278,37 @@ namespace MPTanks.Engine
 
         private void DoUpdate(GameTime gameTime)
         {
+            if (!_hasGameStarted && !HasEnoughPlayersToStart())
+                GameStatus = CurrentGameStatus.WaitingForPlayers;
+
             if (Gamemode.GameEnded)
             {
                 TickGameEnd(gameTime);
                 //Check if whe should still be updating
                 if (IsStillInPostGamePhysicsPhase())
-                    UpdateInGame(gameTime);
-
-                //Do nothing, cleanup time
-                if (!_hasDoneCleanup)
                 {
-                    _hasDoneCleanup = true;
-                    EndGame();
+                    GameStatus = CurrentGameStatus.GameEndedStillRunning;
+                    UpdateInGame(gameTime);
+                }
+                else
+                {
+                    GameStatus = CurrentGameStatus.GameEnded;
+                    //Do nothing, cleanup time
+                    if (!_hasDoneCleanup)
+                    {
+                        _hasDoneCleanup = true;
+                        EndGame();
+                    }
                 }
             }
-            else if (IsGameRunning)
+            else if (GameStatus == CurrentGameStatus.GameRunning)
             {
                 //Run the game *cough* like you're supposed to *cough*
                 UpdateInGame(gameTime);
             }
             else
             {
-                if (!IsWaitingForPlayers) //Only tick game start if we have enough players
+                if (GameStatus != CurrentGameStatus.WaitingForPlayers) //Only tick game start if we have enough players
                     TickGameStart(gameTime);
                 else
                     _timeSinceGameBeganStarting = 0; //Reset the counter if not ready
@@ -314,10 +337,10 @@ namespace MPTanks.Engine
         /// </summary>
         private void TickGameStart(GameTime gameTime)
         {
+            GameStatus = CurrentGameStatus.CountingDownToStart;
             _timeSinceGameBeganStarting += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (_timeSinceGameBeganStarting > Settings.TimeToWaitBeforeStartingGame)
             {
-                _gameStarted = true; //Start the game when allowed
                 BeginGame();
                 Logger.Info(Strings.Engine.GameStarted);
             }
@@ -326,8 +349,11 @@ namespace MPTanks.Engine
                 - (float)(_timeSinceGameBeganStarting / 1000);
         }
 
+        private bool _hasGameStarted = false;
         private void BeginGame()
         {
+            _hasGameStarted = true;
+            GameStatus = CurrentGameStatus.GameRunning;
             //Create the player objects (server only)
             SetUpGamePlayers();
             //And load the map / create the map objects

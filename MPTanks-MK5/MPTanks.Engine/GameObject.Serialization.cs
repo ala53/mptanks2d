@@ -133,7 +133,7 @@ namespace MPTanks.Engine
 
         public void SetFullState(byte[] state)
         {
-            var reflectionNameLength = SerializationHelpers.GetValue<ushort>(state, 0);
+            var reflectionNameLength = state.GetValue<ushort>(0);
             int offset = 0;
             SetStateHeader(state, ref offset);
 

@@ -57,7 +57,7 @@ namespace MPTanks.Networking.Common
 
             MaxNetworkDelayMs = new Setting<float>(this, "Maximum network delay for batching",
                 "The maximum number of milliseconds that the action queue can be delayed (in milliseconds) " +
-                "to batch messages together. This improves bandwidth usage a lot but increases latency.", 30);
+                "to batch messages together. This improves bandwidth usage a fair bit but also increases latency.", 30);
         }
     }
 }

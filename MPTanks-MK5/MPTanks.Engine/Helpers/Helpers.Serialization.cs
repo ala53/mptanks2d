@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,8 +117,7 @@ namespace MPTanks.Engine.Helpers
 
         public static void SetContents(this byte[] array, HalfVector2 value, int offset)
         {
-            array.SetContents(value._x, offset);
-            array.SetContents(value._y, offset + 2);
+            array.SetContents(value.PackedValue, offset);
         }
 
 
@@ -201,7 +201,7 @@ namespace MPTanks.Engine.Helpers
         }
         public static HalfVector2 GetHalfVector(this byte[] src, int offset)
         {
-            return new HalfVector2() { _x = src.GetHalf(offset), _y = src.GetHalf(offset + 2) };
+            return new HalfVector2() { PackedValue = src.GetUInt(offset) };
         }
 
         public static Color GetColor(this byte[] src, int offset)

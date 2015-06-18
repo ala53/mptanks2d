@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,8 @@ namespace MPTanks.Engine.Settings
 
         public Setting<string> LogLevel { get; private set; }
 
+        public Setting<string> CurrentGameVersion { get; private set; }
+
         private GlobalSettings(string file) : base(file)
         {
         }
@@ -28,6 +31,22 @@ namespace MPTanks.Engine.Settings
 #endif
             LogLevel = new Setting<string>(this, "Log Level", "The NLog Log level to run the game at (Fatal, Error, Warn, Info, Debug, Trace).",
                 DebugMode ? "Trace" : "Info");
+
+            CurrentGameVersion = new Setting<string>(this, "Game version string", "The version number of MP Tanks. DO NOT CHANGE THIS.", 
+                "MPTanks " + AssemblyProductVersion);
         }
+
+        private static string AssemblyProductVersion
+        {
+            get
+            {
+                object[] attributes = typeof(GameCore).Assembly
+                    .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+                return attributes.Length == 0 ?
+                    "" :
+                    ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
+            }
+        }
+
     }
-}
+}   
