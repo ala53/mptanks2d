@@ -64,13 +64,13 @@ namespace MPTanks.Engine
 
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
-            if (IsGameRunning)
+            if (Running)
                 PlayersById[playerId].Tank.Input(state);
         }
 
         public void InjectPlayerInput(GamePlayer player, InputState state)
         {
-            if (IsGameRunning)
+            if (Running)
                 player.Tank.Input(state);
         }
 

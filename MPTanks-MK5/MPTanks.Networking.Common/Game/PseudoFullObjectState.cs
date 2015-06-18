@@ -25,6 +25,7 @@ namespace MPTanks.Networking.Common.Game
         public bool RestitutionChanged { get; set; }
         public bool SizeChanged { get; set; }
         public bool IsSensorObject { get; set; }
+        public bool IsStaticObject { get; set; }
         public bool WasDestroyed { get; set; }
 
         public HalfVector2 Velocity { get; set; }
@@ -44,6 +45,7 @@ namespace MPTanks.Networking.Common.Game
             RestitutionChanged = false;
             SizeChanged = false;
             IsSensorObject = newState.IsSensorObject;
+            IsStaticObject = newState.IsStaticObject;
             WasDestroyed = destroyed;
 
             Velocity = newState.Velocity;
@@ -95,6 +97,7 @@ namespace MPTanks.Networking.Common.Game
             RestitutionChanged = true;
             SizeChanged = true;
             IsSensorObject = obj.IsSensor;
+            IsStaticObject = obj.IsStatic;
             WasDestroyed = destroyed;
 
             Velocity = new HalfVector2(obj.LinearVelocity);
@@ -121,6 +124,7 @@ namespace MPTanks.Networking.Common.Game
                 RestitutionChanged = false;
                 SizeChanged = false;
                 IsSensorObject = false;
+                IsStaticObject = false;
                 WasDestroyed = true;
                 Velocity = new HalfVector2();
                 Rotation = 0;
@@ -139,6 +143,7 @@ namespace MPTanks.Networking.Common.Game
                 RestitutionChanged = state.RestitutionChanged;
                 SizeChanged = state.SizeChanged;
                 IsSensorObject = state.IsSensorObject;
+                IsStaticObject = state.IsStaticObject;
                 WasDestroyed = state.WasDestroyed;
                 Velocity = state.Velocity;
                 Rotation = state.Rotation;
