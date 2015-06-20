@@ -1,4 +1,5 @@
 ﻿using MPTanks.Modding;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -52,6 +53,7 @@ namespace MPTanks.Engine
         /// <summary>
         /// The module that contains this object
         /// </summary>
+        [JsonIgnore]
         public Module ContainingModule
         {
             get

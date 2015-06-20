@@ -17,6 +17,7 @@ namespace MPTanks.Engine.Gamemodes
         /// </summary>
         public static Team Indeterminate { get { return _tied; } }
         private GamePlayer[] _players;
+        [JsonIgnore]
         public GamePlayer[] Players
         {
             get { return _players; }

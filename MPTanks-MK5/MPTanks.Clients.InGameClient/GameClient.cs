@@ -200,6 +200,8 @@ namespace MPTanks.Clients.GameClient
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
                 player1 = (NetworkPlayer)game.PlayersById[player1.Id];
                 player2 = (NetworkPlayer)game.PlayersById[player2.Id];
+
+                shouldTick = false;
                 Logger.Trace(game);
 
                 Task.Run(async () =>
@@ -210,8 +212,12 @@ namespace MPTanks.Clients.GameClient
 
                 renderer = new GameWorldRenderer(currentScreen, game);
             }
+
+            if (e.Key == Keys.N)
+                shouldTick = !shouldTick;
         }
 
+        bool shouldTick = true;
         const float limit = 1024;
         private float timescale = limit;
         private float timescaleShiftAmount = 0;
@@ -358,8 +364,8 @@ namespace MPTanks.Clients.GameClient
             {
                 Logger.Info(game.Diagnostics.ToString());
             }
-
-            game.Update(gameTime);
+            if (shouldTick)
+                game.Update(gameTime);
 
             game.Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);

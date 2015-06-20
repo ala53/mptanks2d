@@ -80,8 +80,7 @@ namespace MPTanks.Networking.Common.Game
                 team.Players = kvp.Value.ToArray();
             }
 
-            if (latency > 0)
-                game.UnsafeTickGameWorld(latency);
+            game.UnsafeTickGameWorld(latency);
 
             return game;
         }

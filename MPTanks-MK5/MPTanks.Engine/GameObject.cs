@@ -18,6 +18,7 @@ namespace MPTanks.Engine
         public ushort ObjectId { get; private set; }
         [JsonIgnore]
         public Body Body { get; private set; }
+        [JsonIgnore]
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }
         public bool Authoritative { get { return Game.Authoritative; } }

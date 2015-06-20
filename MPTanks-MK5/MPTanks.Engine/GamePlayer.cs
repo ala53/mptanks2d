@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Gamemodes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,11 @@ namespace MPTanks.Engine
         public virtual bool HasSelectedTankYet { get; set; }
         public virtual Guid Id { get; set; }
         public virtual string[] AllowedTankTypes { get; set; }
+        [JsonIgnore]
         public virtual Tanks.Tank Tank { get; set; }
+        [JsonIgnore]
         public virtual Team Team { get; set; }
+        [JsonIgnore]
         public virtual GameCore Game { get; set; }
         public virtual Vector2 SpawnPoint { get; set; }
 
