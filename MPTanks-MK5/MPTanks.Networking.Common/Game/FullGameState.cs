@@ -14,7 +14,7 @@ namespace MPTanks.Networking.Common.Game
 {
     public class FullGameState
     {
-        public List<FullObjectState> ObjectStates { get; set; }
+        public List<FullObjectState> ObjectStates { get; set; } = new List<FullObjectState>();
         /// <summary>
         /// The raw map data for the current map
         /// </summary>
@@ -22,7 +22,7 @@ namespace MPTanks.Networking.Common.Game
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }
         public byte[] GamemodeState { get; set; }
-        public List<FullStatePlayer> Players { get; set; }
+        public List<FullStatePlayer> Players { get; set; } = new List<FullStatePlayer>();
 
         public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {

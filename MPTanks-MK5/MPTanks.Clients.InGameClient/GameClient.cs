@@ -21,6 +21,7 @@ using MPTanks.Engine.Core;
 using MPTanks.Engine.Settings;
 using MPTanks.Engine.Logging;
 using MPTanks.Networking.Common.Game;
+using MPTanks.Networking.Common;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -33,8 +34,8 @@ namespace MPTanks.Clients.GameClient
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         private GameWorldRenderer renderer;
-        private Guid player1Id;
-        private Guid player2Id;
+        private NetworkPlayer player1;
+        private NetworkPlayer player2;
         private MPTanks.Engine.GameCore game;
         private float zoom = 6.5f;
         private SpriteFont font;
@@ -141,12 +142,21 @@ namespace MPTanks.Clients.GameClient
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
 
-            player1Id = Guid.NewGuid();
-            player2Id = Guid.NewGuid();
-            game.AddPlayer(player1Id);
-            game.AddPlayer(player2Id);
+            player1 = new NetworkPlayer()
+            {
+                Id = Guid.NewGuid()
+            };
+            player2 = new NetworkPlayer()
+            {
+                Id = Guid.NewGuid()
+            };
+            game.AddPlayer(player1);
+            game.AddPlayer(player2);
             for (var i = 0; i < 3; i++)
-                game.AddPlayer(Guid.NewGuid());
+                game.AddPlayer(new NetworkPlayer()
+                {
+                    Id = Guid.NewGuid()
+                });
 
             //Set up rendering
             if (renderer != null)
@@ -268,7 +278,7 @@ namespace MPTanks.Clients.GameClient
             {
                 game.Diagnostics.BeginMeasurement("Input processing");
                 var iState = new InputState();
-                iState.LookDirection = game.PlayersById[player1Id].Tank.Rotation;
+                iState.LookDirection = player1.Tank.Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.W))
                     iState.MovementSpeed = 1;
@@ -282,10 +292,10 @@ namespace MPTanks.Clients.GameClient
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     iState.FirePressed = true;
 
-                game.InjectPlayerInput(player1Id, iState);
+                game.InjectPlayerInput(player1, iState);
 
                 var iState2 = new InputState();
-                iState2.LookDirection = game.PlayersById[player2Id].Tank.Rotation;
+                iState2.LookDirection = player2.Tank.Rotation;
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Up))
                     iState2.MovementSpeed = 1;
@@ -299,7 +309,7 @@ namespace MPTanks.Clients.GameClient
                 if (Keyboard.GetState().IsKeyDown(Keys.M))
                     iState2.FirePressed = true;
 
-                game.InjectPlayerInput(player2Id, iState2);
+                game.InjectPlayerInput(player2, iState2);
 
                 //Complicated look state calcuation below
                 //var screenCenter = new Vector2(GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
@@ -490,9 +500,9 @@ namespace MPTanks.Clients.GameClient
             .Append(",\nMouse: ").Append(Mouse.GetState().Position.ToString())
             .Append(", Tank: ");
 
-            if (game.PlayersById.ContainsKey(player1Id) && game.PlayersById[player1Id].Tank != null)
-                _bldr.Append("{ ").Append(game.PlayersById[player1Id].Tank.Position.X.ToString("N1"))
-                  .Append(", ").Append(game.PlayersById[player1Id].Tank.Position.Y.ToString("N1"))
+            if (player1.Tank != null)
+                _bldr.Append("{ ").Append(player1.Tank.Position.X.ToString("N1"))
+                  .Append(", ").Append(player1.Tank.Position.Y.ToString("N1"))
                   .Append(" }");
             else _bldr.Append("not spawned");
 
