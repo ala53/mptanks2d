@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace MPTanks.Engine.Projectiles
     {
         public abstract int DamageAmount { get; }
 
+        [JsonIgnore]
         public Tanks.Tank Owner { get; private set; }
 
         public Projectile(Tanks.Tank owner, GameCore game, bool authorized, float density = 1,

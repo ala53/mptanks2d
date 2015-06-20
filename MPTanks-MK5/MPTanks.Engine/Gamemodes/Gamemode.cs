@@ -13,6 +13,7 @@ namespace MPTanks.Engine.Gamemodes
 {
     public abstract class Gamemode
     {
+        [JsonIgnore]
         public GameCore Game { get; private set; }
         public virtual bool GameEnded { get; protected set; }
         public virtual Team WinningTeam { get; protected set; } = Team.Null;
