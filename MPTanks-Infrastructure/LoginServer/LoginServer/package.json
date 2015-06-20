@@ -11,6 +11,7 @@
     "express": "3.4.4",
     "jade": "*",
     "mongodb": "^2.0.34",
+    "node-uuid": "^1.4.3",
     "stylus": "*"
   }
 }

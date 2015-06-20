@@ -7,16 +7,16 @@ module.exports.showLoginPage = function (request, response) {
 
 module.exports.apiLogin = function (request, response) {
     if (request.body.username === "alastair" && request.body.password === "mustang1")
-        response.send(JSON.stringify({
+        response.json({
             "username": request.body.username,
             "guid": userdata.getGuid(request.body.username),
-            "token": request.token,
-            "valid": settings.authTokenValidityLengthSeconds,
-            "userData": userdata.getUserData(userdata.getGuid(request.body.username))
-        }));
+            "authenticated": true,
+            "token": "auth_token"
+        });
     else
-        response.status(401).send(JSON.stringify({
+        response.status(401).json({
             "error": "unauthorized",
+            "authenticated": false,
             "message": "AuthorizationFailedUsernameOrPasswordIncorrect"
-        }));
+        });
 }

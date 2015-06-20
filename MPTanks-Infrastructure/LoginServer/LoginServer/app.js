@@ -5,13 +5,13 @@
 
 var express = require('express');
 var routes = require('./routes');
-var user = require('./routes/user');
 var createAccount = require('./routes/create-account.js');
 var login = require('./routes/login.js');
 var tokenAuth = require('./routes/token-auth.js')
 var http = require('http');
 var path = require('path');
 var settings = require('./settings.js');
+var userdata = require('./routes/user-data.js')
 
 var app = express();
 
@@ -34,18 +34,25 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
 
 app.post('/api/login', login.apiLogin);
 app.get('/login', login.showLoginPage);
 
-app.post('/api/verify-token', tokenAuth.authenticateToken);
-app.post('/api/refresh-token', tokenAuth.refreshToken);
-app.post('/api/get-server-token', tokenAuth.getServerToken);
-app.post('/api/verify-server-token', tokenAuth.authenticateServerToken);
+app.get('/api/get-private-user-data/:token', userdata.apiGetPrivateUserData);
+//get /api/verify-token/auth_token
+app.get('/api/verify-token/:token', tokenAuth.authenticateToken);
+//get /api/refresh-token/auth_token
+app.get('/api/refresh-token/:token', tokenAuth.refreshToken);
+//get /api/get-server-token/auth_token
+app.get('/api/get-server-token/:token', tokenAuth.getServerToken);
+//get /api/verify-server-token/SERVER_TOKEN
+app.get('/api/verify-server-token/:token', tokenAuth.authenticateServerToken);
 
 app.post('/api/create-account', createAccount.apiCreateAccount);
-app.post('/create-account', createAccount.showCreateAccountPage);
+app.get('/create-account', createAccount.showCreateAccountPage);
+
+//get /api/user-info/ed801941-1e39-4f3d-8b99-c71d290690cc
+app.get('/api/user-info/:id', userdata.apiGetUserData);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));

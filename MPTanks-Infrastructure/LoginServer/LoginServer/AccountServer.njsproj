@@ -36,6 +36,7 @@
     <Compile Include="routes\index.js" />
     <Compile Include="routes\login.js" />
     <Compile Include="routes\token-auth.js" />
+    <Compile Include="routes\user-data.js" />
     <Compile Include="settings.js" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\style.styl" />
