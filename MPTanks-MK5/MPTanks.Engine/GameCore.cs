@@ -304,10 +304,16 @@ namespace MPTanks.Engine
             }
         }
 
+        private bool _gameCountDownHasBegun;
         private void DoUpdate(GameTime gameTime)
         {
             if (!_hasGameStarted && !HasEnoughPlayersToStart())
                 GameStatus = CurrentGameStatus.WaitingForPlayers;
+            else if (!_gameCountDownHasBegun)
+            {
+                _gameCountDownHasBegun = true;
+                GameStatus = CurrentGameStatus.CountingDownToStart;
+            }
 
             if (Gamemode.GameEnded)
             {
@@ -334,12 +340,9 @@ namespace MPTanks.Engine
                 //Run the game *cough* like you're supposed to *cough*
                 UpdateInGame(gameTime);
             }
-            else
+            else if (GameStatus == CurrentGameStatus.CountingDownToStart)
             {
-                if (GameStatus != CurrentGameStatus.WaitingForPlayers) //Only tick game start if we have enough players
-                    TickGameStart(gameTime);
-                else
-                    _timeSinceGameBeganStarting = 0; //Reset the counter if not ready
+                TickGameStart(gameTime);
             }
         }
 
