@@ -183,11 +183,11 @@ namespace MPTanks.Engine
 
         public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-            var tank = Tank.ReflectiveInitialize(reflectionName, player, this, Authoritative);
+            var tank = Tank.ReflectiveInitialize(reflectionName, player, this, authorized);
             tank.Position = position;
             tank.Rotation = rotation;
             player.Tank = tank;
-            AddGameObject(tank, null, Authoritative);
+            AddGameObject(tank, null, authorized);
             return tank;
         }
 
@@ -198,10 +198,10 @@ namespace MPTanks.Engine
         public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
             var projectile = Projectiles.Projectile.ReflectiveInitialize(
-                reflectionName, spawner, this, Authoritative, position, rotation);
+                reflectionName, spawner, this, authorized, position, rotation);
             projectile.Position = position;
             projectile.Rotation = rotation;
-            AddGameObject(projectile, null, Authoritative);
+            AddGameObject(projectile, null, authorized);
             return projectile;
         }
         public Maps.MapObjects.MapObject AddMapObject(string reflectionName, bool authorized)
@@ -210,8 +210,8 @@ namespace MPTanks.Engine
         }
         public Maps.MapObjects.MapObject AddMapObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-            var obj = Maps.MapObjects.MapObject.ReflectiveInitialize(reflectionName, this, Authoritative, position, rotation);
-            AddGameObject(obj, null, Authoritative);
+            var obj = Maps.MapObjects.MapObject.ReflectiveInitialize(reflectionName, this, authorized, position, rotation);
+            AddGameObject(obj, null, authorized);
             return obj;
         }
 
@@ -221,10 +221,10 @@ namespace MPTanks.Engine
         }
         public GameObject AddGameObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-            var obj = GameObject.ReflectiveInitialize(reflectionName, this, Authoritative);
+            var obj = GameObject.ReflectiveInitialize(reflectionName, this, authorized);
             obj.Position = position;
             obj.Rotation = rotation;
-            AddGameObject(obj, null, Authoritative);
+            AddGameObject(obj, null, authorized);
             return obj;
         }
         #endregion

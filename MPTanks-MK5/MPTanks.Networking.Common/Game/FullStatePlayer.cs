@@ -24,5 +24,6 @@ namespace MPTanks.Networking.Common.Game
         public bool HasSelectedTank { get; set; }
         public string TankReflectionName { get; set; }
         public string[] AllowedTankTypes { get; set; }
+        public NetworkPlayer PlayerObject { get; set; }
     }
 }

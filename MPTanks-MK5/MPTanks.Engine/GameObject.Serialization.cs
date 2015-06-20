@@ -21,10 +21,11 @@ namespace MPTanks.Engine
         }
         public static GameObject CreateAndAddFromSerializationInformation(GameCore game, byte[] serializationData, bool authorized = true)
         {
-            var nameLength = SerializationHelpers.GetValue<ushort>(serializationData, 0);
-            var name = Encoding.UTF8.GetString(serializationData, 4, nameLength);
-            var type = (__SerializationGameObjectType)serializationData[nameLength + 4];
-            var guid = new Guid(serializationData.Slice(nameLength + 4 + 1, 16));
+            int offset = 0;
+            var id = serializationData.GetUShort(offset); offset += 2;
+            var name = serializationData.GetString(offset); offset += serializationData.GetUShort(offset); offset += 2;
+            var type = (__SerializationGameObjectType)serializationData[offset]; offset++;
+            var guid = serializationData.GetGuid(offset); offset += 16;
 
             GameObject obj;
             if (type == __SerializationGameObjectType.Tank)
@@ -90,9 +91,9 @@ namespace MPTanks.Engine
             //And figure out which guid to print
             var guidToWrite = new Guid();
 
-            if (GetSerializationType().GetType().IsSubclassOf(typeof(Tanks.Tank)))
+            if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
                 guidToWrite = ((Tanks.Tank)this).Player.Id;
-            else if (GetSerializationType().GetType().IsSubclassOf(typeof(Projectiles.Projectile)))
+            else if (GetType().IsSubclassOf(typeof(Projectiles.Projectile)))
                 guidToWrite = ((Projectiles.Projectile)this).Owner.Player.Id;
 
             return SerializationHelpers.AllocateArray(true,
@@ -164,21 +165,20 @@ namespace MPTanks.Engine
 
         private void SetStateHeader(byte[] header, ref int offset)
         {
-            var id = SerializationHelpers.GetValue<ushort>(header, offset); offset += 2;
-            var nameLength = SerializationHelpers.GetValue<ushort>(header, offset); offset += 2;
-            var name = Encoding.UTF8.GetString(header, offset, nameLength); offset += nameLength;
+            var id = header.GetUShort(offset); offset += 2;
+            var name = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
             var type = (__SerializationGameObjectType)header[offset++];
-            var guid = new Guid(header.Slice(offset, 16)); offset += 16;
+            var guid = header.GetGuid(offset); offset += 16;
             var isSensor = header[offset++] == 1;
             var isStatic = header[offset++] == 1;
-            var color = SerializationHelpers.GetColor(header, offset); offset += 4;
-            var timeAlive = SerializationHelpers.GetFloat(header, offset); offset += 4;
-            var size = SerializationHelpers.GetVector(header, offset); offset += 8;
-            var position = SerializationHelpers.GetVector(header, offset); offset += 8;
-            var linVel = SerializationHelpers.GetVector(header, offset); offset += 8;
-            var rot = SerializationHelpers.GetFloat(header, offset); offset += 4;
-            var rotVel = SerializationHelpers.GetFloat(header, offset); offset += 4;
-            var restitution = SerializationHelpers.GetFloat(header, offset); offset += 4;
+            var color = header.GetColor(offset); offset += 4;
+            var timeAlive = header.GetFloat(offset); offset += 4;
+            var size = header.GetVector(offset); offset += 8;
+            var position = header.GetVector(offset); offset += 8;
+            var linVel = header.GetVector(offset); offset += 8;
+            var rot = header.GetFloat(offset); offset += 4;
+            var rotVel = header.GetFloat(offset); offset += 4;
+            var restitution = header.GetFloat(offset); offset += 4;
 
             IsSensor = isSensor;
             IsStatic = isStatic;

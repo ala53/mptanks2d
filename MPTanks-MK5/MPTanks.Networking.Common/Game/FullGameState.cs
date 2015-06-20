@@ -21,6 +21,7 @@ namespace MPTanks.Networking.Common.Game
         public string MapData { get; set; }
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }
+        public GameCore.CurrentGameStatus Status { get; set; }
         public byte[] GamemodeState { get; set; }
         public List<FullStatePlayer> Players { get; set; } = new List<FullStatePlayer>();
 
@@ -29,15 +30,13 @@ namespace MPTanks.Networking.Common.Game
             var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
             game.Gamemode.FullState = GamemodeState;
 
-            //Add all of the game objects
-            foreach (var fullState in ObjectStates)
-                GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+            //Do it via reflection to keep api private
+            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
+            statusProp.SetValue(game, Status);
 
-            //Do this with reflection because we want to keep the api private (set gaame time)
-            typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds),
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.SetProperty).SetValue(game, CurrentGameTimeMilliseconds);
+            //Do this with reflection because we want to keep the api private (set game time)
+            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds));
+            timeProp.SetValue(game, CurrentGameTimeMilliseconds);
 
             foreach (var player in Players)
             {
@@ -55,10 +54,30 @@ namespace MPTanks.Networking.Common.Game
                 nwPlayer.IsSpectator = player.IsSpectator;
                 nwPlayer.SelectedTankReflectionName = player.TankReflectionName;
                 nwPlayer.SpawnPoint = player.SpawnPoint;
-                nwPlayer.Tank = (Engine.Tanks.Tank)(player.HasTank ? game.GameObjectsById[player.TankObjectId] : null);
                 nwPlayer.Team = (player.TeamId != -3 ? FindTeam(game.Gamemode.Teams, player.TeamId) : null);
 
+                player.PlayerObject = nwPlayer;
+
                 game.AddPlayer(nwPlayer);
+            }
+
+            //Add all of the game objects
+            foreach (var fullState in ObjectStates)
+                GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+
+            var playersByTeam = new Dictionary<short, List<NetworkPlayer>>();
+            foreach (var player in Players)
+            {
+                if (!playersByTeam.ContainsKey(player.TeamId))
+                    playersByTeam.Add(player.TeamId, new List<NetworkPlayer>());
+
+                playersByTeam[player.TeamId].Add(player.PlayerObject);
+            }
+
+            foreach (var kvp in playersByTeam)
+            {
+                var team = FindTeam(game.Gamemode.Teams, kvp.Key);
+                team.Players = kvp.Value.ToArray();
             }
 
             if (latency > 0)
@@ -86,6 +105,7 @@ namespace MPTanks.Networking.Common.Game
             state.CurrentGameTimeMilliseconds = game.TimeMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
+            state.Status = game.GameStatus;
 
             return state;
         }
@@ -110,6 +130,7 @@ namespace MPTanks.Networking.Common.Game
                 serialized.TeamId = (plr.Team != null) ? plr.Team.TeamId : (short)-3;
                 serialized.Username = plr.DisplayName;
                 serialized.UsernameDisplayColor = plr.DisplayNameDrawColor;
+                serialized.PlayerObject = plr;
 
                 Players.Add(serialized);
             }
@@ -129,6 +150,7 @@ namespace MPTanks.Networking.Common.Game
             state.GamemodeReflectionName = message.ReadString();
             state.CurrentGameTimeMilliseconds = message.ReadFloat();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
+            state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
 
             var objCount = message.ReadInt32();
             for (var i = 0; i < objCount; i++)
@@ -174,6 +196,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(CurrentGameTimeMilliseconds);
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);
+            message.Write((byte)Status);
 
             message.Write(ObjectStates.Count);
             foreach (var obj in ObjectStates)

@@ -196,6 +196,10 @@ namespace MPTanks.Clients.GameClient
             if (e.Key == Keys.LeftAlt)
             {
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
+                player1 = (NetworkPlayer)game.PlayersById[player1.Id];
+                player2 = (NetworkPlayer)game.PlayersById[player2.Id];
+
+                renderer = new GameWorldRenderer(currentScreen, game);
             }
         }
 

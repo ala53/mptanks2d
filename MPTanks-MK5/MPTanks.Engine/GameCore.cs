@@ -238,8 +238,11 @@ namespace MPTanks.Engine
             ConstructorHelper.CallGlobalCtors();
 
             _skipInit = skipInit;
-            if (skipInit)
+            if (skipInit) { 
                 GameStatus = CurrentGameStatus.GameRunning;
+                _gameCountDownHasBegun = true;
+                RemainingCountdownSeconds = 0;
+            }
 
             Map = Maps.Map.LoadMap(mapData, this);
 

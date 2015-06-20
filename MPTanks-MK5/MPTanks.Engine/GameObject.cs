@@ -353,7 +353,7 @@ namespace MPTanks.Engine
         {
             foreach (var cmp in Components)
             {
-                if (cmp.Value.RotationVelocity > 0)
+                if (cmp.Value.RotationVelocity != 0)
                     cmp.Value.Rotation += cmp.Value.RotationVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
         }
