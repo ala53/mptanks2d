@@ -22,5 +22,7 @@ namespace MPTanks.Networking.Common.Game
         public short TeamId { get; set; }
         public Vector2 SpawnPoint { get; set; }
         public bool HasSelectedTank { get; set; }
+        public string TankReflectionName { get; set; }
+        public string[] AllowedTankTypes { get; set; }
     }
 }

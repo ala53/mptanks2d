@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Common.Game
         public byte[] GamemodeState { get; set; }
         public List<FullStatePlayer> Players { get; set; }
 
-        public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null)
+        public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {
             var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
             game.Gamemode.FullState = GamemodeState;
@@ -33,11 +33,12 @@ namespace MPTanks.Networking.Common.Game
 
             //Do this with reflection because we want to keep the api private
             typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds),
-                System.Reflection.BindingFlags.Public
-                | System.Reflection.BindingFlags.NonPublic
-                | System.Reflection.BindingFlags.SetProperty).SetValue(game, CurrentGameTimeMilliseconds);
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.SetProperty).SetValue(game, CurrentGameTimeMilliseconds);
 
-
+            if (latency > 0)
+                game.Update(new Microsoft.Xna.Framework.GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(latency)));
 
             return game;
         }
