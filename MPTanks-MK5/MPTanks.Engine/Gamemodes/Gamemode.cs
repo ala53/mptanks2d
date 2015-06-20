@@ -156,7 +156,7 @@ namespace MPTanks.Engine.Gamemodes
         {
             var serialized = SerializeStateChangeObject(obj);
             return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.JSONSerilizationBytes,
+                SerializationHelpers.JSONSerializationBytes,
                 serialized));
         }
 
@@ -186,10 +186,10 @@ namespace MPTanks.Engine.Gamemodes
 
         private void ProcessReceiveStateData(byte[] stateData)
         {
-            if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
+            if (stateData.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerilizationBytes.Length));
+                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerializationBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
             else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))
@@ -269,7 +269,7 @@ namespace MPTanks.Engine.Gamemodes
                 var serialized = SerializeStateChangeObject(privateStateObject);
 
                 privateStateBytes = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.JSONSerilizationBytes,
+                    SerializationHelpers.JSONSerializationBytes,
                     serialized
                     );
             }
@@ -281,11 +281,11 @@ namespace MPTanks.Engine.Gamemodes
                 GameEnded,
                 AllowRespawn,
                 RespawnTimeMs,
-                (short)WinningTeam.TeamId,
+                WinningTeam.TeamId,
                 (ushort)Teams.Length);
 
             foreach (var team in Teams)
-                header = SerializationHelpers.MergeArrays(header, EncodeTeam(team), true);
+                header = SerializationHelpers.MergeArrays(header, EncodeTeam(team));
 
             //And then the contents
             return SerializationHelpers.MergeArrays(header, privateStateBytes, true);
@@ -294,7 +294,7 @@ namespace MPTanks.Engine.Gamemodes
         private byte[] EncodeTeam(Team team)
         {
             return SerializationHelpers.AllocateArray(true,
-                (short)team.TeamId,
+                team.TeamId,
                 team.TeamColor,
                 (ushort)team.Players.Length,
                 team.TeamName,
@@ -331,9 +331,9 @@ namespace MPTanks.Engine.Gamemodes
 
         private void ProcessSetFullStatePrivateData(byte[] privateState)
         {
-            if (privateState.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
+            if (privateState.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
                 SetFullStateInternal(DeserializeStateChangeObject(
-                    privateState.GetString(SerializationHelpers.JSONSerilizationBytes.Length)));
+                    privateState.GetString(SerializationHelpers.JSONSerializationBytes.Length)));
             else if (privateState.SequenceBegins(SerializationHelpers.StringSerializationBytes))
                 SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
             else SetFullStateInternal(privateState);

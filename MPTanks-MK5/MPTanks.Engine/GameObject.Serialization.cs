@@ -82,7 +82,7 @@ namespace MPTanks.Engine
             {
                 var serialized = SerializeStateChangeObject(privateStateObject);
                 privateState = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.JSONSerilizationBytes,
+                    SerializationHelpers.JSONSerializationBytes,
                     serialized);
             }
 
@@ -154,9 +154,9 @@ namespace MPTanks.Engine
 
         private void ProcessSetFullStatePrivateData(byte[] privateState)
         {
-            if (privateState.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
+            if (privateState.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
                 SetFullStateInternal(DeserializeStateChangeObject(
-                    privateState.GetString(SerializationHelpers.JSONSerilizationBytes.Length)));
+                    privateState.GetString(SerializationHelpers.JSONSerializationBytes.Length)));
             else if (privateState.SequenceBegins(SerializationHelpers.StringSerializationBytes))
                 SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
             else SetFullStateInternal(privateState);

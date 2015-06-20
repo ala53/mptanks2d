@@ -51,7 +51,7 @@ namespace MPTanks.Engine
         {
             var serialized = SerializeStateChangeObject(obj);
             return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.JSONSerilizationBytes, serialized));
+                SerializationHelpers.JSONSerializationBytes, serialized));
         }
 
         private JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
@@ -80,10 +80,10 @@ namespace MPTanks.Engine
 
         private void ProcessReceiveStateData(byte[] stateData)
         {
-            if (stateData.SequenceBegins(SerializationHelpers.JSONSerilizationBytes))
+            if (stateData.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
             {
                 //Try to deserialize
-                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerilizationBytes.Length));
+                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerializationBytes.Length));
                 ReceiveStateDataInternal(obj);
             }
             else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))

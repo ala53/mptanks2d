@@ -13,7 +13,7 @@ namespace MPTanks.Engine.Helpers
     {
 
         const int JSONSerializedMagicNumber = unchecked(0x1337FCED);
-        public static readonly byte[] JSONSerilizationBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
+        public static readonly byte[] JSONSerializationBytes = BitConverter.GetBytes(JSONSerializedMagicNumber);
 
         const int stringSerializedMagicNumber = unchecked(0x1338E3EE);
         public static readonly byte[] StringSerializationBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
@@ -267,37 +267,56 @@ namespace MPTanks.Engine.Helpers
             int size = 0;
             foreach (var obj in contents)
             {
-                if (obj.GetType() == typeof(ulong)) size += 8;
-                else if (obj.GetType() == typeof(long)) size += 8;
+                if (obj.GetType() == typeof(ulong))
+                    size += 8;
 
-                else if (obj.GetType() == typeof(uint)) size += 4;
-                else if (obj.GetType() == typeof(int)) size += 4;
+                else if (obj.GetType() == typeof(long))
+                    size += 8;
 
-                else if (obj.GetType() == typeof(ushort)) size += 2;
-                else if (obj.GetType() == typeof(short)) size += 2;
+                else if (obj.GetType() == typeof(uint))
+                    size += 4;
+                else if (obj.GetType() == typeof(int))
+                    size += 4;
 
-                else if (obj.GetType() == typeof(byte)) size += 1;
-                else if (obj.GetType() == typeof(sbyte)) size += 1;
+                else if (obj.GetType() == typeof(ushort))
+                    size += 2;
+                else if (obj.GetType() == typeof(short))
+                    size += 2;
 
-                else if (obj.GetType() == typeof(bool)) size += 1;
+                else if (obj.GetType() == typeof(byte))
+                    size += 1;
+                else if (obj.GetType() == typeof(sbyte))
+                    size += 1;
 
-                else if (obj.GetType() == typeof(float)) size += 4;
-                else if (obj.GetType() == typeof(double)) size += 8;
-                else if (obj.GetType() == typeof(Half)) size += 2;
+                else if (obj.GetType() == typeof(bool))
+                    size += 1;
 
-                else if (obj.GetType() == typeof(Vector2)) size += 8;
-                else if (obj.GetType() == typeof(HalfVector2)) size += 4;
-                else if (obj.GetType() == typeof(Color)) size += 4;
+                else if (obj.GetType() == typeof(float))
+                    size += 4;
+                else if (obj.GetType() == typeof(double))
+                    size += 8;
+                else if (obj.GetType() == typeof(Half))
+                    size += 2;
 
-                else if (obj.GetType() == typeof(Guid)) size += 16;
+                else if (obj.GetType() == typeof(Vector2))
+                    size += 8;
+                else if (obj.GetType() == typeof(HalfVector2))
+                    size += 4;
+                else if (obj.GetType() == typeof(Color))
+                    size += 4;
+
+                else if (obj.GetType() == typeof(Guid))
+                    size += 16;
 
                 else if (obj.GetType() == typeof(string))
                 {
                     size += 2; //header
                     size += Encoding.UTF8.GetByteCount((string)obj);
                 }
-                else if (obj.GetType() == typeof(byte[])) size += ((byte[])obj).Length + 2;
-                else if (obj.GetType().IsValueType) size += ToByteArray(obj).Length;
+                else if (obj.GetType() == typeof(byte[]))
+                    size += ((byte[])obj).Length + 2;
+                else if (obj.GetType().IsValueType)
+                    size += ToByteArray(obj).Length + 2;
             }
 
             var arr = new byte[size];
@@ -346,7 +365,13 @@ namespace MPTanks.Engine.Helpers
                         offset += 1;
                     }
 
-                    else if (obj.GetType() == typeof(byte))
+                    else if (obj.GetType() == typeof(sbyte))
+                    {
+                        arr[offset] = unchecked((byte)(sbyte)obj);
+                        offset += 1;
+                    }
+
+                    else if (obj.GetType() == typeof(bool))
                     {
                         arr[offset] = (bool)obj ? (byte)1 : (byte)0;
                         offset += 1;
@@ -412,7 +437,7 @@ namespace MPTanks.Engine.Helpers
             Array.Copy(arr1, arr3, arr1.Length);
             if (addLengthHeader)
             {
-                arr3.SetValue((ushort)arr2.Length, arr1.Length);
+                arr3.SetContents((ushort)arr2.Length, arr1.Length);
                 Array.Copy(arr2, 0, arr3, arr1.Length + 2, arr2.Length);
             }
             else
