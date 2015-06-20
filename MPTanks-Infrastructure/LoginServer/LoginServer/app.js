@@ -9,6 +9,8 @@ var createAccount = require('./routes/create-account.js');
 var login = require('./routes/login.js');
 var tokenAuth = require('./routes/token-auth.js')
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
 var path = require('path');
 var settings = require('./settings.js');
 var userdata = require('./routes/user-data.js')
@@ -16,7 +18,6 @@ var userdata = require('./routes/user-data.js')
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || settings.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -54,6 +55,35 @@ app.get('/create-account', createAccount.showCreateAccountPage);
 //get /api/user-info/ed801941-1e39-4f3d-8b99-c71d290690cc
 app.get('/api/user-info/:id', userdata.apiGetUserData);
 
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
-});
+if (settings.https) {
+    var options = {
+        key: fs.readFileSync(settings.httpsKeyFile),
+        cert: fs.readFileSync(settings.httpsCertFile)
+    }
+    
+    https.createServer(options, app).listen(settings.port, function () {
+        console.log('Express server (https) listening on port ' + settings.port);
+    });
+}
+else
+    http.createServer(app).listen(settings.port, function () {
+        console.log('Express server listening on port ' + settings.port);
+    });
+
+if (settings.hostHttpRedirect) {
+    // set up plain http server
+    var server = express();
+    
+    // set up a route to redirect http to https
+    server.get('*', function (req, res) {
+        var host = req.get("host");
+        if (host.indexOf(":") != -1) {
+            host = host.substring(0, host.indexOf(":"));
+        }
+        res.redirect('https://' + host + ":" + settings.port + req.url)
+    })
+    
+    http.createServer(server).listen(settings.httpRedirectPort, function () {
+        console.log('Express http->https redirect server listening on port ' + settings.httpRedirectPort);
+    });
+}
