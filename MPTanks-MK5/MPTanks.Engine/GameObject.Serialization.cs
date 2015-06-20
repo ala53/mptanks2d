@@ -36,8 +36,9 @@ namespace MPTanks.Engine
             else
                 obj = game.AddGameObject(name, authorized);
 
+            obj.UnsafeDisableEvents();
             obj.SetFullState(serializationData);
-
+            obj.UnsafeEnableEvents();
             return obj;
         }
         /// <summary>

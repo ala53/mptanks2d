@@ -12,7 +12,8 @@ namespace MPTanks.Networking.Common.Game
         public bool IsSpectator { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPremium { get; set; }
-        public Color UserDisplayColor { get; set; }
+        public Color UsernameDisplayColor { get; set; }
+        public bool TankHasCustomStyle { get; set; }
         public bool HasTank { get; set; }
         public ushort TankObjectId { get; set; }
         public string ClanName { get; set; }

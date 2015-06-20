@@ -13,7 +13,6 @@ namespace MPTanks.Engine
         public virtual string SelectedTankReflectionName { get; set; }
         public virtual bool HasSelectedTankYet { get; set; }
         public virtual Guid Id { get; set; }
-        public virtual object UserData { get; private set; }
         public virtual string[] AllowedTankTypes { get; set; }
         public virtual Tanks.Tank Tank { get; set; }
         public virtual Team Team { get; set; }
@@ -21,7 +20,7 @@ namespace MPTanks.Engine
         public virtual Vector2 SpawnPoint { get; set; }
 
         private string _name;
-        public virtual string Name
+        public virtual string DisplayName
         {
             get
             {

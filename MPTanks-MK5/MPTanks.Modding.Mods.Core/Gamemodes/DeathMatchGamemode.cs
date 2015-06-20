@@ -33,7 +33,7 @@ namespace MPTanks.Modding.Mods.Core
                     Players = new[] { p },
                     TeamColor = new Color(rnd.Next(50, 255), rnd.Next(50, 255), rnd.Next(50, 255)),
                     TeamId = teamId++,
-                    TeamName = p.Name
+                    TeamName = p.DisplayName
                 };
 
                 teams.Add(team);
