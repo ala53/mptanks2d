@@ -2,6 +2,7 @@
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 using MPTanks.Engine.Rendering;
+using Newtonsoft.Json;
 using System;
 
 namespace MPTanks.Engine
@@ -15,6 +16,7 @@ namespace MPTanks.Engine
         #region Basic Properties
         public Color ColorMask { get; set; }
         public ushort ObjectId { get; private set; }
+        [JsonIgnore]
         public Body Body { get; private set; }
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }

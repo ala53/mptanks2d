@@ -32,8 +32,8 @@ namespace MPTanks.Clients.GameClient
 
             config.AddTarget("logfile", fileTarget);
 
-                config.LoggingRules.Add(new NLog.Config.LoggingRule("*", 
-                    NLog.LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
+            config.LoggingRules.Add(new NLog.Config.LoggingRule("*",
+                NLog.LogLevel.FromString(GlobalSettings.Instance.LogLevel), fileTarget));
 
             NLog.LogManager.Configuration = config;
 
@@ -78,7 +78,11 @@ namespace MPTanks.Clients.GameClient
         public static void Info(object data)
         {
             Info("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
 
         public static void Info(string message)
@@ -99,7 +103,11 @@ namespace MPTanks.Clients.GameClient
         public static void Trace(object data)
         {
             Trace("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
 
         public static void Trace(string message)
@@ -115,7 +123,11 @@ namespace MPTanks.Clients.GameClient
         public static void Warning(object data)
         {
             Warning("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
     }
 }

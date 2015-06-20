@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Settings;
+using Newtonsoft.Json;
 
 namespace MPTanks.Engine
 {
@@ -55,6 +56,7 @@ namespace MPTanks.Engine
         /// Note: animations are long running, controllable objects with a significant overhead
         /// while particles are small simplistic objects that can't be controlled well.
         /// </summary>
+        [JsonIgnore]
         public Rendering.Animations.AnimationEngine AnimationEngine { get; private set; }
         /// <summary>
         /// The game time, accounting for slow motion, that the game is currently at.
@@ -64,6 +66,7 @@ namespace MPTanks.Engine
         /// The particle system for the game. Use this for short lived objects that
         /// do not need fine grain control. Once created, you have no control over the particle.
         /// </summary>
+        [JsonIgnore]
         public Rendering.Particles.ParticleEngine ParticleEngine { get; private set; }
         /// <summary>
         /// The timer manager which lets game objects create timers for their own use
@@ -72,16 +75,20 @@ namespace MPTanks.Engine
         /// <summary>
         /// The sound engine for the game. Manages where sounds should be and when they're playing.
         /// </summary>
+        [JsonIgnore]
         public Sound.SoundEngine SoundEngine { get; private set; }
         /// <summary>
         /// The lighting positions.
         /// </summary>
+        [JsonIgnore]
         public Rendering.Lighting.LightEngine LightEngine { get; private set; }
         #region Diagnostics & Logging
         /// <summary>
         /// The Logger to use for logging important events
         /// </summary>
+        [JsonIgnore]
         public ILogger Logger { get; private set; }
+        [JsonIgnore]
         public Diagnostics Diagnostics { get; private set; }
         /// <summary>
         /// The parent for logging the diagnostics under.
@@ -93,6 +100,7 @@ namespace MPTanks.Engine
         /// </summary>
         public Gamemodes.Gamemode Gamemode { get; private set; }
         public EngineSettings Settings { get; private set; }
+        [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
         public float Timescale { get; set; }
         #region Game Status
@@ -121,6 +129,7 @@ namespace MPTanks.Engine
             }
         }
 
+        [JsonIgnore]
         public Maps.Map Map { get; private set; }
 
         #region World Management
@@ -128,6 +137,7 @@ namespace MPTanks.Engine
         /// <summary>
         /// The physics world that the game runs in.
         /// </summary>
+        [JsonIgnore]
         internal FarseerPhysics.Dynamics.World World { get; private set; }
         private ushort _nextObjectId = 0;
         /// <summary>

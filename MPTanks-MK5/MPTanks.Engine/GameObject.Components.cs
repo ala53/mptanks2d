@@ -6,6 +6,7 @@ using MPTanks.Engine.Rendering.Animations;
 using MPTanks.Engine.Rendering.Particles;
 using MPTanks.Engine.Serialization;
 using MPTanks.Modding;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,8 +19,10 @@ namespace MPTanks.Engine
         #region Associated Properties
         #region Components
         protected Dictionary<string, RenderableComponent> _components;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, RenderableComponent> Components { get { return _components; } }
         protected Dictionary<string, RenderableComponentGroup> _groups;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, RenderableComponentGroup> ComponentGroups { get { return _groups; } }
         #endregion
         #region Emitters
@@ -32,19 +35,24 @@ namespace MPTanks.Engine
             public GameObjectEmitterJSON Information { get; set; }
         }
         protected Dictionary<string, ParticleEngine.Emitter> _emitters;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, ParticleEngine.Emitter> Emitters { get { return _emitters; } }
         #endregion
 
         #region Assets
         protected Dictionary<string, string> _assets;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, string> Assets { get { return _assets; } }
         protected Dictionary<string, SpriteInfo> _sprites;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, SpriteInfo> Sprites { get { return _sprites; } }
         #endregion
         protected Dictionary<string, SpriteAnimationInfo> _animatedSprites;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, SpriteAnimationInfo> AnimatedSprites { get { return _animatedSprites; } }
 
         protected Dictionary<string, Animation> _animations;
+        [JsonIgnore]
         public IReadOnlyDictionary<string, Animation> Animations { get { return _animations; } }
         #endregion
 

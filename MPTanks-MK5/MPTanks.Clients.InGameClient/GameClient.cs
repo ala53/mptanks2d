@@ -22,6 +22,7 @@ using MPTanks.Engine.Settings;
 using MPTanks.Engine.Logging;
 using MPTanks.Networking.Common.Game;
 using MPTanks.Networking.Common;
+using System.Threading.Tasks;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -195,9 +196,17 @@ namespace MPTanks.Clients.GameClient
 
             if (e.Key == Keys.LeftAlt)
             {
+                Logger.Trace(game);
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
                 player1 = (NetworkPlayer)game.PlayersById[player1.Id];
                 player2 = (NetworkPlayer)game.PlayersById[player2.Id];
+                Logger.Trace(game);
+
+                Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    Logger.Trace(game);
+                });
 
                 renderer = new GameWorldRenderer(currentScreen, game);
             }

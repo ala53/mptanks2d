@@ -48,22 +48,16 @@ namespace MPTanks.Clients.GameClient.Menus
         public static void Error(Exception ex)
         {
             Instance.Error(ex, "Severe Error/Exception");
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Error(string message)
         {
             Error(message);
-            if (GlobalSettings.Debug)
-                throw new Exception(message);
         }
 
         public static void Error(string message, Exception ex)
         {
             Instance.Error(ex, message);
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Fatal(Exception ex)
@@ -80,14 +74,16 @@ namespace MPTanks.Clients.GameClient.Menus
         public static void Fatal(string message, Exception ex)
         {
             Instance.Fatal(ex, message);
-            if (GlobalSettings.Debug)
-                throw ex;
         }
 
         public static void Info(object data)
         {
             Info("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
 
         public static void Info(string message)
@@ -108,7 +104,11 @@ namespace MPTanks.Clients.GameClient.Menus
         public static void Trace(object data)
         {
             Trace("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
 
         public static void Trace(string message)
@@ -124,7 +124,11 @@ namespace MPTanks.Clients.GameClient.Menus
         public static void Warning(object data)
         {
             Warning("[" + data.GetType().AssemblyQualifiedName + "]\n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    Formatting = Formatting.Indented
+                }));
         }
     }
 }
