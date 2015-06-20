@@ -93,12 +93,15 @@ namespace MPTanks.Engine
 
             foreach (var player in Players)
             {
+                if (player.IsSpectator) continue; //Ignore spectators
+
                 if (!player.HasSelectedTankYet)
                     player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
 
                 var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
-                tank.Position = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
+                player.SpawnPoint = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
 
+                tank.Position = player.SpawnPoint;
                 tank.ColorMask = player.Team.TeamColor;
 
                 AddGameObject(tank);

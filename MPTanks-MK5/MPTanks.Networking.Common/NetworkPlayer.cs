@@ -22,8 +22,13 @@ namespace MPTanks.Networking.Common
             Team,
             Game,
             DisplayName,
+            DisplayNameColor,
             SpawnPoint,
             HasCustomTankStyle,
+            ClanName,
+            IsAdmin,
+            IsPremium,
+            IsSpectator,
         }
         public event EventHandler<NetworkPlayerPropertyChanged> OnPropertyChanged = delegate { };
 
@@ -158,6 +163,58 @@ namespace MPTanks.Networking.Common
             }
         }
 
+        private string _clanName;
+        public string ClanName
+        {
+            get { return _clanName; }
+            set
+            {
+                _clanName = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.ClanName);
+            }
+        }
+
+        private bool _admin;
+        public bool IsAdmin
+        {
+            get { return _admin; }
+            set
+            {
+                _admin = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.IsAdmin);
+            }
+        }
+        private bool _premium;
+        public bool IsPremium
+        {
+            get { return _premium; }
+            set
+            {
+                _premium = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.IsPremium);
+            }
+        }
+
+        public override bool IsSpectator
+        {
+            get { return base.IsSpectator; }
+            set
+            {
+                base.IsSpectator = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.IsSpectator);
+            }
+        }
+
+        private Color _dispNameColor;
+        public Color DisplayNameDrawColor
+        {
+            get { return _dispNameColor; }
+            set
+            {
+                _dispNameColor = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.DisplayNameColor);
+            }
+        }
         public void ApplyTankStyles()
         {
             if (Tank != null)

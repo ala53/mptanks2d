@@ -10,6 +10,7 @@ namespace MPTanks.Engine
 {
     public class GamePlayer
     {
+        public virtual bool IsSpectator { get; set; }
         public virtual string SelectedTankReflectionName { get; set; }
         public virtual bool HasSelectedTankYet { get; set; }
         public virtual Guid Id { get; set; }

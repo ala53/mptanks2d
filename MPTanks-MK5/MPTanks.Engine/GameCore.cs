@@ -19,7 +19,7 @@ namespace MPTanks.Engine
         {
             get
             {
-                return GameStatus == CurrentGameStatus.GameRunning || 
+                return GameStatus == CurrentGameStatus.GameRunning ||
                     GameStatus == CurrentGameStatus.GameEndedStillRunning;
             }
         }
@@ -102,6 +102,24 @@ namespace MPTanks.Engine
         public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
 
         public IList<GamePlayer> Players { get { return _playersById.Values.ToList(); } }
+
+        public IEnumerable<GamePlayer> Spectators
+        {
+            get
+            {
+                foreach (var player in Players)
+                    if (player.IsSpectator) yield return player;
+            }
+        }
+
+        public IEnumerable<GamePlayer> ActivePlayers
+        {
+            get
+            {
+                foreach (var player in Players)
+                    if (!player.IsSpectator) yield return player;
+            }
+        }
 
         public Maps.Map Map { get; private set; }
 

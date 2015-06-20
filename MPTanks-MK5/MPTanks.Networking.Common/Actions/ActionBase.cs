@@ -27,6 +27,7 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.PlayerJoinedAction));
             RegisterToClientActionType(typeof(ToClient.PlayerKilledAction));
             RegisterToClientActionType(typeof(ToClient.PlayerLeftAction));
+            RegisterToClientActionType(typeof(ToClient.PlayerPropertyChangedAction));
             RegisterToClientActionType(typeof(ToClient.PlayersListSentAction));
             RegisterToClientActionType(typeof(ToClient.PlayerTankAssignedAction));
             RegisterToClientActionType(typeof(ToClient.SentChatMessageAction));
@@ -40,6 +41,8 @@ namespace MPTanks.Networking.Common.Actions
         }
         
         public ActionBase(Lidgren.Network.NetIncomingMessage message) { }
+
+        public ActionBase() { }
 
         public static void RegisterToClientActionType(Type actionType)
         {

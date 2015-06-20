@@ -25,12 +25,16 @@ namespace MPTanks.Engine.Maps
 
         public IReadOnlyDictionary<int, TeamSpawn> SpawnsByTeam { get { return _spawnsByTeam; } }
 
+        private string _data;
+        public string RawData { get { return _data; } }
+
         public static Map LoadMap(string mapData, GameCore game)
         {
             var map = new Map()
             {
                 _game = game,
-                _deserialized = MapJSON.Load(mapData)
+                _deserialized = MapJSON.Load(mapData),
+                _data = mapData
             };
 
             //Process basic
@@ -45,6 +49,11 @@ namespace MPTanks.Engine.Maps
             }
 
             return map;
+        }
+
+        public override string ToString()
+        {
+            return _data;
         }
 
         /// <summary>
