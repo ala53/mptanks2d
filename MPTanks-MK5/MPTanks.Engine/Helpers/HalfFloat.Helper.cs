@@ -158,7 +158,7 @@ namespace System
 
         public static unsafe float HalfToSingle(Half half)
         {
-            uint result = mantissaTable[offsetTable[half.value >> 10] + (half.value & 0x3ff)] + exponentTable[half.value >> 10];
+            uint result = mantissaTable[offsetTable[half.InternalValue >> 10] + (half.InternalValue & 0x3ff)] + exponentTable[half.InternalValue >> 10];
             return *((float*)&result);
         }
         public static unsafe Half SingleToHalf(float single)
@@ -171,28 +171,28 @@ namespace System
 
         public static Half Negate(Half half)
         {
-            return Half.ToHalf((ushort)(half.value ^ 0x8000));
+            return Half.ToHalf((ushort)(half.InternalValue ^ 0x8000));
         }
         public static Half Abs(Half half)
         {
-            return Half.ToHalf((ushort)(half.value & 0x7fff));
+            return Half.ToHalf((ushort)(half.InternalValue & 0x7fff));
         }
 
         public static bool IsNaN(Half half)
         {
-            return ((half.value & 0x7fff) > 0x7c00);
+            return ((half.InternalValue & 0x7fff) > 0x7c00);
         }
         public static bool IsInfinity(Half half)
         {
-            return ((half.value & 0x7fff) == 0x7c00);
+            return ((half.InternalValue & 0x7fff) == 0x7c00);
         }
         public static bool IsPositiveInfinity(Half half)
         {
-            return (half.value == 0x7c00);
+            return (half.InternalValue == 0x7c00);
         }
         public static bool IsNegativeInfinity(Half half)
         {
-            return (half.value == 0xfc00);
+            return (half.InternalValue == 0xfc00);
         }
     }
 }

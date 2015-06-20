@@ -112,7 +112,7 @@ namespace MPTanks.Engine.Helpers
         }
         public static void SetContents(this byte[] array, Half value, int offset)
         {
-            array.SetContents(value.value, offset);
+            array.SetContents(value.InternalValue, offset);
         }
 
         public static void SetContents(this byte[] array, HalfVector2 value, int offset)

@@ -1,4 +1,7 @@
-﻿using MPTanks.Engine;
+﻿using Lidgren.Network;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using MPTanks.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +20,9 @@ namespace MPTanks.Networking.Common.Game
         private Dictionary<ushort, PseudoFullObjectState> _objectStates
             = new Dictionary<ushort, PseudoFullObjectState>();
 
-        public GameCore.CurrentGameStatus CurrentGameStatus { get; set; }
-        public float CurrentGameTimeMilliseconds { get; set; }
-        public bool FriendlyFireEnabled { get; set; }
+        public GameCore.CurrentGameStatus CurrentGameStatus { get; private set; }
+        public float CurrentGameTimeMilliseconds { get; private set; }
+        public bool FriendlyFireEnabled { get; private set; }
 
         public static PseudoFullGameWorldState Create(GameCore game)
         {
@@ -65,6 +68,107 @@ namespace MPTanks.Networking.Common.Game
             state.FriendlyFireEnabled = FriendlyFireEnabled;
 
             return state;
+        }
+
+        public static PseudoFullGameWorldState Read(NetIncomingMessage message)
+        {
+            var state = new PseudoFullGameWorldState();
+
+            state.CurrentGameStatus = (GameCore.CurrentGameStatus)message.ReadByte();
+            state.CurrentGameTimeMilliseconds = message.ReadFloat();
+            state.FriendlyFireEnabled = message.ReadBoolean();
+
+            message.ReadPadBits();
+
+            var ct = message.ReadUInt16();
+
+            for (var i = 0; i < ct; i++)
+            {
+                var objState = new PseudoFullObjectState();
+                objState.ObjectId = message.ReadUInt16();
+                objState.VelocityChanged = message.ReadBoolean();
+                objState.PositionChanged = message.ReadBoolean();
+                objState.RotationChanged = message.ReadBoolean();
+                objState.RotationVelocityChanged = message.ReadBoolean();
+                objState.RestitutionChanged = message.ReadBoolean();
+                objState.SizeChanged = message.ReadBoolean();
+                objState.IsSensorObject = message.ReadBoolean();
+                objState.IsStaticObject = message.ReadBoolean();
+                objState.WasDestroyed = message.ReadBoolean();
+
+                message.ReadPadBits();
+
+                if (objState.VelocityChanged)
+                    objState.Velocity = new HalfVector2 { PackedValue = message.ReadUInt32() };
+
+                if (objState.PositionChanged)
+                    objState.Position = new Vector2(message.ReadFloat(), message.ReadFloat());
+
+                if (objState.RotationChanged)
+                    objState.Rotation = new Half() { InternalValue = message.ReadUInt16() };
+
+                if (objState.RotationVelocityChanged)
+                    objState.RotationVelocity = new Half() { InternalValue = message.ReadUInt16() };
+
+                if (objState.RestitutionChanged)
+                    objState.Restitution = new Half() { InternalValue = message.ReadUInt16() };
+
+                if (objState.SizeChanged)
+                    objState.Size = new HalfVector2() { PackedValue = message.ReadUInt32() };
+            }
+
+            return state;
+        }
+
+        public void Write(NetOutgoingMessage message)
+        {
+            //header
+            message.Write((byte)CurrentGameStatus);
+            message.Write(CurrentGameTimeMilliseconds);
+            message.Write(FriendlyFireEnabled);
+            message.WritePadBits();
+
+            //number of objects
+            message.Write((ushort)ObjectStates.Count);
+
+            //and loop for objects
+            foreach (var obj in ObjectStates.Values)
+            {
+                message.Write(obj.ObjectId);
+
+                message.Write(obj.VelocityChanged);
+                message.Write(obj.PositionChanged);
+                message.Write(obj.RotationChanged);
+                message.Write(obj.RotationVelocityChanged);
+                message.Write(obj.RestitutionChanged);
+                message.Write(obj.SizeChanged);
+                message.Write(obj.IsSensorObject);
+                message.Write(obj.IsStaticObject);
+                message.Write(obj.WasDestroyed);
+
+                message.WritePadBits();
+
+                if (obj.VelocityChanged)
+                    message.Write(obj.Velocity.PackedValue);
+
+                if (obj.PositionChanged)
+                {
+                    message.Write(obj.Position.X);
+                    message.Write(obj.Position.Y);
+                }
+
+                if (obj.RotationChanged)
+                    message.Write(obj.Rotation);
+
+                if (obj.RotationVelocityChanged)
+                    message.Write(obj.RotationVelocity);
+
+                if (obj.RestitutionChanged)
+                    message.Write(obj.Restitution.InternalValue);
+
+                if (obj.SizeChanged)
+                    message.Write(obj.Size.PackedValue);
+            }
         }
     }
 }

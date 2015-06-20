@@ -29,7 +29,7 @@ namespace System
         /// Internal representation of the half-precision floating-point number.
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        internal ushort value;
+        public ushort InternalValue { get; set; }
 
         #region Constants
         /// <summary>
@@ -192,14 +192,14 @@ namespace System
         /// <param name="half1">A System.Half.</param>
         /// <param name="half2">A System.Half.</param>
         /// <returns>true if half1 and half2 are equal; otherwise, false.</returns>
-        public static bool operator ==(Half half1, Half half2) { return (!IsNaN(half1) && (half1.value == half2.value)); }
+        public static bool operator ==(Half half1, Half half2) { return (!IsNaN(half1) && (half1.InternalValue == half2.InternalValue)); }
         /// <summary>
         /// Returns a value indicating whether two instances of System.Half are not equal.
         /// </summary>
         /// <param name="half1">A System.Half.</param>
         /// <param name="half2">A System.Half.</param>
         /// <returns>true if half1 and half2 are not equal; otherwise, false.</returns>
-        public static bool operator !=(Half half1, Half half2) { return !(half1.value == half2.value); }
+        public static bool operator !=(Half half1, Half half2) { return !(half1.InternalValue == half2.InternalValue); }
         /// <summary>
         /// Returns a value indicating whether a specified System.Half is less than another specified System.Half.
         /// </summary>
@@ -478,7 +478,7 @@ namespace System
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return InternalValue.GetHashCode();
         }
         /// <summary>
         /// Returns the System.TypeCode for value type System.Half.
@@ -497,7 +497,7 @@ namespace System
         /// <returns>An array of bytes with length 2.</returns>
         public static byte[] GetBytes(Half value)
         {
-            return BitConverter.GetBytes(value.value);
+            return BitConverter.GetBytes(value.InternalValue);
         }
         /// <summary>
         /// Converts the value of a specified instance of System.Half to its equivalent binary representation.
@@ -506,7 +506,7 @@ namespace System
         /// <returns>A 16-bit unsigned integer that contain the binary representation of value.</returns>        
         public static ushort GetBits(Half value)
         {
-            return value.value;
+            return value.InternalValue;
         }
         /// <summary>
         /// Returns a half-precision floating point number converted from two bytes
@@ -532,7 +532,7 @@ namespace System
         /// <returns>A half-precision floating point number formed by its binary representation.</returns>
         public static Half ToHalf(ushort bits)
         {
-            return new Half { value = bits };
+            return new Half { InternalValue = bits };
         }
 
         /// <summary>
