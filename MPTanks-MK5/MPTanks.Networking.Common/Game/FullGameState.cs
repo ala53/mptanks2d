@@ -1,7 +1,9 @@
-﻿using MPTanks.Engine;
+﻿using Lidgren.Network;
+using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Logging;
 using MPTanks.Engine.Settings;
+using MPTanks.Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +62,7 @@ namespace MPTanks.Networking.Common.Game
             }
 
             if (latency > 0)
-                game.Update(new Microsoft.Xna.Framework.GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(latency)));
+                game.UnsafeTickGameWorld(latency);
 
             return game;
         }
@@ -117,6 +119,92 @@ namespace MPTanks.Networking.Common.Game
         {
             foreach (var obj in game.GameObjects)
                 ObjectStates.Add(new FullObjectState(obj.FullState));
+        }
+
+
+        public static FullGameState Read(NetIncomingMessage message)
+        {
+            var state = new FullGameState();
+            state.MapData = message.ReadString();
+            state.GamemodeReflectionName = message.ReadString();
+            state.CurrentGameTimeMilliseconds = message.ReadFloat();
+            state.GamemodeState = message.ReadBytes(message.ReadInt32());
+
+            var objCount = message.ReadInt32();
+            for (var i = 0; i < objCount; i++)
+            {
+                state.ObjectStates.Add(new FullObjectState(message.ReadBytes(message.ReadInt32())));
+            }
+
+            var playersCount = message.ReadInt32();
+
+            for (var i = 0; i < playersCount; i++)
+            {
+                var fsPlayer = new FullStatePlayer();
+                fsPlayer.ClanName = message.ReadString();
+                fsPlayer.Id = new Guid(message.ReadBytes(16));
+
+                fsPlayer.HasSelectedTank = message.ReadBoolean();
+                fsPlayer.HasTank = message.ReadBoolean();
+                fsPlayer.IsAdmin = message.ReadBoolean();
+                fsPlayer.IsPremium = message.ReadBoolean();
+                fsPlayer.IsSpectator = message.ReadBoolean();
+                fsPlayer.TankHasCustomStyle = message.ReadBoolean();
+                message.ReadPadBits();
+
+                fsPlayer.SpawnPoint = new Microsoft.Xna.Framework.Vector2(
+                    message.ReadFloat(), message.ReadFloat());
+
+                fsPlayer.TankObjectId = message.ReadUInt16();
+                fsPlayer.TankReflectionName = message.ReadString();
+
+                fsPlayer.TeamId = message.ReadInt16();
+                fsPlayer.Username = message.ReadString();
+                fsPlayer.UsernameDisplayColor = new Microsoft.Xna.Framework.Color
+                    { PackedValue = message.ReadUInt32() };
+            }
+
+            return state;
+        }
+
+        public void Write(NetOutgoingMessage message)
+        {
+            message.Write(MapData);
+            message.Write(GamemodeReflectionName);
+            message.Write(CurrentGameTimeMilliseconds);
+            message.Write(GamemodeState.Length);
+            message.Write(GamemodeState);
+
+            message.Write(ObjectStates.Count);
+            foreach (var obj in ObjectStates)
+            {
+                message.Write(obj.Data.Length);
+                message.Write(obj.Data);
+            }
+
+            message.Write(Players.Count);
+            foreach (var player in Players)
+            {
+                message.Write(player.ClanName);
+                message.Write(player.Id.ToByteArray());
+
+                message.Write(player.HasSelectedTank);
+                message.Write(player.HasTank);
+                message.Write(player.IsAdmin);
+                message.Write(player.IsPremium);
+                message.Write(player.IsSpectator);
+                message.Write(player.TankHasCustomStyle);
+                message.WritePadBits();
+
+                message.Write(player.SpawnPoint.X);
+                message.Write(player.SpawnPoint.Y);
+
+                message.Write(player.TankObjectId);
+                message.Write(player.TankReflectionName);
+                message.Write(player.TeamId);
+                message.Write(player.Username);
+                message.Write(player.UsernameDisplayColor.PackedValue);
+            }
         }
     }
 }

@@ -263,6 +263,16 @@ namespace MPTanks.Engine
             Logger.Info(Strings.Engine.GameCreated);
         }
 
+        public void UnsafeTickGameWorld(float deltaMs)
+        {
+            while (deltaMs > 0)
+            {
+                var tickTime = Math.Min(deltaMs, Settings.MaxDeltaTimeGameTick);
+                World.Step(tickTime);
+                deltaMs -= tickTime;
+            }
+        }
+
         private bool _hasDoneCleanup;
         private GameTime _internalGameTime = new GameTime();
         private double _deficitGameTime;
