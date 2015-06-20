@@ -79,7 +79,7 @@ namespace MPTanks.Networking.Common.Game
         {
             var state = new FullGameState();
 
-            state.SetPlayers((IEnumerable<NetworkPlayer>)game.Players);
+            state.SetPlayers(game.Players.Select(x => (NetworkPlayer)x).AsEnumerable());
             state.SetObjects(game);
 
             state.MapData = game.Map.ToString();
@@ -161,7 +161,7 @@ namespace MPTanks.Networking.Common.Game
                 fsPlayer.TeamId = message.ReadInt16();
                 fsPlayer.Username = message.ReadString();
                 fsPlayer.UsernameDisplayColor = new Microsoft.Xna.Framework.Color
-                    { PackedValue = message.ReadUInt32() };
+                { PackedValue = message.ReadUInt32() };
             }
 
             return state;

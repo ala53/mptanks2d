@@ -20,6 +20,7 @@ using EmptyKeys.UserInterface.Media;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Settings;
 using MPTanks.Engine.Logging;
+using MPTanks.Networking.Common.Game;
 #endregion
 
 namespace MPTanks.Clients.GameClient
@@ -180,6 +181,11 @@ namespace MPTanks.Clients.GameClient
             {
                 _unlockCursor = !_unlockCursor;
                 IsMouseVisible = !IsMouseVisible;
+            }
+
+            if (e.Key == Keys.LeftAlt)
+            {
+                game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
             }
         }
 
