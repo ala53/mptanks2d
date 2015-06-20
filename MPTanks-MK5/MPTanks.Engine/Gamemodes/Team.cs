@@ -24,12 +24,12 @@ namespace MPTanks.Engine.Gamemodes
             {
                 _players = value;
                 foreach (var p in _players)
-                    p.Team = this;
+                    if (p != null) p.Team = this;
             }
         }
         public string TeamName { get; set; }
         public Color TeamColor { get; set; }
-        public int TeamId { get; set; }
+        public short TeamId { get; set; }
         /// <summary>
         /// The team's goal, for an explanation to the players.
         /// </summary>

@@ -161,7 +161,7 @@ namespace MPTanks.Engine.Helpers
                 return (T)(object)(src[offset] == 1);
 
             if (typeof(T) == typeof(Half))
-                return (T)(object)(new Half() { value = BitConverter.ToUInt16(src, offset) });
+                return (T)(object)(new Half() { InternalValue = BitConverter.ToUInt16(src, offset) });
 
             if (typeof(T) == typeof(Guid))
                 return (T)(object)src.GetGuid(offset);
@@ -211,7 +211,7 @@ namespace MPTanks.Engine.Helpers
         }
 
         public static float GetFloat(this byte[] src, int offset) => BitConverter.ToSingle(src, offset);
-        public static Half GetHalf(this byte[] src, int offset) => new Half() { value = BitConverter.ToUInt16(src, offset) };
+        public static Half GetHalf(this byte[] src, int offset) => new Half() { InternalValue = BitConverter.ToUInt16(src, offset) };
         public static ushort GetUShort(this byte[] src, int offset) => BitConverter.ToUInt16(src, offset);
         public static short GetShort(this byte[] src, int offset) => BitConverter.ToInt16(src, offset);
 
@@ -219,6 +219,7 @@ namespace MPTanks.Engine.Helpers
         public static uint GetUInt(this byte[] src, int offset) => BitConverter.ToUInt32(src, offset);
         public static long GetLong(this byte[] src, int offset) => BitConverter.ToInt64(src, offset);
         public static ulong GetULong(this byte[] src, int offset) => BitConverter.ToUInt64(src, offset);
+        public static bool GetBool(this byte[] src, int offset) => src[offset] == 1;
         public static Guid GetGuid(this byte[] src, int offset) => new Guid(src.Slice(offset, 16));
 
         public static byte[] GetByteArray(this byte[] src, int offset, int? count = null)

@@ -18,33 +18,12 @@ namespace MPTanks.Modding.Mods.Core
             AllowRespawn = false;
             RespawnTimeMs = 0;
         }
-
-        private bool _gameEnded;
-        public override bool GameEnded
-        {
-            get { return _gameEnded; }
-        }
-
-        private Team[] _teams;
-        public override Team[] Teams
-        {
-            get { return _teams; }
-        }
-
-        private Team _winner = Team.Null;
-        public override Team WinningTeam
-        {
-            get
-            {
-                return _winner;
-            }
-        }
-
+        
         public override void MakeTeams(Engine.GamePlayer[] players)
         {
             var rnd = new Random();
             var teams = new List<Team>();
-            var teamId = 1;
+            short teamId = 1;
 
             foreach (var p in players)
             {
@@ -60,7 +39,7 @@ namespace MPTanks.Modding.Mods.Core
                 teams.Add(team);
             }
 
-            _teams = teams.ToArray();
+            Teams = teams.ToArray();
         }
         
         public override string[] GetPlayerAllowedTankTypes(Engine.GamePlayer player)
@@ -91,15 +70,15 @@ namespace MPTanks.Modding.Mods.Core
 
             if (pCountAlive == 1)
             {
-                _gameEnded = true;
-                _winner = Teams.First((t) => t.Players[0].Tank.Alive);
+                GameEnded = true;
+                WinningTeam = Teams.First((t) => t.Players[0].Tank.Alive);
                 return;
             }
 
             if (pCountAlive == 0)
             {
-                _gameEnded = true;
-                _winner = Team.Indeterminate;
+                GameEnded = true;
+                WinningTeam = Team.Indeterminate;
                 return;
             }
         }

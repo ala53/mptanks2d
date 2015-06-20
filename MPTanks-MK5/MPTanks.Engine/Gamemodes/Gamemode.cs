@@ -14,9 +14,9 @@ namespace MPTanks.Engine.Gamemodes
     public abstract class Gamemode
     {
         public GameCore Game { get; private set; }
-        public abstract bool GameEnded { get; }
-        public virtual Team WinningTeam { get { return Team.Null; } }
-        public abstract Team[] Teams { get; }
+        public virtual bool GameEnded { get; protected set; }
+        public virtual Team WinningTeam { get; protected set; } = Team.Null;
+        public virtual Team[] Teams { get; protected set; }
         public bool AllowRespawn { get; protected set; }
         public float RespawnTimeMs { get; protected set; }
 
@@ -243,6 +243,7 @@ namespace MPTanks.Engine.Gamemodes
             //          2 byte team object size
             //          1 byte team id
             //          4 byte team color 
+            //          2 byte player count
             //          2 byte team name length
             //          variable team name string
             //          2 byte team objective length
@@ -280,8 +281,8 @@ namespace MPTanks.Engine.Gamemodes
                 GameEnded,
                 AllowRespawn,
                 RespawnTimeMs,
-                (byte)WinningTeam.TeamId,
-                (byte)Teams.Length);
+                (short)WinningTeam.TeamId,
+                (ushort)Teams.Length);
 
             foreach (var team in Teams)
                 header = SerializationHelpers.MergeArrays(header, EncodeTeam(team), true);
@@ -293,8 +294,9 @@ namespace MPTanks.Engine.Gamemodes
         private byte[] EncodeTeam(Team team)
         {
             return SerializationHelpers.AllocateArray(true,
-                (byte)team.TeamId,
+                (short)team.TeamId,
                 team.TeamColor,
+                (ushort)team.Players.Length,
                 team.TeamName,
                 team.Objective);
         }
@@ -339,7 +341,49 @@ namespace MPTanks.Engine.Gamemodes
 
         private void SetFullStateHeader(byte[] header, ref int offset)
         {
+            var reflectionName = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
+            var ended = header.GetBool(offset); offset++;
+            var allowRespawn = header.GetBool(offset); offset++;
+            var respawnTime = header.GetFloat(offset); offset += 4;
+            var winningTeamId = header.GetShort(offset); offset += 2;
+            var teamCount = header.GetUShort(offset); offset += 2;
 
+            var teams = new List<Team>();
+
+            for (var i = 0; i < teamCount; i++)
+                teams.Add(MakeFullStateTeam(header, ref offset));
+
+            GameEnded = ended;
+            AllowRespawn = allowRespawn;
+            RespawnTimeMs = respawnTime;
+
+            if (winningTeamId == Team.Indeterminate.TeamId)
+                WinningTeam = Team.Indeterminate;
+            else if (winningTeamId == Team.Null.TeamId)
+                WinningTeam = Team.Null;
+            else
+                foreach (var team in teams)
+                    if (team.TeamId == winningTeamId)
+                        WinningTeam = team;
+
+            Teams = teams.ToArray();
+        }
+
+        private Team MakeFullStateTeam(byte[] header, ref int offset)
+        {
+            short id = header.GetShort(offset); offset += 2;
+            var color = header.GetColor(offset); offset += 4;
+            var playerCount = header.GetUShort(offset); offset += 2;
+            var teamName = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
+            var objective = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
+            return new Team()
+            {
+                TeamId = id,
+                TeamColor = color,
+                Players = new GamePlayer[playerCount],
+                Objective = objective,
+                TeamName = teamName
+            };
         }
 
         protected virtual void SetFullStateInternal(byte[] stateData)

@@ -18,28 +18,7 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
             AllowRespawn = false;
             RespawnTimeMs = 0;
         }
-
-        private bool _gameEnded;
-        public override bool GameEnded
-        {
-            get { return _gameEnded; }
-        }
-
-        private Team[] _teams;
-        public override Team[] Teams
-        {
-            get { return _teams; }
-        }
-
-        private Team _winner = Team.Null;
-        public override Team WinningTeam
-        {
-            get
-            {
-                return _winner;
-            }
-        }
-
+        
         public override void MakeTeams(Engine.GamePlayer[] players)
         {
             players = ShufflePlayers(players);
@@ -53,7 +32,7 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
             team1.Players = players.Take(players.Length / 2).ToArray();
             team2.Players = players.Skip(players.Length / 2).Take(players.Length - (players.Length / 2)).ToArray();
 
-            _teams = new[] { team1, team2 };
+            Teams = new[] { team1, team2 };
         }
 
         private Engine.GamePlayer[] ShufflePlayers(Engine.GamePlayer[] players)
@@ -110,24 +89,24 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
             //Red team wins
             if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue == 0)
             {
-                _gameEnded = true;
-                _winner = Teams[0];
+                GameEnded = true;
+                WinningTeam = Teams[0];
                 return;
             }
 
             //Blue team wins
             if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue > 0)
             {
-                _gameEnded = true;
-                _winner = Teams[1];
+                GameEnded = true;
+                WinningTeam = Teams[1];
                 return;
             }
 
             //Tie
             if (pCountAliveOnTeamRed == 0 && pCountAliveOnTeamBlue == 0)
             {
-                _gameEnded = true;
-                _winner = Team.Indeterminate;
+                GameEnded = true;
+                WinningTeam = Team.Indeterminate;
                 return;
             }
         }

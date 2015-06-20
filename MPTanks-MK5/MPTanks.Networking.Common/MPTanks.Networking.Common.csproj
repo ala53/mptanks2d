@@ -51,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountServer\Models\PrivateUserInfoModel.cs" />
+    <Compile Include="AccountServer\Models\PublicUserInfoModel.cs" />
     <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
@@ -80,13 +82,10 @@
     <Compile Include="Actions\ToServer\SentChatMessageAction.cs" />
     <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
-    <Compile Include="Game\DeltaGameState.cs" />
     <Compile Include="Game\PseudoFullGameWorldState.cs" />
     <Compile Include="Game\FullObjectState.cs" />
     <Compile Include="Game\FullGameState.cs" />
-    <Compile Include="Game\DeltaObjectState.cs" />
     <Compile Include="Game\FullStatePlayer.cs" />
-    <Compile Include="Game\FullStateTeam.cs" />
     <Compile Include="Game\PseudoFullObjectState.cs" />
     <Compile Include="MessageBase.cs" />
     <Compile Include="NetworkedGame.cs" />

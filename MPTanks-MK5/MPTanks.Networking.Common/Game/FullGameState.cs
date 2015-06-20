@@ -12,6 +12,9 @@ namespace MPTanks.Networking.Common.Game
     public class FullGameState
     {
         public List<FullObjectState> ObjectStates { get; set; }
+        /// <summary>
+        /// The raw map data for the current map
+        /// </summary>
         public string MapData { get; set; }
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }

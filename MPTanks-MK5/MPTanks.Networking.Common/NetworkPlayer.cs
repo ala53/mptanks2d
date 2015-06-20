@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Common
             set
             {
                 base.Tank = value;
-                    ApplyTankStyles();
+                ApplyTankStyles();
             }
         }
 

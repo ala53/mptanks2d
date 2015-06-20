@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Game
+namespace MPTanks.Networking.Common.AccountServer.Models
 {
-    public class FullStateTeam
+    public class PrivateUserInfoModel
     {
     }
 }
