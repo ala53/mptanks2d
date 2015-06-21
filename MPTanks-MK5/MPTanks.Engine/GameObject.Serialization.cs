@@ -87,6 +87,9 @@ namespace MPTanks.Engine
                     serialized);
             }
 
+            int health = 0;
+            if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
+                health = ((Tanks.Tank)this).Health;
 
             //And figure out which guid to print
             var guidToWrite = new Guid();
@@ -111,6 +114,7 @@ namespace MPTanks.Engine
             Rotation,
             AngularVelocity,
             Restitution,
+            health,
             privateState
             );
         }
@@ -179,6 +183,7 @@ namespace MPTanks.Engine
             var rot = header.GetFloat(offset); offset += 4;
             var rotVel = header.GetFloat(offset); offset += 4;
             var restitution = header.GetFloat(offset); offset += 4;
+            var health = header.GetInt(offset); offset += 4;
 
             IsSensor = isSensor;
             IsStatic = isStatic;
@@ -190,6 +195,9 @@ namespace MPTanks.Engine
             LinearVelocity = linVel;
             Rotation = rot;
             AngularVelocity = rotVel;
+
+            if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
+                ((Tanks.Tank)this).Health = health;
         }
 
         protected virtual void SetFullStateInternal(byte[] stateData)
