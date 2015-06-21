@@ -32,7 +32,7 @@ namespace MPTanks.Engine.Tanks
         /// <summary>
         /// The current health level for the tank.
         /// </summary>
-        public int Health { get; protected set; }
+        public int Health { get; set; }
 
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
