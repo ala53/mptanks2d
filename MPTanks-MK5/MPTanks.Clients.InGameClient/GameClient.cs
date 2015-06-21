@@ -196,25 +196,25 @@ namespace MPTanks.Clients.GameClient
 
             if (e.Key == Keys.LeftAlt)
             {
-                Logger.Trace(game);
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
                 player1 = (NetworkPlayer)game.PlayersById[player1.Id];
                 player2 = (NetworkPlayer)game.PlayersById[player2.Id];
 
-                shouldTick = false;
-                Logger.Trace(game);
+                game.Authoritative = true;
 
-                Task.Run(async () =>
-                {
-                    await Task.Delay(500);
-                    Logger.Trace(game);
-                });
+                shouldTick = false;
 
                 renderer = new GameWorldRenderer(currentScreen, game);
             }
 
             if (e.Key == Keys.N)
                 shouldTick = !shouldTick;
+
+            if (e.Key == Keys.M)
+                game.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(15)));
+
+            if (e.Key == Keys.L)
+                game.UnsafeTickGameWorld(0.5f);
         }
 
         bool shouldTick = true;

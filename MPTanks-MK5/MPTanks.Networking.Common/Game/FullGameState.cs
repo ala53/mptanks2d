@@ -21,6 +21,7 @@ namespace MPTanks.Networking.Common.Game
         public string MapData { get; set; }
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }
+        public float Timescale { get; set; }
         public GameCore.CurrentGameStatus Status { get; set; }
         public byte[] GamemodeState { get; set; }
         public List<FullStatePlayer> Players { get; set; } = new List<FullStatePlayer>();
@@ -29,6 +30,7 @@ namespace MPTanks.Networking.Common.Game
         {
             var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
             game.Gamemode.FullState = GamemodeState;
+            game.Timescale = Timescale;
 
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
@@ -105,6 +107,7 @@ namespace MPTanks.Networking.Common.Game
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.GameStatus;
+            state.Timescale = game.Timescale;
 
             return state;
         }
@@ -150,6 +153,7 @@ namespace MPTanks.Networking.Common.Game
             state.CurrentGameTimeMilliseconds = message.ReadFloat();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
             state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
+            state.Timescale = message.ReadFloat();
 
             var objCount = message.ReadInt32();
             for (var i = 0; i < objCount; i++)
@@ -196,6 +200,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);
             message.Write((byte)Status);
+            message.Write(Timescale);
 
             message.Write(ObjectStates.Count);
             foreach (var obj in ObjectStates)

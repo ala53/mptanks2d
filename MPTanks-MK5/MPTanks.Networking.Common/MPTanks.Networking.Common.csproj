@@ -70,6 +70,7 @@
     <Compile Include="Actions\ToClient\PlayerPropertyChangedAction.cs" />
     <Compile Include="Actions\ToClient\PlayersListSentAction.cs" />
     <Compile Include="Actions\ToClient\SentChatMessageAction.cs" />
+    <Compile Include="Actions\ToClient\TimescaleChangedAction.cs" />
     <Compile Include="Actions\ToServer\FireProjectileAction.cs" />
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />

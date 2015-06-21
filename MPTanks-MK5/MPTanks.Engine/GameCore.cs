@@ -281,7 +281,7 @@ namespace MPTanks.Engine
             while (deltaMs > 0)
             {
                 var tickTime = Math.Min(deltaMs, Settings.MaxDeltaTimeGameTick);
-                World.Step(tickTime);
+                World.Step(tickTime / 1000);
                 deltaMs -= tickTime;
             }
         }

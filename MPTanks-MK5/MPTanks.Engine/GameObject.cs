@@ -131,13 +131,18 @@ namespace MPTanks.Engine
                 if (Size != value)
                     RaiseBasicPropertyChange(BasicPropertyChangeEventType.Size);
 
+                //Set the internal note
+                _size = value;
+
                 if (_hasBeenCreated)
                 {
+                    //Then correct for scaling
+                    value = value * Game.Settings.PhysicsScale;
                     //Build new shape
                     var vertices = new FarseerPhysics.Common.Vertices(new[] {
-                        new Vector2(-value.X / 2, -value.Y /2),
-                        new Vector2(value.X / 2, -value.Y /2),
-                        new Vector2(value.X / 2, value.Y /2),
+                        new Vector2(-value.X / 2, -value.Y / 2),
+                        new Vector2(value.X / 2, -value.Y / 2),
+                        new Vector2(value.X / 2, value.Y / 2),
                         new Vector2(-value.X / 2, value.Y /2)
                     });
                     var rect = new FarseerPhysics.Collision.Shapes.PolygonShape(
@@ -148,9 +153,6 @@ namespace MPTanks.Engine
                     //And add the new one
                     Body.CreateFixture(rect, this);
                 }
-
-                //And set the internal note
-                _size = value;
             }
         }
         #endregion
@@ -203,12 +205,13 @@ namespace MPTanks.Engine
             }
         }
 
+        private float _currentRestitution;
         public float Restitution
         {
             get
             {
                 if (_hasBeenCreated)
-                    return Body.Restitution;
+                    return _currentRestitution;
                 else return _startRestitution;
             }
             set
@@ -216,12 +219,14 @@ namespace MPTanks.Engine
                 if (Restitution != value)
                     RaiseBasicPropertyChange(BasicPropertyChangeEventType.Restitution);
 
-                if (_hasBeenCreated)
+                if (_hasBeenCreated) { 
                     Body.Restitution = value;
+                    _currentRestitution = value;
+                }
                 else _startRestitution = value;
             }
         }
-        
+
         #endregion
 
         #region Places to store settings pre-initialization
@@ -265,13 +270,14 @@ namespace MPTanks.Engine
             if (Size == Vector2.Zero)
                 Size = DefaultSize;
 
-            _hasBeenCreated = true;
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
             Body = BodyFactory.CreateRectangle(Game.World, Size.X * Game.Settings.PhysicsScale,
-                 Size.Y * Game.Settings.PhysicsScale, _startDensity, Vector2.Zero, _startRotation,
+                 Size.Y * Game.Settings.PhysicsScale, _startDensity, Vector2.Zero, Rotation,
                  BodyType.Dynamic, this);
-            Body.Restitution = _startRestitution;
+            Body.Restitution = Restitution;
             Body.OnCollision += Body_OnCollision;
+
+            _hasBeenCreated = true;
             //And initialize the object
             Alive = true;
             Position = _startPosition;
@@ -400,7 +406,7 @@ namespace MPTanks.Engine
 
             DestroyEmitters();
 
-            var mustWaitToDelete = DestroyInternal(destructor) || PostDeathExistenceTime > 0; 
+            var mustWaitToDelete = DestroyInternal(destructor) || PostDeathExistenceTime > 0;
             if (!Body.IsDisposed && !mustWaitToDelete)
                 Body.Dispose(); //Kill the physics body if allowed to delete
 
@@ -455,7 +461,7 @@ namespace MPTanks.Engine
         #endregion
         public override string ToString()
         {
-            return $"Class: {base.ToString()} Id: {ObjectId}, Name: {ReflectionName}"; 
+            return $"Class: {base.ToString()} Id: {ObjectId}, Name: {ReflectionName}";
         }
     }
 }
