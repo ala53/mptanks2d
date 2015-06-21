@@ -365,7 +365,11 @@ namespace MPTanks.Clients.GameClient
                 Logger.Info(game.Diagnostics.ToString());
             }
             if (shouldTick)
+            {
                 game.Update(gameTime);
+            }
+
+
 
             game.Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);

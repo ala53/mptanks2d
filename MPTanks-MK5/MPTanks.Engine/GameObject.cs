@@ -128,8 +128,9 @@ namespace MPTanks.Engine
             get { return _size; }
             set
             {
-                if (Size != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Size);
+                if (Size == value || value.X <= 0 || value.Y <= 0) return;
+
+                RaiseBasicPropertyChange(BasicPropertyChangeEventType.Size);
 
                 //Set the internal note
                 _size = value;
@@ -152,6 +153,9 @@ namespace MPTanks.Engine
                     Body.DestroyFixture(Body.FixtureList[0]);
                     //And add the new one
                     Body.CreateFixture(rect, this);
+
+                    Body.OnCollision -= Body_OnCollision;
+                    Body.OnCollision += Body_OnCollision;
                 }
             }
         }
@@ -219,7 +223,8 @@ namespace MPTanks.Engine
                 if (Restitution != value)
                     RaiseBasicPropertyChange(BasicPropertyChangeEventType.Restitution);
 
-                if (_hasBeenCreated) { 
+                if (_hasBeenCreated)
+                {
                     Body.Restitution = value;
                     _currentRestitution = value;
                 }
