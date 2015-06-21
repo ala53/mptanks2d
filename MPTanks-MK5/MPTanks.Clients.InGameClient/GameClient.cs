@@ -367,6 +367,8 @@ namespace MPTanks.Clients.GameClient
             if (shouldTick)
             {
                 game.Update(gameTime);
+                var state = PseudoFullGameWorldState.Create(game);
+                state.Apply(game);
             }
 
 

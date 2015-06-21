@@ -70,6 +70,46 @@ namespace MPTanks.Networking.Common.Game
             return state;
         }
 
+        public void Apply(GameCore game)
+        {
+            //Do it via reflection to keep api private
+            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
+            statusProp.SetValue(game, CurrentGameStatus);
+
+            //Do this with reflection because we want to keep the api private (set game time)
+            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds));
+            timeProp.SetValue(game, CurrentGameTimeMilliseconds);
+
+            game.FriendlyFireEnabled = FriendlyFireEnabled;
+
+            foreach (var objState in ObjectStates.Values)
+            {
+                if (objState.WasDestroyed && game.GameObjectsById.ContainsKey(objState.ObjectId))
+                {
+                    game.RemoveGameObject(game.GameObjectsById[objState.ObjectId], null, true);
+                    continue;
+                }
+
+                var obj = game.GameObjectsById[objState.ObjectId];
+
+                obj.IsSensor = objState.IsSensorObject;
+                obj.IsStatic = objState.IsStaticObject;
+
+                if (objState.PositionChanged)
+                    obj.Position = objState.Position;
+                if (objState.RestitutionChanged)
+                    obj.Restitution = objState.Restitution;
+                if (objState.RotationChanged)
+                    obj.Rotation = objState.Rotation;
+                if (objState.RotationVelocityChanged)
+                    obj.AngularVelocity = objState.RotationVelocity;
+                if (objState.SizeChanged)
+                    obj.Size = objState.Size.ToVector2();
+                if (objState.VelocityChanged)
+                    obj.LinearVelocity = objState.Velocity.ToVector2();
+            }
+        }
+
         public static PseudoFullGameWorldState Read(NetIncomingMessage message)
         {
             var state = new PseudoFullGameWorldState();
