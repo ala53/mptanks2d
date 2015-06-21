@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Tanks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,6 @@ namespace MPTanks.Networking.Common.Game
         public string TankReflectionName { get; set; }
         public string[] AllowedTankTypes { get; set; }
         public NetworkPlayer PlayerObject { get; set; }
+        public InputState Input { get; set; }
     }
 }

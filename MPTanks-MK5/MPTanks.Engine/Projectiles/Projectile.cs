@@ -30,7 +30,7 @@ namespace MPTanks.Engine.Projectiles
 
         public virtual void CollidedWithTank(Tanks.Tank tank)
         {
-            Kill(tank);
+            Kill(this);
         }
 
         #region Static initialization

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Tanks;
 
 namespace MPTanks.Networking.Common.Game
 {
@@ -22,6 +23,7 @@ namespace MPTanks.Networking.Common.Game
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }
         public float Timescale { get; set; }
+        public bool FriendlyFireEnabled { get; set; }
         public GameCore.CurrentGameStatus Status { get; set; }
         public byte[] GamemodeState { get; set; }
         public List<FullStatePlayer> Players { get; set; } = new List<FullStatePlayer>();
@@ -31,6 +33,7 @@ namespace MPTanks.Networking.Common.Game
             var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
             game.Gamemode.FullState = GamemodeState;
             game.Timescale = Timescale;
+            game.FriendlyFireEnabled = FriendlyFireEnabled;
 
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
@@ -57,7 +60,7 @@ namespace MPTanks.Networking.Common.Game
                 nwPlayer.SelectedTankReflectionName = player.TankReflectionName;
                 nwPlayer.SpawnPoint = player.SpawnPoint;
                 nwPlayer.Team = (player.TeamId != -3 ? FindTeam(game.Gamemode.Teams, player.TeamId) : null);
-
+                
                 player.PlayerObject = nwPlayer;
 
                 game.AddPlayer(nwPlayer);
@@ -81,6 +84,10 @@ namespace MPTanks.Networking.Common.Game
                 var team = FindTeam(game.Gamemode.Teams, kvp.Key);
                 team.Players = kvp.Value.ToArray();
             }
+
+            foreach (var player in Players)
+                if (player.PlayerObject.Tank != null)
+                    player.PlayerObject.Tank.Input(player.Input);
 
             game.UnsafeTickGameWorld(latency);
 
@@ -108,6 +115,7 @@ namespace MPTanks.Networking.Common.Game
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.GameStatus;
             state.Timescale = game.Timescale;
+            state.FriendlyFireEnabled = game.FriendlyFireEnabled;
 
             return state;
         }
@@ -130,6 +138,7 @@ namespace MPTanks.Networking.Common.Game
                 serialized.TankObjectId = (plr.Tank != null) ? plr.Tank.ObjectId : (ushort)0;
                 serialized.TankReflectionName = (plr.Tank != null) ? plr.Tank.ReflectionName : "";
                 serialized.TeamId = (plr.Team != null) ? plr.Team.TeamId : (short)-3;
+                serialized.Input = (plr.Tank != null ? plr.Tank.InputState : default(InputState));
                 serialized.Username = plr.DisplayName;
                 serialized.UsernameDisplayColor = plr.DisplayNameDrawColor;
                 serialized.PlayerObject = plr;
@@ -151,6 +160,8 @@ namespace MPTanks.Networking.Common.Game
             state.MapData = message.ReadString();
             state.GamemodeReflectionName = message.ReadString();
             state.CurrentGameTimeMilliseconds = message.ReadFloat();
+            state.FriendlyFireEnabled = message.ReadBoolean();
+            message.ReadPadBits();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
             state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
             state.Timescale = message.ReadFloat();
@@ -165,6 +176,7 @@ namespace MPTanks.Networking.Common.Game
 
             for (var i = 0; i < playersCount; i++)
             {
+                var input = new InputState();
                 var fsPlayer = new FullStatePlayer();
                 fsPlayer.ClanName = message.ReadString();
                 fsPlayer.Id = new Guid(message.ReadBytes(16));
@@ -175,7 +187,13 @@ namespace MPTanks.Networking.Common.Game
                 fsPlayer.IsPremium = message.ReadBoolean();
                 fsPlayer.IsSpectator = message.ReadBoolean();
                 fsPlayer.TankHasCustomStyle = message.ReadBoolean();
+                input.FirePressed = message.ReadBoolean();
                 message.ReadPadBits();
+
+                input.LookDirection = message.ReadFloat();
+                input.MovementSpeed = message.ReadFloat();
+                input.RotationSpeed = message.ReadFloat();
+                input.WeaponNumber = message.ReadByte();
 
                 fsPlayer.SpawnPoint = new Microsoft.Xna.Framework.Vector2(
                     message.ReadFloat(), message.ReadFloat());
@@ -187,6 +205,8 @@ namespace MPTanks.Networking.Common.Game
                 fsPlayer.Username = message.ReadString();
                 fsPlayer.UsernameDisplayColor = new Microsoft.Xna.Framework.Color
                 { PackedValue = message.ReadUInt32() };
+
+                fsPlayer.Input = input;
             }
 
             return state;
@@ -197,6 +217,8 @@ namespace MPTanks.Networking.Common.Game
             message.Write(MapData);
             message.Write(GamemodeReflectionName);
             message.Write(CurrentGameTimeMilliseconds);
+            message.Write(FriendlyFireEnabled);
+            message.WritePadBits();
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);
             message.Write((byte)Status);
@@ -221,7 +243,15 @@ namespace MPTanks.Networking.Common.Game
                 message.Write(player.IsPremium);
                 message.Write(player.IsSpectator);
                 message.Write(player.TankHasCustomStyle);
+                message.Write(player.Input.FirePressed); //input
                 message.WritePadBits();
+
+                //input
+                message.Write(player.Input.LookDirection);
+                message.Write(player.Input.MovementSpeed);
+                message.Write(player.Input.RotationSpeed);
+
+                message.Write((byte)player.Input.WeaponNumber);
 
                 message.Write(player.SpawnPoint.X);
                 message.Write(player.SpawnPoint.Y);

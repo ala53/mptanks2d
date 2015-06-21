@@ -76,7 +76,7 @@ namespace MPTanks.Engine.Tanks
                 return true;
             return false;
         }
-
+        
         public void Input(InputState state)
         {
             InputState = state;

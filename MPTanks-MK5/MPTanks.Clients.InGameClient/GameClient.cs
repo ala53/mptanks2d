@@ -202,7 +202,7 @@ namespace MPTanks.Clients.GameClient
 
                 game.Authoritative = true;
 
-                shouldTick = false;
+                //shouldTick = false;
 
                 renderer = new GameWorldRenderer(currentScreen, game);
             }
