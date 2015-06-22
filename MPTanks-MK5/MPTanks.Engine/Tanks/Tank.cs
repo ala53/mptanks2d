@@ -19,23 +19,29 @@ namespace MPTanks.Engine.Tanks
         public Team Team { get { return Player.Team; } }
         public InputState InputState { get; private set; }
         /// <summary>
-        /// The Asset to show in the UI to describe the current weapon.
-        /// </summary>
-        [JsonIgnore]
-        public SpriteInfo ActiveWeaponUIAsset { get; protected set; }
-        /// <summary>
-        /// The recharge percentage for the active weapon. Alas, this is the # of percent done it is. 
-        /// 100 or greater means it's done charging and the progress bar disappears.
-        /// </summary>
-        [JsonIgnore]
-        public double ActiveWeaponRechargePercentage { get; protected set; }
-        /// <summary>
         /// The current health level for the tank.
         /// </summary>
         public int Health { get; set; }
 
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
+
+        public virtual Weapon PrimaryWeapon { get; protected set; } = Weapon.Null;
+        public virtual Weapon SecondaryWeapon { get; protected set; } = Weapon.Null;
+        public virtual Weapon TertiaryWeapon { get; protected set; } = Weapon.Null;
+        public virtual Weapon ActiveWeapon { get; protected set; } = Weapon.Null;
+
+        private void SetActiveWeapon()
+        {
+            ActiveWeapon = Weapon.Null;
+
+            if (InputState.WeaponNumber == 0)
+                ActiveWeapon = PrimaryWeapon ?? SecondaryWeapon ?? TertiaryWeapon ?? Weapon.Null;
+            if (InputState.WeaponNumber == 1)
+                ActiveWeapon = SecondaryWeapon ?? TertiaryWeapon ?? PrimaryWeapon ?? Weapon.Null;
+            if (InputState.WeaponNumber == 2)
+                ActiveWeapon = TertiaryWeapon ?? PrimaryWeapon ?? SecondaryWeapon ?? Weapon.Null;
+        }
 
         public Tank(GamePlayer player, GameCore game, bool authorized)
             : base(game, authorized, game.Settings.TankDensity, 0, default(Vector2), 0)
@@ -76,7 +82,7 @@ namespace MPTanks.Engine.Tanks
                 return true;
             return false;
         }
-        
+
         public void Input(InputState state)
         {
             InputState = state;
@@ -99,6 +105,15 @@ namespace MPTanks.Engine.Tanks
             LinearVelocity = new Vector2((float)x, (float)y);
             AngularVelocity = 0;
             Rotation += (float)rotationAmount;
+
+            //Set the active weapon
+            SetActiveWeapon();
+            //And update weapons
+            PrimaryWeapon?.Update(time);
+            SecondaryWeapon?.Update(time);
+            TertiaryWeapon?.Update(time);
+
+            if (ActiveWeapon.Recharged && InputState.FirePressed) ActiveWeapon.Fire();
 
             UnsafeEnableEvents();
         }

@@ -35,9 +35,51 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             Health = 150;
             Size = new Vector2(3, 5);
 
-            primaryTimer = game.TimerFactory.CreateTimer(primaryRechargeTime).Complete();
-            secondaryTimer = game.TimerFactory.CreateTimer(secondaryRechargeTime).Complete();
-            tertiaryTimer = game.TimerFactory.CreateTimer(tertiaryRechargeTime).Complete();
+            PrimaryWeapon = new Weapon(this)
+            {
+                AddedRotation = 0,
+                FireRotationIsRelativeToTankLookDirection = true,
+                FireRotationIsRelativeToTankRotation = false,
+                MaxActiveProjectileCount = 5,
+                MaxDistance = 50,
+                ProjectileOffset = new Vector2(1.5f, -1.1f),
+                ProjectileVelocity = new Vector2(60),
+                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                TargetingType = Weapon.WeaponTargetingType.Directional,
+                TransformPositionAndVelocityByRotation = true,
+                WeaponName = "120mm cannon",
+                WeaponDisplaySprite = Sprites["tank_cannon"]
+            };
+            SecondaryWeapon = new Weapon(this)
+            {
+                AddedRotation = 0,
+                FireRotationIsRelativeToTankLookDirection = true,
+                FireRotationIsRelativeToTankRotation = false,
+                MaxActiveProjectileCount = 5,
+                MaxDistance = 50,
+                ProjectileOffset = new Vector2(1.5f, -1.1f),
+                ProjectileVelocity = new Vector2(60),
+                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                TargetingType = Weapon.WeaponTargetingType.Directional,
+                TransformPositionAndVelocityByRotation = true,
+                WeaponName = "Duct Tape and Magical Caterpillars",
+                WeaponDisplaySprite = Sprites["tank_cannon"]
+            };
+            TertiaryWeapon = new Weapon(this)
+            {
+                AddedRotation = 0,
+                FireRotationIsRelativeToTankLookDirection = true,
+                FireRotationIsRelativeToTankRotation = false,
+                MaxActiveProjectileCount = 5,
+                MaxDistance = 50,
+                ProjectileOffset = new Vector2(1.5f, -1.1f),
+                ProjectileVelocity = new Vector2(60),
+                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                TargetingType = Weapon.WeaponTargetingType.Directional,
+                TransformPositionAndVelocityByRotation = true,
+                WeaponName = "Quantum Teleporter With Space Monkeys",
+                WeaponDisplaySprite = Sprites["tank_cannon"]
+            };
         }
         const float primaryRechargeTime = 500;
         const float secondaryRechargeTime = 2000;
@@ -142,17 +184,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             else if (state == "weapon 3 fired")
                 tertiaryTimer.Reset();
         }
-
-        protected override object GetPrivateStateData()
-        {
-            var data = new byte[4 + 4 + 4];
-            data.SetContents(primaryTimer.ElapsedMilliseconds, 0);
-            data.SetContents(secondaryTimer.ElapsedMilliseconds, 4);
-            data.SetContents(tertiaryTimer.ElapsedMilliseconds, 8);
-
-            return data;
-        }
-
+        
         protected override void SetFullStateInternal(byte[] state)
         {
             primaryTimer.ElapsedMilliseconds = state.GetValue<float>(0);

@@ -332,17 +332,17 @@ namespace MPTanks.Engine
             if (transformOnlyBySecondaryRotation)
             {
                 cos = (float)Math.Cos(secondaryRotation);
-                sin = (float)-Math.Sin(secondaryRotation);
+                sin = (float)Math.Sin(secondaryRotation);
             }
             else
             {
                 cos = (float)Math.Cos(Rotation + secondaryRotation);
-                sin = (float)-Math.Sin(Rotation + secondaryRotation);
+                sin = (float)Math.Sin(Rotation + secondaryRotation);
             }
 
             point = point - (Size / 2);
-            var rotatedX = point.X * cos + point.Y * sin;
-            var rotatedY = point.X * sin + point.Y * cos;
+            var rotatedX = point.X * cos + point.Y * -sin;
+            var rotatedY = point.X * -sin + point.Y * cos;
             var centered = new Vector2(rotatedX, rotatedY);
             var transformed = centered + Position;
 

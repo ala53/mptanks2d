@@ -118,6 +118,7 @@
     <Compile Include="Tanks\InputState.cs" />
     <Compile Include="Tanks\SuperTank.cs" />
     <Compile Include="Tanks\Tank.cs" />
+    <Compile Include="Tanks\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\maps\testmap.json">

@@ -115,6 +115,11 @@
       "key": "grillmask",
       "frame": "grillmask",
       "sheet": { "ref": "main_sheet" }
+    },
+    {
+      "key": "tank_cannon",
+      "frame": "null",
+      "sheet": { "ref": "main_sheet" }
     }
   ],
   "reflectionName": "BasicTankMP",
