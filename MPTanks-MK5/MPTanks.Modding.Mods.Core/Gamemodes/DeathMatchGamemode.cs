@@ -71,7 +71,7 @@ namespace MPTanks.Modding.Mods.Core
             if (pCountAlive == 1)
             {
                 GameEnded = true;
-                WinningTeam = Teams.First((t) => t.Players[0].Tank.Alive);
+                WinningTeam = Teams.First((t) => (t.Players[0].Tank?.Alive).Value);
                 return;
             }
 
