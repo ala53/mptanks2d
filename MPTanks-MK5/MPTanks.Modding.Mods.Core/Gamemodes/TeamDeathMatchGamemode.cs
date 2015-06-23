@@ -80,8 +80,8 @@ namespace MPTanks.Modding.Mods.Core.Gamemodes
 
         public override void Update(GameTime gameTime)
         {
-            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => p.Tank.Alive);
-            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => p.Tank.Alive);
+            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => (p.Tank?.Alive).Value);
+            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => (p.Tank?.Alive).Value);
 
             if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue > 0)
                 return; //game still running

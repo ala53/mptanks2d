@@ -63,7 +63,7 @@ namespace MPTanks.Modding.Mods.Core
 
         public override void Update(GameTime gameTime)
         {
-            int pCountAlive = Teams.Count((t) => t.Players[0].Tank.Alive);
+            int pCountAlive = Teams.Count((t) => (t.Players[0].Tank?.Alive).Value);
 
             if (pCountAlive > 1)
                 return; //still running
