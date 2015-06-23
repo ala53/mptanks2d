@@ -9,7 +9,7 @@ namespace MPTanks.Engine.Rendering.Lighting
     public class LightEngine
     {
         private HashSet<Light> _lights = new HashSet<Light>();
-        public IEnumerable<Light> Lights { get { return _lights; } }
+        public ISet<Light> Lights { get { return _lights; } }
 
         public void AddLight(Light light)
         {

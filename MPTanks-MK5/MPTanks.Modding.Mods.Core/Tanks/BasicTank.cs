@@ -48,7 +48,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "120mm cannon",
-                WeaponDisplaySprite = Sprites["tank_cannon"]
+                WeaponDisplaySprite = Sprites["tank_cannon"],
+                WeaponRechargeTimeMs = 500
             };
             SecondaryWeapon = new Weapon(this)
             {
@@ -63,7 +64,8 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Duct Tape and Magical Caterpillars",
-                WeaponDisplaySprite = Sprites["tank_cannon"]
+                WeaponDisplaySprite = Sprites["tank_cannon"],
+                WeaponRechargeTimeMs = 2000
             };
             TertiaryWeapon = new Weapon(this)
             {
@@ -78,12 +80,10 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Quantum Teleporter With Space Monkeys",
-                WeaponDisplaySprite = Sprites["tank_cannon"]
+                WeaponDisplaySprite = Sprites["tank_cannon"],
+                WeaponRechargeTimeMs = 3000
             };
         }
-        const float primaryRechargeTime = 500;
-        const float secondaryRechargeTime = 2000;
-        const float tertiaryRechargeTime = 3000;
         private Timer primaryTimer;
         private Timer secondaryTimer;
         private Timer tertiaryTimer;

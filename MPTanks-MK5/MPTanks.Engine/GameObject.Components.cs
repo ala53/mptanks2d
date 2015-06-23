@@ -3,6 +3,7 @@ using MPTanks.Engine.Assets;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Rendering;
 using MPTanks.Engine.Rendering.Animations;
+using MPTanks.Engine.Rendering.Lighting;
 using MPTanks.Engine.Rendering.Particles;
 using MPTanks.Engine.Serialization;
 using MPTanks.Modding;
@@ -54,6 +55,26 @@ namespace MPTanks.Engine
         protected Dictionary<string, Animation> _animations;
         [JsonIgnore]
         public IReadOnlyDictionary<string, Animation> Animations { get { return _animations; } }
+
+        private List<AnimationData> _animationsWithData = new List<AnimationData>();
+
+        private struct AnimationData
+        {
+            public Animation Animation { get; set; }
+            public GameObjectAnimationJSON Information { get; set; }
+        }
+
+        protected Dictionary<string, Light> _lights;
+        [JsonIgnore]
+        public IReadOnlyDictionary<string, Light> Lights { get { return _lights; } }
+
+        private List<LightData> _lightsWithData = new List<LightData>();
+
+        private struct LightData
+        {
+            public Light Light { get; set; }
+            public GameObjectLightJSON Information { get; set; }
+        }
         #endregion
 
         /// <summary>
@@ -96,12 +117,10 @@ namespace MPTanks.Engine
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
 
-
-
-
             LoadComponents(deserialized.Components);
             LoadComponentGroups(deserialized.ComponentGroups);
-            LoadKeyedAssets(deserialized.OtherAssets, deserialized.Components, deserialized.Emitters);
+            LoadKeyedAssets(deserialized.OtherAssets, deserialized.Components, deserialized.Emitters,
+                deserialized.Animations, deserialized.Lights);
             LoadOtherSprites(deserialized.OtherSprites);
             LoadEmitters(deserialized.Emitters);
         }
@@ -110,19 +129,14 @@ namespace MPTanks.Engine
         {
             foreach (var cmp in components)
             {
-                string sheet;
-                if (cmp.Sheet.FromOtherMod)
-                    sheet = ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File);
-                else
-                    sheet = ResolveAsset(cmp.Sheet.File);
-
                 SpriteInfo asset = new SpriteInfo();
                 if (cmp.Frame != null)
                 {
                     if (cmp.Frame.StartsWith("[animation]"))
-                        asset = new SpriteAnimationInfo(cmp.Frame.Substring("[animation]".Length), sheet);
+                        asset = new SpriteAnimationInfo(cmp.Frame.Substring("[animation]".Length),
+                            ResolveJSONSheet(cmp.Sheet));
                     else
-                        asset = new SpriteInfo(cmp.Frame, sheet);
+                        asset = new SpriteInfo(cmp.Frame, ResolveJSONSheet(cmp.Sheet));
                 }
                 _components.Add(cmp.Name, new RenderableComponent
                 {
@@ -153,38 +167,30 @@ namespace MPTanks.Engine
             }
         }
 
-        private void LoadKeyedAssets(GameObjectSheetSpecifierJSON[] assets, GameObjectComponentJSON[] components, GameObjectEmitterJSON[] emitters)
+        private void LoadKeyedAssets(GameObjectSheetSpecifierJSON[] assets, GameObjectComponentJSON[] components,
+            GameObjectEmitterJSON[] emitters, GameObjectAnimationJSON[] anims, GameObjectLightJSON[] lights)
         {
             foreach (var cmp in components)
-            {
                 if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
-                    if (cmp.Sheet.FromOtherMod)
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.ModName, cmp.Sheet.File));
-                    else
-                        _assets.Add(cmp.Sheet.Key, ResolveAsset(cmp.Sheet.File));
-            }
+                    _assets.Add(cmp.Sheet.Key, ResolveJSONSheet(cmp.Sheet));
 
             foreach (var emitter in emitters)
-            {
                 foreach (var sp in emitter.Sprites)
-                {
                     if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))
-                        if (sp.Sheet.FromOtherMod)
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.ModName, sp.Sheet.File));
-                        else
-                            _assets.Add(sp.Sheet.Key, ResolveAsset(sp.Sheet.File));
-                }
-
-            }
+                        _assets.Add(sp.Sheet.Key, ResolveJSONSheet(sp.Sheet));
 
             foreach (var asset in assets)
-            {
                 if (asset.Key != null && !_assets.ContainsKey(asset.Key))
-                    if (asset.FromOtherMod)
-                        _assets.Add(asset.Key, ResolveAsset(asset.ModName, asset.File));
-                    else
-                        _assets.Add(asset.Key, ResolveAsset(asset.File));
-            }
+                    _assets.Add(asset.Key, ResolveJSONSheet(asset));
+
+            foreach (var anim in anims)
+                foreach (var sp in anim.SpriteOptions)
+                    if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))
+                        _assets.Add(sp.Sheet.Key, ResolveJSONSheet(sp.Sheet));
+
+            foreach (var light in lights)
+                if (light.Sheet.Key != null && !_assets.ContainsKey(light.Sheet.Key))
+                    _assets.Add(light.Sheet.Key, ResolveJSONSheet(light.Sheet));
         }
 
         private void LoadOtherSprites(GameObjectSpriteSpecifierJSON[] sprites)
@@ -193,29 +199,15 @@ namespace MPTanks.Engine
             {
                 if (sprite.IsAnimation)
                 {
-                    if (sprite.Sheet.FromOtherMod)
-                    {
-                        _animatedSprites.Add(sprite.Key,
-                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
-                        _sprites.Add(sprite.Key,
-                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
-                    }
-                    else
-                    {
-                        _animatedSprites.Add(sprite.Key,
-                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
-                        _sprites.Add(sprite.Key,
-                            new SpriteAnimationInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
-                    }
+                    _animatedSprites.Add(sprite.Key,
+                        new SpriteAnimationInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet)));
+                    _sprites.Add(sprite.Key,
+                        new SpriteAnimationInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet)));
                 }
                 else
                 {
-                    if (sprite.Sheet.FromOtherMod)
-                        _sprites.Add(sprite.Key,
-                            new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
-                    else
-                        _sprites.Add(sprite.Key,
-                            new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
+                    _sprites.Add(sprite.Key,
+                        new SpriteInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet)));
                 }
             }
         }
@@ -228,24 +220,12 @@ namespace MPTanks.Engine
                 foreach (var sprite in emitter.Sprites)
                 {
                     if (sprite.Frame.StartsWith("[animation]"))
-                    {
-                        if (sprite.Sheet.FromOtherMod)
-                            infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
-                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
-                        else
-                            infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
-                                ResolveAsset(sprite.Sheet.File)));
-                    }
+                        infos.Add(
+                            new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
+                            ResolveJSONSheet(sprite.Sheet)));
                     else
-                    {
-                        if (sprite.Sheet.FromOtherMod)
-                            infos.Add(new SpriteInfo(sprite.Frame,
-                                ResolveAsset(sprite.Sheet.ModName, sprite.Sheet.File)));
-                        else
-                            infos.Add(new SpriteInfo(sprite.Frame, ResolveAsset(sprite.Sheet.File)));
-                    }
+                        infos.Add(new SpriteInfo(sprite.Frame,
+                            ResolveJSONSheet(sprite.Sheet)));
                 }
 
                 var em = Game.ParticleEngine.CreateEmitter(infos.ToArray(),
@@ -276,6 +256,68 @@ namespace MPTanks.Engine
                 _emittersWithData.Add(new EmitterData { AttachedEmitter = em, Information = emitter });
             }
         }
+
+        private void LoadAnimations(GameObjectAnimationJSON[] animations)
+        {
+            foreach (var anim in animations)
+            {
+                var sprite = anim.SpriteOptions[Game.SharedRandom.Next(0, anim.SpriteOptions.Length)];
+                var animation = new Animation(
+                    sprite.Frame,
+                    anim.Position,
+                    anim.Size,
+                    ResolveJSONSheet(sprite.Sheet),
+                    null,
+                    anim.LoopCount
+                    );
+
+                _animations.Add(anim.Name, animation);
+                _animationsWithData.Add(new AnimationData
+                {
+                    Animation = animation,
+                    Information = anim
+                });
+            }
+        }
+
+        private void LoadLights(GameObjectLightJSON[] lights)
+        {
+            foreach (var light in lights)
+            {
+                var l = new Light()
+                {
+                    AssetName = light.Frame,
+                    Color = light.Color,
+                    //Intensity is nothing when not activated yet
+                    Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
+                    PositionCenter = light.Position,
+                    SpriteName = ResolveJSONSheet(light.Sheet),
+                    Size = light.Size
+                };
+
+                if (light.ShowForAllTeams)
+                    l.ShowForAllTeams = true;
+                else if (light.ShowForTankTeamOnly && GetType().IsSubclassOf(typeof(Tanks.Tank)))
+                    l.TeamIds = new[] { ((Tanks.Tank)this).Team.TeamId };
+                else if (light.TeamIds != null)
+                    l.TeamIds = light.TeamIds;
+
+                _lights.Add(light.Name, l);
+                _lightsWithData.Add(new LightData
+                {
+                    Light = l,
+                    Information = light
+                });
+            }
+        }
+
+        private string ResolveJSONSheet(GameObjectSheetSpecifierJSON sheet)
+        {
+            if (sheet.FromOtherMod)
+                return ResolveAsset(sheet.ModName, sheet.File);
+            else return ResolveAsset(sheet.File);
+        }
+
         #endregion
 
         /// <summary>
@@ -295,6 +337,7 @@ namespace MPTanks.Engine
             _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
             _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
             _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
+            _lights = new Dictionary<string, Light>();
 
             LoadComponentsFromFile(ResolveAsset(componentFile));
             AddComponents(_components);
@@ -336,14 +379,14 @@ namespace MPTanks.Engine
         private void TriggerEmitters(string trigger)
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Information.SpawnIsTriggered &&
+                if (emitter.Information.ActivationIsTriggered &&
                     emitter.Information.TriggerName.Equals(trigger, StringComparison.InvariantCultureIgnoreCase))
                     emitter.AttachedEmitter.Paused = false;
         }
         private void ActivateAtTimeEmitters()
         {
             foreach (var emitter in _emittersWithData)
-                if (emitter.Information.SpawnAtTime)
+                if (emitter.Information.ActivatesAtTime)
                     if (emitter.Information.TimeMsToSpawnAt < TimeAliveMs)
                         emitter.AttachedEmitter.Paused = false;
                     else emitter.AttachedEmitter.Paused = true;
@@ -351,10 +394,50 @@ namespace MPTanks.Engine
 
         #endregion
 
+        #region Animations
+        private void UpdateAnimations(GameTime gameTime)
+        {
+            foreach (var anim in _animationsWithData)
+                if (anim.Information.ActivatesAtTime && anim.Information.TimeMsToSpawnAt < TimeAliveMs &&
+                    !Game.AnimationEngine.Animations.Contains(anim.Animation))
+                    Game.AnimationEngine.AddAnimation(anim.Animation);
+
+        }
+
+        private void TriggerAnimations(string triggerName)
+        {
+            foreach (var anim in _animationsWithData)
+                if (anim.Information.ActivationIsTriggered &&
+                    anim.Information.TriggerName.Equals(triggerName, StringComparison.InvariantCultureIgnoreCase))
+                    Game.AnimationEngine.AddAnimation(anim.Animation);
+        }
+        #endregion
+
+        #region Lights
+        private void UpdateLights(GameTime gameTime)
+        {
+            foreach (var light in _lightsWithData)
+                if (light.Information.ActivatesAtTime &&
+                    light.Information.TimeMsToSpawnAt < TimeAliveMs &&
+                    light.Light.Intensity == 0)
+                    light.Light.Intensity = light.Information.Intensity;
+        }
+
+        private void TriggerLights(string triggerName)
+        {
+            foreach (var light in _lightsWithData)
+                if (light.Information.ActivationIsTriggered &&
+                    light.Information.TriggerName.Equals(triggerName, StringComparison.InvariantCultureIgnoreCase))
+                    light.Light.Intensity = light.Information.Intensity;
+        }
+        #endregion
+
         #region Triggers
         protected void InvokeTrigger(string triggerName)
         {
             TriggerEmitters(triggerName);
+            TriggerAnimations(triggerName);
+            TriggerLights(triggerName);
             //Look for a function with the name and signature of "void On[TriggerName]() {}"
             try
             {
@@ -364,13 +447,13 @@ namespace MPTanks.Engine
                     BindingFlags.Instance |
                     BindingFlags.IgnoreCase);
 
-                if (method != null)
+                if (method != null && method.ReturnType == typeof(void))
                     method.Invoke(this, null);
             }
             catch (Exception ex)
             {
                 Game.Logger.Error($"GameObject (ID {ObjectId}): Tried to call \"On{triggerName}\" as triggered" +
-                    " but the call failed.", ex);
+                    " but the call failed (method does exist).", ex);
             }
         }
         #endregion

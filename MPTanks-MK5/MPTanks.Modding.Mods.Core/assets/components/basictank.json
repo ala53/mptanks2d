@@ -1,15 +1,19 @@
 ﻿{
   "animations": [
     {
-      "name": "death_explosion",
       "activatesOn": "destroy",
+      "spriteOptions": [
+        { "frame": "[ref]explosion1" },
+        { "frame": "[ref]explosion2" },
+        { "frame": "[ref]explosion3" }
+      ],
+      "loopCount": 1,
+      "name": "death_explosion",
       "position": { "x": 0, "y": 0 },
-      "tracksObject": true,
+      "rotation": 0,
       "size": { "x": 0, "y": 0 },
-      "assets": [
-        {
-        }
-      ]
+      "startPositionMs": 0,
+      "tracksObject": true
     }
   ],
   "componentGroups": [
@@ -69,6 +73,21 @@
       "rotation": 0,
       "rotationOrigin": { "x": 0.75, "y": 0.75 },
       "size": { "x": 0.65, "y": 0.65 }
+    }
+  ],
+  "lights": [
+    {
+      "frame": "",
+      "intensity": 1,
+      "activatesOn": "create",
+      "color": { "r": 255, "g": 255, "b": 255 },
+      "position": { "x": 0.25, "y": 4 },
+      "tracksComponent": true,
+      "tracksObject": true,
+      "componentToTrack": "turret",
+      "size": { "x": 0, "y": 0 },
+      "sheet": { "ref": "main_sheet" },
+      "teamsToDisplayFor": "tank.team"
     }
   ],
   "name": "Basic Tank",

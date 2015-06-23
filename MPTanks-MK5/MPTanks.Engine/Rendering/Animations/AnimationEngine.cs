@@ -9,21 +9,34 @@ namespace MPTanks.Engine.Rendering.Animations
 {
     public class AnimationEngine
     {
-        private List<Animation> animations = new List<Animation>();
-        public IList<Animation> Animations { get { return animations; } }
+        private HashSet<Animation> animations = new HashSet<Animation>();
+        public ISet<Animation> Animations { get { return animations; } }
 
         private bool _dirty = false;
-        public bool IsDirty { get { var dirty = _dirty; _dirty = false; return dirty; } }
+        /// <summary>
+        /// Gets whether the state has changed since the last time this flag was checked.
+        /// </summary>
+        public bool IsDirty
+        {
+            get
+            {
+                var dirty = _dirty;
+                _dirty = false;
+                return dirty;
+            }
+        }
 
         public void AddAnimation(Animation anim)
         {
             _dirty = true;
-            animations.Add(anim);
+            if (!animations.Contains(anim))
+                animations.Add(anim);
         }
         public void RemoveAnimation(Animation anim)
         {
             _dirty = true;
-            animations.Remove(anim);
+            if (animations.Contains(anim))
+                animations.Remove(anim);
         }
         /// <summary>
         /// For the renderer to use: Marks an animation as completed/finished and removes it.

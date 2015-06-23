@@ -26,13 +26,14 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSheetSpecifierJSON[] OtherAssets { get; set; }
         public GameObjectEmitterJSON[] Emitters { get; set; }
         public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
+        public GameObjectLightJSON[] Lights { get; set; }
+        public GameObjectAnimationJSON[] Animations { get; set; }
 
         public static GameObjectComponentsJSON Create(string data)
         {
             //Deserialize
             var me = JsonConvert.DeserializeObject<GameObjectComponentsJSON>(data);
             //Make sure there are no null references
-            if (me.Components == null) me.Components = new GameObjectComponentJSON[0];
             if (me.Sheet == null)
                 me.Sheet = new GameObjectSheetSpecifierJSON
                 {
@@ -40,99 +41,135 @@ namespace MPTanks.Engine.Serialization
                     File = "assets/empty.png",
                     FromOtherMod = true
                 };
+            if (me.Components == null) me.Components = new GameObjectComponentJSON[0];
             if (me.OtherAssets == null) me.OtherAssets = new GameObjectSheetSpecifierJSON[0];
             if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
             if (me.OtherSprites == null) me.OtherSprites = new GameObjectSpriteSpecifierJSON[0];
             if (me.ComponentGroups == null) me.ComponentGroups = new GameObjectComponentGroupJSON[0];
 
+            me.ProcessSprites();
+            me.ProcessComponents();
+            me.ProcessEmitters();
+            me.BuildGroups();
+
+            return me;
+        }
+
+        private void ProcessSprites()
+        {
+
             //Sprites
-            foreach (var sp in me.OtherSprites)
+            foreach (var sp in OtherSprites)
             {
+                ValidateKey(sp);
+
                 sp.IsAnimation = sp.IsAnimation || sp.Frame.StartsWith("[animation]");
                 if (sp.Frame.StartsWith("[animation]"))
                     sp.Frame = sp.Frame.Substring("[animation]".Length);
 
-                if (sp.Sheet == null) sp.Sheet = me.Sheet;
-
-                if (sp.Sheet.Reference != null)
-                    sp.Sheet = me.FindSheet(sp.Sheet.Reference);
+                HandleSheet(sp);
             }
+        }
+
+        private void ProcessComponents()
+        {
 
             //Go through the components
-            foreach (var cmp in me.Components)
+            foreach (var cmp in Components)
             {
-                if (cmp.Name == null)
-                    throw new Exception("Component missing name");
+                Validate(cmp);
                 //Handle unset colors
                 if (cmp.Mask == null)
                     cmp.Mask = Color.White;
                 //Handle scale being unset
                 if (cmp.Scale == null)
                     cmp.Scale = Vector2.One;
-                if (cmp.Frame != null && cmp.Frame.StartsWith("[ref]"))
-                {
-                    var sprite = me.FindSprite(cmp.Frame.Substring("[ref]".Length));
-                    if (sprite.IsAnimation)
-                        cmp.Frame = "[animation]" + sprite.Frame;
-                    else cmp.Frame = sprite.Frame;
-                    cmp.Sheet = sprite.Sheet;
-                }
 
-                //And again, null ref protection
-                if (cmp.Sheet == null)
-                    cmp.Sheet = me.Sheet;
-                if (cmp.Sheet.Reference != null)
-                    cmp.Sheet = me.FindSheet(cmp.Sheet.Reference);
+                ResolveSpriteReference(cmp.Frame, cmp);
 
+                HandleSheet(cmp);
             }
-            foreach (var cmp in me.Emitters)
+        }
+
+        private void ProcessEmitters()
+        {
+            foreach (var emitter in Emitters)
             {
                 //Handle namelessness
-                if (cmp.Name == null)
-                    throw new Exception("Emitter missing name");
+                Validate(emitter);
                 //Deal with null refs in the sub-sprites
-                foreach (var sprite in cmp.Sprites)
+                foreach (var sprite in emitter.Sprites)
                 {
-                    if (sprite.Sheet == null)
-                        sprite.Sheet = me.Sheet;
-                    if (sprite.Sheet.Reference != null)
-                        sprite.Sheet = me.FindSheet(sprite.Sheet.Reference);
-                    if (sprite.Frame != null && sprite.Frame.StartsWith("[ref]"))
-                    {
-                        var spr = me.FindSprite(sprite.Frame.Substring("[ref]".Length));
-                        if (spr.IsAnimation)
-                            sprite.Frame = "[animation]" + sprite.Frame;
-                        else sprite.Frame = sprite.Frame;
-                        sprite.Sheet = sprite.Sheet;
-                    }
+                    HandleSheet(sprite);
+                    sprite.Frame = ResolveSpriteReference(sprite.Frame, sprite);
                 }
 
-                //Handle activation triggers
-                if (cmp.ActivatesOn == null)
-                    cmp.ActivatesOn = "create";
-                //And actually deal with the activation triggers
-                if (cmp.ActivatesOn.StartsWith("t=") && cmp.ActivatesOn.Length > 2)
+                HandleTriggers(emitter);
+            }
+        }
+
+        private void ProcessAnimations()
+        {
+            foreach (var anim in Animations)
+            {
+                Validate(anim);
+                HandleTriggers(anim);
+
+                foreach (var cmp in anim.SpriteOptions)
                 {
-                    float parse = 0;
-                    if (float.TryParse(cmp.ActivatesOn.Substring(2), out parse))
-                    {
-                        cmp.SpawnAtTime = true;
-                        cmp.TimeMsToSpawnAt = parse;
-                    }
-                }
-                else
-                {
-                    cmp.SpawnIsTriggered = true;
-                    cmp.TriggerName = cmp.ActivatesOn.ToLower();
+                    HandleSheet(cmp);
+                    cmp.Frame = ResolveSpriteReference(cmp.Frame, cmp);
                 }
             }
+        }
+
+        private void ProcessLights()
+        {
+            foreach (var light in Lights)
+            {
+                Validate(light);
+                HandleSheet(light);
+                HandleTriggers(light);
+
+                //resolve the component
+                if (light.TracksComponent && light.ComponentToTrack != null)
+                    foreach (var cmp in Components)
+                        if (cmp.Name.Equals(light.ComponentToTrack, StringComparison.InvariantCultureIgnoreCase))
+                            light.Component = cmp;
+
+                //And process team ids
+                if (light.TeamsToDisplayFor == null)
+                    light.ShowForAllTeams = true;
+                else if (light.TeamsToDisplayFor.Equals("all", StringComparison.InvariantCultureIgnoreCase))
+                    light.ShowForAllTeams = true;
+                else if (light.TeamsToDisplayFor.Equals("tank.team", StringComparison.InvariantCultureIgnoreCase))
+                    light.ShowForTankTeamOnly = true;
+                else
+                {
+                    string[] split = light.TeamsToDisplayFor.Split(',');
+                    var teams = new List<short>();
+                    foreach (var team in split)
+                    {
+                        short parsed;
+                        if (!short.TryParse(team, out parsed))
+                            throw new Exception($"{light.TeamsToDisplayFor} contains an invalid item: {team}");
+
+                        teams.Add(parsed);
+                    }
+                    light.TeamIds = teams.ToArray();
+                }
+            }
+        }
+
+        private void BuildGroups()
+        {
 
             //And finally, resolve component groups
-            foreach (var grp in me.ComponentGroups)
+            foreach (var grp in ComponentGroups)
             {
                 var cmps = new List<GameObjectComponentJSON>();
                 foreach (var cmp in grp.ComponentStrings)
-                    foreach (var component in me.Components)
+                    foreach (var component in Components)
                     {
                         if (component.Name.Equals(cmp, StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -141,8 +178,50 @@ namespace MPTanks.Engine.Serialization
                         }
                     }
             }
+        }
 
-            return me;
+        private void Validate(INameValidatable validatable)
+        {
+            if (validatable.Name != null && validatable.Name.Length > 0)
+                return;
+            throw new Exception("Name cannot be null");
+        }
+
+        private void HandleSheet(IHasSheet obj)
+        {
+            if (obj.Sheet == null)
+                obj.Sheet = Sheet;
+            if (obj.Sheet.Reference != null)
+                obj.Sheet = FindSheet(obj.Sheet.Reference);
+        }
+
+        private void HandleTriggers(ITriggerable obj)
+        {
+            //Handle activation triggers
+            if (obj.ActivatesOn == null)
+                obj.ActivatesOn = "create";
+            //And actually deal with the activation triggers
+            if (obj.ActivatesOn.StartsWith("t=") && obj.ActivatesOn.Length > 2)
+            {
+                float parse = 0;
+                if (float.TryParse(obj.ActivatesOn.Substring(2), out parse))
+                {
+                    obj.ActivatesAtTime = true;
+                    obj.TimeMsToSpawnAt = parse;
+                }
+            }
+            else
+            {
+                obj.ActivationIsTriggered = true;
+                obj.TriggerName = obj.ActivatesOn.ToLower();
+            }
+        }
+
+        private void ValidateKey(IRequiresKey obj)
+        {
+            if (obj.Key != null && obj.Key.Length > 0)
+                return;
+            throw new Exception("Missing key!");
         }
 
         private GameObjectSheetSpecifierJSON FindSheet(string name)
@@ -177,6 +256,23 @@ namespace MPTanks.Engine.Serialization
             return Sheet;
         }
 
+        private string ResolveSpriteReference(string reference, IHasSheet obj)
+        {
+            ResolveSpriteReference(ref reference, obj);
+            return reference;
+        }
+        private void ResolveSpriteReference(ref string reference, IHasSheet obj)
+        {
+            if (reference == null || !reference.StartsWith("[ref]")) return;
+
+            var spr = FindSprite(reference.Substring("[ref]".Length));
+            if (spr.IsAnimation)
+                reference = "[animation]" + spr.Frame;
+            else reference = spr.Frame;
+
+            obj.Sheet = spr.Sheet;
+        }
+
         private GameObjectSpriteSpecifierJSON FindSprite(string name)
         {
             foreach (var sprite in OtherSprites)
@@ -193,7 +289,7 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
-    class GameObjectComponentGroupJSON
+    class GameObjectComponentGroupJSON : IRequiresKey
     {
         public string Key { get; set; }
         [JsonProperty("components")]
@@ -202,7 +298,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectComponentJSON[] Components { get; set; }
     }
 
-    class GameObjectComponentJSON
+    class GameObjectComponentJSON : INameValidatable, IHasSheet
     {
         public int DrawLayer { get; set; }
         public JSONColor Mask { get; set; }
@@ -228,7 +324,7 @@ namespace MPTanks.Engine.Serialization
         public string ModName { get; set; }
     }
 
-    class GameObjectSpriteSpecifierJSON
+    class GameObjectSpriteSpecifierJSON : IHasSheet, IRequiresKey
     {
         public string Frame { get; set; }
         public string Key { get; set; }
@@ -236,25 +332,21 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
     }
 
-    class GameObjectEmitterJSON
+    class GameObjectEmitterJSON : ITriggerable, INameValidatable
     {
         public string Name { get; set; }
-        /// <summary>
-        /// Can be "create", "destroy", "destroy_ended" "t=[milliseconds]"
-        /// </summary>
-        public string ActivatesOn { get; set; }
         public bool KeepAliveAfterDeath { get; set; }
         public bool ColorChangedByObjectMask { get; set; }
 
         public EmissionAreaJSON EmissionArea { get; set; }
 
-        [JsonIgnore]
-        public bool SpawnIsTriggered { get; set; }
-        [JsonIgnore]
+        /// <summary>
+        /// Can be "create", "destroy", "destroy_ended" "t=[milliseconds]"
+        /// </summary>
+        public string ActivatesOn { get; set; }
+        public bool ActivationIsTriggered { get; set; }
         public string TriggerName { get; set; }
-        [JsonIgnore]
-        public bool SpawnAtTime { get; set; }
-        [JsonIgnore]
+        public bool ActivatesAtTime { get; set; }
         public float TimeMsToSpawnAt { get; set; }
 
         public float Lifespan { get; set; }
@@ -288,7 +380,7 @@ namespace MPTanks.Engine.Serialization
         public SpriteJSON[] Sprites { get; set; }
         public bool VelocityAndAccelerationTrackRotation { get; set; }
         public bool VelocityRelativeToObject { get; set; }
-        public class SpriteJSON
+        public class SpriteJSON : IHasSheet
         {
             public string Frame { get; set; }
             public GameObjectSheetSpecifierJSON Sheet { get; set; }
@@ -301,5 +393,81 @@ namespace MPTanks.Engine.Serialization
             public float Y { get; set; }
             public bool TracksObject { get; set; }
         }
+    }
+
+    class GameObjectLightJSON : ITriggerable, INameValidatable, IHasSheet
+    {
+        public string Name { get; set; }
+        public string Frame { get; set; }
+        public float Intensity { get; set; }
+        public JSONColor Color { get; set; }
+        public JSONVector Position { get; set; }
+        public bool TracksObject { get; set; }
+        public bool TracksComponent { get; set; }
+        [JsonIgnore]
+        public GameObjectComponentJSON Component { get; set; }
+        public string ComponentToTrack { get; set; }
+        public JSONVector Size { get; set; }
+        public GameObjectSheetSpecifierJSON Sheet { get; set; }
+        public string ActivatesOn { get; set; }
+        public bool ActivatesAtTime { get; set; }
+        public float TimeMsToSpawnAt { get; set; }
+        public bool ActivationIsTriggered { get; set; }
+        public string TriggerName { get; set; }
+        /// <summary>
+        /// can be tank.team, comma separated list of 1,2,3,4,5, or all
+        /// </summary>
+        public string TeamsToDisplayFor { get; set; }
+        [JsonIgnore]
+        public short[] TeamIds { get; set; }
+        [JsonIgnore]
+        public bool ShowForTankTeamOnly { get; set; }
+        [JsonIgnore]
+        public bool ShowForAllTeams { get; set; }
+    }
+
+    class GameObjectAnimationJSON : ITriggerable, INameValidatable
+    {
+        public string ActivatesOn { get; set; }
+        public bool ActivatesAtTime { get; set; }
+        public float TimeMsToSpawnAt { get; set; }
+        public bool ActivationIsTriggered { get; set; }
+        public string TriggerName { get; set; }
+        public GameObjectSpriteSpecifierJSON[] SpriteOptions { get; set; }
+        public int LoopCount { get; set; }
+        public string Name { get; set; }
+        public JSONVector Position { get; set; }
+        public bool TracksObject { get; set; }
+        public float Rotation { get; set; }
+        public JSONVector Size { get; set; }
+        public float StartPositionMs { get; set; }
+    }
+
+    interface ITriggerable
+    {
+        string ActivatesOn { get; set; }
+        [JsonIgnore]
+        bool ActivatesAtTime { get; set; }
+        [JsonIgnore]
+        bool ActivationIsTriggered { get; set; }
+        [JsonIgnore]
+        float TimeMsToSpawnAt { get; set; }
+        [JsonIgnore]
+        string TriggerName { get; set; }
+    }
+
+    interface INameValidatable
+    {
+        string Name { get; set; }
+    }
+
+    interface IHasSheet
+    {
+        GameObjectSheetSpecifierJSON Sheet { get; set; }
+    }
+
+    interface IRequiresKey
+    {
+        string Key { get; set; }
     }
 }
