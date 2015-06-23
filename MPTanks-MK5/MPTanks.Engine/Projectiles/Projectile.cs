@@ -33,6 +33,11 @@ namespace MPTanks.Engine.Projectiles
             Kill(this);
         }
 
+        public virtual bool CanDamage(Tanks.Tank tank, bool friendlyFireEnabled)
+        {
+            return true;
+        }
+
         #region Static initialization
         private static Dictionary<string, Type> _prjTypes =
             new Dictionary<string, Type>();

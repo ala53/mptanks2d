@@ -43,7 +43,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 MaxActiveProjectileCount = 5,
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
-                ProjectileVelocity = new Vector2(60),
+                ProjectileVelocity = new Vector2(0, -60),
                 ProjectileReflectionName = "BasicTankMPMainProjectile",
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
@@ -59,7 +59,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 MaxActiveProjectileCount = 5,
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
-                ProjectileVelocity = new Vector2(60),
+                ProjectileVelocity = new Vector2(0, -60),
                 ProjectileReflectionName = "BasicTankMPMainProjectile",
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
@@ -75,7 +75,7 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 MaxActiveProjectileCount = 5,
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
-                ProjectileVelocity = new Vector2(60),
+                ProjectileVelocity = new Vector2(0, -60),
                 ProjectileReflectionName = "BasicTankMPMainProjectile",
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
@@ -95,10 +95,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
             if (Alive && Authoritative)
             {
-                if (InputState.FirePressed && InputState.WeaponNumber == 0)
-                    FirePrimary();
-                if (InputState.FirePressed && InputState.WeaponNumber == 1)
-                    FireSecondary();
             }
             base.UpdateInternal(time);
         }
@@ -184,12 +180,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             else if (state == "weapon 3 fired")
                 tertiaryTimer.Reset();
         }
-        
-        protected override void SetFullStateInternal(byte[] state)
-        {
-            primaryTimer.ElapsedMilliseconds = state.GetValue<float>(0);
-            secondaryTimer.ElapsedMilliseconds = state.GetValue<float>(4);
-            tertiaryTimer.ElapsedMilliseconds = state.GetValue<float>(8);
-        }
+
     }
 }

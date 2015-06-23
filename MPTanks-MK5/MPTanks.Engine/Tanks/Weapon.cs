@@ -150,7 +150,7 @@ namespace MPTanks.Engine.Tanks
         public virtual void Fire(Vector2? spawnPosition = null, Vector2? velocity = null)
         {
             if (_isNullWeapon || _isWaitingForTarget || !Recharged ||
-                MaxActiveProjectileCount >= Projectiles.Count)
+                MaxActiveProjectileCount <= Projectiles.Count)
                 return;
 
             if (TargetingType == WeaponTargetingType.Targeted)
@@ -182,9 +182,11 @@ namespace MPTanks.Engine.Tanks
             cos = (float)Math.Cos(exactRotation);
             sin = (float)Math.Sin(exactRotation);
 
+            var centered = ProjectileOffset - Owner.Size / 2;
+
             var exactPosition = spawnPosition ?? Owner.Position +
-                new Vector2(ProjectileOffset.X * cos + ProjectileOffset.Y * -sin,
-                ProjectileOffset.X * -sin + ProjectileOffset.Y * cos);
+                new Vector2(centered.X * cos + centered.Y * -sin,
+                centered.X * -sin + centered.Y * cos);
 
             if (!TransformPositionAndVelocityByRotation)
                 exactPosition = spawnPosition ?? Owner.Position + ProjectileOffset;

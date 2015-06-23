@@ -56,8 +56,13 @@ namespace MPTanks.Engine.Tanks
             {
                 var o = (Projectiles.Projectile)other;
 
-                if (!IsDamageAllowed(o.Owner))
+                if (!IsDamageAllowed(o.Owner) || !o.CanDamage(this, Game.FriendlyFireEnabled))
                     return true;
+
+                //In case of friendly firing the spawning tank
+                //because it spawned too close, ignore the collision to give it a chance.
+                if (o.Owner == this && o.TimeAliveMs < 500)
+                    return false;
 
                 Health -= o.DamageAmount;
 
