@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Engine.Helpers;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 
 namespace MPTanks.Engine.Tanks
 {
@@ -66,7 +68,7 @@ namespace MPTanks.Engine.Tanks
         /// <summary>
         /// The maximum number of projectiles allowed to be spawned at any one point.
         /// </summary>
-        public int MaxActiveProjectileCount { get; set; } = int.MaxValue;
+        public ushort MaxActiveProjectileCount { get; set; } = ushort.MaxValue; //no reasonable max (lag sets in before we hit this)
         /// <summary>
         /// Whether the computed rotation for the projectile is relative to the rotation of the tank object. 
         /// </summary>
@@ -117,10 +119,13 @@ namespace MPTanks.Engine.Tanks
         /// </summary>
         public bool Recharged { get { return CurrentRechargePercentage >= 0.999; } }
         /// <summary>
-        /// 
+        /// Called when a targeted weapon needs the targeting UI shown
         /// </summary>
         public event EventHandler<TargetingUIArgs> OnShowTargetingUIRequested = delegate { };
         private TargetingUIArgs _targetingUIInstance = new TargetingUIArgs();
+
+        public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
+
         public class TargetingUIArgs : EventArgs
         {
             public Weapon Weapon { get; set; }
@@ -144,6 +149,58 @@ namespace MPTanks.Engine.Tanks
         private Weapon()
         {
             _isNullWeapon = true;
+        }
+
+        public byte[] GetFullState()
+        {
+            if (_isNullWeapon)
+                return new[] { SerializationHelpers.FalseByte };
+            else
+                return SerializationHelpers.AllocateArray(true,
+                      _isNullWeapon,
+                      (byte)TargetingType,
+                      MaxDistance,
+                      ProjectileReflectionName,
+                      new HalfVector2(ProjectileVelocity),
+                      new HalfVector2(ProjectileOffset),
+                      (Half)ProjectileRotation,
+                      (Half)ProjectileRotationVelocity,
+                      MaxActiveProjectileCount,
+                      FireRotationIsRelativeToTankRotation,
+                      FireRotationIsRelativeToTankLookDirection,
+                      (Half)AddedRotation,
+                      TransformPositionAndVelocityByRotation,
+                      WeaponRechargeTimeMs,
+                      WeaponName,
+                      TimeRechargedMs
+                      );
+        }
+
+        public void SetFullState(byte[] state)
+        {
+            int offset = 0;
+            var isNull = state.GetBool(offset); offset++;
+            if (isNull)
+            {
+                _isNullWeapon = true;
+                return;
+            }
+            else _isNullWeapon = false;
+            TargetingType = (WeaponTargetingType)state[offset]; offset++;
+            MaxDistance = state.GetFloat(offset); offset += 4;
+            ProjectileReflectionName = state.GetString(offset); offset += state.GetUShort(offset); offset += 2;
+            ProjectileVelocity = state.GetHalfVector(offset).ToVector2(); offset += 4;
+            ProjectileOffset = state.GetHalfVector(offset).ToVector2(); offset += 4;
+            ProjectileRotation = state.GetHalf(offset); offset += 2;
+            ProjectileRotationVelocity = state.GetHalf(offset); offset += 2;
+            MaxActiveProjectileCount = state.GetUShort(offset); offset += 2;
+            FireRotationIsRelativeToTankRotation = state.GetBool(offset); offset++;
+            FireRotationIsRelativeToTankLookDirection = state.GetBool(offset); offset++;
+            AddedRotation = state.GetHalf(offset); offset += 2;
+            TransformPositionAndVelocityByRotation = state.GetBool(offset); offset++;
+            WeaponRechargeTimeMs = state.GetFloat(offset); offset += 4;
+            WeaponName = state.GetString(offset); offset += state.GetUShort(offset); offset += 2;
+            TimeRechargedMs = state.GetFloat(offset); offset += 4;
         }
 
         private bool _isWaitingForTarget = false;
