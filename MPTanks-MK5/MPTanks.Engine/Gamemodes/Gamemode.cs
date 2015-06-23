@@ -17,7 +17,7 @@ namespace MPTanks.Engine.Gamemodes
         public GameCore Game { get; private set; }
         public virtual bool GameEnded { get; protected set; }
         public virtual Team WinningTeam { get; protected set; } = Team.Null;
-        public virtual Team[] Teams { get; protected set; }
+        public virtual Team[] Teams { get; protected set; } = new Team[0];
         public bool AllowRespawn { get; protected set; }
         public float RespawnTimeMs { get; protected set; }
 

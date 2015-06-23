@@ -46,10 +46,14 @@ namespace MPTanks.Engine.Serialization
             if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
             if (me.OtherSprites == null) me.OtherSprites = new GameObjectSpriteSpecifierJSON[0];
             if (me.ComponentGroups == null) me.ComponentGroups = new GameObjectComponentGroupJSON[0];
+            if (me.Animations == null) me.Animations = new GameObjectAnimationJSON[0];
+            if (me.Lights == null) me.Lights = new GameObjectLightJSON[0];
 
             me.ProcessSprites();
             me.ProcessComponents();
             me.ProcessEmitters();
+            me.ProcessAnimations();
+            me.ProcessLights();
             me.BuildGroups();
 
             return me;
@@ -252,6 +256,19 @@ namespace MPTanks.Engine.Serialization
                     if (sp.Sheet.Reference == null)
                         return sp.Sheet;
                     else return FindSheet(sp.Sheet.Reference);
+            foreach (var anim in Animations)
+                foreach (var sp in anim.SpriteOptions)
+                    if (sp.Sheet != null && sp.Sheet.Key != null &&
+                        sp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                        if (sp.Sheet.Reference == null)
+                            return sp.Sheet;
+                        else return FindSheet(sp.Sheet.Reference);
+            foreach (var light in Lights)
+                if (light.Sheet != null && light.Sheet.Key != null &&
+                    light.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    if (light.Sheet.Reference == null)
+                        return light.Sheet;
+                    else return FindSheet(light.Sheet.Reference);
 
             return Sheet;
         }

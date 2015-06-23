@@ -77,9 +77,10 @@
   ],
   "lights": [
     {
+      "name": "turret_light",
       "frame": "",
       "intensity": 1,
-      "activatesOn": "create",
+      "activatesOn": "NULL_DO_NOT_USE",
       "color": { "r": 255, "g": 255, "b": 255 },
       "position": { "x": 0.25, "y": 4 },
       "tracksComponent": true,
