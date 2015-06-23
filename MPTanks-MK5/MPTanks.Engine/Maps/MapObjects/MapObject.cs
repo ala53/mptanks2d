@@ -27,11 +27,17 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         public static MapObject ReflectiveInitialize(string objName, GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0, byte[] state = null)
         {
+#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
+            var totalMem = GC.GetTotalMemory(true);
+#endif
             if (!_objTypes.ContainsKey(objName.ToLower())) throw new Exception("Map object type does not exist.");
 
             var inst = (MapObject)Activator.CreateInstance(_objTypes[objName.ToLower()], game, authorized, position, rotation);
             if (state != null) inst.ReceiveStateData(state);
-
+#if DBG_WATCH_GAMEOBJECT_SIZES
+            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+            game.Logger.Trace($"Allocating (Map)Object {objName}, size is: {memUsageBytes.ToString("N2")} KiB");
+#endif
             return inst;
         }
 

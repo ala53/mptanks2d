@@ -50,22 +50,24 @@ namespace MPTanks.Engine.Projectiles
         }
 
         public static T ReflectiveInitialize<T>(string prjName, Tanks.Tank owner, GameCore game, bool authorized,
-            Vector2 position = default(Vector2), float rotation = 0, byte[] state = null) where T : Projectile
+            byte[] state = null) where T : Projectile
         {
-            return (T)ReflectiveInitialize(prjName, owner, game, authorized, position, rotation, state);
+            return (T)ReflectiveInitialize(prjName, game, owner, authorized, state);
         }
-        public static Projectile ReflectiveInitialize(string prjName, byte[] state = null, params object[] args)
+        public static Projectile ReflectiveInitialize(string prjName, GameCore game, Tanks.Tank tank, bool authorized, byte[] state = null)
         {
+#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
+            var totalMem = GC.GetTotalMemory(true);
+#endif
             if (!_prjTypes.ContainsKey(prjName.ToLower())) throw new Exception("Projectile type does not exist.");
 
-            var inst = (Projectile)Activator.CreateInstance(_prjTypes[prjName.ToLower()], args);
+            var inst = (Projectile)Activator.CreateInstance(_prjTypes[prjName.ToLower()], tank, game, authorized);
             if (state != null) inst.ReceiveStateData(state);
-
+#if DBG_WATCH_GAMEOBJECT_SIZES
+            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+            game.Logger.Trace($"Allocating (Projectile)Object {prjName}, size is: {memUsageBytes.ToString("N2")} KiB");
+#endif
             return inst;
-        }
-        public static T ReflectiveInitialize<T>(string prjName, byte[] state = null, params object[] args) where T : Projectile
-        {
-            return (T)ReflectiveInitialize(prjName, state, args);
         }
 
         private static void RegisterType<T>() where T : Projectile

@@ -80,7 +80,15 @@ namespace MPTanks.Engine
 
         public static GameObject ReflectiveInitialize(string reflectionName, GameCore game, bool authorized = false)
         {
-            return (GameObject)Activator.CreateInstance(_types[reflectionName], game, authorized);
+#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
+            var totalMem = GC.GetTotalMemory(true);
+#endif
+            var obj = Activator.CreateInstance(_types[reflectionName], game, authorized);
+#if DBG_WATCH_GAMEOBJECT_SIZES
+            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+            game.Logger.Trace($"Allocating Generic (Game)Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
+#endif
+            return (GameObject)obj;
         }
     }
 }
