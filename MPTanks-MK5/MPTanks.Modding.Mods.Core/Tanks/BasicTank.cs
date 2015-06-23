@@ -84,9 +84,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
                 WeaponRechargeTimeMs = 3000
             };
         }
-        private Timer primaryTimer;
-        private Timer secondaryTimer;
-        private Timer tertiaryTimer;
 
         protected override void UpdateInternal(GameTime time)
         {
@@ -97,59 +94,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
             {
             }
             base.UpdateInternal(time);
-        }
-
-        private void FirePrimary()
-        {
-            if (!primaryTimer.Completed)
-                return;
-            const float velocity = 60f;
-            var rotation = InputState.LookDirection;
-            //Spawn a projectile
-            SpawnProjectile("BasicTankMPMainProjectile",
-                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
-                velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
-
-            //and reload
-            primaryTimer.Reset();
-
-            RaiseStateChangeEvent("weapon 1 fired");
-        }
-        private void FireSecondary()
-        {
-            if (!secondaryTimer.Completed)
-                return;
-            const float velocity = 60f;
-            var rotation = InputState.LookDirection;
-            //Spawn a projectile
-            SpawnProjectile("BasicTankMPMainProjectile",
-                TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
-                velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
-
-            //reload
-            secondaryTimer.Reset();
-
-            RaiseStateChangeEvent("weapon 2 fired");
-        }
-
-        private void FireTertiary()
-        {
-            if (!tertiaryTimer.Completed)
-                return;
-            if (Game.Authoritative) // If we are able to be create game objects AKA we're authoritative, make the projectile
-            {
-                const float velocity = 60f;
-                var rotation = InputState.LookDirection;
-                //Spawn a projectile
-                SpawnProjectile("BasicTankMPMainProjectile",
-                    TransformPoint(new Vector2(1.5f, -1.1f), rotation, true), rotation,
-                    velocity * new Vector2((float)Math.Sin(rotation), -(float)Math.Cos(rotation)));
-            }
-
-            //and reload
-            tertiaryTimer.Reset();
-
-            RaiseStateChangeEvent("weapon 3 fired");
         }
 
         protected override bool DestroyInternal(GameObject destructor = null)
@@ -173,12 +117,6 @@ namespace MPTanks.Modding.Mods.Core.Tanks
 
         protected override void ReceiveStateDataInternal(string state)
         {
-            if (state == "weapon 1 fired")
-                primaryTimer.Reset();
-            else if (state == "weapon 2 fired")
-                secondaryTimer.Reset();
-            else if (state == "weapon 3 fired")
-                tertiaryTimer.Reset();
         }
 
     }
