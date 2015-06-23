@@ -144,9 +144,7 @@ namespace MPTanks.Engine.Gamemodes
         protected bool RaiseStateChangeEvent(string state)
         {
             var count = Encoding.UTF8.GetByteCount(state);
-            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.StringSerializationBytes,
-                state));
+            return RaiseStateChangeEvent(SerializationHelpers.Serialize(state));
         }
 
         /// <summary>
@@ -155,79 +153,31 @@ namespace MPTanks.Engine.Gamemodes
         /// <param name="obj"></param>
         protected bool RaiseStateChangeEvent(object obj)
         {
-            var serialized = SerializeStateChangeObject(obj);
-            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.JSONSerializationBytes,
-                serialized));
-        }
-
-        private JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
-            TypeNameHandling = TypeNameHandling.All
-        };
-        protected string SerializeStateChangeObject(object obj)
-        {
-            return JsonConvert.SerializeObject(obj, Formatting.None, _serializerSettingsForStateChange);
+            return RaiseStateChangeEvent(SerializationHelpers.Serialize(obj));
         }
 
         public void ReceiveStateData(byte[] stateData)
         {
             if (GlobalSettings.Debug)
-                ProcessReceiveStateData(stateData);
+                SerializationHelpers.ResolveDeserialize(stateData,
+                     ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
             else
-                try { ProcessReceiveStateData(stateData); }
+                try
+                {
+                    SerializationHelpers.ResolveDeserialize(stateData,
+                         ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"Gamemode state parsing failed! Gamemode name: {ReflectionName}", ex);
                     ReceiveStateDataInternal(stateData);
                 }
         }
+        protected virtual void ReceiveStateDataInternal(byte[] stateData) { }
 
-        private void ProcessReceiveStateData(byte[] stateData)
-        {
-            if (stateData.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
-            {
-                //Try to deserialize
-                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerializationBytes.Length));
-                ReceiveStateDataInternal(obj);
-            }
-            else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))
-            {
-                //Try to deserialize
-                var obj = stateData.GetString(SerializationHelpers.StringSerializationBytes.Length);
-                ReceiveStateDataInternal(obj);
-            }
-            else
-            {
-                ReceiveStateDataInternal(stateData);
-            }
-        }
+        protected virtual void ReceiveStateDataInternal(dynamic obj) { }
 
-        protected object DeserializeStateChangeObject(string obj)
-        {
-            return JsonConvert.DeserializeObject(obj);
-        }
-        protected T DeserializeStateChangeObject<T>(string obj)
-        {
-            return JsonConvert.DeserializeObject<T>(obj);
-        }
-
-        protected virtual void ReceiveStateDataInternal(byte[] stateData)
-        {
-
-        }
-
-        protected virtual void ReceiveStateDataInternal(dynamic obj)
-        {
-
-        }
-
-        protected virtual void ReceiveStateDataInternal(string state)
-        {
-
-        }
+        protected virtual void ReceiveStateDataInternal(string state) { }
         #endregion
 
         public byte[] GetFullState()
@@ -252,28 +202,7 @@ namespace MPTanks.Engine.Gamemodes
             // 2 byte private size
             // variable private data
 
-            var privateStateObject = GetPrivateStateData();
-            byte[] privateStateBytes;
-
-            //Figure out what the final output should be (encoded object, string, or plain byte array)
-            if (privateStateObject.GetType() == typeof(byte[]))
-                privateStateBytes = (byte[])privateStateObject;
-            else if (privateStateObject.GetType() == typeof(string))
-            {
-                privateStateBytes = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.StringSerializationBytes,
-                    privateStateObject
-                    );
-            }
-            else
-            {
-                var serialized = SerializeStateChangeObject(privateStateObject);
-
-                privateStateBytes = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.JSONSerializationBytes,
-                    serialized
-                    );
-            }
+            byte[] privateStateBytes = SerializationHelpers.Serialize(GetPrivateStateData());
 
             //then encode the header
 
@@ -319,25 +248,19 @@ namespace MPTanks.Engine.Gamemodes
             var privateState = stateData.GetByteArray(offset);
 
             if (GlobalSettings.Debug)
-                ProcessSetFullStatePrivateData(privateState);
+                SerializationHelpers.ResolveDeserialize(stateData,
+                    SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
             else
-                try { ProcessSetFullStatePrivateData(privateState); }
+                try
+                {
+                    SerializationHelpers.ResolveDeserialize(stateData,
+                        SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"Gamemode full state parsing failed! Gamemode name: {ReflectionName}", ex);
                     SetFullStateInternal(privateState);
                 }
-        }
-
-
-        private void ProcessSetFullStatePrivateData(byte[] privateState)
-        {
-            if (privateState.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
-                SetFullStateInternal(DeserializeStateChangeObject(
-                    privateState.GetString(SerializationHelpers.JSONSerializationBytes.Length)));
-            else if (privateState.SequenceBegins(SerializationHelpers.StringSerializationBytes))
-                SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
-            else SetFullStateInternal(privateState);
         }
 
         private void SetFullStateHeader(byte[] header, ref int offset)
@@ -387,20 +310,13 @@ namespace MPTanks.Engine.Gamemodes
             };
         }
 
-        protected virtual void SetFullStateInternal(byte[] stateData)
-        {
+        protected virtual void SetFullStateInternal(byte[] stateData) { }
 
-        }
+        protected virtual void SetFullStateInternal(string state) { }
 
-        protected virtual void SetFullStateInternal(string state)
-        {
+        protected virtual void SetFullStateInternal(dynamic state) { }
 
-        }
-
-        protected virtual void SetFullStateInternal(dynamic state)
-        {
-
-        }
+        public virtual void DeferredSetFullState() { }
 
         #region Static initialization
         private static Dictionary<string, Type> _gamemodeTypes =

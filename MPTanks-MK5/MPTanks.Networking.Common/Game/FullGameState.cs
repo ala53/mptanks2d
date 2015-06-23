@@ -89,6 +89,10 @@ namespace MPTanks.Networking.Common.Game
                 if (player.PlayerObject.Tank != null)
                     player.PlayerObject.Tank.Input(player.Input);
 
+            game.Gamemode.DeferredSetFullState();
+            foreach (var obj in game.GameObjects)
+                obj.DeferredSetFullState();
+
             game.UnsafeTickGameWorld(latency);
 
             return game;

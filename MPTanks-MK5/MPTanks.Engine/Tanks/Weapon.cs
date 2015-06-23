@@ -172,10 +172,12 @@ namespace MPTanks.Engine.Tanks
                       TransformPositionAndVelocityByRotation,
                       WeaponRechargeTimeMs,
                       WeaponName,
-                      TimeRechargedMs
+                      TimeRechargedMs,
+                      SerializationHelpers.AllocateArray(true, _projectiles.Select(p => (object)p.ObjectId).ToArray())
                       );
         }
 
+        private byte[] _projectileArray;
         public void SetFullState(byte[] state)
         {
             int offset = 0;
@@ -201,6 +203,15 @@ namespace MPTanks.Engine.Tanks
             WeaponRechargeTimeMs = state.GetFloat(offset); offset += 4;
             WeaponName = state.GetString(offset); offset += state.GetUShort(offset); offset += 2;
             TimeRechargedMs = state.GetFloat(offset); offset += 4;
+
+            _projectileArray = state.GetByteArray(offset); offset += state.GetUShort(offset); offset += 2;
+        }
+
+        public void DeferredSetFullState()
+        {
+            _projectiles.Clear();
+            for (var i = 0; i < _projectileArray.Length; i += 2)
+                _projectiles.Add((Projectiles.Projectile)Game.GameObjectsById[_projectileArray.GetUShort(i)]);
         }
 
         private bool _isWaitingForTarget = false;

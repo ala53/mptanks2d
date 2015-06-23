@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -429,6 +430,56 @@ namespace MPTanks.Engine.Helpers
                 }
             }
             return arr;
+        }
+
+        public static byte[] Serialize(byte[] obj) => obj;
+
+        public static byte[] Serialize(string obj)
+        {
+            return AllocateArray(true,
+                StringSerializationBytes,
+                obj
+                );
+        }
+
+        private static JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
+            TypeNameHandling = TypeNameHandling.All
+        };
+        public static byte[] Serialize(object obj)
+        {
+            if(obj.GetType() == typeof(byte[]))
+                return (byte[])obj;
+            if (obj.GetType() == typeof(string))
+                return Serialize((string)obj);
+
+            return AllocateArray(
+                true, 
+                JSONSerializationBytes,
+                JsonConvert.SerializeObject(obj, Formatting.None, _serializerSettingsForStateChange));
+        }
+
+
+        public static void ResolveDeserialize(byte[] arr, Action<byte[]> arrAction, Action<string> strAction, Action<dynamic> dynamicAction)
+        {
+            if (arr.SequenceBegins(JSONSerializationBytes))
+            {
+                //Try to deserialize
+                var obj = JsonConvert.DeserializeObject(arr.GetString(JSONSerializationBytes.Length));
+                dynamicAction(obj);
+            }
+            else if (arr.SequenceBegins(StringSerializationBytes))
+            {
+                //Try to deserialize
+                var obj = arr.GetString(StringSerializationBytes.Length);
+                strAction(obj);
+            }
+            else
+            {
+                arrAction(arr);
+            }
         }
 
         public static byte[] MergeArrays(byte[] arr1, byte[] arr2, bool addLengthHeader = false)

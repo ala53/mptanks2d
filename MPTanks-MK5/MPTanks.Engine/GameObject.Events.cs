@@ -40,8 +40,7 @@ namespace MPTanks.Engine
 
         protected bool RaiseStateChangeEvent(string state)
         {
-            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.StringSerializationBytes, state));
+            return RaiseStateChangeEvent(SerializationHelpers.Serialize(state));
         }
         /// <summary>
         /// Serializes the object to JSON before sending it.
@@ -49,28 +48,20 @@ namespace MPTanks.Engine
         /// <param name="obj"></param>
         protected bool RaiseStateChangeEvent(object obj)
         {
-            var serialized = SerializeStateChangeObject(obj);
-            return RaiseStateChangeEvent(SerializationHelpers.AllocateArray(true,
-                SerializationHelpers.JSONSerializationBytes, serialized));
-        }
-
-        private JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
-            TypeNameHandling = TypeNameHandling.All
-        };
-        protected virtual string SerializeStateChangeObject(object obj)
-        {
-            return JsonConvert.SerializeObject(obj, Formatting.None, _serializerSettingsForStateChange);
+            return RaiseStateChangeEvent(SerializationHelpers.Serialize(obj));
         }
 
         public void ReceiveStateData(byte[] stateData)
         {
             if (GlobalSettings.Debug)
-                ProcessReceiveStateData(stateData);
+                SerializationHelpers.ResolveDeserialize(stateData,
+                    ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
             else
-                try { ProcessReceiveStateData(stateData); }
+                try
+                {
+                    SerializationHelpers.ResolveDeserialize(stateData,
+                        ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"GameObject partial state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
@@ -78,49 +69,11 @@ namespace MPTanks.Engine
                 }
         }
 
-        private void ProcessReceiveStateData(byte[] stateData)
-        {
-            if (stateData.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
-            {
-                //Try to deserialize
-                var obj = DeserializeStateChangeObject(stateData.GetString(SerializationHelpers.JSONSerializationBytes.Length));
-                ReceiveStateDataInternal(obj);
-            }
-            else if (stateData.SequenceBegins(SerializationHelpers.StringSerializationBytes))
-            {
-                //Try to deserialize
-                var obj = stateData.GetString(SerializationHelpers.StringSerializationBytes.Length);
-                ReceiveStateDataInternal(obj);
-            }
-            else
-            {
-                ReceiveStateDataInternal(stateData);
-            }
-        }
+        protected virtual void ReceiveStateDataInternal(byte[] stateData) { }
 
-        protected virtual object DeserializeStateChangeObject(string obj)
-        {
-            return JsonConvert.DeserializeObject(obj);
-        }
-        protected virtual T DeserializeStateChangeObject<T>(string obj)
-        {
-            return JsonConvert.DeserializeObject<T>(obj);
-        }
+        protected virtual void ReceiveStateDataInternal(dynamic obj) { }
 
-        protected virtual void ReceiveStateDataInternal(byte[] stateData)
-        {
-
-        }
-
-        protected virtual void ReceiveStateDataInternal(dynamic obj)
-        {
-
-        }
-
-        protected virtual void ReceiveStateDataInternal(string state)
-        {
-
-        }
+        protected virtual void ReceiveStateDataInternal(string state) { }
 
         protected void UnsafeDisableEvents()
         {
@@ -173,6 +126,8 @@ namespace MPTanks.Engine
                 AngularVelocity = value;
             if (type == BasicPropertyChangeEventType.Rotation)
                 Rotation = value;
+            if (type == BasicPropertyChangeEventType.Restitution)
+                Restitution = value;
         }
 
         public void ReceiveBasicPropertyChange(BasicPropertyChangeEventType type, Vector2 value)
@@ -183,6 +138,14 @@ namespace MPTanks.Engine
                 Size = value;
             if (type == BasicPropertyChangeEventType.Position)
                 Position = value;
+        }
+
+        public void ReceiveBasicPropertyChange(BasicPropertyChangeEventType type, bool value)
+        {
+            if (type == BasicPropertyChangeEventType.IsSensor)
+                IsSensor = value;
+            if (type == BasicPropertyChangeEventType.IsStatic)
+                IsStatic = value;
         }
         #endregion
 

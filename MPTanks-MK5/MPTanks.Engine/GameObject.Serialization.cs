@@ -67,25 +67,7 @@ namespace MPTanks.Engine
             //4 byte restitution
             /////Then, there's the data from the instance
             //variable Private state data bytes
-            var privateStateObject = GetPrivateStateData();
-            byte[] privateState;
-
-            //Figure out what the final output should be (encoded object, string, or plain byte array)
-            if (privateStateObject.GetType() == typeof(byte[]))
-                privateState = (byte[])privateStateObject;
-            else if (privateStateObject.GetType() == typeof(string))
-            {
-                privateState = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.StringSerializationBytes,
-                    privateStateObject);
-            }
-            else
-            {
-                var serialized = SerializeStateChangeObject(privateStateObject);
-                privateState = SerializationHelpers.AllocateArray(true,
-                    SerializationHelpers.JSONSerializationBytes,
-                    serialized);
-            }
+            byte[] privateState = SerializationHelpers.Serialize(GetPrivateStateData());
 
             int health = 0;
             if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
@@ -147,24 +129,19 @@ namespace MPTanks.Engine
             var privateState = state.GetByteArray(offset);
 
             if (GlobalSettings.Debug)
-                ProcessSetFullStatePrivateData(privateState);
+                SerializationHelpers.ResolveDeserialize(privateState,
+                    SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
             else
-                try { ProcessSetFullStatePrivateData(privateState); }
+                try
+                {
+                    SerializationHelpers.ResolveDeserialize(privateState,
+                        SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"GameObject full state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
                     SetFullStateInternal(privateState);
                 }
-        }
-
-        private void ProcessSetFullStatePrivateData(byte[] privateState)
-        {
-            if (privateState.SequenceBegins(SerializationHelpers.JSONSerializationBytes))
-                SetFullStateInternal(DeserializeStateChangeObject(
-                    privateState.GetString(SerializationHelpers.JSONSerializationBytes.Length)));
-            else if (privateState.SequenceBegins(SerializationHelpers.StringSerializationBytes))
-                SetFullStateInternal(privateState.GetString(SerializationHelpers.StringSerializationBytes.Length));
-            else SetFullStateInternal(privateState);
         }
 
         private void SetStateHeader(byte[] header, ref int offset)
@@ -200,20 +177,15 @@ namespace MPTanks.Engine
                 ((Tanks.Tank)this).Health = health;
         }
 
-        protected virtual void SetFullStateInternal(byte[] stateData)
-        {
+        protected virtual void SetFullStateInternal(byte[] stateData) { }
 
-        }
-
-        protected virtual void SetFullStateInternal(string state)
-        {
-
-        }
+        protected virtual void SetFullStateInternal(string state) { }
 
         protected virtual void SetFullStateInternal(dynamic state)
         {
-
         }
+
+        public virtual void DeferredSetFullState() { }
 
     }
 }
