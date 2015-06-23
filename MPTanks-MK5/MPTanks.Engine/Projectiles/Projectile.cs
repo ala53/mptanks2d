@@ -30,7 +30,7 @@ namespace MPTanks.Engine.Projectiles
 
         public virtual void CollidedWithTank(Tanks.Tank tank)
         {
-            Kill(this);
+            Kill(tank);
         }
 
         public virtual bool CanDamage(Tanks.Tank tank, bool friendlyFireEnabled)
