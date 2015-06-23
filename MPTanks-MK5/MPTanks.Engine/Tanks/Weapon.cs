@@ -13,7 +13,7 @@ namespace MPTanks.Engine.Tanks
     {
         public static Weapon Null
         { get; private set; }
-        = new Weapon(null)
+        = new Weapon
         {
             MaxActiveProjectileCount = 0,
             MaxDistance = 0,
@@ -139,6 +139,11 @@ namespace MPTanks.Engine.Tanks
         {
             Owner = tank;
             Game = tank.Game;
+        }
+
+        private Weapon()
+        {
+            _isNullWeapon = true;
         }
 
         private bool _isWaitingForTarget = false;

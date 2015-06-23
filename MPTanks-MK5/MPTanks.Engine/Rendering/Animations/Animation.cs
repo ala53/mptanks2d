@@ -23,10 +23,10 @@ namespace MPTanks.Engine.Rendering.Animations
         public Action<Animation> CompletionCallback { get; private set; }
         public float LoopCount { get; private set; }
 
-        public Animation(string name, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null, float loopCount = 1)
+        public Animation(string frameName, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null, float loopCount = 1)
         {
             Position = center;
-            AnimationName = name;
+            AnimationName = frameName;
             SpriteSheetName = sheetName;
             Size = size;
             CompletionCallback = callback;
