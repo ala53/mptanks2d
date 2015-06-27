@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MPTanks.Engine.Assets;
 using MPTanks.Engine.Logging;
 using MPTanks.Rendering.Renderer.Assets.Sprites;
 using System;
@@ -12,11 +13,14 @@ namespace MPTanks.Rendering.Renderer.Assets
 {
     class AssetCache
     {
+        public const string LoadingTextureSpriteName = "loading_texture_sprite";
+        public const string MissingTextureSpriteName = "missing_texture_sprite";
+
         private GraphicsDevice _graphics;
         private AssetLoader _loader;
         private GameWorldRenderer _renderer;
 
-        private Sprites.SpriteSheet _internalSprites
+        private SpriteSheet _internalSprites
         {
             get { return _spriteSheets["asset_cache_internal_spritesheet"]; }
         }
@@ -24,21 +28,24 @@ namespace MPTanks.Rendering.Renderer.Assets
         /// <summary>
         /// A checkerboard purple and white sprite sheet to use when we can't find the sprite sheet or sprite
         /// </summary>
-        public Sprites.Sprite MissingTextureSprite
+        public Sprite MissingTextureSprite
         {
-            get { return _internalSprites["missing_texture_sprite"]; }
+            get { return _internalSprites[MissingTextureSpriteName]; }
         }
         /// <summary>
         /// A completely transparent, black, sprite to display while the actual texture is loading.
         /// </summary>
-        public Sprites.Sprite LoadingTextureSprite
+        public Sprite LoadingTextureSprite
         {
-            get { return _internalSprites["loading_texture_sprite"]; }
+            get { return _internalSprites[LoadingTextureSpriteName]; }
         }
 
-        private Dictionary<string, Sprites.SpriteSheet> _spriteSheets = new Dictionary<string, Sprites.SpriteSheet>();
-        private HashSet<string> _sheetsWhichHaveBeenLoaded = new HashSet<string>();
-        private HashSet<string> _sheetsThatAreCurrentlyLoading = new HashSet<string>();
+        private Dictionary<string, SpriteSheet> _spriteSheets = new Dictionary<string, SpriteSheet>(
+            StringComparer.InvariantCultureIgnoreCase);
+        private HashSet<string> _sheetsWhichHaveBeenLoaded = new HashSet<string>(
+            StringComparer.InvariantCultureIgnoreCase);
+        private HashSet<string> _sheetsThatAreCurrentlyLoading = new HashSet<string>(
+            StringComparer.InvariantCultureIgnoreCase);
 
 
         public AssetCache(GraphicsDevice gd, AssetLoader loader, GameWorldRenderer renderer)
@@ -62,7 +69,7 @@ namespace MPTanks.Rendering.Renderer.Assets
 
             const int checkerboardSize = 48;
 
-            //O(infinity) aka O(horror movie)
+            //O(horror movie) aka O(4) loop
             for (var y = 0; y < checkerboardSize; y += 8)
                 for (var x = 0; x < checkerboardSize; x += 8)
                 {
@@ -70,53 +77,64 @@ namespace MPTanks.Rendering.Renderer.Assets
                     //i is y offset, j is x offset
                     for (var i = 0; i < 8; i++)
                         for (var j = 0; j < 8; i++)
-                        {
                             data[((y + i) * checkerboardSize) + x + j] = checkerBoardColor;
-                        }
                 }
 
             tx.SetData(data);
 
             var sprites = new Dictionary<string, Sprite>();
-            sprites.Add("missing_texture_sprite", new Sprite(0, 0, 48, 48, "missing_texture_sprite"));
-            sprites.Add("loading_texture_sprite", new Sprite(52, 52, 54, 54, "loading_texture_sprite"));
+            sprites.Add(MissingTextureSpriteName, new Sprite(0, 0, 48, 48, MissingTextureSpriteName));
+            sprites.Add(LoadingTextureSpriteName, new Sprite(52, 52, 54, 54, LoadingTextureSpriteName));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
                 new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
         }
 
+        public Animation GetAnimation(string animationName, string sheetName)
+        {
+            var sheet = GetSpriteSheet(sheetName);
+            if (sheet == null) return null;
+            if (!sheet.AnimationsByName.ContainsKey(animationName))
+                return sheet.AnimationsByName[animationName];
+
+            return null;
+        }
+
+        public bool IsLoading(string sheetName) => _sheetsThatAreCurrentlyLoading.Contains(sheetName);
+        public bool HasLoadStarted(string sheetName) => _sheetsWhichHaveBeenLoaded.Contains(sheetName);
+        public bool IsLoaded(string sheetName) => HasLoadStarted(sheetName) && !IsLoading(sheetName);
+
+        public Sprite GetSprite(SpriteInfo info) => GetSprite(info.FrameName, info.SheetName);
         public Sprite GetSprite(string spriteName, string sheetName)
         {
-            spriteName = spriteName.ToLower();
-            sheetName = sheetName.ToLower();
+            //special cases
+            if (spriteName == LoadingTextureSpriteName) return LoadingTextureSprite;
+            if (spriteName == MissingTextureSpriteName) return MissingTextureSprite;
 
-            //First, check if it's loaded and if it is, just return it
+            if (IsLoading(sheetName)) return LoadingTextureSprite;
+
+            var sheet = GetSpriteSheet(sheetName); //get the sheet
+            if (sheet != null && sheet.ContainsKey(spriteName)) //And see if the sprite exists
+                return _spriteSheets[sheetName][spriteName]; //so return it
+            else return MissingTextureSprite; //otherwise, die horribly
+        }
+
+        private SpriteSheet GetSpriteSheet(string sheetName)
+        {
             if (_spriteSheets.ContainsKey(sheetName)) //Loaded
-            {
-                if (_spriteSheets[sheetName].ContainsKey(spriteName)) //And the sprite exists
-                    return _spriteSheets[sheetName][spriteName]; //so return it
-                else return MissingTextureSprite; //otherwise, die horribly
-            }
-
-            //Then check if we've tried to load it already and are just waiting
-            if (_sheetsThatAreCurrentlyLoading.Contains(sheetName))
-                return LoadingTextureSprite;
-
-            //Otherwise, check that we haven't tried to load it already and then load it
-            if (!_sheetsWhichHaveBeenLoaded.Contains(sheetName))
+                return _spriteSheets[sheetName]; // give them it
+            else if (IsLoaded(sheetName)) return null; //loading; do nothing
+            else if (!HasLoadStarted(sheetName)) //not loaded, tell it to load
             {
                 LoadSpriteSheet(sheetName);
-                return LoadingTextureSprite;
+                return null;
             }
-
-            //Fall through and return something, at least
-            //We hit this if something bad happens or if we've tried to load the sheet and couldn't find it
-            return MissingTextureSprite;
+            else return null;
         }
 
         private void LoadSpriteSheet(string sheetName)
         {
-            if (_sheetsWhichHaveBeenLoaded.Contains(sheetName) || _sheetsThatAreCurrentlyLoading.Contains(sheetName))
+            if (HasLoadStarted(sheetName))
             {
                 _renderer.Logger.Error("Spritesheet load called more than once for " + sheetName);
                 return;

@@ -13,8 +13,10 @@ namespace MPTanks.Rendering.Renderer.Assets.Sprites
 
         private List<Animation> _animations = new List<Animation>();
         private List<Sprite> _sprites = new List<Sprite>();
-        private Dictionary<string, Animation> _animsByName = new Dictionary<string, Animation>();
-        private Dictionary<string, Sprite> _spritesByName = new Dictionary<string, Sprite>();
+        private Dictionary<string, Animation> _animsByName = new Dictionary<string, Animation>(
+            StringComparer.InvariantCultureIgnoreCase);
+        private Dictionary<string, Sprite> _spritesByName = new Dictionary<string, Sprite>(
+            StringComparer.InvariantCultureIgnoreCase);
 
         public IReadOnlyList<Animation> Animations { get { return _animations; } }
         public IReadOnlyList<Sprite> Sprites { get { return _sprites; } }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using MPTanks.Engine.Settings;
 using MPTanks.Rendering.Renderer.Assets.Sprites;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,12 @@ namespace MPTanks.Rendering.Renderer.Assets
         {
             Task.Run(() =>
             {
-                var sheet = LoadSpriteSheet(sheetName, missingTextureSprite);
+                SpriteSheet sheet = null;
+                if (GlobalSettings.Debug)
+                    sheet = LoadSpriteSheet(sheetName, missingTextureSprite);
+                else
+                    try { sheet = LoadSpriteSheet(sheetName, missingTextureSprite); }
+                    catch (Exception ex) { _renderer.Logger.Error("SpriteSheet load error: " + sheetName, ex); }
 
                 if (sheet == null)
                     errorCallback();
@@ -34,46 +40,39 @@ namespace MPTanks.Rendering.Renderer.Assets
 
         public SpriteSheet LoadSpriteSheet(string sheetName, Sprite missingTextureSprite = null)
         {
-            try
+            //Find the file and fail if we can't
+            var resolvedFilename = _resolver.ResolveAssetFile(sheetName);
+            if (resolvedFilename == null)
             {
-                //Find the file and fail if we can't
-                var resolvedFilename = _resolver.ResolveAssetFile(sheetName);
-                if (resolvedFilename == null)
-                {
-                    _renderer.Logger.Error("SpriteSheet does not exist: " + sheetName);
-                    _renderer.Logger.Error("Paths searched: " + string.Join(", ", _resolver.SearchPaths));
-                    return null;
-                }
-                //Check that the matching JSON file exists
-                if (!File.Exists(resolvedFilename + ".json"))
-                {
-                    _renderer.Logger.Error("SpriteSheet missing matching JSON file");
-                    return null;
-                }
-
-                //Then load the texture
-                var texture = LoadTexture(resolvedFilename);
-                //And metadata
-                var metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
-                        File.ReadAllText(resolvedFilename + ".json"));
-
-                var sprites = new Dictionary<string, Sprite>();
-                var animations = new Dictionary<string, Animation>();
-                //Parse the animations
-                if (metadata.Animations != null)
-                    foreach (var animation in metadata.Animations)
-                        animations.Add(animation.Name, new Animation(animation.Name, animation.Frames, animation.FrameRate));
-                //And the sprites
-                if (metadata.Sprites != null)
-                    foreach (var sprite in metadata.Sprites)
-                        sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
-                //And build the output sprite sheet
-                return new SpriteSheet(animations, sprites, texture, metadata.Name, missingTextureSprite);
+                _renderer.Logger.Error("SpriteSheet does not exist: " + sheetName);
+                _renderer.Logger.Error("Paths searched: " + string.Join(",\n ", _resolver.SearchPaths));
+                return null;
             }
-            catch (Exception ex)
+            //Check that the matching JSON file exists
+            if (!File.Exists(resolvedFilename + ".json"))
             {
-                _renderer.Logger.Error("SpriteSheet load error: " + sheetName, ex);
+                _renderer.Logger.Error("SpriteSheet missing matching JSON file");
+                return null;
             }
+
+            //Then load the texture
+            var texture = LoadTexture(resolvedFilename);
+            //And metadata
+            var metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
+                    File.ReadAllText(resolvedFilename + ".json"));
+
+            var sprites = new Dictionary<string, Sprite>();
+            var animations = new Dictionary<string, Animation>();
+            //Parse the animations
+            if (metadata.Animations != null)
+                foreach (var animation in metadata.Animations)
+                    animations.Add(animation.Name, new Animation(animation.Name, animation.Frames, animation.FrameRate));
+            //And the sprites
+            if (metadata.Sprites != null)
+                foreach (var sprite in metadata.Sprites)
+                    sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
+            //And build the output sprite sheet
+            return new SpriteSheet(animations, sprites, texture, metadata.Name, missingTextureSprite);
             return null;
         }
 

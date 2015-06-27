@@ -19,7 +19,7 @@ namespace MPTanks.Rendering.Renderer.Assets
         {
             foreach (var directory in SearchPaths)
             {
-                foreach (var file in System.IO.Directory.GetFiles(directory))
+                foreach (var file in Directory.GetFiles(directory))
                 {
                     var fi = new FileInfo(file);
                     if (fi.Name.Equals(sheetName, StringComparison.OrdinalIgnoreCase))
