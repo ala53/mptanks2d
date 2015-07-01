@@ -34,7 +34,7 @@ namespace MPTanks.Modding
 
         /// <summary>
         /// Warning! Very expensive. Creates an appdomain, unpacks a mod, and inspects its contents
-        /// to get a list of all files in the mod.
+        /// to get a list of all files in the mod. Then it builds the metadata from the information.
         /// </summary>
         public static ModMetadata CreateMetadata(string modFile)
         {
@@ -48,7 +48,7 @@ namespace MPTanks.Modding
 
             domain.SetData("__create__modFile", modFile);
             //Flag the domain for special case usage - avoid loading the entire metadata cache which we will not use.
-            domain.SetData("__metadata__creation__domain", new object());
+            domain.SetData("__metadata__creation__domain", "not null, i swear");
             var crossDomainTarget = new CrossAppDomainDelegate(Create);
 
             domain.DoCallBack(crossDomainTarget);
