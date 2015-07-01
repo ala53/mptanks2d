@@ -42,13 +42,13 @@ namespace MPTanks.Modding
             if (header.CodeFiles.Length > 0)
             {
                 string mErr = "";
-                Load(
-                    ModUnpacker.GetSourceCode(modFile),
-                    verifySafe,
-                    out mErr,
-                    dllPaths,
-                    deps.ToArray()
-                    );
+                output = Load(
+                         ModUnpacker.GetSourceCode(modFile),
+                         verifySafe,
+                         out mErr,
+                         dllPaths,
+                         deps.ToArray()
+                         );
 
                 err += mErr;
             }
@@ -56,8 +56,8 @@ namespace MPTanks.Modding
             {
                 //Otherwise, just do a simple load
                 string mErr = "";
-                Load(
-                    dllPaths, verifySafe, out mErr);
+                output = Load(
+                      dllPaths, verifySafe, out mErr);
                 err += mErr;
             }
             //And finally, unpack assets
@@ -72,6 +72,8 @@ namespace MPTanks.Modding
 #endif
             errors = err;
             loadedModFiles.Add(modFile, output);
+
+            output.PackedFile = modFile;
             return output;
         }
 
@@ -304,6 +306,7 @@ namespace MPTanks.Modding
             //And finally, inject the code
 
             errors = safetyCheckErrors + "\n\n" + builderErrors;
+            module.PackedFile = assemblies[0];
 
             return module;
         }

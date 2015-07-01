@@ -81,6 +81,9 @@ namespace MPTanks.Modding
 
         public static void AddLoaded(Module module)
         {
+            if (!Contains(module.Name))
+                Add(module.Name, module.Version.Major, module.Version.Minor, module.Version.Tag, module.PackedFile);
+
             if (!_loadedModules.Contains(module))
                 _loadedModules.Add(module);
 
@@ -121,5 +124,11 @@ namespace MPTanks.Modding
         public int Minor { get; set; }
         public string Tag { get; set; }
         public string File { get; set; }
+        private Lazy<ModMetadata> _metadata;
+        public ModMetadata Metadata { get { return _metadata.Value; } }
+
+        public ModDatabaseItem() {
+            _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File));
+        }
     }
 }

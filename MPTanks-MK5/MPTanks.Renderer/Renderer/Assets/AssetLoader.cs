@@ -29,7 +29,7 @@ namespace MPTanks.Rendering.Renderer.Assets
                     sheet = LoadSpriteSheet(sheetName, missingTextureSprite);
                 else
                     try { sheet = LoadSpriteSheet(sheetName, missingTextureSprite); }
-                    catch (Exception ex) { _renderer.Logger.Error("SpriteSheet load error: " + sheetName, ex); }
+                    catch (Exception ex) { _renderer.Logger.Error($"SpriteSheet load error for {sheetName}", ex); }
 
                 if (sheet == null)
                     errorCallback();
@@ -73,7 +73,6 @@ namespace MPTanks.Rendering.Renderer.Assets
                     sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
             //And build the output sprite sheet
             return new SpriteSheet(animations, sprites, texture, metadata.Name, missingTextureSprite);
-            return null;
         }
 
         private Texture2D LoadTexture(string fn)

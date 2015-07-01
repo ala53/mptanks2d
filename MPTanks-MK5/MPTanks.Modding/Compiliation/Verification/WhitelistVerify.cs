@@ -19,12 +19,13 @@ namespace MPTanks.Modding.Compiliation.Verification
         "MPTanks.Modding.Mods",
         "Starbound.Input",
         "MPTanks.Clients",
-        "System.Dynamic"
+        "System.Dynamic",
+        "FarseerPhysics"
         });
 
-        private static List<string> WhitelistedTypes = new List<string>(new[] { 
-        //Primitive types
-        "System.Nullable",
+        private static List<string> WhitelistedTypes = new List<string>(new[] {
+            //Primitive types
+            "System.Nullable",
         "System.Object",
         "System.Void",
         "System.IDisposable",
@@ -50,16 +51,16 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.DateTime",
         "System.TimeSpan",
         "System.Array",
-        //Debug helpers
-        "System.Runtime.CompilerServices.RuntimeHelpers",
+            //Debug helpers
+            "System.Runtime.CompilerServices.RuntimeHelpers",
         "System.Diagnostics.Debugger",
-        //Streams
-        "System.IO.Stream",
+            //Streams
+            "System.IO.Stream",
         "System.IO.TextReader",
         "System.IO.TextWriter",
         "System.IO.MemoryStream",
-        //Exceptions
-        "System.NullReferenceException",
+            //Exceptions
+            "System.NullReferenceException",
         "System.ArgumentException",
         "System.ArgumentNullException",
         "System.InvalidOperationException",
@@ -68,36 +69,41 @@ namespace MPTanks.Modding.Compiliation.Verification
         "System.UnhandledExceptionEventArgs",
         "System.DivideByZeroException",
         "System.InvalidCastException",
-        //Path concentation tools
-        "System.IO.Path",
-        //Event args
-        "System.EventArgs",
+            //Path concentation tools
+            "System.IO.Path",
+            //Event args
+            "System.EventArgs",
         "System.EventHandler",
-        //Helpers
-        "System.Random",
+            //Helpers
+            "System.Random",
         "System.Convert",
         "System.Nullable",
         "System.StringComparer",
         "System.IComparable",
         "System.Diagnostics.Stopwatch",
-        //GC
-        "System.GC",
-        "System.GCSettings",
-        //Lidgren
-        "Lidgren.Network.NetBuffer",
+            //GC
+            "System.GC",
+            //Lidgren
+            "Lidgren.Network.NetBuffer",
         "Lidgren.Network.NetException",
         "Lidgren.Network.NetIncomingMessage",
         "Lidgren.Network.NetOutgoingMessage",
         "Lidgren.Network.NetConnection",
-        //Tasks
-        "System.Threading.Tasks"
+            //Tasks
+            "System.Threading.Tasks",
+            //Custom
+            "MPTanks.Modding.Module",
+        "MPTanks.Modding.GameObjectType",
+        "MPTanks.Modding.MapObjectType",
+        "MPTanks.Modding.TankType",
+        "MPTanks.Modding.ProjectileType",
+        "MPTanks.Modding.GamemodeType",
         });
-        
+
         /// <summary>
         /// Blacklisted types in whitelisted namespaces
         /// </summary>
-        private static List<string> BlacklistedTypes = new List<string>(new[] { 
-            "MPTanks.Engine.Logging.ILogger", //Don't let it thrash the HDD
+        private static List<string> BlacklistedTypes = new List<string>(new[] {
             "MPTanks.Engine.Settings",
             "Microsoft.Xna.Framework.Content.ContentManager", //Or load content from the hard drive
 
@@ -122,7 +128,7 @@ namespace MPTanks.Modding.Compiliation.Verification
                     amount++;
                     //Ignore unnecessary
                     if (type == null || type.FullName == "<Module>") continue;
-
+                    
                     if (!IsTypeWhitelisted(type.FullName))
                     {
                         error += "\n\n\nType " + type.FullName + " is not allowed. Are you in the MPTanks.Modding.Mods namespace?";
@@ -187,18 +193,18 @@ namespace MPTanks.Modding.Compiliation.Verification
         private static bool CheckTypeInheritanceTree(Mono.Cecil.TypeDefinition def, out string error)
         {
             error = "";
-           var baseType = def.BaseType;
-           bool safe = true;
-           while (baseType != null)
-           {
-               if (!IsTypeWhitelisted(baseType.FullName))
-               {
-                   error += "\n\n" + baseType.FullName + " is not allowed.";
-               }
-               baseType = baseType.Resolve().BaseType;
-           }
+            var baseType = def.BaseType;
+            bool safe = true;
+            while (baseType != null)
+            {
+                if (!IsTypeWhitelisted(baseType.FullName))
+                {
+                    error += "\n\n" + baseType.FullName + " is not allowed.";
+                }
+                baseType = baseType.Resolve().BaseType;
+            }
 
-           return safe;
+            return safe;
         }
 
         private static bool CheckMethod(Mono.Cecil.MethodDefinition def, out string error)

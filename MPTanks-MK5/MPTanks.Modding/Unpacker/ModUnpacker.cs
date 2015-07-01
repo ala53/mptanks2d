@@ -51,7 +51,7 @@ namespace MPTanks.Modding.Unpacker
 
         public static string[] UnpackDlls(string modFile, string outputDir)
         {
-            //we unpack to modName_modMajor_modMinor_modTag_assetName.dll
+            //we unpack to modName_modMajor_modMinor_assetName.dll
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
             var dlls = new List<string>();
@@ -59,7 +59,8 @@ namespace MPTanks.Modding.Unpacker
             foreach (var dll in header.DLLFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{dll}.dll");
-                File.WriteAllBytes(path,
+                if (!File.Exists(path))
+                    File.WriteAllBytes(path,
                     GetData(dll, zf));
                 dlls.Add(path);
             }
@@ -68,7 +69,7 @@ namespace MPTanks.Modding.Unpacker
         }
         public static string[] UnpackSounds(string modFile, string outputDir)
         {
-            //we unpack to modFile_modMajor_modMinor_modTag_assetName.ogg
+            //we unpack to modFile_modMajor_modMinor_assetName.ogg
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
 
@@ -77,8 +78,9 @@ namespace MPTanks.Modding.Unpacker
             foreach (var sound in header.SoundFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{sound}.ogg");
-                File.WriteAllBytes(path,
-                    GetData(sound, zf));
+                if (!File.Exists(path))
+                    File.WriteAllBytes(path,
+                        GetData(sound, zf));
                 files.Add(path);
             }
             zf.Close();
@@ -86,7 +88,7 @@ namespace MPTanks.Modding.Unpacker
         }
         public static string[] UnpackImages(string modFile, string outputDir)
         {
-            //we unpack by modFile_modMajor_modMinor_modTag_assetName.png
+            //we unpack by modFile_modMajor_modMinor_assetName.png
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
 
@@ -96,7 +98,8 @@ namespace MPTanks.Modding.Unpacker
             {
                 var ext = img.Split('.').Last();
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.png");
-                File.WriteAllBytes(path,
+                if (!File.Exists(path))
+                    File.WriteAllBytes(path,
                     GetData(img, zf));
                 files.Add(path);
             }
@@ -116,6 +119,22 @@ namespace MPTanks.Modding.Unpacker
             }
             zf.Close();
             return codePages.ToArray();
+        }
+
+        public static string GetStringFile(string modFile, string internalFileName)
+        {
+            var zf = OpenZip(modFile);
+            var text = ReadText(internalFileName, zf);
+            zf.Close();
+            return text;
+        }
+
+        public static byte[] GetByteArrayFile(string modFile, string internalFileName)
+        {
+            var zf = OpenZip(modFile);
+            var data = GetData(internalFileName, zf);
+            zf.Close();
+            return data;
         }
     }
 }

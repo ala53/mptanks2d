@@ -14,8 +14,7 @@ using MPTanks.Engine.Helpers;
 namespace MPTanks.Modding.Mods.Core.Tanks
 {
     [Tank("BasicTankMP", "assets/components/basictank.json",
-        DisplayName = "Basic Tank", Description = "Basic Tank",
-        RequiresMatchingOnOtherTeam = false)]
+        DisplayName = "Basic Tank", Description = "Basic Tank")]
     public class BasicTank : Tank
     {
         private string[] _explosions = { "explosion1", "explosion2", "explosion3" };

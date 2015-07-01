@@ -18,10 +18,6 @@ namespace MPTanks.Modding
         {
 
         }
-        /// <summary>
-        /// Whether this tank types requires a matching tank on the enemy team.
-        /// </summary>
-        public bool RequiresMatchingOnOtherTeam { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]

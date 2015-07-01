@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPTanks.Modding.Unpacker;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,10 +10,10 @@ namespace MPTanks.Modding
 {
     public class Module
     {
-        public bool Activated { get; private set; }
         public string Name { get; internal set; }
         public string Description { get; internal set; }
         public string Author { get; internal set; }
+        public string PackedFile { get; internal set; }
         public ModuleDeclarationAttribute.ModuleVersion Version { get; internal set; }
         public Assembly[] Assemblies { get; internal set; }
         public Assembly[] Dependencies { get; internal set; }
@@ -39,7 +40,25 @@ namespace MPTanks.Modding
 
         internal Dictionary<string, string> assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         public IReadOnlyDictionary<string,string> Assets { get { return assets; } }
-        
+
+        /// <summary>
+        /// Gets the data from a file that is packed in the *.mod container (paths not supported).
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public byte[] GetPackedFileData(string filename)
+        {
+            return ModUnpacker.GetByteArrayFile(PackedFile, filename);
+        }
+        /// <summary>
+        /// Gets the string data from a file that is packed in the *.mod container (paths not supported).
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public string GetPackedFileString(string filename)
+        {
+            return ModUnpacker.GetStringFile(PackedFile, filename);
+        }
     }
 
     public class GamemodeType
@@ -52,6 +71,7 @@ namespace MPTanks.Modding
         /// The minimum number of players required to start a game.
         /// </summary>
         public int MinPlayersCount { get; set; }
+        public bool HotJoinAllowed { get; set; }
 
         public GamemodeType(Type t)
         {
@@ -64,6 +84,7 @@ namespace MPTanks.Modding
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
             MinPlayersCount = attrib.MinPlayersCount;
+            HotJoinAllowed = attrib.PlayersCanJoinMidGame;
         }
         internal static bool IsGamemodeType(Type t)
         {
