@@ -10,7 +10,7 @@ namespace MPTanks.Modding.Unpacker
     {
         public string[] CodeFiles { get; set; }
         public string[] DLLFiles { get; set; }
-        public string[] AssetFiles { get; set; }
+        public string[] ImageFiles { get; set; }
         public string[] SoundFiles { get; set; }
         public string[] ComponentFiles { get; set; }
         public ModDependency[] Dependencies { get; set; }

@@ -15,10 +15,7 @@ namespace MPTanks.Clients.GameClient
             {
                 if (_inst == null)
                 {
-                    _inst = new CrossDomainObject
-                    {
-                        
-                    };
+                    _inst = new CrossDomainObject { };
                 }
                 return _inst;
             }
@@ -38,10 +35,11 @@ namespace MPTanks.Clients.GameClient
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
 
-        public bool ShouldBeGameHost { get; set; }
-        public bool GameHostIsLanGame { get; set; }
+        public bool IsGameHost { get; set; }
+        public bool HostIsLanGame { get; set; }
 
-        public string SettingsJSON { get; set; }
+        public string GameSettingsJSON { get; set; }
+        public string ServerEngineSettingsJSON { get; set; }
 
         public bool Connected { get; set; }
         public bool Connecting { get; set; }

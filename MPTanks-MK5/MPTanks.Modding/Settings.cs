@@ -5,8 +5,17 @@ namespace MPTanks.Modding
 {
     static class Settings
     {
+#if DEBUG
+        public static readonly string ConfigDir = "";
+#else
         public static readonly string ConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D");
+#endif
 
+        static Settings()
+        {
+            Directory.CreateDirectory(ConfigDir);
+            Directory.CreateDirectory(MetadataModUnpackDir);
+        }
         public static readonly string MetadataModUnpackDir = Path.Combine(ConfigDir, "Temp Mod Metadata Unpack");
 
         public const string EngineNS = "MPTanks.Engine";

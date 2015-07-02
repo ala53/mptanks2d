@@ -20,23 +20,24 @@ namespace MPTanks.Clients.GameClient
 
             foreach (var modFile in settings.CoreMods.Value)
             {
-#if !DEBUG
-                try
-                {
-#endif
-                string err = "";
-                var mod = ModLoader.Load(modFile, false, out err);
+                if (GlobalSettings.Debug)
+                    LoadModInternal(modFile, ref errors);
+                else
+                    try { LoadModInternal(modFile, ref errors); }
+                    catch (Exception ex)
+                    {
+                        errors += ex.ToString();
+                        Logger.Error(errors);
+                    }
+            }
+        }
 
-                errors += "\n\n\n" + err;
-#if !DEBUG
-            }
-                catch (Exception ex)
-                {
-                    errors += ex.ToString();
-                    Logger.Error(errors);
-                }
-#endif
-            }
+        private static void LoadModInternal(string modFile, ref string errors)
+        {
+            string err = "";
+            var mod = ModLoader.Load(modFile, false, out err);
+
+            errors += "\n\n\n" + err;
         }
     }
 }

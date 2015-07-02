@@ -26,6 +26,8 @@ namespace MPTanks.ModCompiler
         public static string version;
         public static string description;
 
+        const int MAX_SIZE_MB = 10;
+
         static void Main(string[] args)
         {
             Mono.Options.OptionSet options = null;
@@ -54,11 +56,12 @@ namespace MPTanks.ModCompiler
                         }
                         else if (fi.Extension == ".dll")
                         {
-                            if (!CheckDLLSafe(p))
-                            {
-                                Console.WriteLine($"{p} is either an unrecognized mod or does not follow the whitelist.");
-                                Exit(-2);
-                            }
+                            if (whitelistDlls)
+                                if (!CheckDLLSafe(p))
+                                {
+                                    Console.WriteLine($"{p} is either an unrecognized mod or does not follow the whitelist.");
+                                    Exit(-2);
+                                }
                             dlls.Add(p);
                         }
                         else
@@ -184,14 +187,26 @@ namespace MPTanks.ModCompiler
                 Exit(-2);
             }
 
-            CheckCodeSafe();
+            if (!DependencyResolver.IsNameValid(name))
+            {
+                Console.WriteLine($"Error! {name} is not a valid name. " +
+                    "It must be between 4 and 64 characters, containing only A-Z 0-9 and - (dash).");
+                Exit(-2);
+            }
+
+            if (whitelistDlls) CheckCodeSafe();
 
             foreach (var dep in dependencies)
-                if (!DependencyResolver.TryResolve(dep))
+            {
+                Console.WriteLine($"Verifying dependency: {dep}");
+                Console.WriteLine("======================================================");
+                if (!DependencyResolver.ModExists(dep))
                 {
                     Console.WriteLine($"Warning! Could not resolve {dep} via the ZSB Mod Workshop." +
-                        " The version specified may not exist.");
+                        " The mod may not exist.");
                 }
+                Console.WriteLine("Dependency verified.");
+            }
 
             if (name.Contains(":"))
             {
@@ -199,6 +214,7 @@ namespace MPTanks.ModCompiler
                 Exit(-2);
             }
 
+            Console.WriteLine("Checking if mod with same name exists in workshop.");
             if (DependencyResolver.ModExists(name))
             {
                 Console.WriteLine($"Warning! The mod {name} already exists in the ZSB Mod Workshop. If you " +
@@ -220,11 +236,20 @@ namespace MPTanks.ModCompiler
             if (!DependencyResolver.IsValidVersion(version))
             {
                 Console.WriteLine($"Error! The version tag {version} is invalid. Make sure it's in the format of " +
-                    "MAJOR.MINOR [TAG]. The tag is optional, but the major and minor aren't.");
+                    "MAJOR.MINOR [TAG]. The tag is optional, but the major and minor version numbers are required.");
                 Exit(-2);
             }
 
             //And then actually compile the mod files
+            var packed = Packer.Packer.Pack();
+
+            if (packed.Length > (1024 * 1024 * MAX_SIZE_MB)) // 10mb usually
+            {
+                Console.WriteLine($"Warning! Mod is {(packed.Length / (1024d * 1024 * MAX_SIZE_MB)).ToString("N1")}mb (" +
+                    $"max size is {MAX_SIZE_MB}mb). You cannot upload it to the ZSB database.");
+            }
+
+            File.WriteAllBytes(outputFile, packed);
         }
 
         static bool CheckDLLSafe(string file)
@@ -247,7 +272,11 @@ namespace MPTanks.ModCompiler
             string err;
             var safe = Modding.Compiliation.Verification.WhitelistVerify.IsAssemblySafe(file, out err);
             if (!safe)
+            {
+                Console.WriteLine($"Assembly verification for {file} failed. Errors printed below.");
+                Console.WriteLine("===============================================================");
                 Console.WriteLine(err);
+            }
             return safe;
         }
 
@@ -264,7 +293,7 @@ namespace MPTanks.ModCompiler
             }
             if (!CheckDLLSafe(asm))
             {
-                Console.WriteLine("Source files are unsafe.");
+                Console.WriteLine("Source files (post compiliation) are unsafe.");
                 Exit(-2);
             }
         }

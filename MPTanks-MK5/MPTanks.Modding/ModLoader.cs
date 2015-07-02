@@ -74,6 +74,9 @@ namespace MPTanks.Modding
             loadedModFiles.Add(modFile, output);
 
             output.PackedFile = modFile;
+
+            //Mark the mod as loaded
+            ModDatabase.AddLoaded(output);
             return output;
         }
 
@@ -299,9 +302,6 @@ namespace MPTanks.Modding
             //And call the constructors
             foreach (var asm in module.Assemblies)
                 CallStaticCtors(asm);
-
-            //Mark the mod as loaded
-            ModDatabase.AddLoaded(module);
 
             //And finally, inject the code
 

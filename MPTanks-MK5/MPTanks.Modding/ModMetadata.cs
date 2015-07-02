@@ -79,7 +79,7 @@ namespace MPTanks.Modding
                 modData = ModLoader.LoadMod(modFile, Settings.MetadataModUnpackDir,
                Settings.MetadataModUnpackDir, out errors, true);
 
-            result.ModFile = modFile;
+            result.ModPackedFile = modFile;
 
             result.GameObjects = modData.GameObjects.Select(a => new GameObjectDescriptor()
             {
@@ -138,7 +138,7 @@ namespace MPTanks.Modding
             AppDomain.CurrentDomain.SetData("__create__return__metadata", result);
         }
 
-        public string ModFile { get; private set; }
+        public string ModPackedFile { get; private set; }
         public GameObjectDescriptor[] GameObjects { get; private set; }
         public GameObjectDescriptor[] Projectiles { get; private set; }
         public GameObjectDescriptor[] Tanks { get; private set; }
@@ -155,7 +155,7 @@ namespace MPTanks.Modding
         public string ComponentsFile { get; set; }
         public string ComponentsJSONData
         {
-            get { return ModUnpacker.GetStringFile(Owner.ModFile, ComponentsFile); }
+            get { return ModUnpacker.GetStringFile(Owner.ModPackedFile, ComponentsFile); }
         }
         public ModMetadata Owner { get; set; }
     }

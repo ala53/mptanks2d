@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace MPTanks.Modding
         {
             var fName = Path.Combine(Settings.ConfigDir, "Mod Database.json");
             if (File.Exists(fName))
-                _items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ModDatabaseItem>>(
+                _items = JsonConvert.DeserializeObject<List<ModDatabaseItem>>(
                     File.ReadAllText(fName));
         }
 
@@ -61,11 +62,15 @@ namespace MPTanks.Modding
             return result;
         }
 
+
         public static void Add(string name, int major, int minor, string tag, string file)
         {
             if (Contains(name))
             {
                 Get(name).File = file;
+                Get(name).Major = major;
+                Get(name).Minor = minor;
+                Get(name).Tag = tag;
             }
             else
             {
@@ -100,20 +105,17 @@ namespace MPTanks.Modding
                 _reverseLookupTable.Add(mode.Type, module);
         }
 
-        public static void Remove(string name, int major, int minor)
+        public static void Remove(string name)
         {
             if (Contains(name))
-            {
-                if (Get(name).Major == major && Get(name).Minor == minor)
                     _items.Remove(Get(name));
-            }
             Save();
         }
 
         private static void Save()
         {
             File.WriteAllText(Path.Combine(Settings.ConfigDir, "Mod Database.json"),
-                Newtonsoft.Json.JsonConvert.SerializeObject(_items, Newtonsoft.Json.Formatting.Indented));
+                JsonConvert.SerializeObject(_items, Formatting.Indented));
         }
     }
 
@@ -125,9 +127,14 @@ namespace MPTanks.Modding
         public string Tag { get; set; }
         public string File { get; set; }
         private Lazy<ModMetadata> _metadata;
+        [JsonIgnore]
         public ModMetadata Metadata { get { return _metadata.Value; } }
 
-        public ModDatabaseItem() {
+        public async Task LoadMetadata() =>
+            await Task.Run(() => { var tmp = Metadata; });
+
+        public ModDatabaseItem()
+        {
             _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File));
         }
     }

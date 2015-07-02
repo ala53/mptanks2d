@@ -94,7 +94,7 @@ namespace MPTanks.Modding.Unpacker
 
             var files = new List<string>();
 
-            foreach (var img in header.AssetFiles)
+            foreach (var img in header.ImageFiles)
             {
                 var ext = img.Split('.').Last();
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.png");
