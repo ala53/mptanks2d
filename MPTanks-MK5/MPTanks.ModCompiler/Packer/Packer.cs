@@ -34,6 +34,7 @@ namespace MPTanks.ModCompiler.Packer
             var ms = new MemoryStream();
             var zipFile = new ZipOutputStream(ms);
             zipFile.IsStreamOwner = false;
+            zipFile.SetLevel(9);
 
             WriteFile(zipFile, "mod.json", headerString);
 
@@ -45,7 +46,7 @@ namespace MPTanks.ModCompiler.Packer
             Archive(zipFile, Program.maps);
 
             zipFile.Close();
-            zipFile.Dispose();
+            zipFile.Dispose(); 
 
             ms.Seek(0, SeekOrigin.Begin);
             var data = ms.ToArray();
