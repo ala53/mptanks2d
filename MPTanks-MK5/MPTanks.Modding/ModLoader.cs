@@ -14,7 +14,7 @@ namespace MPTanks.Modding
         private static Dictionary<string, Module> loadedModFiles = new Dictionary<string, Module>();
         public static IReadOnlyDictionary<string, Module> LoadedMods { get { return loadedModFiles; } }
 
-        public static Module LoadMod(string modFile, string dllUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true)
+        public static Module LoadMod(string modFile, string dllUnpackDir, string mapUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true)
         {
             errors = "";
             if (loadedModFiles.ContainsKey(modFile))
@@ -32,7 +32,7 @@ namespace MPTanks.Modding
             //Resolve the dependencies and get all of their dlls
             foreach (var dep in header.Dependencies)
                 deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
-                    dllUnpackDir, assetUnpackDir, header.Name));
+                    dllUnpackDir, mapUnpackDir, assetUnpackDir, header.Name));
             //Remove duplicates
             deps = deps.Distinct().ToList();
             //Then, unpack the assemblies to the correct directory
@@ -60,9 +60,13 @@ namespace MPTanks.Modding
                       dllPaths, verifySafe, out mErr);
                 err += mErr;
             }
+
+            output.Header = ModUnpacker.GetHeader(modFile);
             //And finally, unpack assets
-            ModUnpacker.UnpackImages(modFile, assetUnpackDir);
-            ModUnpacker.UnpackSounds(modFile, assetUnpackDir);
+            CreateFileMappings(output.Header.ImageFiles, ModUnpacker.UnpackImages(modFile, assetUnpackDir), output);
+            CreateFileMappings(output.Header.SoundFiles, ModUnpacker.UnpackSounds(modFile, assetUnpackDir), output);
+            CreateFileMappings(output.Header.MapFiles, ModUnpacker.UnpackMaps(modFile, mapUnpackDir), output);
+            CreateFileMappings(output.Header.ComponentFiles, ModUnpacker.UnpackComponents(modFile, assetUnpackDir), output);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
         }
             catch (Exception ex)
@@ -80,11 +84,17 @@ namespace MPTanks.Modding
             return output;
         }
 
+        private static void CreateFileMappings(string[] src, string[] dst, Module module)
+        {
+            for (var i = 0; i < src.Length; i++)
+                module.AssetMappings.Add(src[i], dst[i]);
+        }
+
         public static Module Load(string source, bool verifySafe, out string errors, string[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
         {
             return Load(new[] { source }, verifySafe, out errors, precompiledAssemblies, otherAssemblyReferences);
         }
-        public static Module Load(string[] sources, bool verifySafe, out string errors, string[] precompiledAssemblies, string[] otherAssemblyReferences = null)
+        public static Module Load(string[] sources, bool verifySafe, out string errors, string[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
         {
             //Null ref protection
             if (otherAssemblyReferences == null) otherAssemblyReferences = new string[0];

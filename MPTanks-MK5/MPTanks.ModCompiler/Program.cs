@@ -32,17 +32,18 @@ namespace MPTanks.ModCompiler
         {
             Mono.Options.OptionSet options = null;
             options = new Mono.Options.OptionSet()
-                .Add("o|out|output=", "The output *.mod file for the compiled mod.", (p) => outputFile = p)
-                .Add("nowhitelist|nowl", "Disable whitelist verification on the DLLs (mandatory for store upload)",
+                .Add("o=|out=|output=", "The output *.mod file for the compiled mod.", (p) => outputFile = p)
+                .Add("nowhitelist=|nowl=", "Disable whitelist verification on the DLLs (mandatory for store upload)",
                     (w) => whitelistDlls = false)
                 .Add("?|help|h", (a) =>
                 {
                     options.WriteOptionDescriptions(Console.Out);
                     Exit(0);
                 })
-                .Add("c|code:",
+                .Add("c:|code:",
                     "The executable code (*.dll) or C# source files to pack into the mod.", (p) =>
                     {
+                        p = Path.GetFullPath(p);
                         if (!File.Exists(p))
                         {
                             Console.WriteLine($"{p} does not exist.");
@@ -70,20 +71,22 @@ namespace MPTanks.ModCompiler
                             Exit(-2);
                         }
                     })
-                .Add("cmp|componentfile:", "Component JSON files to describe in what way a GameObject should be constructed.",
+                .Add("cmp:|componentfile:", "Component JSON files to describe in what way a GameObject should be constructed.",
                 (p) =>
                 {
+                    p = Path.GetFullPath(p);
                     if (!File.Exists(p))
                     {
                         Console.WriteLine($"{p} does not exist.");
                         Exit(-2);
                     }
-                    //Check
+                    //And continue
                     components.Add(p);
                 })
-                .Add("i|image:", "The image assets to compile. Expects a *.json file to reside with the image",
+                .Add("i:|image:", "The image assets to compile. Expects a *.json file to reside with the image",
                 (p) =>
                 {
+                    p = Path.GetFullPath(p);
                     if (!File.Exists(p))
                     {
                         Console.WriteLine($"{p} does not exist.");
@@ -104,8 +107,9 @@ namespace MPTanks.ModCompiler
                         Exit(-2);
                     }
                 })
-                .Add("s|sound:", "The sound assets to pack into the mod.", (p) =>
+                .Add("s:|sound:", "The sound assets to pack into the mod.", (p) =>
                 {
+                    p = Path.GetFullPath(p);
                     if (!File.Exists(p))
                     {
                         Console.WriteLine($"{p} does not exist.");
@@ -121,8 +125,9 @@ namespace MPTanks.ModCompiler
                         Exit(-2);
                     }
                 })
-                .Add("map|m:", "A map file to embed in the mod.", (m) =>
+                .Add("map:|m:", "A map file to embed in the mod.", (m) =>
                 {
+                    m = Path.GetFullPath(m);
                     if (!File.Exists(m))
                     {
                         Console.WriteLine($"{m} does not exist.");
@@ -132,9 +137,13 @@ namespace MPTanks.ModCompiler
                     try
                     {
                         Map.LoadMap(File.ReadAllText(m), null);
+                        maps.Add(m);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Console.WriteLine(ex.ToString());
+                        Console.WriteLine();
+                        Console.WriteLine();
                         Console.WriteLine($"{m} is not a valid map file");
                         Exit(-2);
                     }
@@ -144,7 +153,7 @@ namespace MPTanks.ModCompiler
                 .Add("name=", "The display name of the mod", (p) => name = p)
                 .Add("description=", "The description of the mod", (p) => description = p)
                 .Add("version=", "The mod's version in the form of MAJOR.MINOR TAG. E.g. 1.2 DEV", (p) => version = p)
-                .Add("dependency:",
+                .Add("dep:|dependency:",
                     "A mod that this mod depends on. In the form of Name:MinVersion. E.g. ZSB Core Assets:1.0.",
                     (p) =>
                     {
@@ -262,6 +271,7 @@ namespace MPTanks.ModCompiler
             catch (Exception ex)
             {
                 Console.WriteLine("Could not load assembly: " + file);
+                Console.WriteLine();
                 Console.WriteLine(ex.ToString());
                 return false;
             }

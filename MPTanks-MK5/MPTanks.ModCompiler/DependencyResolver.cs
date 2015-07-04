@@ -44,7 +44,7 @@ namespace MPTanks.ModCompiler
         }
         public static int ParseVersionMinor(string versionTag)
         {
-            return int.Parse(versionTag.Split('.')[1]);
+            return int.Parse(versionTag.Split('.')[1].Split(' ')[0]);
         }
         public static string ParseVersionTag(string versionTag)
         {

@@ -24,7 +24,7 @@ namespace MPTanks.Modding.Unpacker
         /// <param name="caller"></param>
         /// <returns></returns>
         public static IEnumerable<string> LoadDependency(string name, int verMajor, int verMinor,
-            string dllDir, string assetDir, string caller)
+            string dllDir, string mapDir, string assetDir, string caller)
         {
             List<string> _dependencyDlls = new List<string>();
 
@@ -46,7 +46,7 @@ namespace MPTanks.Modding.Unpacker
 
             //Resolve and load the dependency
             string errors;
-            var module = ModLoader.LoadMod(dbItem.File, dllDir, assetDir, out errors);
+            var module = ModLoader.LoadMod(dbItem.File, dllDir, mapDir, assetDir, out errors);
 
             if (errors != null)
                 throw new Exception(errors);
@@ -54,7 +54,7 @@ namespace MPTanks.Modding.Unpacker
             _dependencyDlls.AddRange(module.Assemblies.Select(a => a.Location));
             _dependencyDlls.AddRange(module.Dependencies.Select(a => a.Location));
 
-            return _dependencyDlls;
+            return _dependencyDlls.Distinct();
         }
 
         private static bool IsCircular(string filename, string caller)

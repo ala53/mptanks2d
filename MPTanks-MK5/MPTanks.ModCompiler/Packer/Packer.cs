@@ -5,6 +5,9 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Drawing;
+using System.Text;
+using ICSharpCode.SharpZipLib.Core;
 
 namespace MPTanks.ModCompiler.Packer
 {
@@ -22,16 +25,32 @@ namespace MPTanks.ModCompiler.Packer
             header.DLLFiles = GetFileNamesOnly(Program.dlls).ToArray();
             header.ImageFiles = GetFileNamesOnly(Program.imageAssets).ToArray();
             header.SoundFiles = GetFileNamesOnly(Program.soundAssets).ToArray();
+            header.MapFiles = GetFileNamesOnly(Program.maps).ToArray();
             header.DatabaseUrl = DependencyResolver.GetModUrl(Program.name);
             header.Description = Program.description;
             header.Dependencies = BuildDependencies();
 
-            var headerString = JsonConvert.SerializeObject(header);
+            var headerString = JsonConvert.SerializeObject(header, Formatting.Indented);
             var ms = new MemoryStream();
-            var zipFile = new ZipFile(ms);
-            
+            var zipFile = new ZipOutputStream(ms);
+            zipFile.IsStreamOwner = false;
 
-            return null;
+            WriteFile(zipFile, "mod.json", headerString);
+
+            Archive(zipFile, Program.srcFiles);
+            Archive(zipFile, Program.components);
+            Archive(zipFile, Program.dlls);
+            Archive(zipFile, Program.imageAssets);
+            Archive(zipFile, Program.soundAssets);
+            Archive(zipFile, Program.maps);
+            
+            zipFile.Close();
+            zipFile.Dispose();
+
+            ms.Seek(0, SeekOrigin.Begin);
+            var data = ms.ToArray();
+            ms.Dispose();
+            return ms.ToArray();
         }
 
         private static ModDependency[] BuildDependencies()
@@ -43,6 +62,25 @@ namespace MPTanks.ModCompiler.Packer
                 Minor = DependencyResolver.ParseVersionMinor(DependencyResolver.ParseDependencyVersion(a)),
                 ModName = DependencyResolver.ParseDependencyName(a)
             }).ToArray();
+        }
+
+        private static void Archive(ZipOutputStream zf, List<string> src)
+        {
+            foreach (var a in src)
+            {
+                var data = File.ReadAllBytes(a);
+                WriteFile(zf, GetFileNameOnly(a), data);
+            }
+        }
+
+        private static void WriteFile(ZipOutputStream zf, string name, string data) =>
+            WriteFile(zf, name, Encoding.UTF8.GetBytes(data));
+        private static void WriteFile(ZipOutputStream zf, string name, byte[] data)
+        {
+            var f = new ZipEntry(name);
+            zf.PutNextEntry(f);
+            StreamUtils.Copy(new MemoryStream(data), zf, new byte[4096]);
+            zf.CloseEntry();
         }
 
         private static List<string> GetFileNamesOnly(List<string> input) =>

@@ -76,7 +76,7 @@ namespace MPTanks.Modding
             if (fi.Extension.ToLower().EndsWith("dll"))
                 modData = ModLoader.Load(modFile, true, out errors);
             else
-                modData = ModLoader.LoadMod(modFile, Settings.MetadataModUnpackDir,
+                modData = ModLoader.LoadMod(modFile, Settings.MetadataModUnpackDir, Settings.MetadataModUnpackDir,
                Settings.MetadataModUnpackDir, out errors, true);
 
             result.ModPackedFile = modFile;

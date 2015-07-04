@@ -50,6 +50,7 @@ namespace MPTanks.Clients.GameClient
         //just leave them in the temp directory where they are removed next time the program opens
         public Setting<string> ModUnpackPath { get; private set; }
         public Setting<string> ModAssetPath { get; private set; }
+        public Setting<string> ModMapPath { get; private set; }
         public Setting<string> ModDownloadPath { get; private set; }
 
         public Setting<string> UserTankImageDownloadCache { get; private set; }
@@ -124,6 +125,9 @@ namespace MPTanks.Clients.GameClient
                 "The place to store mods assets that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into (but not the code).",
                 Path.Combine(ConfigDir, "tempmodunpack", "assets"));
+
+            ModMapPath = new Setting<string>(this, "Mod temp directory for maps",
+                "The place where maps from *.mod files are unpacked to.", Path.Combine(ConfigDir, "tempmodunpack", "maps"));
 
             ModDownloadPath = new Setting<string>(this, "Mod download directory",
                 "The directory to store mods downloaded from servers in.",

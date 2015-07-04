@@ -28,7 +28,7 @@ namespace MPTanks.Clients.GameClient.Mods
             }
             string errors;
             var mod = Modding.ModLoader.LoadMod(
-                 modFile, settings.ModUnpackPath,
+                 modFile, settings.ModUnpackPath, settings.ModMapPath,
                  settings.ModAssetPath, out errors);
 
             loaded = mod;

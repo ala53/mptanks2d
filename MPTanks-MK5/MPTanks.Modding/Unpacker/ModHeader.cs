@@ -13,6 +13,7 @@ namespace MPTanks.Modding.Unpacker
         public string[] ImageFiles { get; set; }
         public string[] SoundFiles { get; set; }
         public string[] ComponentFiles { get; set; }
+        public string[] MapFiles { get; set; }
         public ModDependency[] Dependencies { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
