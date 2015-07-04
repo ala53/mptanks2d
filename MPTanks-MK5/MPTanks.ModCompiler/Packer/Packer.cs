@@ -40,10 +40,10 @@ namespace MPTanks.ModCompiler.Packer
             Archive(zipFile, Program.srcFiles);
             Archive(zipFile, Program.components);
             Archive(zipFile, Program.dlls);
-            Archive(zipFile, Program.imageAssets);
+            Archive(zipFile, Program.imageAssets.SelectMany(a => new[] { a, a + ".json" }).ToList());
             Archive(zipFile, Program.soundAssets);
             Archive(zipFile, Program.maps);
-            
+
             zipFile.Close();
             zipFile.Dispose();
 

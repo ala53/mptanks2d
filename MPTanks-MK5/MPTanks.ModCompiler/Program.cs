@@ -111,7 +111,9 @@ namespace MPTanks.ModCompiler
                     var fi = new FileInfo(p);
                     if (fi.Extension == ".png" || fi.Extension == ".bmp" || fi.Extension == ".jpg" ||
                         fi.Extension == ".gif")
+                    {
                         imageAssets.Add(p);
+                    }
                     else
                     {
                         Console.WriteLine($"{p} is not a valid image.");
@@ -181,34 +183,41 @@ namespace MPTanks.ModCompiler
             }
             if (whitelistDlls == false)
             {
+                Console.WriteLine();
                 Console.WriteLine("You have disabled DLL code whitelisting." +
                     "You will not be able to put this mod on the ZSB mods page.");
             }
             if (dlls.Count == 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("Warning! This mod has no code." +
                     "It will only be usable in a supporting role for another mod (e.g. asset files).");
             }
             if (imageAssets.Count == 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("Warning! This mod has no images. Make sure dependencies on asset mods are correct!");
             }
             if (soundAssets.Count == 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("Warning! This mod has no sounds. Make sure dependencies on asset mods are correct!");
             }
             if (components.Count == 0)
             {
-                Console.WriteLine("Warning! This mod has no component files. It is a very bad idea to generate tanks from code alone!");
+                Console.WriteLine();
+                Console.WriteLine("Warning! This mod has no component files. It is a bad idea to generate components from code alone!");
             }
             if (imageAssets.Count == 0 && soundAssets.Count == 0 && dlls.Count == 0 && maps.Count == 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! This mod is empty! No sound, code, images, or maps are included.");
                 Exit(-2);
             }
 
             if (!DependencyResolver.IsNameValid(name))
             {
+                Console.WriteLine();
                 Console.WriteLine($"Error! {name} is not a valid name. " +
                     "It must be between 4 and 64 characters, containing only A-Z 0-9 and - (dash).");
                 Exit(-2);
@@ -218,6 +227,7 @@ namespace MPTanks.ModCompiler
 
             foreach (var dep in dependencies)
             {
+                Console.WriteLine();
                 Console.WriteLine($"Verifying dependency: {dep}");
                 Console.WriteLine("======================================================");
                 if (!DependencyResolver.ModExists(dep))
@@ -230,31 +240,37 @@ namespace MPTanks.ModCompiler
 
             if (name.Contains(":"))
             {
+                Console.WriteLine();
                 Console.WriteLine($"Error! The mod name {name} contains a : (colon), which is a disallowed character.");
                 Exit(-2);
             }
 
+            Console.WriteLine();
             Console.WriteLine("Checking if mod with same name exists in workshop.");
             if (DependencyResolver.ModExists(name))
             {
+                Console.WriteLine();
                 Console.WriteLine($"Warning! The mod {name} already exists in the ZSB Mod Workshop. If you " +
                     "are not the owner, you will not be able to upload it.");
             }
 
             if (author.Length < 4)
             {
+                Console.WriteLine();
                 Console.WriteLine("Error! The author name is too short. It must be 4 characters or more.");
                 Exit(-2);
             }
 
             if (description.Length < 30)
             {
+                Console.WriteLine();
                 Console.WriteLine("Warning! There is either a very short description or no description. Make sure the " +
                     "description or name fully describes the mod.");
             }
 
             if (!DependencyResolver.IsValidVersion(version))
             {
+                Console.WriteLine();
                 Console.WriteLine($"Error! The version tag {version} is invalid. Make sure it's in the format of " +
                     "MAJOR.MINOR [TAG]. The tag is optional, but the major and minor version numbers are required.");
                 Exit(-2);
@@ -309,36 +325,60 @@ namespace MPTanks.ModCompiler
             if (asm == null)
             {
                 Console.WriteLine(errors);
+                Console.WriteLine();
+                Console.WriteLine("=======================================");
+                Console.WriteLine();
                 Console.WriteLine("Source files could not be compiled.");
+                Console.WriteLine();
                 Exit(-2);
             }
             if (!CheckDLLSafe(asm))
             {
                 Console.WriteLine("Source files (post compiliation) are unsafe.");
+                Console.WriteLine();
                 Exit(-2);
             }
         }
 
         static void ProcessInputFileList(IEnumerable<string> files)
         {
+            var mappings = new Dictionary<string, string>();
             foreach (var file in files)
             {
                 var info = new FileInfo(file);
                 var ext = info.Extension.ToLower();
+
+                if (file.ToLower().EndsWith(".png.json") ||
+                    file.ToLower().EndsWith(".gif.json") ||
+                    file.ToLower().EndsWith(".jpg.json") ||
+                    file.ToLower().EndsWith(".bmp.json"))
+                    continue; //Unnecessary: it's included when archiving the png file
+
                 if (ext == ".png" || ext == ".gif" || ext == ".jpg" || ext == ".bmp")
                 {
-                    imageAssets.Add(file);
+                    if (File.Exists(file + ".json"))
+                    {
+                        mappings.Add(file, "image");
+                        imageAssets.Add(file);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning! {file} is missing matching .json descriptor. Ignoring for now.");
+                    }
                 }
                 else if (ext == ".wav" || ext == ".mp3" || ext == ".ogg")
                 {
+                    mappings.Add(file, "sound");
                     soundAssets.Add(file);
                 }
                 else if (ext == ".cs")
                 {
+                    mappings.Add(file, "c# source");
                     srcFiles.Add(file);
                 }
                 else if (ext == ".dll")
                 {
+                    mappings.Add(file, "mod dll");
                     dlls.Add(file);
                     if (whitelistDlls) CheckDLLSafe(file);
                 }
@@ -350,6 +390,7 @@ namespace MPTanks.ModCompiler
 
                     if (deserializedGeneric.reflectionName != null)
                     {
+                        mappings.Add(file, "components");
                         //component file
                         components.Add(file);
                     }
@@ -359,16 +400,29 @@ namespace MPTanks.ModCompiler
                         try
                         {
                             Map.LoadMap(File.ReadAllText(file), null);
+                            maps.Add(file);
+                            mappings.Add(file, "map");
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Error loading map file:");
+                            Console.WriteLine($"Error loading map file: {file}");
                             Console.WriteLine(ex.ToString());
                             Console.WriteLine();
                         }
                     }
                 }
             }
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Files identified");
+            foreach (var file in mappings)
+            {
+                var fi = new FileInfo(file.Key);
+                Console.WriteLine($"\t{fi.Name} -> {file.Value}");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
         }
 
         static void Exit(int code)
