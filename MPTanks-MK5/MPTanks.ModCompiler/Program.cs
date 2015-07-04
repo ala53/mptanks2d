@@ -34,8 +34,8 @@ namespace MPTanks.ModCompiler
             Mono.Options.OptionSet options = null;
             options = new Mono.Options.OptionSet()
                 .Add("o=|out=|output=", "The output *.mod file for the compiled mod.", (p) => outputFile = p)
-                .Add("nowhitelist=|nowl=", "Disable whitelist verification on the DLLs (mandatory for store upload)",
-                    (w) => whitelistDlls = false)
+                .Add("nowhitelist|nowl", "Disable whitelist verification on the DLLs (mandatory for store upload)",
+                    (w) => { whitelistDlls = false; })
                 .Add("?|help|h", (a) =>
                 {
                     options.WriteOptionDescriptions(Console.Out);
@@ -184,7 +184,7 @@ namespace MPTanks.ModCompiler
             if (whitelistDlls == false)
             {
                 Console.WriteLine();
-                Console.WriteLine("You have disabled DLL code whitelisting." +
+                Console.WriteLine("You have disabled DLL code whitelisting. " +
                     "You will not be able to put this mod on the ZSB mods page.");
             }
             if (dlls.Count == 0)
@@ -281,7 +281,7 @@ namespace MPTanks.ModCompiler
 
             if (packed.Length > (1024 * 1024 * MAX_SIZE_MB)) // 10mb usually
             {
-                Console.WriteLine($"Warning! Mod is {(packed.Length / (1024d * 1024 * MAX_SIZE_MB)).ToString("N1")}mb (" +
+                Console.WriteLine($"Warning! Mod is {(packed.Length / (1024d * 1024)).ToString("N1")}mb (" +
                     $"max size is {MAX_SIZE_MB}mb). You cannot upload it to the ZSB database.");
             }
 
@@ -380,7 +380,12 @@ namespace MPTanks.ModCompiler
                 {
                     mappings.Add(file, "mod dll");
                     dlls.Add(file);
-                    if (whitelistDlls) CheckDLLSafe(file);
+                    if (whitelistDlls)
+                        if (!CheckDLLSafe(file))
+                        {
+                            Console.WriteLine($"Error! {file} is either an unrecognized mod or does not follow the whitelist.");
+                            Exit(-2);
+                        }
                 }
                 else if (ext == ".json")
                 {
