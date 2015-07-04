@@ -1,5 +1,6 @@
 ﻿using MPTanks.Engine.Maps;
 using MPTanks.ModCompiler.Packer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,6 +72,16 @@ namespace MPTanks.ModCompiler
                             Exit(-2);
                         }
                     })
+                .Add("indir:|inputdirectory:", "Looks for all known files in a directory, validates them, and then includes them.", p =>
+                {
+                    p = Path.GetFullPath(p);
+                    ProcessInputFileList(Directory.GetFiles(p));
+                })
+                .Add("rindir:|recursiveindir:", "Looks for all known files in a directory and it's subdirectories, validates them, then includes them.", p =>
+                {
+                    p = Path.GetFullPath(p);
+                    ProcessInputFileList(Directory.GetFiles(p, "*.*", SearchOption.AllDirectories));
+                })
                 .Add("cmp:|componentfile:", "Component JSON files to describe in what way a GameObject should be constructed.",
                 (p) =>
                 {
@@ -308,14 +319,61 @@ namespace MPTanks.ModCompiler
             }
         }
 
+        static void ProcessInputFileList(IEnumerable<string> files)
+        {
+            foreach (var file in files)
+            {
+                var info = new FileInfo(file);
+                var ext = info.Extension.ToLower();
+                if (ext == ".png" || ext == ".gif" || ext == ".jpg" || ext == ".bmp")
+                {
+                    imageAssets.Add(file);
+                }
+                else if (ext == ".wav" || ext == ".mp3" || ext == ".ogg")
+                {
+                    soundAssets.Add(file);
+                }
+                else if (ext == ".cs")
+                {
+                    srcFiles.Add(file);
+                }
+                else if (ext == ".dll")
+                {
+                    dlls.Add(file);
+                    if (whitelistDlls) CheckDLLSafe(file);
+                }
+                else if (ext == ".json")
+                {
+                    //map OR component file
+                    dynamic deserializedGeneric = JsonConvert.DeserializeObject(
+                        File.ReadAllText(file));
+
+                    if (deserializedGeneric.reflectionName != null)
+                    {
+                        //component file
+                        components.Add(file);
+                    }
+                    else
+                    {
+                        //map file
+                        try
+                        {
+                            Map.LoadMap(File.ReadAllText(file), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Error loading map file:");
+                            Console.WriteLine(ex.ToString());
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+
         static void Exit(int code)
         {
             Environment.Exit(code);
-        }
-
-        static void WriteCredits()
-        {
-            Console.WriteLine("Using oggenc2 by Michael Smith & John Edwards");
         }
     }
 }
