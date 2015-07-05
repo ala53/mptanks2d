@@ -38,8 +38,9 @@ namespace AssetCompileHelper
                 return -2;
 
             string cmdArgs = "";
-
-            foreach (var file in GetAssetsNeedingRecompile(files))
+            var needingRecompile = GetAssetsNeedingRecompile(files);
+            if (needingRecompile.Length == 0) return 0;
+            foreach (var file in needingRecompile)
             {
                 cmdArgs += String.Format("/build:\"{0}\" ", file);
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));

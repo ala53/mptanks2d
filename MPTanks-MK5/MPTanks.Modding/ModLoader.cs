@@ -281,7 +281,7 @@ namespace MPTanks.Modding
                     }
                     catch (Exception e)
                     {
-                        builderErrors += "\n\n\nMap object: " + mapObject.FullName + " has error: " + e.Message;
+                        builderErrors += "\n\n\nMap object: " + gameObject.FullName + " has error: " + e.Message;
                     }
 #endif
                 }

@@ -32,7 +32,7 @@ namespace MPTanks.Networking.Common
 
             public static QueueFrame Get()
             {
-                var frame = Pool.Get<QueueFrame>();
+                var frame = new QueueFrame();
                 frame.FrameNumber = 0;
                 frame.Actions.Clear();
                 return frame;

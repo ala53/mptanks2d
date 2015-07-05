@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Windows\Debug\</OutputPath>
+    <OutputPath>..\..\Build\Clients\ClientCore_GameSandbox\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Windows\Release\</OutputPath>
+    <OutputPath>..\..\Build\Clients\ClientCore_GameSandbox\Release\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\Build\Clients\ClientCore_GameSandbox\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,7 +48,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\Build\Clients\ClientCore_GameSandbox\Release\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -95,10 +95,6 @@
       <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.CocosSharp, Version=1.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\CocosSharp\AnyCPU\EmptyKeys.UserInterface.CocosSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EmptyKeys.UserInterface.Core, Version=1.7.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
       <Private>True</Private>
@@ -107,20 +103,8 @@
       <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Debug.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.FNA, Version=1.7.5.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EmptyKeys.UserInterface.MonoGame, Version=1.7.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EmptyKeys.UserInterface.Paradox, Version=1.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Paradox\AnyCPU\EmptyKeys.UserInterface.Paradox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EmptyKeys.UserInterface.SunBurn, Version=1.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FarseerPhysics.Portable">
