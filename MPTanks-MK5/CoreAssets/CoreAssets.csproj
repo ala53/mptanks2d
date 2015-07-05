@@ -44,9 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\components\basictank.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="assets\components\basictank.json" />
     <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
@@ -56,15 +54,9 @@
     <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
-    <None Include="assets\components\basictankmainprojectile.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\components\largehouse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\components\satellitedish.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="assets\components\basictankmainprojectile.json" />
+    <None Include="assets\components\largehouse.json" />
+    <None Include="assets\components\satellitedish.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">
@@ -81,65 +73,30 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="assets\animations\basictank_projectile.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\animations\explosion.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\animations\explosion2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\animations\explosion3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\mapobjects\housetexturebasic.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\mapobjects\moving\satellite_dish.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\other\lowresfont.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\other\smokepuff.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\tanks\basictank2d.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="assets\animations\basictank_projectile.png" />
+    <Content Include="assets\animations\explosion.png" />
+    <Content Include="assets\animations\explosion2.png" />
+    <Content Include="assets\animations\explosion3.png" />
+    <Content Include="assets\mapobjects\housetexturebasic.png" />
+    <Content Include="assets\mapobjects\moving\satellite_dish.png" />
+    <Content Include="assets\other\lowresfont.png" />
+    <Content Include="assets\other\smokepuff.png" />
+    <Content Include="assets\tanks\basictank2d.png" />
     <Content Include="core-assets.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\animations\basictank_projectile.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\animations\explosion.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\animations\explosion2.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\animations\explosion3.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\mapobjects\housetexturebasic.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\mapobjects\moving\satellite_dish.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\other\lowresfont.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\other\smokepuff.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\tanks\basictank2d.png.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="assets\animations\basictank_projectile.png.json" />
+    <None Include="assets\animations\explosion.png.json" />
+    <None Include="assets\animations\explosion2.png.json" />
+    <None Include="assets\animations\explosion3.png.json" />
+    <None Include="assets\mapobjects\housetexturebasic.png.json" />
+    <None Include="assets\mapobjects\moving\satellite_dish.png.json" />
+    <None Include="assets\maps\testmap.json" />
+    <None Include="assets\other\lowresfont.png.json" />
+    <None Include="assets\other\smokepuff.png.json" />
+    <None Include="assets\tanks\basictank2d.png.json" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

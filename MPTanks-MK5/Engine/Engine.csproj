@@ -64,9 +64,6 @@
     <Compile Include="GameObject.Serialization.cs" />
     <Compile Include="Helpers\HalfFloat.cs" />
     <Compile Include="Helpers\Helpers.cs" />
-    <Compile Include="assets\SpriteInfo.cs" />
-    <Compile Include="assets\JSONColor.cs" />
-    <Compile Include="assets\JSONVector.cs" />
     <Compile Include="Core\Events\Types\GameCore\EndedEventArgs.cs" />
     <Compile Include="Core\Events\Types\GameCore\TickEventArgs.cs" />
     <Compile Include="Core\Events\Types\Gamemodes\StateChangedEventArgs.cs" />
@@ -120,16 +117,11 @@
     <Compile Include="Tanks\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\maps\testmap.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Compile Include="Helpers\Helpers.Serialization.cs" />
     <Compile Include="Helpers\HalfFloat.Helper.cs" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="assets\mods\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Modding\Modding.csproj">
       <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
