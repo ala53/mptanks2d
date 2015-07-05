@@ -445,7 +445,6 @@ namespace MPTanks.Engine.Helpers
         private static JsonSerializerSettings _serializerSettingsForStateChange = new JsonSerializerSettings()
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
             TypeNameHandling = TypeNameHandling.All
         };
         public static byte[] Serialize(object obj)

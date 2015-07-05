@@ -121,6 +121,9 @@ namespace MPTanks.Client.GameSandbox.Rendering
                         {
                             Component = component,
                             ComputedTransforms = cmpMatrix,
+#if DEBUG
+                            __debug__OBJ = obj,
+#endif
                             ComputedColor = mask
                         };
                         AddComponentToInternalList(cmp);
@@ -197,6 +200,9 @@ namespace MPTanks.Client.GameSandbox.Rendering
         private struct RComponentInternal
         {
             public Matrix ComputedTransforms;
+#if DEBUG
+            public GameObject __debug__OBJ;
+#endif
             public MPTanks.Engine.Rendering.RenderableComponent Component;
             public Color ComputedColor;
         }

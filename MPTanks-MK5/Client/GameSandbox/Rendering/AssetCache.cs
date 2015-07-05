@@ -86,7 +86,8 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 return _loading;
             }
             //If loading but not loaded...
-            if (!HasSpriteSheetLoadCompleted(sheetName)) return _loading;
+            if (!HasSpriteSheetLoadCompleted(sheetName))
+                return _loading;
 
             //Check if the load failed
             if (spriteSheets.ContainsKey(sheetName))
@@ -190,10 +191,15 @@ namespace MPTanks.Client.GameSandbox.Rendering
             //Do not do duplicate loads
             if (HasSpriteSheetLoadBeenCalled(sheetName)) return;
             //Note that we have called load on it
-            _sheetsWithLoadCalled.Add(sheetName, false);
+            lock (_sheetsWithLoadCalled)
+                _sheetsWithLoadCalled.Add(sheetName, false);
             //And async load
             if (GlobalSettings.Debug)
+            {
                 AsyncLoadFunction(sheetName);
+                lock (_sheetsWithLoadCalled)
+                    _sheetsWithLoadCalled[sheetName] = true;
+            }
             else
                 Task.Run(() =>
                 {
@@ -210,7 +216,8 @@ namespace MPTanks.Client.GameSandbox.Rendering
                     }
                     finally
                     {
-                        _sheetsWithLoadCalled[sheetName] = true;
+                        lock (_sheetsWithLoadCalled)
+                            _sheetsWithLoadCalled[sheetName] = true;
                     }
                 });
         }
@@ -255,12 +262,14 @@ namespace MPTanks.Client.GameSandbox.Rendering
 
         private bool HasSpriteSheetLoadBeenCalled(string sheetName)
         {
-            return _sheetsWithLoadCalled.ContainsKey(sheetName);
+            lock (_sheetsWithLoadCalled)
+                return _sheetsWithLoadCalled.ContainsKey(sheetName);
         }
 
         private bool HasSpriteSheetLoadCompleted(string sheetName)
         {
-            return HasSpriteSheetLoadBeenCalled(sheetName) && _sheetsWithLoadCalled[sheetName];
+            lock (_sheetsWithLoadCalled)
+                return HasSpriteSheetLoadBeenCalled(sheetName) && _sheetsWithLoadCalled[sheetName];
         }
 
         public void Dispose()
