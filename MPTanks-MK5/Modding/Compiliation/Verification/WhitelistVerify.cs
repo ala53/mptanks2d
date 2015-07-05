@@ -17,6 +17,7 @@ namespace MPTanks.Modding.Compiliation.Verification
             "Microsoft.Xna.Framework",
             "Microsoft.VisualBasic",
             "MPTanks.Mods",
+            "MPTanks.CoreAssets",
             "Starbound.Input",
             "MPTanks.Clients",
             "System.Dynamic",
