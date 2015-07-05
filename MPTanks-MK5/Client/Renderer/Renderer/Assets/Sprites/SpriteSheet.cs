@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.Renderer.Assets.Sprites
+namespace MPTanks.Renderer.Renderer.Assets.Sprites
 {
     class SpriteSheet : IReadOnlyDictionary<string, Sprite>, IReadOnlyDictionary<string, Animation>, IReadOnlyList<Sprite>, IReadOnlyList<Animation>
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.UI
+namespace MPTanks.Renderer.UI
 {
     public abstract class BinderBase : ViewModelBase
     {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Menus
+namespace MPTanks.Client
 {
     static class Settings
     {
-        public static string FilePathForInGameAssembly = typeof(MPTanks.Clients.GameClient.GameClient).Assembly.Location;
+        public static string FilePathForInGameAssembly = typeof(MPTanks.Client.GameSandbox.GameClient).Assembly.Location;
     }
 }

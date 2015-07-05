@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Screens.Component
+namespace MPTanks.Client.GameSandbox.Screens.Component
 {
     class DebugRenderer : ScreenComponent
     {

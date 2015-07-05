@@ -1,7 +1,7 @@
 ﻿using MPTanks.Engine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MPTanks.Clients.GameClient.Rendering.Sprites;
+using MPTanks.Client.GameSandbox.Rendering.Sprites;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using MPTanks.Engine.Settings;
 using System.Runtime.CompilerServices;
 
-namespace MPTanks.Clients.GameClient.Rendering
+namespace MPTanks.Client.GameSandbox.Rendering
 {
     /// <summary>
     /// An internal cache so that multiple gameobjects using the same art asset can run

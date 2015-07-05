@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Client.GameSandbox;
 using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Menus.InGame
+namespace MPTanks.Client
 {
     /// <summary>
     /// A running game. That is, a game with mods loaded, etc. Sandboxed from the menus.
@@ -84,7 +85,7 @@ namespace MPTanks.Clients.GameClient.Menus.InGame
             if (!ClientSettings.Instance.SandboxGames)
             {
                 SetStartWindowParams();
-                Clients.GameClient.Program.Main(new string[] { });
+                Client.GameSandbox.Program.Main(new string[] { });
             }
             _clearedToRun = true;
         }

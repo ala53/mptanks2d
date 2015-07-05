@@ -11,9 +11,6 @@
     <RootNamespace>MPTanks.Client</RootNamespace>
     <AssemblyName>MPTanks.Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MonoGamePlatform>Windows</MonoGamePlatform>
-    <MonoGameContentBuilderExe>
-    </MonoGameContentBuilderExe>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -104,9 +101,6 @@
     <Content Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="assets\Content.mgcb" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Networking\Client\MPTanks.Networking.Client.csproj">
       <Project>{2f77b6ce-2d2d-4e67-a7bd-38e896a52931}</Project>
       <Name>MPTanks.Networking.Client</Name>
@@ -142,7 +136,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

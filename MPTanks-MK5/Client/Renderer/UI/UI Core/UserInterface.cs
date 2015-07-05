@@ -6,14 +6,14 @@ using EmptyKeys.UserInterface.Renderers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MPTanks.Rendering.UI.Binders;
+using MPTanks.Renderer.UI.Binders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.UI
+namespace MPTanks.Renderer.UI
 {
     public class UserInterface
     {

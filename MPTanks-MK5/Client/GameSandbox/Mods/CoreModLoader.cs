@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient
+namespace MPTanks.Client.GameSandbox.Mods
 {
     public static class CoreModLoader
     {
@@ -35,7 +35,7 @@ namespace MPTanks.Clients.GameClient
         private static void LoadModInternal(string modFile, ref string errors)
         {
             string err = "";
-            var mod = ModLoader.Load(modFile, false, out err);
+            var mod = Modding.ModLoader.Load(modFile, false, out err);
 
             errors += "\n\n\n" + err;
         }

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Engine.Settings;
-using MPTanks.Rendering.Renderer.Assets.Sprites;
+using MPTanks.Renderer.Renderer.Assets.Sprites;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.Renderer.Assets
+namespace MPTanks.Renderer.Renderer.Assets
 {
     class AssetLoader
     {

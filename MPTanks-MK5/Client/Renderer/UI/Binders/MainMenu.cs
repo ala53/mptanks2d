@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.UI.Binders
+namespace MPTanks.Renderer.UI.Binders
 {
     public class MainMenu : BinderBase
     {

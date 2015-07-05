@@ -1,4 +1,4 @@
-﻿<ek:UIRoot x:Class="MPTanks.Rendering.assets.ui.xaml.CreateAccountPage"
+﻿<ek:UIRoot x:Class="MPTanks.Renderer.assets.ui.xaml.CreateAccountPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

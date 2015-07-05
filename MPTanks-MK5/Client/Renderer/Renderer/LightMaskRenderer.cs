@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Engine.Rendering;
 using MPTanks.Engine.Rendering.Lighting;
-using MPTanks.Rendering.Renderer.Assets;
+using MPTanks.Renderer.Renderer.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.Renderer
+namespace MPTanks.Renderer.Renderer
 {
     class LightMaskRenderer 
     {

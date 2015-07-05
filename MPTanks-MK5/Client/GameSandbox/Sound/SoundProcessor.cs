@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Sound
+namespace MPTanks.Client.GameSandbox.Sound
 {
     class SoundProcessor
     {

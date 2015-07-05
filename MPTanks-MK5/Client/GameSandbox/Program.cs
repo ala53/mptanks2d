@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace MPTanks.Clients.GameClient
+namespace MPTanks.Client.GameSandbox
 {
 #if WINDOWS || LINUX
     /// <summary>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Screens
+namespace MPTanks.Client.GameSandbox.Screens
 {
     abstract class Screen
     {

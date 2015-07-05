@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Mods
+namespace MPTanks.Client.GameSandbox.Mods
 {
     public static class ModLoader
     {

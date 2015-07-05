@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Engine;
 using MPTanks.Engine.Logging;
-using MPTanks.Rendering.Renderer.Assets;
+using MPTanks.Renderer.Renderer.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.Renderer
+namespace MPTanks.Renderer.Renderer
 {
     public class GameWorldRenderer : IDisposable
     {

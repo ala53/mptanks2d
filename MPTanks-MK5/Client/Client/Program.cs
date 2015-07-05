@@ -1,6 +1,4 @@
 ﻿#region Using Statements
-using MPTanks.Clients.GameClient.Menus;
-using MPTanks.Clients.GameClient.Menus.InGame;
 using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
@@ -8,7 +6,7 @@ using System.Linq;
 using System.Threading;
 #endregion
 
-namespace MPTanks.Clients.GameClient.Menus
+namespace MPTanks.Client
 {
 #if WINDOWS || LINUX
     /// <summary>

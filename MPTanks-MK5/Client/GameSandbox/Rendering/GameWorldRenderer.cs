@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MPTanks.Engine.Core;
 
-namespace MPTanks.Clients.GameClient.Rendering
+namespace MPTanks.Client.GameSandbox.Rendering
 {
     partial class GameWorldRenderer : Renderer, IDisposable
     {

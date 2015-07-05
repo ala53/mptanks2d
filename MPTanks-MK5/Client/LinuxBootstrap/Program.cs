@@ -10,7 +10,7 @@ namespace MPTanks.PlatformRuntime.Linux
     {
         static void Main(string[] args)
         {
-            Clients.GameClient.Menus.Program.Main();
+            Client.Program.Main();
         }
     }
 }

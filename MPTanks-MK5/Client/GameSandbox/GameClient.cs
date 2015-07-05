@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
-using MPTanks.Clients.GameClient.Rendering;
+using MPTanks.Client.GameSandbox.Rendering;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using System.Diagnostics;
 using System.Runtime;
 using System.Text;
 using MPTanks.Engine.Rendering.Particles;
-using MPTanks.Rendering.UI;
+using MPTanks.Renderer.UI;
 using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Media;
@@ -23,9 +23,10 @@ using MPTanks.Engine.Logging;
 using MPTanks.Networking.Common.Game;
 using MPTanks.Networking.Common;
 using System.Threading.Tasks;
+using MPTanks.Client.GameSandbox.Mods;
 #endregion
 
-namespace MPTanks.Clients.GameClient
+namespace MPTanks.Client.GameSandbox
 {
     /// <summary>
     /// This is the main type for your game

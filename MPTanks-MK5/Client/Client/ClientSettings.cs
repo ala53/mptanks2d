@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Menus
+namespace MPTanks.Client
 {
     class ClientSettings : SettingsBase
     {

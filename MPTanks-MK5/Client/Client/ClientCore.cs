@@ -6,11 +6,10 @@ using EmptyKeys.UserInterface.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MPTanks.Clients.GameClient.Menus.InGame;
-using MPTanks.Rendering.UI;
+using MPTanks.Renderer.UI;
 using System;
 
-namespace MPTanks.Clients.GameClient.Menus
+namespace MPTanks.Client
 {
     /// <summary>
     /// This is the main type for your game

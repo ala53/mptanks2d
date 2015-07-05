@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.GameClient.Rendering
+namespace MPTanks.Client.GameSandbox.Rendering
 {
     abstract class Renderer
     {

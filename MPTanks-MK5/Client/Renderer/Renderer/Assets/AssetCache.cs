@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Engine.Assets;
 using MPTanks.Engine.Logging;
-using MPTanks.Rendering.Renderer.Assets.Sprites;
+using MPTanks.Renderer.Renderer.Assets.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Rendering.Renderer.Assets
+namespace MPTanks.Renderer.Renderer.Assets
 {
     class AssetCache
     {
