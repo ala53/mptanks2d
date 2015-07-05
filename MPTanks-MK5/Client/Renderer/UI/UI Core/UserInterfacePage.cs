@@ -20,8 +20,8 @@ namespace MPTanks.Renderer.UI
         public UserInterfacePage(string pageName)
         {
             //Generate an instance of the page
-            Page = (UIRoot)Activator.CreateInstance(Type.GetType(nameof(EmptyKeys.UserInterface.Generated) + "." + pageName, true, true), 0, 0);
-            Binder = Activator.CreateInstance(Type.GetType(nameof(Binders) + "." + pageName, true, true));
+            Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
+            Binder = Activator.CreateInstance(Type.GetType("MPTanks.Renderer.UI.Binders." + pageName, true, true));
             if (Binder is BinderBase)
                 Binder.Owner = this;
 

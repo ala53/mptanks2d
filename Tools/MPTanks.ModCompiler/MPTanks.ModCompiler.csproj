@@ -67,13 +67,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MPTanks-MK5\MPTanks.Engine\MPTanks.Engine.csproj">
+    <ProjectReference Include="..\..\MPTanks-MK5\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
-      <Name>MPTanks.Engine</Name>
+      <Name>Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MPTanks-MK5\MPTanks.Modding\MPTanks.Modding.csproj">
+    <ProjectReference Include="..\..\MPTanks-MK5\Modding\Modding.csproj">
       <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
-      <Name>MPTanks.Modding</Name>
+      <Name>Modding</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
