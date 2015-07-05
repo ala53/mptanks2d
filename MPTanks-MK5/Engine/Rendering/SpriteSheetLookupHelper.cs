@@ -45,9 +45,7 @@ namespace MPTanks.Engine.Rendering
         {
             if (_tankResolver == null && _assetResolver == null)
                 return asset;
-
-            if (moduleName == "engine_base" || moduleName == "MPTanks Core Assets") return asset;
-
+            
             if (player != null)
                 return _tankResolver(FindModuleByName(moduleName), player, asset);
             else
