@@ -63,7 +63,7 @@ namespace MPTanks.Modding
         }
 
 
-        public static void Add(string name, int major, int minor, string tag, string file)
+        public static void Add(string name, int major, int minor, string tag, string file, bool hasWhitelist)
         {
             if (Contains(name))
             {
@@ -71,6 +71,7 @@ namespace MPTanks.Modding
                 Get(name).Major = major;
                 Get(name).Minor = minor;
                 Get(name).Tag = tag;
+                Get(name).UsesWhitelist = hasWhitelist;
             }
             else
             {
@@ -87,7 +88,7 @@ namespace MPTanks.Modding
         public static void AddLoaded(Module module)
         {
             if (!Contains(module.Name))
-                Add(module.Name, module.Version.Major, module.Version.Minor, module.Version.Tag, module.PackedFile);
+                Add(module.Name, module.Version.Major, module.Version.Minor, module.Version.Tag, module.PackedFile, module.UsesWhitelist);
 
             if (!_loadedModules.Contains(module))
                 _loadedModules.Add(module);
@@ -126,6 +127,7 @@ namespace MPTanks.Modding
         public int Minor { get; set; }
         public string Tag { get; set; }
         public string File { get; set; }
+        public bool UsesWhitelist { get; set; }
         private Lazy<ModMetadata> _metadata;
         [JsonIgnore]
         public ModMetadata Metadata { get { return _metadata.Value; } }
@@ -135,7 +137,7 @@ namespace MPTanks.Modding
 
         public ModDatabaseItem()
         {
-            _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File));
+           // _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File, UsesWhitelist));
         }
     }
 }

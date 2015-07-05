@@ -318,6 +318,8 @@ namespace MPTanks.Modding
             errors = safetyCheckErrors + "\n\n" + builderErrors;
             module.PackedFile = assemblies[0];
 
+            module.UsesWhitelist = verifySafe;
+
             return module;
         }
 

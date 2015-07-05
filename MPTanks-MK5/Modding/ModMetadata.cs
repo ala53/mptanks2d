@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace MPTanks.Modding
         /// Warning! Very expensive. Creates an appdomain, unpacks a mod, and inspects its contents
         /// to get a list of all files in the mod. Then it builds the metadata from the information.
         /// </summary>
-        public static ModMetadata CreateMetadata(string modFile)
+        public static ModMetadata CreateMetadata(string modFile, bool verifySafe)
         {
             if (_cache.ContainsKey(modFile.ToLower()))
                 return _cache[modFile.ToLower()];
@@ -47,12 +48,13 @@ namespace MPTanks.Modding
             domain.Load(new System.Reflection.AssemblyName(typeof(ModMetadata).Assembly.FullName));
 
             domain.SetData("__create__modFile", modFile);
+            domain.SetData("__create__verifySafe", verifySafe);
             //Flag the domain for special case usage - avoid loading the entire metadata cache which we will not use.
             domain.SetData("__metadata__creation__domain", "not null, i swear");
             var crossDomainTarget = new CrossAppDomainDelegate(Create);
 
             domain.DoCallBack(crossDomainTarget);
-            meta = (ModMetadata)domain.GetData("__create__return__metadata");
+            meta = DeepClone((ModMetadata)domain.GetData("__create__return__metadata"));
 
             AppDomain.Unload(domain);
 
@@ -62,9 +64,22 @@ namespace MPTanks.Modding
             return meta;
         }
 
+        private static T DeepClone<T>(T obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+
+                return (T)formatter.Deserialize(ms);
+            }
+        }
+
         private static void Create()
         {
             var modFile = (string)AppDomain.CurrentDomain.GetData("__create__modFile");
+            var verifySafe = (bool)AppDomain.CurrentDomain.GetData("__create__verifySafe");
             ModMetadata result = new ModMetadata();
 
             string errors = null;
@@ -74,10 +89,10 @@ namespace MPTanks.Modding
             FileInfo fi = new FileInfo(modFile);
 
             if (fi.Extension.ToLower().EndsWith("dll"))
-                modData = ModLoader.Load(modFile, true, out errors);
+                modData = ModLoader.Load(modFile, verifySafe, out errors);
             else
                 modData = ModLoader.LoadMod(modFile, Settings.MetadataModUnpackDir, Settings.MetadataModUnpackDir,
-               Settings.MetadataModUnpackDir, out errors, true);
+               Settings.MetadataModUnpackDir, out errors, verifySafe);
 
             result.ModPackedFile = modFile;
 

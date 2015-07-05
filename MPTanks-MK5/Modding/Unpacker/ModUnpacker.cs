@@ -51,6 +51,7 @@ namespace MPTanks.Modding.Unpacker
 
         public static string[] UnpackDlls(string modFile, string outputDir)
         {
+            Directory.CreateDirectory(outputDir);
             //we unpack to modName_modMajor_modMinor_assetName.dll
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
@@ -69,6 +70,7 @@ namespace MPTanks.Modding.Unpacker
         }
         public static string[] UnpackSounds(string modFile, string outputDir)
         {
+            Directory.CreateDirectory(outputDir);
             //we unpack to modFile_modMajor_modMinor_assetName.ogg/mp3/ac3/wav
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
@@ -88,6 +90,7 @@ namespace MPTanks.Modding.Unpacker
         }
         public static string[] UnpackImages(string modFile, string outputDir)
         {
+            Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName and *.json
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
@@ -114,6 +117,7 @@ namespace MPTanks.Modding.Unpacker
 
         public static string[] UnpackMaps(string modFile, string outputDir)
         {
+            Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName.json
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);
@@ -135,6 +139,7 @@ namespace MPTanks.Modding.Unpacker
 
         public static string[] UnpackComponents(string modFile, string outputDir)
         {
+            Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName.json
             var header = GetHeader(modFile);
             var zf = OpenZip(modFile);

@@ -21,9 +21,9 @@ namespace MPTanks.Client.GameSandbox.Mods
             foreach (var modFile in settings.CoreMods.Value)
             {
                 if (GlobalSettings.Debug)
-                    LoadModInternal(modFile, ref errors);
+                    LoadModInternal(modFile, settings, ref errors);
                 else
-                    try { LoadModInternal(modFile, ref errors); }
+                    try { LoadModInternal(modFile, settings, ref errors); }
                     catch (Exception ex)
                     {
                         errors += ex.ToString();
@@ -32,10 +32,10 @@ namespace MPTanks.Client.GameSandbox.Mods
             }
         }
 
-        private static void LoadModInternal(string modFile, ref string errors)
+        private static void LoadModInternal(string modFile, GameSettings settings, ref string errors)
         {
             string err = "";
-            var mod = Modding.ModLoader.Load(modFile, false, out err);
+            var mod = Modding.ModLoader.LoadMod(modFile, settings.ModUnpackPath, settings.ModMapPath, settings.ModAssetPath, out err, false);
 
             errors += "\n\n\n" + err;
         }

@@ -37,7 +37,6 @@ namespace MPTanks.Client
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
-                Unload();
             }
             else
             {
@@ -85,7 +84,8 @@ namespace MPTanks.Client
             if (!ClientSettings.Instance.SandboxGames)
             {
                 SetStartWindowParams();
-                Client.GameSandbox.Program.Main(new string[] { });
+                GameSandbox.Program.Main(new string[] { });
+                Unload();
             }
             _clearedToRun = true;
         }

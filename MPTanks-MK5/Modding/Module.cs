@@ -14,6 +14,7 @@ namespace MPTanks.Modding
         public string Description { get; internal set; }
         public string Author { get; internal set; }
         public ModHeader Header { get; internal set; }
+        public bool UsesWhitelist { get; internal set; }
         public Dictionary<string, string> AssetMappings { get; internal set; } =
             new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         public string PackedFile { get; internal set; }

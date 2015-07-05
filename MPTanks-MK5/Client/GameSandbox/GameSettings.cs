@@ -62,7 +62,7 @@ namespace MPTanks.Client.GameSandbox
         public Setting<string[]> CoreMods { get; private set; }
 
         public static readonly string[] DefaultTrustedMods = new[] {
-                    "MPTanks.Modding.Mods.Core.dll"
+                    "core-assets.mod"
                 };
 
         /// <summary>
