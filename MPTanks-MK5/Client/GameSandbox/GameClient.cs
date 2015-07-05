@@ -134,10 +134,11 @@ namespace MPTanks.Client.GameSandbox
 
         private void SetupGame()
         {
+            Modding.ModDatabase.Get("MPTanks Core Assets").Metadata.ToString();
             game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
-                System.IO.File.ReadAllText("assets/maps/testmap.json"),
+                Modding.ModLoader.LoadedMods["core-assets.mod"].GetPackedFileString("testmap.json"),
                 false,
                 new EngineSettings("Engine Settings.json")
                 );

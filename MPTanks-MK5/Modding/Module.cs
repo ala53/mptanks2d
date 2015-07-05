@@ -1,6 +1,7 @@
 ﻿using MPTanks.Modding.Unpacker;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -49,7 +50,7 @@ namespace MPTanks.Modding
         /// <returns></returns>
         public byte[] GetPackedFileData(string filename)
         {
-            return ModUnpacker.GetByteArrayFile(PackedFile, filename);
+            return File.ReadAllBytes(AssetMappings[filename]);
         }
         /// <summary>
         /// Gets the string data from a file that is packed in the *.mod container (paths not supported).
@@ -58,7 +59,7 @@ namespace MPTanks.Modding
         /// <returns></returns>
         public string GetPackedFileString(string filename)
         {
-            return ModUnpacker.GetStringFile(PackedFile, filename);
+            return File.ReadAllText(AssetMappings[filename]);
         }
     }
 

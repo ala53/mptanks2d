@@ -61,6 +61,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\JSONColor.cs" />
+    <Compile Include="Assets\JSONVector.cs" />
+    <Compile Include="Assets\SpriteInfo.cs" />
     <Compile Include="GameObject.Serialization.cs" />
     <Compile Include="Helpers\HalfFloat.cs" />
     <Compile Include="Helpers\Helpers.cs" />
