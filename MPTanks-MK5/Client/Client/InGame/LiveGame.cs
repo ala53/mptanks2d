@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EmptyKeys.UserInterface;
+using Microsoft.Xna.Framework;
 using MPTanks.Client.GameSandbox;
 using MPTanks.Engine.Settings;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace MPTanks.Client
 {
     /// <summary>
-    /// A running game. That is, a game with mods loaded, etc. Sandboxed from the menus.
+    /// A running game. That is, a game with mods loaded, players joined, etc. Sandboxed from the menus.
     /// </summary>
     public class LiveGame
     {
@@ -85,7 +86,9 @@ namespace MPTanks.Client
             {
                 SetStartWindowParams();
                 GameSandbox.Program.Main(new string[] { });
-                Unload();
+                Logger.Error("Closing program to prevent crashes (Debug mode causes severe issues when " + 
+                    "attempting to run multiple games through the same process)");
+                Environment.Exit(-2); //Force close because, well, it will die anyway and now, we can be graceful
             }
             _clearedToRun = true;
         }
