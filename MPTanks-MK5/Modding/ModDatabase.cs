@@ -10,7 +10,7 @@ namespace MPTanks.Modding
 {
     public static class ModDatabase
     {
-        static List<ModDatabaseItem> _items = new List<ModDatabaseItem>();
+        static List<ModDatabaseItem> _items { get; set; } = new List<ModDatabaseItem>();
 
         public static IReadOnlyList<ModDatabaseItem> Mods { get { return _items; } }
 
@@ -82,6 +82,8 @@ namespace MPTanks.Modding
                 itm.Minor = minor;
                 itm.Tag = tag;
                 itm.File = file;
+                itm.UsesWhitelist = hasWhitelist;
+                _items.Add(itm);
             }
             Save();
         }
@@ -110,7 +112,7 @@ namespace MPTanks.Modding
         public static void Remove(string name)
         {
             if (Contains(name))
-                    _items.Remove(Get(name));
+                _items.Remove(Get(name));
             Save();
         }
 
@@ -138,7 +140,7 @@ namespace MPTanks.Modding
 
         public ModDatabaseItem()
         {
-           // _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File, UsesWhitelist));
+            _metadata = new Lazy<ModMetadata>(() => ModMetadata.CreateMetadata(File, UsesWhitelist));
         }
     }
 }
