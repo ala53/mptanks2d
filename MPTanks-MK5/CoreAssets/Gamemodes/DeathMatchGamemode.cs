@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MPTanks.Modding;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Gamemodes;
 
-namespace MPTanks.Modding.Mods.Core
+namespace MPTanks.CoreAssets.Gamemodes
 {
     [Gamemode("DeathMatchGamemode", DisplayName = "Deathmatch (no teams)",
         Description = "2 team deathmatch", MinPlayersCount = 2)]

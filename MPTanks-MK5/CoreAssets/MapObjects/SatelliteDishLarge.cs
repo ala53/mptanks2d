@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Modding;
 
-namespace MPTanks.Modding.Mods.Core.MapObjects
+namespace MPTanks.CoreAssets.MapObjects
 {
-    [Modding.MapObject("SatelliteDishLarge", "assets/components/satellitedish.json", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
+    [MapObject("SatelliteDishLarge", "assets/components/satellitedish.json", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
         DisplayName = "Satellite Dish (large)")]
     public class SatelliteDishLarge : MapObject
     {

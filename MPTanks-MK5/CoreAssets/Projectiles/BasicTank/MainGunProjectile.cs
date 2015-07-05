@@ -10,10 +10,11 @@ using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Assets;
+using MPTanks.Modding;
 
-namespace MPTanks.Modding.Mods.Core.Projectiles.BasicTank
+namespace MPTanks.CoreAssets.Projectiles.BasicTank
 {
-    [MPTanks.Modding.Projectile("BasicTankMPMainProjectile", "assets/components/basictankmainprojectile.json", "BasicTankMP", DisplayName = "Main gun projectile for Basic Tank")]
+    [Projectile("BasicTankMPMainProjectile", "assets/components/basictankmainprojectile.json", "BasicTankMP", DisplayName = "Main gun projectile for Basic Tank")]
     public class MainGunProjectile : Projectile
     {
         /// <summary>

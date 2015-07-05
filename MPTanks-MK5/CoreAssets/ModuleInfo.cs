@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MPTanks.Modding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Modding.Mods.Core
+namespace MPTanks.CoreAssets
 {
     /// <summary>
     /// Explanation: This is the core module where all of the ZSB assets are.

@@ -349,16 +349,7 @@ namespace MPTanks.Clients.GameClient
                 zoom += 0.1f;
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.V))
-            {
-                for (var i = 0; i < 10; i++)
-                    game.ParticleEngine.CreateEmitter(0.05f,
-                        MPTanks.Modding.Mods.Core.Assets.BasicTank.MainGunSparks,
-                        Color.Red, new MPTanks.Engine.Core.RectangleF(10, 10, 10, 10),
-                        new Vector2(0.2f)
-                        );
-            }
+            
 
             if (Keyboard.GetState().IsKeyDown(Keys.B))
             {

@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine;
 using MPTanks.Engine.Maps.MapObjects;
+using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Modding.Mods.Core.MapObjects
+namespace MPTanks.CoreAssets.MapObjects
 {
     [MapObject("LargeHouseMultiLevel", "assets/components/largehouse.json", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
         DisplayName = "Multi level house")]

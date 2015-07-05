@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MPTanks.Modding;
 
-namespace MPTanks.Modding.Mods.Core.Gamemodes
+namespace MPTanks.CoreAssets.Gamemodes
 {
     [Gamemode("TeamDeathMatchGamemode", DisplayName = "Team Deathmatch",
         Description = "A free-for-all deathmatch", MinPlayersCount = 2)]

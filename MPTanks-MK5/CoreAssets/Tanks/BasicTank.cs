@@ -10,8 +10,9 @@ using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Assets;
 using MPTanks.Engine.Helpers;
+using MPTanks.Modding;
 
-namespace MPTanks.Modding.Mods.Core.Tanks
+namespace MPTanks.CoreAssets.Tanks
 {
     [Tank("BasicTankMP", "assets/components/basictank.json",
         DisplayName = "Basic Tank", Description = "Basic Tank")]

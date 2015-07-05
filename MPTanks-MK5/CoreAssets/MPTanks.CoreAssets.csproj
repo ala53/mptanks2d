@@ -7,8 +7,8 @@
     <ProjectGuid>{3FA1FB15-E7EF-44A3-A4FA-DFFC33F85417}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MPTanks.Modding.Mods.Core</RootNamespace>
-    <AssemblyName>MPTanks.Modding.Mods.Core</AssemblyName>
+    <RootNamespace>MPTanks.CoreAssets</RootNamespace>
+    <AssemblyName>MPTanks.CoreAssets</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets.cs" />
     <None Include="assets\components\basictank.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
