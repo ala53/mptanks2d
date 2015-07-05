@@ -67,7 +67,6 @@
     <Compile Include="assets\SpriteInfo.cs" />
     <Compile Include="assets\JSONColor.cs" />
     <Compile Include="assets\JSONVector.cs" />
-    <Compile Include="ConstructorHelper.cs" />
     <Compile Include="Core\Events\Types\GameCore\EndedEventArgs.cs" />
     <Compile Include="Core\Events\Types\GameCore\TickEventArgs.cs" />
     <Compile Include="Core\Events\Types\Gamemodes\StateChangedEventArgs.cs" />

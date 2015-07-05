@@ -244,8 +244,6 @@ namespace MPTanks.Engine
                 Settings = new EngineSettings();
             else
                 Settings = settings;
-            //Safety: call all global Ctors
-            ConstructorHelper.CallGlobalCtors();
 
             _skipInit = skipInit;
             if (skipInit) { 
