@@ -23,10 +23,12 @@ namespace MPTanks.Client.GameSandbox.Mods
         {
             if (_loaded.ContainsKey(modFile))
             {
+                Logger.Warning($"ModLoader::LoadMod called two or more times for {modFile}");
                 loaded = _loaded[modFile];
                 return true;
             }
             string errors;
+            Logger.Info($"Mod {modFile} loaded.");
             var mod = Modding.ModLoader.LoadMod(
                  modFile, settings.ModUnpackPath, settings.ModMapPath,
                  settings.ModAssetPath, out errors);
