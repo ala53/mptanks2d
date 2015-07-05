@@ -35,8 +35,9 @@ namespace MPTanks.Client.GameSandbox.Mods
         private static void LoadModInternal(string modFile, GameSettings settings, ref string errors)
         {
             string err = "";
-            var mod = Modding.ModLoader.LoadMod(modFile, settings.ModUnpackPath, settings.ModMapPath, settings.ModAssetPath, out err, false);
-
+            var mod = Modding.ModLoader.LoadMod(modFile, settings.ModUnpackPath, settings.ModMapPath, 
+                settings.ModAssetPath, out err, false, GlobalSettings.Debug);
+            //In debug mode, we delete and recreate the cache
             errors += "\n\n\n" + err;
         }
     }

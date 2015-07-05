@@ -41,15 +41,19 @@ namespace MPTanks.Modding.Unpacker
             return zf;
         }
 
+        private static Dictionary<string, ModHeader> _headerCache = 
+            new Dictionary<string, ModHeader>(StringComparer.InvariantCultureIgnoreCase);
         public static ModHeader GetHeader(string modFile)
         {
+            if (_headerCache.ContainsKey(modFile)) return _headerCache[modFile];
             var zf = OpenZip(modFile);
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ModHeader>(ReadText("mod.json", zf));
+            _headerCache.Add(modFile, obj);
             zf.Close();
             return obj;
         }
 
-        public static string[] UnpackDlls(string modFile, string outputDir)
+        public static string[] UnpackDlls(string modFile, string outputDir, bool overwriteExisting)
         {
             Directory.CreateDirectory(outputDir);
             //we unpack to modName_modMajor_modMinor_assetName.dll
@@ -60,7 +64,7 @@ namespace MPTanks.Modding.Unpacker
             foreach (var dll in header.DLLFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{dll}");
-                if (!File.Exists(path))
+                if (!File.Exists(path) || overwriteExisting)
                     File.WriteAllBytes(path,
                     GetData(dll, zf));
                 dlls.Add(path);
@@ -68,7 +72,7 @@ namespace MPTanks.Modding.Unpacker
             zf.Close();
             return dlls.ToArray();
         }
-        public static string[] UnpackSounds(string modFile, string outputDir)
+        public static string[] UnpackSounds(string modFile, string outputDir, bool overwriteExisting)
         {
             Directory.CreateDirectory(outputDir);
             //we unpack to modFile_modMajor_modMinor_assetName.ogg/mp3/ac3/wav
@@ -80,7 +84,7 @@ namespace MPTanks.Modding.Unpacker
             foreach (var sound in header.SoundFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{sound}");
-                if (!File.Exists(path))
+                if (!File.Exists(path) || overwriteExisting)
                     File.WriteAllBytes(path,
                         GetData(sound, zf));
                 files.Add(path);
@@ -88,7 +92,7 @@ namespace MPTanks.Modding.Unpacker
             zf.Close();
             return files.ToArray();
         }
-        public static string[] UnpackImages(string modFile, string outputDir)
+        public static string[] UnpackImages(string modFile, string outputDir, bool overwriteExisting)
         {
             Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName and *.json
@@ -106,7 +110,7 @@ namespace MPTanks.Modding.Unpacker
                 files.Add(path);
 
                 var jsonPath = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.json");
-                if (!File.Exists(jsonPath))
+                if (!File.Exists(jsonPath) || overwriteExisting)
                     File.WriteAllBytes(jsonPath,
                     GetData($"{img}.json", zf));
             }
@@ -115,7 +119,7 @@ namespace MPTanks.Modding.Unpacker
             return files.ToArray();
         }
 
-        public static string[] UnpackMaps(string modFile, string outputDir)
+        public static string[] UnpackMaps(string modFile, string outputDir, bool overwriteExisting)
         {
             Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName.json
@@ -127,7 +131,7 @@ namespace MPTanks.Modding.Unpacker
             foreach (var map in header.MapFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{map}");
-                if (!File.Exists(path))
+                if (!File.Exists(path) || overwriteExisting)
                     File.WriteAllBytes(path,
                     GetData(map, zf));
                 files.Add(path);
@@ -137,7 +141,7 @@ namespace MPTanks.Modding.Unpacker
             return files.ToArray();
         }
 
-        public static string[] UnpackComponents(string modFile, string outputDir)
+        public static string[] UnpackComponents(string modFile, string outputDir, bool overwriteExisting)
         {
             Directory.CreateDirectory(outputDir);
             //we unpack by modFile_modMajor_modMinor_assetName.json
@@ -149,7 +153,7 @@ namespace MPTanks.Modding.Unpacker
             foreach (var component in header.ComponentFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{component}");
-                if (!File.Exists(path))
+                if (!File.Exists(path) || overwriteExisting)
                     File.WriteAllBytes(path,
                     GetData(component, zf));
                 files.Add(path);

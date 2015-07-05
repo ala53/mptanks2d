@@ -14,7 +14,7 @@ namespace MPTanks.Modding
         private static Dictionary<string, Module> loadedModFiles = new Dictionary<string, Module>();
         public static IReadOnlyDictionary<string, Module> LoadedMods { get { return loadedModFiles; } }
 
-        public static Module LoadMod(string modFile, string dllUnpackDir, string mapUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true)
+        public static Module LoadMod(string modFile, string dllUnpackDir, string mapUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true, bool overwriteExisting = false)
         {
             errors = "";
             if (loadedModFiles.ContainsKey(modFile))
@@ -32,11 +32,11 @@ namespace MPTanks.Modding
             //Resolve the dependencies and get all of their dlls
             foreach (var dep in header.Dependencies)
                 deps.AddRange(DependencyResolver.LoadDependency(dep.ModName, dep.Major, dep.Minor,
-                    dllUnpackDir, mapUnpackDir, assetUnpackDir, header.Name));
+                    dllUnpackDir, mapUnpackDir, assetUnpackDir, header.Name, overwriteExisting));
             //Remove duplicates
             deps = deps.Distinct().ToList();
             //Then, unpack the assemblies to the correct directory
-            var dllPaths = ModUnpacker.UnpackDlls(modFile, dllUnpackDir);
+            var dllPaths = ModUnpacker.UnpackDlls(modFile, dllUnpackDir, overwriteExisting);
 
             //If it has source code, compile that
             if (header.CodeFiles.Length > 0)
@@ -63,10 +63,10 @@ namespace MPTanks.Modding
 
             output.Header = ModUnpacker.GetHeader(modFile);
             //And finally, unpack assets
-            CreateFileMappings(output.Header.ImageFiles, ModUnpacker.UnpackImages(modFile, assetUnpackDir), output);
-            CreateFileMappings(output.Header.SoundFiles, ModUnpacker.UnpackSounds(modFile, assetUnpackDir), output);
-            CreateFileMappings(output.Header.MapFiles, ModUnpacker.UnpackMaps(modFile, mapUnpackDir), output);
-            CreateFileMappings(output.Header.ComponentFiles, ModUnpacker.UnpackComponents(modFile, assetUnpackDir), output);
+            CreateFileMappings(output.Header.ImageFiles, ModUnpacker.UnpackImages(modFile, assetUnpackDir, overwriteExisting), output);
+            CreateFileMappings(output.Header.SoundFiles, ModUnpacker.UnpackSounds(modFile, assetUnpackDir, overwriteExisting), output);
+            CreateFileMappings(output.Header.MapFiles, ModUnpacker.UnpackMaps(modFile, mapUnpackDir, overwriteExisting), output);
+            CreateFileMappings(output.Header.ComponentFiles, ModUnpacker.UnpackComponents(modFile, assetUnpackDir, overwriteExisting), output);
 #if !DISABLE_ERROR_HANDLING_FOR_MODLOADER
         }
             catch (Exception ex)

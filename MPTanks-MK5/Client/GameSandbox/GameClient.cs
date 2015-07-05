@@ -173,10 +173,13 @@ namespace MPTanks.Client.GameSandbox
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
-            CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
-            CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
-            CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
-            CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
+            if (!GlobalSettings.Debug)
+            {
+                CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
+                CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
+                CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
+                CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
+            }
         }
 
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
@@ -350,7 +353,7 @@ namespace MPTanks.Client.GameSandbox
                 zoom += 0.1f;
             if (Keyboard.GetState().IsKeyDown(Keys.Z))
                 zoom -= 0.1f;
-            
+
 
             if (Keyboard.GetState().IsKeyDown(Keys.B))
             {
