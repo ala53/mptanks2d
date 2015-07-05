@@ -57,7 +57,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Client\MPTanks.Client.csproj">
+    <ProjectReference Include="..\Client\_Client.csproj">
       <Project>{600eb8f7-0534-459e-9c8a-6d7fba0eb82b}</Project>
       <Name>MPTanks.Client</Name>
     </ProjectReference>

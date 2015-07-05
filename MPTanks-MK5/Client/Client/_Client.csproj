@@ -101,27 +101,27 @@
     <Content Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Networking\Client\MPTanks.Networking.Client.csproj">
+    <ProjectReference Include="..\..\Networking\Client\Client.csproj">
       <Project>{2f77b6ce-2d2d-4e67-a7bd-38e896a52931}</Project>
       <Name>MPTanks.Networking.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Engine\MPTanks.Engine.csproj">
+    <ProjectReference Include="..\..\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>MPTanks.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameSandbox\MPTanks.Client.GameSandbox.csproj">
+    <ProjectReference Include="..\GameSandbox\GameSandbox.csproj">
       <Project>{1aa033d4-c1b0-4653-ba2f-672a79b207ce}</Project>
       <Name>MPTanks.Client.GameSandbox</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Networking\Common\MPTanks.Networking.Common.csproj">
+    <ProjectReference Include="..\..\Networking\Common\Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
       <Name>MPTanks.Networking.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Networking\Server\MPTanks.Networking.Server.csproj">
+    <ProjectReference Include="..\..\Networking\Server\Server.csproj">
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
       <Name>MPTanks.Networking.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Renderer\MPTanks.Renderer.csproj">
+    <ProjectReference Include="..\Renderer\Renderer.csproj">
       <Project>{9845aa6f-4b25-4685-9554-148376a73561}</Project>
       <Name>MPTanks.Renderer</Name>
     </ProjectReference>
