@@ -24,13 +24,22 @@ namespace MPTanks.Modding
             //Load
             if (File.Exists(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json")))
                 _cache = JsonConvert.DeserializeObject<Dictionary<string, ModMetadata>>(
-                    File.ReadAllText(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json")));
+                    File.ReadAllText(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json")),
+                    new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.All,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                    });
         }
 
         private static void Save()
         {
             File.WriteAllText(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json"),
-                JsonConvert.SerializeObject(_cache));
+                JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.All,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                }));
         }
 
         /// <summary>
@@ -168,6 +177,7 @@ namespace MPTanks.Modding
         public string Description { get; set; }
         public string ReflectionName { get; set; }
         public string ComponentsFile { get; set; }
+        [JsonIgnore]
         public string ComponentsJSONData
         {
             get { return ModUnpacker.GetStringFile(Owner.ModPackedFile, ComponentsFile); }
