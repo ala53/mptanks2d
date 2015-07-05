@@ -28,6 +28,7 @@ namespace MPTanks.Modding
             if (File.Exists(fName))
                 _items = JsonConvert.DeserializeObject<List<ModDatabaseItem>>(
                     File.ReadAllText(fName));
+            else Save();
         }
 
         public static bool Contains(string name)

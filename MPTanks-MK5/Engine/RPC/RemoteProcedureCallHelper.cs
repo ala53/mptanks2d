@@ -31,7 +31,6 @@ namespace MPTanks.Engine.RPC
 
         private JsonSerializerSettings _settings = new JsonSerializerSettings
         {
-            TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full,
             TypeNameHandling = TypeNameHandling.All
         };
 

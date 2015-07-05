@@ -5,16 +5,19 @@ namespace MPTanks.Modding
 {
     static class Settings
     {
-#if DEBUG
         public static readonly string ConfigDir = "";
-#else
-        public static readonly string ConfigDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D");
-#endif
 
         static Settings()
         {
-            Directory.CreateDirectory(ConfigDir);
             Directory.CreateDirectory(MetadataModUnpackDir);
+            if (File.Exists("configpath.txt"))
+#if DEBUG
+                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
+#else
+                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
+#endif
+            if (ConfigDir != "")
+                Directory.CreateDirectory(ConfigDir);
         }
         public static readonly string MetadataModUnpackDir = Path.Combine(ConfigDir, "Temp Mod Metadata Unpack");
 

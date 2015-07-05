@@ -133,7 +133,7 @@ namespace MPTanks.Modding
             //Make sure that all of the assemblies have absolute paths (if not, we will crash when loading.
             assemblies = assemblies.Select((a) =>
             {
-                if (a.Contains(@"\") || a.Contains("/"))
+                if (Path.IsPathRooted(a))
                     return a;
                 else
                     return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, a);
