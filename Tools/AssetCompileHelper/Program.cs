@@ -59,8 +59,8 @@ namespace AssetCompileHelper
         private static string[] GetAssetsNeedingRecompile(IEnumerable<string> inputFiles)
         {
             if (System.IO.File.Exists("asset_md5s.json"))
-                Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                    System.IO.File.ReadAllText("asset_md5s.json"));
+                _filesAndMD5s = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                     System.IO.File.ReadAllText("asset_md5s.json"));
 
             List<string> _outFiles = new List<string>();
             foreach (var file in inputFiles)
