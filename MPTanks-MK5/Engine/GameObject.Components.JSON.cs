@@ -89,7 +89,7 @@ namespace MPTanks.Engine.Serialization
                 if (cmp.Scale == null)
                     cmp.Scale = Vector2.One;
 
-                ResolveSpriteReference(cmp.Frame, cmp);
+                cmp.Frame = ResolveSpriteReference(cmp.Frame, cmp);
 
                 HandleSheet(cmp);
             }

@@ -42,9 +42,6 @@ namespace MPTanks.Modding
         /// </summary>
         public GameObjectType[] GameObjects { get; internal set; }
 
-        internal Dictionary<string, string> assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-        public IReadOnlyDictionary<string,string> Assets { get { return assets; } }
-
         /// <summary>
         /// Gets the data from a file that is packed in the *.mod container (paths not supported).
         /// </summary>

@@ -15,8 +15,6 @@
   "reflectionName": "LargeHouseMultiLevel",
   "size": { "x": 8, "y": 8 },
   "sheet": {
-    "file": "assets/mapobjects/housetexturebasic.png",
-    "fromOtherMod": true,
-    "modName": "engine_base"
+    "file": "housetexturebasic.png"
   }
 }

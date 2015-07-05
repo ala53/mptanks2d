@@ -8,18 +8,20 @@ namespace MPTanks.Engine.Rendering
     {
         private static Func<Module, GamePlayer, string, string> _tankResolver = (m, p, a) =>
         {
-            if (m == null) return a;
+            if (m == null)
+                return a;
             //Simple passthrough search
-            if (m.Assets.ContainsKey(a))
-                return m.Assets[a];
+            if (m.AssetMappings.ContainsKey(a))
+                return m.AssetMappings[a];
             return a;
         };
         private static Func<Module, string, string> _assetResolver = (m, a) =>
         {
-            if (m == null) return a;
+            if (m == null)
+                return a;
             //Simple passthrough
-            if (m.Assets.ContainsKey(a))
-                return m.Assets[a];
+            if (m.AssetMappings.ContainsKey(a))
+                return m.AssetMappings[a];
             return a;
         };
         /// <summary>

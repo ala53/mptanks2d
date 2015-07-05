@@ -94,22 +94,16 @@
   "name": "Basic Tank",
   "otherAssets": [
     {
-      "file": "assets/animations/explosion.png",
-      "fromOtherMod": true,
-      "key": "explosion1",
-      "modName": "engine_base"
+      "file": "explosion.png",
+      "key": "explosion1"
     },
     {
-      "file": "assets/animations/explosion2.png",
-      "fromOtherMod": true,
-      "key": "explosion2",
-      "modName": "engine_base"
+      "file": "explosion2.png",
+      "key": "explosion2"
     },
     {
-      "file": "assets/animations/explosion3.png",
-      "fromOtherMod": true,
-      "key": "explosion3",
-      "modName": "engine_base"
+      "file": "explosion3.png",
+      "key": "explosion3"
     }
   ],
   "otherSprites": [
@@ -146,9 +140,7 @@
   "removeAfter": 500,
   "sheet": {
     "key": "main_sheet",
-    "file": "assets/tanks/basictank2d.png",
-    "fromOtherMod": true,
-    "modName": "engine_base"
+    "file": "basictank2d.png"
   },
   "size": { "x": 3, "y": 5 }
 }

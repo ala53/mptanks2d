@@ -14,7 +14,7 @@ using MPTanks.Modding;
 
 namespace MPTanks.CoreAssets.Tanks
 {
-    [Tank("BasicTankMP", "assets/components/basictank.json",
+    [Tank("BasicTankMP", "basictank.json",
         DisplayName = "Basic Tank", Description = "Basic Tank")]
     public class BasicTank : Tank
     {

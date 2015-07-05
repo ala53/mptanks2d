@@ -166,22 +166,17 @@
   "name": "Basic Tank Main Projectile",
   "otherAssets": [
     {
-      "file": "assets/tanks/basictank2d.png",
-      "fromOtherMod": true,
-      "key": "basic_tank_sprites",
-      "modName": "engine_base"
+      "file": "basictank2d.png",
+      "key": "basic_tank_sprites"
     },
     {
-      "file": "assets/other/smokepuff.png",
-      "fromOtherMod": true,
-      "key": "smoke_puffs",
-      "modName": "engine_base"
+      "file": "smokepuff.png",
+      "key": "smoke_puffs"
     }
   ],
   "reflectionName": "BasicTankMPMainProjectile",
   "sheet": {
-    "file": "assets/animations/basictank_projectile.png",
-    "fromOtherMod": true,
+    "file": "basictank_projectile.png",
     "modName": "engine_base"
   },
   "size": { "x": 0.5, "y": 0.5 }

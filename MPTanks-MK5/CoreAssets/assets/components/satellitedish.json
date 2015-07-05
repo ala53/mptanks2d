@@ -19,8 +19,6 @@
   "reflectionName": "SatelliteDishLarge",
   "size": { "x": 4, "y": 4 },
   "sheet": {
-    "file": "assets/mapobjects/moving/satellite_dish.png",
-    "fromOtherMod": true,
-    "modName": "engine_base"
+    "file": "satellite_dish.png"
   }
 }
