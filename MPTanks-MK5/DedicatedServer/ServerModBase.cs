@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Clients.DedicatedServer
+namespace MPTanks.DedicatedServer
 {
     public abstract class ServerModBase
     {
