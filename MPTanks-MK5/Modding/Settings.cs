@@ -19,7 +19,7 @@ namespace MPTanks.Modding
             if (ConfigDir != "")
                 Directory.CreateDirectory(ConfigDir);
         }
-        public static readonly string MetadataModUnpackDir = Path.Combine(ConfigDir, "Temp Mod Metadata Unpack");
+        public static readonly string MetadataModUnpackDir = Path.Combine(ConfigDir, "tempmodmetadataunpack");
 
         public const string EngineNS = "MPTanks.Engine";
         public const string TankTypeName = EngineNS + ".Tanks.Tank";
