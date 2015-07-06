@@ -190,9 +190,23 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if NOT EXIST "$(SolutionDir)..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" $(SolutionDir)..\prebuild.cmd
-"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
-"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "$(ProjectDir)assets\ui\imgs"</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OS)' == 'Windows_NT'">
+	if NOT EXIST "$(SolutionDir)..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" $(SolutionDir)..\prebuild.cmd
+	"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
+	"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
+	</PreBuildEvent>
+    <!--Prebuild for travis ci-->
+    <PreBuildEvent Condition="'$(OS)' == 'Unix'">
+		"$(SolutionDir)..\prebuild.sh"
+		"mono $(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "mono" "$(SolutionDir)..\Build Tools\MGCB\Linux\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
+	</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+	if NOT EXIST "$(SolutionDir)..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" $(SolutionDir)..\prebuild.cmd
+	"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
+	"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
+	</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

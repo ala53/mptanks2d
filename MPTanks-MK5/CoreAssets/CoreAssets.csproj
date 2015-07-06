@@ -102,11 +102,14 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
   <PropertyGroup>
-    <PreBuildEvent>if NOT EXIST "$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe" $(SolutionDir)..\prebuild.cmd
-</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OS)' == 'Windows_NT'">if NOT EXIST "$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe" $(SolutionDir)..\prebuild.cmd
+	</PreBuildEvent>
+    <PreBuildEvent Condition="'$(OS)' == 'Unix'">$(SolutionDir)..\prebuild.sh
+	</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT'">$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
+	<PostBuildEvent Condition="'$(OS)' == 'Unix'">mono $(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

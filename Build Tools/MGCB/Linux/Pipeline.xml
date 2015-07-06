@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Pipeline</name>
+    </assembly>
+    <members>
+        <member name="M:MonoGame.Tools.Pipeline.History.AddProjectHistory(System.String)">
+            <summary>
+            If the project already exists in history, it will be moved to the end.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.Program.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:MGCB.MGBuildParser">
+            <summary>
+            Adapted from this generic command line argument parser:
+            http://blogs.msdn.com/b/shawnhar/archive/2012/04/20/a-reusable-reflection-based-command-line-parser.aspx     
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.IController.OnProjectModified">
+            <summary>
+            Notify controller that a property of Project or its contents has been modified.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.IController.OnReferencesModified">
+            <summary>
+            Notify controller that Project.References has been modified.
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.Templates">
+            <summary>
+            Types of content which can be created and added to a project. 
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.ProjectOpen">
+            <summary>
+            True if there is a project.
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.ProjectDirty">
+            <summary>
+            True if the project has unsaved changes.
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.ProjectBuilding">
+            <summary>
+            True if the project is actively building.
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.LaunchDebugger">
+            <summary>
+            Passes /launchdebugger option when launching MGCB.
+            </summary>
+        </member>
+        <member name="P:MonoGame.Tools.Pipeline.IController.View">
+            <summary>
+            The view this controller is attached to.
+            </summary>
+        </member>
+        <member name="E:MonoGame.Tools.Pipeline.IController.OnProjectLoading">
+            <summary>
+            Triggered when the project starts loading.
+            </summary>
+        </member>
+        <member name="E:MonoGame.Tools.Pipeline.IController.OnProjectLoaded">
+            <summary>
+            Triggered when the project finishes loading.
+            </summary>
+        </member>
+        <member name="E:MonoGame.Tools.Pipeline.IController.OnBuildStarted">
+            <summary>
+            Triggered when the project finishes building.
+            </summary>
+        </member>
+        <member name="E:MonoGame.Tools.Pipeline.IController.OnBuildFinished">
+            <summary>
+            Triggered when the project finishes building.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.PipelineController.AskSaveProject">
+            <summary>
+            Prompt the user if they wish to save the project.
+            Save it if yes is chosen.
+            Return true if yes or no is chosen.
+            Return false if cancel is chosen.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.PipelineController.ActionStack">
+            <summary>
+            Represents a stack of undo/redo-able actions.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.ProcessorConverter">
+            <summary>
+            Custom converter for the Processor property of a ContentItem.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.ImporterConverter">
+            <summary>
+            Custom converter for the Processor property of a ContentItem.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.ContentItemState">
+            <summary>
+            Snapshot of a ContentItem's state, used for undo/redo.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.ContentItemState.Get(MonoGame.Tools.Pipeline.ContentItem)">
+            <summary>
+            Create a ContentItemState storing member values of the passed ContentItem.
+            </summary>        
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.ContentItemState.Apply(MonoGame.Tools.Pipeline.ContentItem)">
+            <summary>
+            Set a ContentItem's member values from this state object.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.ProjectState">
+            <summary>
+            Snapshot of a PipelineProject's state, used for undo/redo.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.ProjectState.Get(MonoGame.Tools.Pipeline.PipelineProject)">
+            <summary>
+            Create a ProjectState storing member values of the passed PipelineProject.
+            </summary>        
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.ProjectState.Apply(MonoGame.Tools.Pipeline.PipelineProject)">
+            <summary>
+            Set a PipelineProject's member values from this state object.
+            </summary>
+        </member>
+        <member name="M:MonoGame.Tools.Pipeline.Util.GetRelativePath(System.String,System.String)">
+            <summary>        
+            Returns the path 'filspec' made relative path 'folder'.
+            
+            If 'folder' is not an absolute path, throws ArgumentException.
+            If 'filespec' is not an absolute path, returns 'filespec' unmodified.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.MultiTargetPropertyDescriptor">
+            <summary>
+            PropertyDescriptor for delegating get/set calls to more than one component (object).
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.OpaqueDataDictionaryElementPropertyDescriptor">
+            <summary>
+            PropertyDescriptor for a named item within an OpaqueDataDictionary.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Tools.Pipeline.ReadonlyPropertyDescriptor">
+            <summary>
+            PropertyDescriptor which has a fixed value.
+            </summary>
+        </member>
+    </members>
+</doc>

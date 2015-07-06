@@ -15,7 +15,9 @@ namespace AssetCompileHelper
         private static Dictionary<string, string> _filesAndMD5s = new Dictionary<string, string>();
         static int Main(string[] args)
         {
-            var inDir = args[0];
+            var mono = args[0] == "mono";
+            var mgcbPath = args[1];
+            var inDir = args[2];
 
             bool ok = true;
 
@@ -46,8 +48,13 @@ namespace AssetCompileHelper
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
             }
 
-            var prc = Process.Start(@"C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MGCB.exe",
-                cmdArgs);
+            Process prc;
+
+            if (mono)
+                prc = Process.Start("mono", $"\"{mgcbPath}\" {cmdArgs}");
+            else
+                prc = Process.Start(mgcbPath,
+                   cmdArgs);
             prc.WaitForExit();
 
             if (prc.ExitCode != 0) ok = false;
