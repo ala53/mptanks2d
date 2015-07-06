@@ -190,7 +190,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
+    <PreBuildEvent>if NOT EXIST "$(SolutionDir)..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" $(SolutionDir)..\prebuild.cmd
+"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
 "$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "$(ProjectDir)assets\ui\imgs"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
