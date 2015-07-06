@@ -70,15 +70,15 @@
   <ItemGroup>
     <ProjectReference Include="..\CoreAssets\CoreAssets.csproj">
       <Project>{3fa1fb15-e7ef-44a3-a4fa-dffc33f85417}</Project>
-      <Name>MPTanks.CoreAssets</Name>
+      <Name>CoreAssets</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networking\Common\Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
-      <Name>MPTanks.Networking.Common</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networking\Server\Server.csproj">
       <Project>{6a9a39b2-3bda-4be0-98a4-6f2ab3f51b7f}</Project>
-      <Name>MPTanks.Networking.Server</Name>
+      <Name>Server</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

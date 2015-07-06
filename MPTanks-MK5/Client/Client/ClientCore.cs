@@ -6,7 +6,7 @@ using EmptyKeys.UserInterface.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MPTanks.Renderer.UI;
+using MPTanks.Client.Backend.UI;
 using System;
 
 namespace MPTanks.Client

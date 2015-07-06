@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Runtime;
 using System.Text;
 using MPTanks.Engine.Rendering.Particles;
-using MPTanks.Renderer.UI;
+using MPTanks.Client.Backend.UI;
 using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Media;
