@@ -82,9 +82,7 @@
     <Content Include="assets\other\lowresfont.png" />
     <Content Include="assets\other\smokepuff.png" />
     <Content Include="assets\tanks\basictank2d.png" />
-    <Content Include="core-assets.mod">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="core-assets.mod" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animations\basictank_projectile.png.json" />
@@ -112,9 +110,13 @@
     <PostBuildEvent Condition="'$(OS)' == 'Unix'">mono $(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>echo "" &gt; core-assets.mod
+    <PreBuildEvent>
 if NOT EXIST "$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe" $(SolutionDir)..\prebuild.cmd
 	</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"
+xcopy /y $(ProjectDir)core-assets.mod $(ProjectDir)$(OutDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
