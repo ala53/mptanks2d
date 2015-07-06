@@ -30,9 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.3.0.2238, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -57,6 +56,7 @@
     <None Include="assets\components\basictankmainprojectile.json" />
     <None Include="assets\components\largehouse.json" />
     <None Include="assets\components\satellitedish.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">
@@ -109,7 +109,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT'">$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
-	<PostBuildEvent Condition="'$(OS)' == 'Unix'">mono $(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' == 'Unix'">mono $(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
