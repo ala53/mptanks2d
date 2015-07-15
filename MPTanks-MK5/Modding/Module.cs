@@ -86,7 +86,7 @@ namespace MPTanks.Modding
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
             MinPlayersCount = attrib.MinPlayersCount;
-            HotJoinAllowed = attrib.PlayersCanJoinMidGame;
+            HotJoinAllowed = attrib.HotJoinEnabled;
         }
         internal static bool IsGamemodeType(Type t)
         {

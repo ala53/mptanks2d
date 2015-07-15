@@ -38,7 +38,7 @@ namespace MPTanks.Client.GameSandbox
         private GameWorldRenderer renderer;
         private NetworkPlayer player1;
         private NetworkPlayer player2;
-        private MPTanks.Engine.GameCore game;
+        private MPTanks.Engine.GameCore game { get;set; }
         private float zoom = 6.5f;
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
@@ -155,12 +155,6 @@ namespace MPTanks.Client.GameSandbox
             };
             game.AddPlayer(player1);
             game.AddPlayer(player2);
-            for (var i = 0; i < 3; i++)
-                game.AddPlayer(new NetworkPlayer()
-                {
-                    Id = Guid.NewGuid()
-                });
-
             //Set up rendering
             if (renderer != null)
                 renderer.Destroy();
@@ -432,6 +426,8 @@ namespace MPTanks.Client.GameSandbox
             }
         }
 
+        RenderTarget2D t;
+        RenderTarget2D u;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -446,21 +442,49 @@ namespace MPTanks.Client.GameSandbox
 
             if (!loading || loadingScreen.IsSlidingOut)
             { //in game
-                drawRect = new RectangleF(
-                    0,
-                    0,
-                    30 * zoom,
-                    20 * zoom);
-                //if (game.Players.ContainsKey(player1Id))
-                //    drawRect = new RectangleF(
-                //        game.Players[player1Id].Position.X - (15 * zoom),
-                //        game.Players[player1Id].Position.Y - (10 * zoom),
-                //        30 * zoom,
-                //        20 * zoom);
+                if (t == null || t.Width != GraphicsDevice.Viewport.Width || t.Height != GraphicsDevice.Viewport.Height / 2)
+                {
+                    if (t != null)
+                        t.Dispose();
+
+                    t = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
+
+                }
+                if (u == null || u.Width != GraphicsDevice.Viewport.Width || u.Height != GraphicsDevice.Viewport.Height / 2)
+                {
+                    if (u != null) u.Dispose();
+                    u = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
+
+                }
+                GraphicsDevice.SetRenderTarget(t);
+                GraphicsDevice.Clear(new Color(20, 20, 20, 255));
+                if (player1.Tank != null)
+                    drawRect = new RectangleF(
+                        player1.Tank.Position.X - (15 * zoom),
+                        player1.Tank.Position.Y - (5 * zoom),
+                        30 * zoom,
+                        10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
                 renderer.Render(spriteBatch, gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
+                GraphicsDevice.SetRenderTarget(u);
+                GraphicsDevice.Clear(new Color(10, 10, 10, 255));
+                if (player2.Tank != null)
+                    drawRect = new RectangleF(
+                        player2.Tank.Position.X - (15 * zoom),
+                        player2.Tank.Position.Y - (5 * zoom),
+                        30 * zoom,
+                        10 * zoom);
+                game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
+                renderer.SetViewport(drawRect);
+                renderer.Render(spriteBatch, gameTime);
+                game.Diagnostics.EndMeasurement("World rendering", "Rendering");
+                GraphicsDevice.SetRenderTarget(null);
+                spriteBatch.Begin(SpriteSortMode.Immediate);
+                spriteBatch.Draw(t, new Rectangle(-50, 0, GraphicsDevice.Viewport.Width, (GraphicsDevice.Viewport.Height / 2) - 2), Color.White);
+                spriteBatch.Draw(u, new Rectangle(50, (GraphicsDevice.Viewport.Height / 2) + 2, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2), Color.White);
+                spriteBatch.End();
             }
             //And draw the loading screen last so its over everything
             if (loading || loadingScreen.IsSlidingOut)

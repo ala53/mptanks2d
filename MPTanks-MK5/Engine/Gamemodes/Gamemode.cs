@@ -67,6 +67,20 @@ namespace MPTanks.Engine.Gamemodes
             }
         }
 
+
+        private bool? _hotJoinEnabled;
+        public bool HotJoinEnabled
+        {
+            get
+            {
+                if (_hotJoinEnabled == null)
+                    _hotJoinEnabled = ((Modding.GamemodeAttribute)(GetType().
+                         GetCustomAttributes(typeof(Modding.GamemodeAttribute), true))[0]).HotJoinEnabled;
+
+                return _hotJoinEnabled.Value;
+            }
+        }
+
         /// <summary>
         /// An event that is fired when the gamemode updates and changes state
         /// </summary>
@@ -317,6 +331,21 @@ namespace MPTanks.Engine.Gamemodes
         protected virtual void SetFullStateInternal(dynamic state) { }
 
         public virtual void DeferredSetFullState() { }
+
+        #region Hot Join
+        public virtual bool HotJoinCanPlayerJoin(GamePlayer player) => HotJoinEnabled;
+        public virtual string[] HotJoinGetAllowedTankTypes(GamePlayer player) =>
+            GetPlayerAllowedTankTypes(player);
+        public virtual bool HotJoinSetPlayerTankType(GamePlayer player, string tankType)
+        {
+            if (GetPlayerAllowedTankTypes(player).Contains(tankType))
+            {
+                player.SelectedTankReflectionName = tankType;
+                return true;
+            }
+            return false;
+        }
+        #endregion
 
         #region Static initialization
         private static Dictionary<string, Type> _gamemodeTypes =

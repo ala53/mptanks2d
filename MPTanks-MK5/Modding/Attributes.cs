@@ -70,7 +70,7 @@ namespace MPTanks.Modding
         /// <summary>
         /// Whether a player can join an active game and get spawned in or if they will have to wait for the next one.
         /// </summary>
-        public bool PlayersCanJoinMidGame { get; set; }
+        public bool HotJoinEnabled { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]

@@ -38,8 +38,29 @@
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
     },
     {
+      "mask": { "r": 255, "g": 255, "b": 225, "a": 255 },
+      "position": { "x": 60, "y": 30 },
+      "rotation": 0.712,
+      "size": { "x": 6, "y": 6 },
+      "typeName": "LargeHouseMultiLevel"
+    },
+    {
+      "mask": { "r": 25, "g": 25, "b": 25, "a": 255 },
+      "position": { "x": 70, "y": 30 },
+      "rotation": 0.712,
+      "size": { "x": 6, "y": 6 },
+      "typeName": "LargeHouseMultiLevel"
+    },
+    {
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
-      "position": { "x": 50, "y": 30 },
+      "position": { "x": 50, "y": 36 },
+      "rotation": 0.712,
+      "size": { "x": 6, "y": 6 },
+      "typeName": "LargeHouseMultiLevel"
+    },
+    {
+      "mask": { "r": 200, "g": 200, "b": 200, "a": 255 },
+      "position": { "x": 50, "y": 42 },
       "rotation": 0.712,
       "size": { "x": 6, "y": 6 },
       "typeName": "LargeHouseMultiLevel"
