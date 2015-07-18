@@ -91,7 +91,7 @@ namespace MPTanks.Networking.Common.Game
 
             game.Gamemode.DeferredSetFullState();
             foreach (var obj in game.GameObjects)
-                obj.DeferredSetFullState();
+                obj.SetPostInitStateData();
 
             game.UnsafeTickGameWorld(latency);
 

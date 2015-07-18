@@ -97,9 +97,12 @@ namespace MPTanks.Engine
             AngularVelocity,
             Restitution,
             health,
+            GetTypeStateHeader(),
             privateState
             );
         }
+
+        protected virtual byte[] GetTypeStateHeader() => SerializationHelpers.EmptyByteArray;
 
         private __SerializationGameObjectType GetSerializationType()
         {
@@ -162,6 +165,8 @@ namespace MPTanks.Engine
             var restitution = header.GetFloat(offset); offset += 4;
             var health = header.GetInt(offset); offset += 4;
 
+            SetTypeStateHeader(header, ref offset); 
+
             IsSensor = isSensor;
             IsStatic = isStatic;
             ObjectId = id;
@@ -177,6 +182,17 @@ namespace MPTanks.Engine
                 ((Tanks.Tank)this).Health = health;
         }
 
+        /// <summary>
+        /// Called so a class of objects (Tanks, MapObjects, or Projectiles) can set it's own type information.
+        /// This is usually sealed.
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="offset"></param>
+        protected virtual void SetTypeStateHeader(byte[] header, ref int offset)
+        {
+            
+        }
+
         protected virtual void SetFullStateInternal(byte[] stateData) { }
 
         protected virtual void SetFullStateInternal(string state) { }
@@ -184,8 +200,12 @@ namespace MPTanks.Engine
         protected virtual void SetFullStateInternal(dynamic state)
         {
         }
-
-        public virtual void DeferredSetFullState() { }
+        /// <summary>
+        /// Allows you to do deferred state initialization, as <see cref="SetFullStateInternal"/>
+        /// is called before the world is fully initialized. This is usually only necessary when
+        /// interacting with other objects.
+        /// </summary>
+        public virtual void SetPostInitStateData() { }
 
     }
 }

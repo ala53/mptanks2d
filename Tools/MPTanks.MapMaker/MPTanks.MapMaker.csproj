@@ -80,6 +80,8 @@
     <Compile Include="ModLoader.xaml.cs">
       <DependentUpon>ModLoader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModLoader\Loader.cs" />
+    <Compile Include="ModLoader\Mod.cs" />
     <Compile Include="PopupOnSelected.xaml.cs">
       <DependentUpon>PopupOnSelected.xaml</DependentUpon>
     </Compile>

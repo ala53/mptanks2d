@@ -123,6 +123,15 @@ namespace MPTanks.Engine.Tanks
             UnsafeEnableEvents();
         }
 
+        protected override byte[] GetTypeStateHeader()
+        {
+            return base.GetTypeStateHeader();
+        }
+        protected override void SetTypeStateHeader(byte[] header, ref int offset)
+        {
+            base.SetTypeStateHeader(header, ref offset);
+        }
+
         public override string ToString()
         {
             return base.ToString() + ", Player ID: " + Player.Id.ToString();
