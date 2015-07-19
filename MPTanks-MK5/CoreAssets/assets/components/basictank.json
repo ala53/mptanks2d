@@ -138,6 +138,7 @@
   ],
   "reflectionName": "BasicTankMP",
   "removeAfter": 500,
+  "health": 150,
   "sheet": {
     "key": "main_sheet",
     "file": "basictank2d.png"

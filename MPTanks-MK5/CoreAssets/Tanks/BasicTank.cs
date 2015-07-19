@@ -32,9 +32,6 @@ namespace MPTanks.CoreAssets.Tanks
         public BasicTank(GamePlayer player, GameCore game, bool authorized = false)
             : base(player, game, authorized)
         {
-            Health = 150;
-            Size = new Vector2(3, 5);
-
             PrimaryWeapon = new Weapon(this)
             {
                 AddedRotation = 0,
