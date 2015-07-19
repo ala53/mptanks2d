@@ -48,6 +48,7 @@
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
     <Compile Include="MapObjects\SatelliteDishLarge.cs" />
+    <Compile Include="MapObjects\Wall.cs" />
     <Compile Include="ModuleInfo.cs" />
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
     <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
@@ -56,6 +57,7 @@
     <None Include="assets\components\basictankmainprojectile.json" />
     <None Include="assets\components\largehouse.json" />
     <None Include="assets\components\satellitedish.json" />
+    <None Include="assets\components\wall_generic.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

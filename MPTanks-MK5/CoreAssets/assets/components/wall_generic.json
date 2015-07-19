@@ -1,0 +1,15 @@
+﻿{
+  "components": [
+    {
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
+      "name": "wall",
+      "offset": { "x": 0, "y": 0 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0, "y": 0 },
+      "size": { "x": 1, "y": 1 }
+    }
+  ],
+  "name": "Generic Wall",
+  "size": { "x": 1, "y": 1 }
+}
