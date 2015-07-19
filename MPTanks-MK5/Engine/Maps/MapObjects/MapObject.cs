@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Gamemodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,32 @@ namespace MPTanks.Engine.Maps.MapObjects
             Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
             base.CreateInternal();
         }
+
+        private bool _killed = false;
+        protected override bool CollideInternal(GameObject other, FarseerPhysics.Dynamics.Contacts.Contact contact)
+        {
+            if (other.GetType().IsSubclassOf(typeof(Projectiles.Projectile)) && other.Alive)
+            {
+                var o = (Projectiles.Projectile)other;
+
+                if (!CanBeDamaged(o.Owner.Team))
+                    return true;
+                Health -= o.DamageAmount;
+
+                o.CollidedWithMapObject(this);
+
+                if (Health <= 0 && !_killed)
+                {
+                    Game.RemoveGameObject(this, o);
+                    _killed = true;
+                }
+                return true;
+            }
+
+            return base.CollideInternal(other, contact);
+        }
+
+        protected virtual bool CanBeDamaged(Team team) => true;
 
         #region Static initialization
         private static Dictionary<string, Type> _objTypes =

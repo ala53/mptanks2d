@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MPTanks.Engine.Core;
+using MPTanks.Engine.Settings;
 
 namespace MPTanks.Client.GameSandbox.Rendering
 {
@@ -83,8 +84,11 @@ namespace MPTanks.Client.GameSandbox.Rendering
         #region Object Rendering
         private SortedDictionary<int, SortListItem> _renderLayers =
             new SortedDictionary<int, SortListItem>();
+        private SpriteFont font;
         private void DrawObjects(RectangleF boundsRect, GameTime gameTime, SpriteBatch sb)
         {
+            if (font == null)
+                font = Screen.Game.Content.Load<SpriteFont>("font");
             if (_game.GameObjects != null)
                 foreach (var obj in _game.GameObjects)
                 {
@@ -103,6 +107,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
                         Matrix.CreateRotationZ(obj.Rotation) *
                         Matrix.CreateTranslation(
                             new Vector3(objPos, 0));
+
 
                     foreach (var component in obj.Components.Values)
                     {
@@ -134,6 +139,25 @@ namespace MPTanks.Client.GameSandbox.Rendering
             var list = SortRenderList();
             foreach (var item in list)
                 DrawComponent(sb, item, gameTime);
+
+            if (GlobalSettings.Debug)
+            {
+                foreach (var obj in _game.GameObjects)
+                {
+                    //Cache position and size for perf reasons
+                    var objPos = Scale(obj.Position);
+                    var objSize = Scale(obj.Size);
+                    var fontMatrix = Matrix.CreateScale(new Vector3(1)) *
+                        Matrix.CreateTranslation(
+                            new Vector3(-objSize / 2, 0)) *
+                        Matrix.CreateRotationZ(obj.Rotation) *
+                        Matrix.CreateTranslation(
+                            new Vector3(objPos, 0));
+                    sb.Begin(SpriteSortMode.Immediate, null, null, null, null, null, fontMatrix);
+                    sb.DrawString(font, obj.Health.ToString(), Vector2.Zero, Color.HotPink);
+                    sb.End();
+                }
+            }
 
             ClearLists();
         }

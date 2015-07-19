@@ -68,11 +68,7 @@ namespace MPTanks.Engine
             /////Then, there's the data from the instance
             //variable Private state data bytes
             byte[] privateState = SerializationHelpers.Serialize(GetPrivateStateData());
-
-            int health = 0;
-            if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                health = ((Tanks.Tank)this).Health;
-
+            
             //And figure out which guid to print
             var guidToWrite = new Guid();
 
@@ -96,7 +92,7 @@ namespace MPTanks.Engine
             Rotation,
             AngularVelocity,
             Restitution,
-            health,
+            Health,
             GetTypeStateHeader(),
             privateState
             );
@@ -177,9 +173,7 @@ namespace MPTanks.Engine
             LinearVelocity = linVel;
             Rotation = rot;
             AngularVelocity = rotVel;
-
-            if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                ((Tanks.Tank)this).Health = health;
+            Health = health;
         }
 
         /// <summary>

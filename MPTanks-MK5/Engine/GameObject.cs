@@ -21,6 +21,10 @@ namespace MPTanks.Engine
         [JsonIgnore]
         public GameCore Game { get; private set; }
         public bool Alive { get; private set; }
+        /// <summary>
+        /// The current health level for the tank.
+        /// </summary>
+        public int Health { get; set; }
         public bool Authoritative { get { return Game.Authoritative; } }
         /// <summary>
         /// The number of milliseconds that the object has been alive

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Assets;
 using Newtonsoft.Json;
+using MPTanks.Engine.Helpers;
 
 namespace MPTanks.Engine.Tanks
 {
@@ -18,10 +19,6 @@ namespace MPTanks.Engine.Tanks
         [JsonIgnore]
         public Team Team { get { return Player.Team; } }
         public InputState InputState { get; private set; }
-        /// <summary>
-        /// The current health level for the tank.
-        /// </summary>
-        public int Health { get; set; }
 
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
@@ -123,11 +120,17 @@ namespace MPTanks.Engine.Tanks
             UnsafeEnableEvents();
         }
 
-        protected override byte[] GetTypeStateHeader()
+        protected sealed override byte[] GetTypeStateHeader()
         {
-            return base.GetTypeStateHeader();
+            return SerializationHelpers.AllocateArray(true,
+                PrimaryWeapon != null,
+                SecondaryWeapon != null,
+                TertiaryWeapon != null,
+                PrimaryWeapon,
+                SecondaryWeapon,
+                TertiaryWeapon);
         }
-        protected override void SetTypeStateHeader(byte[] header, ref int offset)
+        protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
         {
             base.SetTypeStateHeader(header, ref offset);
         }

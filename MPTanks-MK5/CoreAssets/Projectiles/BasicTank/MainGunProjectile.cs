@@ -20,10 +20,8 @@ namespace MPTanks.CoreAssets.Projectiles.BasicTank
         /// <summary>
         /// The amount of damage this projectile does.
         /// </summary>
-        public override int DamageAmount
-        {
-            get { return 60; }
-        }
+        public override int DamageAmount => 60;
+        public override bool DamagesMapObjects => true;
         public MainGunProjectile(Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
             : base(owner, game, authorized, 1, 1.2f, position, rotation)

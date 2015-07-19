@@ -116,6 +116,7 @@ namespace MPTanks.Engine
             LifespanMs = deserialized.Lifespan;
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
+            Health = deserialized.Health;
 
             LoadComponents(deserialized.Components);
             LoadComponentGroups(deserialized.ComponentGroups);

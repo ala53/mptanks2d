@@ -268,6 +268,8 @@ namespace MPTanks.Engine.Helpers
             int size = 0;
             foreach (var obj in contents)
             {
+                if (obj == null) continue; //it's null :(
+
                 if (obj.GetType() == typeof(ulong))
                     size += 8;
 
@@ -327,6 +329,8 @@ namespace MPTanks.Engine.Helpers
                 int offset = 0;
                 foreach (var obj in contents)
                 {
+                    if (obj == null) continue; //it's null :(
+
                     if (obj.GetType() == typeof(ulong))
                     {
                         arr.SetContents((ulong)obj, offset);

@@ -11,6 +11,7 @@
       "size": { "x": 8, "y": 8.25 }
     }
   ],
+  "health": 300,
   "name": "Large House #1",
   "reflectionName": "LargeHouseMultiLevel",
   "size": { "x": 8, "y": 8 },

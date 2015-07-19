@@ -15,6 +15,7 @@ namespace MPTanks.Engine.Projectiles
         [JsonIgnore]
         public Tanks.Tank Owner { get; private set; }
 
+        public virtual bool DamagesMapObjects => true;
         public Projectile(Tanks.Tank owner, GameCore game, bool authorized, float density = 1,
             float bounciness = 0.1f, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, density, bounciness, position, rotation)
@@ -36,6 +37,12 @@ namespace MPTanks.Engine.Projectiles
         public virtual bool CanDamage(Tanks.Tank tank, bool friendlyFireEnabled)
         {
             return true;
+        }
+
+        public virtual void CollidedWithMapObject(Maps.MapObjects.MapObject mapObject)
+        {
+            if (DamagesMapObjects)
+                Kill(mapObject);
         }
 
         #region Static initialization

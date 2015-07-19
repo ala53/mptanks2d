@@ -14,6 +14,7 @@ namespace MPTanks.Engine.Serialization
         public string Name { get; set; }
         public string ReflectionName { get; set; }
         public float Lifespan { get; set; }
+        public int Health { get; set; }
         /// <summary>
         /// The number of milliseconds to wait after death to remove the object from the game.
         /// </summary>
@@ -41,6 +42,7 @@ namespace MPTanks.Engine.Serialization
                     File = "assets/empty.png",
                     FromOtherMod = true
                 };
+            if (me.Health <= 0) me.Health = int.MaxValue;
             if (me.Components == null) me.Components = new GameObjectComponentJSON[0];
             if (me.OtherAssets == null) me.OtherAssets = new GameObjectSheetSpecifierJSON[0];
             if (me.Emitters == null) me.Emitters = new GameObjectEmitterJSON[0];
