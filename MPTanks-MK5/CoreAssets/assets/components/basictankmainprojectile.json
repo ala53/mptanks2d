@@ -2,7 +2,7 @@
   "components": [
     {
       "drawLayer": 0,
-      "frame": "[animation]projectileAnim",
+      "image": { "frame": "[animation]projectileAnim" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "bullet",
       "offset": { "x": 0, "y": 0 },

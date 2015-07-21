@@ -131,13 +131,13 @@ namespace MPTanks.Engine
             foreach (var cmp in components)
             {
                 SpriteInfo asset = new SpriteInfo();
-                if (cmp.Frame != null)
+                if (cmp.Image != null && cmp.Image.Frame != null)
                 {
-                    if (cmp.Frame.StartsWith("[animation]"))
-                        asset = new SpriteAnimationInfo(cmp.Frame.Substring("[animation]".Length),
-                            ResolveJSONSheet(cmp.Sheet));
+                    if (cmp.Image.Frame.StartsWith("[animation]"))
+                        asset = new SpriteAnimationInfo(cmp.Image.Frame.Substring("[animation]".Length),
+                            ResolveJSONSheet(cmp.Image.Sheet));
                     else
-                        asset = new SpriteInfo(cmp.Frame, ResolveJSONSheet(cmp.Sheet));
+                        asset = new SpriteInfo(cmp.Image.Frame, ResolveJSONSheet(cmp.Image.Sheet));
                 }
                 _components.Add(cmp.Name, new RenderableComponent
                 {
@@ -171,10 +171,6 @@ namespace MPTanks.Engine
         private void LoadKeyedAssets(GameObjectSheetSpecifierJSON[] assets, GameObjectComponentJSON[] components,
             GameObjectEmitterJSON[] emitters, GameObjectAnimationJSON[] anims, GameObjectLightJSON[] lights)
         {
-            foreach (var cmp in components)
-                if (cmp.Sheet.Key != null && !_assets.ContainsKey(cmp.Sheet.Key))
-                    _assets.Add(cmp.Sheet.Key, ResolveJSONSheet(cmp.Sheet));
-
             foreach (var emitter in emitters)
                 foreach (var sp in emitter.Sprites)
                     if (sp.Sheet.Key != null && !_assets.ContainsKey(sp.Sheet.Key))

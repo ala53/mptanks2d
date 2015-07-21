@@ -2,12 +2,12 @@
   "components": [
     {
       "name": "base",
-      "frame": "baseblock",
+      "image": { "frame": "baseblock" },
       "size": { "x": 4, "y": 4 }
     },
     {
       "drawLayer": 5,
-      "frame": "dishandrevolver",
+      "image": { "frame": "dishandrevolver" },
       "name": "dish",
       "offset": { "x": -1.5, "y": 0.75 },
       "rotationOrigin": { "x": 3, "y": 1 },

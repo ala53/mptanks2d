@@ -38,7 +38,7 @@
     },
     {
       "drawLayer": 0,
-      "frame": "[ref]grillmask",
+      "image": { "frame": "[ref]grillmask" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "tankFront",
       "offset": { "x": 0, "y": 0 },
@@ -57,7 +57,7 @@
     },
     {
       "drawLayer": 0,
-      "frame": "turretbase",
+      "image": { "frame": "turretbase" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "turretBase",
       "offset": { "x": 0.5, "y": 1.5 },
@@ -78,7 +78,7 @@
   "lights": [
     {
       "name": "turret_light",
-      "frame": "",
+      "image": { "frame": "" },
       "intensity": 1,
       "activatesOn": null,
       "color": { "r": 255, "g": 255, "b": 255 },

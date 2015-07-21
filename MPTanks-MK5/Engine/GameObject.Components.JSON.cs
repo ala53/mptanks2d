@@ -91,9 +91,24 @@ namespace MPTanks.Engine.Serialization
                 if (cmp.Scale == null)
                     cmp.Scale = Vector2.One;
 
-                cmp.Frame = ResolveSpriteReference(cmp.Frame, cmp);
+                if (cmp.Image != null && cmp.Image.Frame != null)
+                {
+                    var img = ResolveSpriteObjectReference(cmp.Image.Frame);
+                    if (img != null)
+                        cmp.Image = img;
+                }
 
-                HandleSheet(cmp);
+                if (cmp.Image != null && cmp.Image.DamageLevels != null)
+                {
+                    for (var i = 0; i < cmp.Image.DamageLevels.Length; i++)
+                    {
+                        var img = ResolveSpriteObjectReference(cmp.Image.DamageLevels[i].Sprite.Frame);
+                        if (img != null)
+                            cmp.Image.DamageLevels[i].Sprite = img;
+                    }
+                }
+
+                HandleSheet(cmp.Image);
             }
         }
 
@@ -195,6 +210,7 @@ namespace MPTanks.Engine.Serialization
 
         private void HandleSheet(IHasSheet obj)
         {
+            if (obj == null) return;
             if (obj.Sheet == null)
                 obj.Sheet = Sheet;
             if (obj.Sheet.Reference != null)
@@ -246,12 +262,6 @@ namespace MPTanks.Engine.Serialization
                         if (sp.Sheet.Reference == null)
                             return sp.Sheet;
                         else return FindSheet(sp.Sheet.Reference);
-            foreach (var cmp in Components)
-                if (cmp.Sheet != null && cmp.Sheet.Key != null &&
-                    cmp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-                    if (cmp.Sheet.Reference == null)
-                        return cmp.Sheet;
-                    else return FindSheet(cmp.Sheet.Reference);
             foreach (var sp in OtherSprites)
                 if (sp.Sheet != null && sp.Sheet.Key != null &&
                     sp.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
@@ -292,6 +302,14 @@ namespace MPTanks.Engine.Serialization
             obj.Sheet = spr.Sheet;
         }
 
+        private GameObjectSpriteSpecifierJSON ResolveSpriteObjectReference(string reference)
+        {
+            if (reference == null || !reference.StartsWith("[ref]")) return null;
+
+            var spr = FindSprite(reference.Substring("[ref]".Length));
+            return spr;
+        }
+
         private GameObjectSpriteSpecifierJSON FindSprite(string name)
         {
             foreach (var sprite in OtherSprites)
@@ -317,7 +335,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectComponentJSON[] Components { get; set; }
     }
 
-    class GameObjectComponentJSON : INameValidatable, IHasSheet
+    class GameObjectComponentJSON : INameValidatable
     {
         public int DrawLayer { get; set; }
         public JSONColor Mask { get; set; }
@@ -330,8 +348,7 @@ namespace MPTanks.Engine.Serialization
         public JSONVector Size { get; set; }
         [DefaultValue(true)]
         public bool Visible { get; set; }
-        public string Frame { get; set; }
-        public GameObjectSheetSpecifierJSON Sheet { get; set; }
+        public GameObjectSpriteSpecifierJSON Image { get; set; }
     }
     class GameObjectSheetSpecifierJSON
     {
@@ -348,7 +365,14 @@ namespace MPTanks.Engine.Serialization
         public string Frame { get; set; }
         public string Key { get; set; }
         public bool IsAnimation { get; set; }
+        public GameObjectSpriteSpecifierDamageLevelJSON[] DamageLevels { get; set; }
         public GameObjectSheetSpecifierJSON Sheet { get; set; }
+
+        public class GameObjectSpriteSpecifierDamageLevelJSON
+        {
+            public int MaxHealth { get; set; }
+            public GameObjectSpriteSpecifierJSON Sprite { get; set; }
+        }
     }
 
     class GameObjectEmitterJSON : ITriggerable, INameValidatable
