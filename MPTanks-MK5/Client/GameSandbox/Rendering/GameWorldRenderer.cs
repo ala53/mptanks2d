@@ -126,6 +126,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
                         {
                             Component = component,
                             ComputedTransforms = cmpMatrix,
+                            Scale = obj.Scale * component.Scale,
 #if DEBUG
                             __debug__OBJ = obj,
 #endif
@@ -209,10 +210,10 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 RasterizerState.CullNone, _effect);
             //Build a correctly sized rectangle to draw the asset on
             var drawRect = new Rectangle(
-                -Scale(GameSettings.Instance.PhysicsCompensationForRendering),
-                -Scale(GameSettings.Instance.PhysicsCompensationForRendering),
-                ScaleForRendering(component.Component.Size.X),
-                ScaleForRendering(component.Component.Size.Y));
+                -Scale(GameSettings.Instance.PhysicsCompensationForRendering / component.Scale.X),
+                -Scale(GameSettings.Instance.PhysicsCompensationForRendering / component.Scale.Y),
+                ScaleForRendering(component.Component.Size.X, component.Scale.X),
+                ScaleForRendering(component.Component.Size.Y, component.Scale.Y));
             //Get the cached asset
             var asset = _cache.GetArtAsset(component.Component.SheetName, component.Component.FrameName, gameTime);
             //And draw
@@ -223,6 +224,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
 
         private struct RComponentInternal
         {
+            public Vector2 Scale;
             public Matrix ComputedTransforms;
 #if DEBUG
             public GameObject __debug__OBJ;
@@ -367,12 +369,12 @@ namespace MPTanks.Client.GameSandbox.Rendering
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int ScaleForRendering(float amount)
+        private int ScaleForRendering(float amount, float scale)
         {
             //So, farseer keeps a small skin around objects (for whatever reason, only god knows)
             //so we have to artificially add the 0.0001 (or whatever) blocks around the object
             return (int)
-                ((amount + (2 * GameSettings.Instance.PhysicsCompensationForRendering))
+                ((amount + (2 * (GameSettings.Instance.PhysicsCompensationForRendering / scale)))
                 * GameSettings.Instance.RenderScale);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
