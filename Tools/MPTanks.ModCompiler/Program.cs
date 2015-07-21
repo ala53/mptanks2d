@@ -395,6 +395,7 @@ namespace MPTanks.ModCompiler
 
                     if (deserializedGeneric.reflectionName != null)
                     {
+                        Console.WriteLine($"Assuming {info.Name} is a components file (reflectionName property found), not a map file.");
                         mappings.Add(file, "components");
                         //component file
                         components.Add(file);
@@ -404,6 +405,7 @@ namespace MPTanks.ModCompiler
                         //map file
                         try
                         {
+                            Console.WriteLine($"Assuming {info.Name} is a map file (reflectionName property not found), not a components file.");
                             Map.LoadMap(File.ReadAllText(file), null);
                             maps.Add(file);
                             mappings.Add(file, "map");
