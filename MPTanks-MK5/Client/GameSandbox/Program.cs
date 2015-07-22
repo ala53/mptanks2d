@@ -19,8 +19,7 @@ namespace MPTanks.Client.GameSandbox
         [STAThread]
         public static void Main(string[] args)
         {
-            if (!GlobalSettings.Debug)
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             CrossDomainObject.Instance.ConnectionFailureCause = "NOCOMMENT";
             //Write down some logging information so we know what happened.

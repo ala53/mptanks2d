@@ -20,8 +20,7 @@ namespace MPTanks.Client
         [STAThread]
         public static void Main()
         {
-            if (!GlobalSettings.Debug)
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Logger.Info("Initialized.");
 

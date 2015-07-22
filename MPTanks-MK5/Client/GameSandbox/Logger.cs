@@ -26,7 +26,8 @@ namespace MPTanks.Client.GameSandbox
                         KeepFileOpen = true,
                         MaxArchiveFiles = 10,
                         EnableFileDelete = true,
-                        CreateDirs = true
+                        CreateDirs = true,
+                        Layout = "${longdate}|${level:uppercase=true}|${logger}|${message}|${exception:innerFormat=ToString:maxInnerExceptionLevel=128:innerExceptionSeparator=String:separator = String:format = ToString}"
                     },
                     10000, NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction.Grow);
 
