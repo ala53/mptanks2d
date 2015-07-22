@@ -53,7 +53,7 @@ namespace MPTanks.Client
 
         public static void Error(string message)
         {
-            Error(message);
+            Instance.Error(message);
         }
 
         public static void Error(string message, Exception ex)
