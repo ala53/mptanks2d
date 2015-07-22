@@ -4,7 +4,21 @@
       "drawLayer": 0,
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
       "name": "house",
-      "image": { "frame": "house" },
+      "image": {
+        "frame": "house",
+        "damageLevels": [
+          {
+            "maxHealth": 300,
+            "minHealth": 150,
+            "sprite": { "frame": "house" }
+          },
+          {
+            "maxHealth": 150,
+            "minHealth": 0,
+            "sprite": { "frame": "house_damaged" }
+          }
+        ]
+      },
       "offset": { "x": 0, "y": 0 },
       "rotation": 0,
       "rotationOrigin": { "x": 0, "y": 0 },

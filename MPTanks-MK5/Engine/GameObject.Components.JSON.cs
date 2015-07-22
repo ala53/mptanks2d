@@ -103,6 +103,7 @@ namespace MPTanks.Engine.Serialization
                     for (var i = 0; i < cmp.Image.DamageLevels.Length; i++)
                     {
                         var img = ResolveSpriteObjectReference(cmp.Image.DamageLevels[i].Sprite.Frame);
+                        HandleSheet(cmp.Image.DamageLevels[i].Sprite);
                         if (img != null)
                             cmp.Image.DamageLevels[i].Sprite = img;
                     }
@@ -371,6 +372,7 @@ namespace MPTanks.Engine.Serialization
         public class GameObjectSpriteSpecifierDamageLevelJSON
         {
             public int MaxHealth { get; set; }
+            public int MinHealth { get; set; }
             public GameObjectSpriteSpecifierJSON Sprite { get; set; }
         }
     }

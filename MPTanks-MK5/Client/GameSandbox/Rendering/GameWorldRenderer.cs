@@ -215,7 +215,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 ScaleForRendering(component.Component.Size.X, component.Scale.X),
                 ScaleForRendering(component.Component.Size.Y, component.Scale.Y));
             //Get the cached asset
-            var asset = _cache.GetArtAsset(component.Component.SheetName, component.Component.FrameName, gameTime);
+            var asset = _cache.GetArtAsset(component.Component.CurrentSprite.SheetName, component.Component.CurrentSprite.FrameName, gameTime);
             //And draw
             sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, component.ComputedColor);
 

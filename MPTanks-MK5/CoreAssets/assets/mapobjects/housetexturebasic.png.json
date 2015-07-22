@@ -7,6 +7,13 @@
       "y": 0,
       "width": 360,
       "height": 360
+    },
+    {
+      "name": "house_damaged",
+      "x": 360,
+      "y": 0,
+      "width": 360,
+      "height": 360
     }
 	]
 }

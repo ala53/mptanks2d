@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,13 +57,13 @@ namespace MPTanks.Engine.Rendering
         }
 
         //And for rendering, we let the renderer know what we want to show
-        public string SheetName
+        public SpriteInfo DefaultSprite
         {
-            set { foreach (var cmp in Components) cmp.SheetName = value; }
+            set { foreach (var cmp in Components) cmp.DefaultSprite = value; }
         }
-        public string FrameName
+        public RenderableComponent.RenderableComponentDamageLevel[] DamageLevels
         {
-            set { foreach (var cmp in Components) cmp.FrameName = value; }
+            set { foreach (var cmp in Components) cmp.DamageLevels = value; }
         }
     }
 }

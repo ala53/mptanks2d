@@ -139,20 +139,41 @@ namespace MPTanks.Engine
                     else
                         asset = new SpriteInfo(cmp.Image.Frame, ResolveJSONSheet(cmp.Image.Sheet));
                 }
-                _components.Add(cmp.Name, new RenderableComponent
+                var component = new RenderableComponent(this)
                 {
                     DrawLayer = cmp.DrawLayer,
-                    FrameName = asset.FrameName,
+                    DefaultSprite = asset,
                     Mask = (cmp.Mask == null) ? Color.White : (Color)cmp.Mask,
                     Offset = cmp.Offset,
                     Rotation = cmp.Rotation,
                     RotationVelocity = cmp.RotationVelocity,
                     RotationOrigin = cmp.RotationOrigin,
                     Scale = cmp.Scale,
-                    SheetName = asset.SheetName,
                     Size = cmp.Size,
                     Visible = cmp.Visible
-                });
+                };
+                if (cmp.Image != null && cmp.Image.DamageLevels != null && cmp.Image.DamageLevels.Length > 0)
+                {
+                    component.DamageLevels =
+                        new RenderableComponent.RenderableComponentDamageLevel[cmp.Image.DamageLevels.Length];
+                    for (var i = 0; i < component.DamageLevels.Length; i++)
+                    {
+                        var dmgLevel = cmp.Image.DamageLevels[i];
+                        SpriteInfo dmgAsset;
+                        if (dmgLevel.Sprite.Frame.StartsWith("[animation]"))
+                            dmgAsset = new SpriteAnimationInfo(dmgLevel.Sprite.Frame.Substring("[animation]".Length),
+                                ResolveJSONSheet(dmgLevel.Sprite.Sheet));
+                        else
+                            dmgAsset = new SpriteInfo(dmgLevel.Sprite.Frame, ResolveJSONSheet(dmgLevel.Sprite.Sheet));
+                        component.DamageLevels[i] = new RenderableComponent.RenderableComponentDamageLevel()
+                        {
+                            Info = dmgAsset,
+                            MinHealth = dmgLevel.MinHealth,
+                            MaxHealth = dmgLevel.MaxHealth
+                        };
+                    }
+                }
+                _components.Add(cmp.Name, component);
             }
         }
 

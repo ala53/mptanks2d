@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,44 @@ namespace MPTanks.Engine.Rendering
         public int DrawLayer { get; set; }
 
         //And for rendering, we let the renderer know what we want to show
-        public string SheetName { get; set; }
-        public string FrameName { get; set; }
+        public SpriteInfo DefaultSprite { get; set; }
+        public bool HasDamageLevels => DamageLevels != null && DamageLevels.Length > 0;
+        public RenderableComponentDamageLevel[] DamageLevels { get; set; }
+        public SpriteInfo CurrentSprite
+        {
+            get
+            {
+                if (!HasDamageLevels) return DefaultSprite;
+
+                foreach (var damageLevel in DamageLevels)
+                {
+                    if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
+                        return damageLevel.Info;
+                }
+
+                return DefaultSprite;
+            }
+            set
+            {
+                if (!HasDamageLevels) DefaultSprite = value;
+
+                foreach (var damageLevel in DamageLevels)
+                {
+                    if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
+                        damageLevel.Info = value;
+                }
+
+                DefaultSprite = value;
+            }
+        }
+        public GameObject Owner { get; set; }
+        public RenderableComponent(GameObject owner) { Owner = owner; }
+
+        public class RenderableComponentDamageLevel
+        {
+            public int MaxHealth { get; set; }
+            public int MinHealth { get; set; }
+            public SpriteInfo Info { get; set; }
+        }
     }
 }
