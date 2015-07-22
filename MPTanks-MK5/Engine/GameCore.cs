@@ -411,12 +411,6 @@ namespace MPTanks.Engine
             var hasControlOfParent = !Diagnostics.IsMeasuring(DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.BeginMeasurement(DiagnosticsParent);
 
-            //Process the add/remove queue for the last frame
-            //It's up here to fix issues with collision callbacks destroying the objects 1 frame too early
-            //When that happens, it appears that a projectile explodes *before* it hits the target, 
-            //and by deferring the destruction queues 1 frame, it completely fixes the issue.
-            Diagnostics.MonitorCall(ProcessGameObjectQueues, "Process add/remove queue", DiagnosticsParent);
-
             Diagnostics.BeginMeasurement("Begin UpdateInGame()", DiagnosticsParent);
 
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
@@ -441,6 +435,8 @@ namespace MPTanks.Engine
 
             //And notify that we exited the update loop
             _inUpdateLoop = false;
+
+            Diagnostics.MonitorCall(ProcessGameObjectQueues, "Process add/remove queue", DiagnosticsParent);
 
             Diagnostics.EndMeasurement("Begin UpdateInGame()", DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.EndMeasurement(DiagnosticsParent);
