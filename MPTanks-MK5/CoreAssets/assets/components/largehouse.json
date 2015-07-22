@@ -25,6 +25,52 @@
       "size": { "x": 8, "y": 8.25 }
     }
   ],
+  "emitters": [
+    {
+      "activatesOn": "create",
+      "colorChangedByObjectColorMask": false,
+      "emissionArea": {
+        "h": 0.3,
+        "tracksObject": true,
+        "w": 0.3,
+        "x": -2.2,
+        "y": -1
+      },
+      "keepAliveAfterDeath": false,
+      "maxAcceleration": { "x": 0, "y": 0 },
+      "maxColorMask": { "r": 100, "g": 100, "b": 100, "a": 255 },
+      "maxFadeInTime": 500,
+      "maxFadeOutTime": 1500,
+      "maxLifeSpan": 10050,
+      "maxParticlesPerSecond": 5,
+      "maxRotation": 6.28,
+      "maxRotationVelocity": 0.5,
+      "maxSize": { "x": 0.3, "y": 0.3 },
+      "maxVelocity": { "x": 1, "y": 1 },
+      "minAcceleration": { "x": 0, "y": 0 },
+      "minColorMask": { "r": 0, "g": 0, "b": 0, "a": 127 },
+      "minFadeInTime": 250,
+      "minFadeOutTime": 1000,
+      "minLifeSpan": 3250,
+      "minParticlesPerSecond": 5,
+      "minRotation": 0,
+      "minRotationVelocity": -0.5,
+      "minSize": { "x": 0.2, "y": 0.2 },
+      "minVelocity": { "x": 0.1, "y": 0.1 },
+      "name": "chimney_smoke",
+      "renderBelowObjects": false,
+      "shrinkInsteadOfFade": false,
+      "sizeScalingUniform": false,
+      "sprites": [
+        {
+          "frame": null,
+          "sheet": null
+        }
+      ],
+      "velocityAndAccelerationTrackRotation": false,
+      "velocityRelativeToObject": false
+    }
+  ],
   "health": 300,
   "name": "Large House #1",
   "reflectionName": "LargeHouseMultiLevel",

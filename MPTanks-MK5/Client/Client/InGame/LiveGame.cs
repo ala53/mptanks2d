@@ -76,8 +76,15 @@ namespace MPTanks.Client
 
         private void SetReturnWindowParams()
         {
-            _client.QueuePositionAndSizeSet(DomainProxy.WindowPositionX, DomainProxy.WindowPositionY,
-            DomainProxy.WindowWidth, DomainProxy.WindowHeight);
+            try
+            {
+                _client.QueuePositionAndSizeSet(DomainProxy.WindowPositionX, DomainProxy.WindowPositionY,
+                DomainProxy.WindowWidth, DomainProxy.WindowHeight);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("SetReturnWindowParams() had an error.", ex);
+            }
         }
 
         public void Run()
@@ -86,7 +93,7 @@ namespace MPTanks.Client
             {
                 SetStartWindowParams();
                 GameSandbox.Program.Main(new string[] { });
-                Logger.Error("Closing program to prevent crashes (Debug mode without sandboxing causes severe issues when " + 
+                Logger.Error("Closing program to prevent crashes (Debug mode without sandboxing causes severe issues when " +
                     "attempting to run multiple games through the same process)");
                 Environment.Exit(-2); //Force close because, well, it will die anyway and now, we can be graceful
             }

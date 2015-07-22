@@ -47,7 +47,7 @@
     {
       "mask": { "r": 255, "g": 255, "b": 225, "a": 255 },
       "position": { "x": 60, "y": 30 },
-      "rotation": 0.712,
+      "rotation": 0,
       "size": { "x": 6, "y": 6 },
       "typeName": "LargeHouseMultiLevel"
     },

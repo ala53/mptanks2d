@@ -237,13 +237,19 @@ namespace MPTanks.Engine
                 var infos = new List<SpriteInfo>();
                 foreach (var sprite in emitter.Sprites)
                 {
-                    if (sprite.Frame.StartsWith("[animation]"))
-                        infos.Add(
-                            new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
-                            ResolveJSONSheet(sprite.Sheet)));
-                    else
-                        infos.Add(new SpriteInfo(sprite.Frame,
-                            ResolveJSONSheet(sprite.Sheet)));
+                    if (sprite.Frame != null)
+                    {
+                        if (sprite.Frame.StartsWith("[animation]"))
+                            infos.Add(
+                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
+                                ResolveJSONSheet(sprite.Sheet)));
+                        else
+                            infos.Add(new SpriteInfo(sprite.Frame,
+                                ResolveJSONSheet(sprite.Sheet)));
+                    }else
+                    {
+                        infos.Add(new SpriteInfo(null, null));
+                    }
                 }
 
                 var em = Game.ParticleEngine.CreateEmitter(infos.ToArray(),
