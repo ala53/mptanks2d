@@ -104,7 +104,7 @@ namespace MPTanks.Modding.Unpacker
             foreach (var img in header.ImageFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}");
-                if (!File.Exists(path))
+                if (!File.Exists(path) || overwriteExisting)
                     File.WriteAllBytes(path,
                     GetData(img, zf));
                 files.Add(path);
