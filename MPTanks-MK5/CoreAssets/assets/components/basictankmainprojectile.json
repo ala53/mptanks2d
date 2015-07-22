@@ -5,7 +5,7 @@
       "image": { "frame": "[animation]projectileAnim" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "bullet",
-      "offset": { "x": 0, "y": 0 },
+      "offset": { "x": -0.2, "y": -0.2 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.25, "y": 0.25 },
       "size": { "x": 0.5, "y": 0.5 }
@@ -179,5 +179,5 @@
     "file": "basictank_projectile.png",
     "modName": "engine_base"
   },
-  "size": { "x": 0.5, "y": 0.5 }
+  "size": { "x": 0.1, "y": 0.1 }
 }
