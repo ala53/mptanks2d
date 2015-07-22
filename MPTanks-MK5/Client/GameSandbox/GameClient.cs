@@ -38,7 +38,7 @@ namespace MPTanks.Client.GameSandbox
         private GameWorldRenderer renderer;
         private NetworkPlayer player1;
         private NetworkPlayer player2;
-        private MPTanks.Engine.GameCore game { get;set; }
+        private MPTanks.Engine.GameCore game { get; set; }
         private float zoom = 6.5f;
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
@@ -442,19 +442,22 @@ namespace MPTanks.Client.GameSandbox
 
             if (!loading || loadingScreen.IsSlidingOut)
             { //in game
-                if (t == null || t.Width != GraphicsDevice.Viewport.Width || t.Height != GraphicsDevice.Viewport.Height / 2)
+                if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
                 {
-                    if (t != null)
-                        t.Dispose();
+                    if (t == null || t.Width != GraphicsDevice.Viewport.Width || t.Height != GraphicsDevice.Viewport.Height / 2)
+                    {
+                        if (t != null)
+                            t.Dispose();
 
-                    t = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
+                        t = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
 
-                }
-                if (u == null || u.Width != GraphicsDevice.Viewport.Width || u.Height != GraphicsDevice.Viewport.Height / 2)
-                {
-                    if (u != null) u.Dispose();
-                    u = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
+                    }
+                    if (u == null || u.Width != GraphicsDevice.Viewport.Width || u.Height != GraphicsDevice.Viewport.Height / 2)
+                    {
+                        if (u != null) u.Dispose();
+                        u = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
 
+                    }
                 }
                 GraphicsDevice.SetRenderTarget(t);
                 GraphicsDevice.Clear(new Color(20, 20, 20, 255));
