@@ -109,6 +109,7 @@ namespace MPTanks.Engine
             LinearVelocity,
             AngularVelocity,
             Size,
+            Health,
             IsSensor,
             IsStatic,
             Restitution,
@@ -128,6 +129,8 @@ namespace MPTanks.Engine
                 Rotation = value;
             if (type == BasicPropertyChangeEventType.Restitution)
                 Restitution = value;
+            if (type == BasicPropertyChangeEventType.Health)
+                Health = value;
         }
 
         public void ReceiveBasicPropertyChange(BasicPropertyChangeEventType type, Vector2 value)
