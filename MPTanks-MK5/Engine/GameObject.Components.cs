@@ -414,9 +414,19 @@ namespace MPTanks.Engine
         private void TriggerEmitters(string trigger)
         {
             foreach (var emitter in _emittersWithData)
+            {
                 if (emitter.Information.ActivationIsTriggered &&
                     emitter.Information.TriggerName.Equals(trigger, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var pos = TransformPoint(
+                        new Vector2(emitter.Information.EmissionArea.X, emitter.Information.EmissionArea.Y));
                     emitter.AttachedEmitter.Paused = false;
+                    emitter.AttachedEmitter.EmissionArea = new RectangleF(
+                       pos.X, pos.Y, 
+                       emitter.AttachedEmitter.EmissionArea.Width, 
+                       emitter.AttachedEmitter.EmissionArea.Height);
+                }
+            }
         }
         private void ActivateAtTimeEmitters()
         {
