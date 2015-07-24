@@ -578,13 +578,6 @@ namespace MPTanks.Client.GameSandbox
                 _bldr.Append(" running");
             if (game.GameEnded)
                 _bldr.Append(" ended");
-            if (Keyboard.GetState().IsKeyDown(Keys.M))
-                foreach (var gameObject in game.GameObjects)
-                    if (gameObject.ReflectionName == "LargeHouseMultiLevel")
-                    {
-                        gameObject.Rotation += 0.01f;
-                        break;
-                    }
 
             if (game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
                 _bldr.Append(", Winner: ").Append(game.Gamemode.WinningTeam.TeamName);
