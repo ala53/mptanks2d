@@ -22,7 +22,7 @@ namespace MPTanks.Engine.Rendering.Animations
         public float PositionInAnimationMs { get; set; }
         public Action<Animation> CompletionCallback { get; private set; }
         public float LoopCount { get; private set; }
-        public int DrawLayer { get; set; };
+        public int DrawLayer { get; set; }
 
         public Animation(string frameName, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null, float loopCount = 1, int drawLayer = 0)
         {
