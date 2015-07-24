@@ -51,7 +51,8 @@ namespace MPTanks.CoreAssets.Tanks
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "120mm cannon",
                 WeaponDisplaySprite = Sprites["tank_cannon"],
-                WeaponRechargeTimeMs = 500
+                WeaponRechargeTimeMs = 500,
+                FireCallback = (w, p) => InvokeTrigger("primary_fired")
             };
             SecondaryWeapon = new Weapon(this)
             {
@@ -67,7 +68,8 @@ namespace MPTanks.CoreAssets.Tanks
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Duct Tape and Magical Caterpillars",
                 WeaponDisplaySprite = Sprites["tank_cannon"],
-                WeaponRechargeTimeMs = 2000
+                WeaponRechargeTimeMs = 2000,
+                FireCallback = (w, p) => InvokeTrigger("secondary_fired")
             };
             TertiaryWeapon = new Weapon(this)
             {
@@ -83,7 +85,8 @@ namespace MPTanks.CoreAssets.Tanks
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Quantum Teleporter With Space Monkeys",
                 WeaponDisplaySprite = Sprites["tank_cannon"],
-                WeaponRechargeTimeMs = 3000
+                WeaponRechargeTimeMs = 3000,
+                FireCallback = (w, p) => InvokeTrigger("tertiary_fired")
             };
         }
 

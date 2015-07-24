@@ -124,6 +124,8 @@ namespace MPTanks.Engine.Tanks
         public event EventHandler<TargetingUIArgs> OnShowTargetingUIRequested = delegate { };
         private TargetingUIArgs _targetingUIInstance = new TargetingUIArgs();
 
+        public Action<Weapon, Projectiles.Projectile> FireCallback = delegate { };
+
         public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
 
         public class TargetingUIArgs : EventArgs
@@ -273,6 +275,8 @@ namespace MPTanks.Engine.Tanks
             prj.AngularVelocity = ProjectileRotationVelocity;
 
             _projectiles.Add(prj);
+
+            FireCallback(this, prj);
 
             TimeRechargedMs = 0;
         }
