@@ -58,6 +58,10 @@ namespace MPTanks.Engine
 
         private List<AnimationData> _animationsWithData = new List<AnimationData>();
 
+        protected HashSet<string> _flags = new HashSet<string>();
+        [JsonIgnore]
+        public ISet<string> Flags { get { return _flags; } }
+
         private struct AnimationData
         {
             public Animation Animation { get; set; }
@@ -117,6 +121,8 @@ namespace MPTanks.Engine
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
             Health = deserialized.Health;
+            foreach (var flag in deserialized.Flags)
+                _flags.Add(flag);
 
             LoadComponents(deserialized.Components);
             LoadComponentGroups(deserialized.ComponentGroups);

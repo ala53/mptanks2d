@@ -29,6 +29,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
         public GameObjectLightJSON[] Lights { get; set; }
         public GameObjectAnimationJSON[] Animations { get; set; }
+        public string[] Flags { get; set; }
 
         public static GameObjectComponentsJSON Create(string data)
         {
@@ -50,6 +51,7 @@ namespace MPTanks.Engine.Serialization
             if (me.ComponentGroups == null) me.ComponentGroups = new GameObjectComponentGroupJSON[0];
             if (me.Animations == null) me.Animations = new GameObjectAnimationJSON[0];
             if (me.Lights == null) me.Lights = new GameObjectLightJSON[0];
+            if (me.Flags == null) me.Flags = new string[0];
 
             me.ProcessSprites();
             me.ProcessComponents();
