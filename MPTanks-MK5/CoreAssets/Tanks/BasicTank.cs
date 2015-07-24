@@ -32,6 +32,11 @@ namespace MPTanks.CoreAssets.Tanks
         public BasicTank(GamePlayer player, GameCore game, bool authorized = false)
             : base(player, game, authorized)
         {
+            
+        }
+
+        protected override void CreateInternal()
+        {
             PrimaryWeapon = new Weapon(this)
             {
                 AddedRotation = 0,

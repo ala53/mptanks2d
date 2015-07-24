@@ -48,21 +48,21 @@
       "mask": { "r": 255, "g": 255, "b": 225, "a": 255 },
       "position": { "x": 60, "y": 30 },
       "rotation": 0,
-      "size": { "x": 6, "y": 6 },
+      "size": { "x": 8, "y": 8 },
       "typeName": "LargeHouseMultiLevel"
     },
     {
       "mask": { "r": 25, "g": 25, "b": 25, "a": 255 },
       "position": { "x": 70, "y": 30 },
       "rotation": 0.712,
-      "size": { "x": 6, "y": 6 },
+      "size": { "x": 8, "y": 8 },
       "typeName": "LargeHouseMultiLevel"
     },
     {
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
-      "position": { "x": 50, "y": 36 },
-      "rotation": 0.712,
-      "size": { "x": 6, "y": 6 },
+      "position": { "x": 50, "y": 48 },
+      "rotation": 0,
+      "size": { "x": 8, "y": 8 },
       "typeName": "LargeHouseMultiLevel"
     },
     {

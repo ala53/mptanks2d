@@ -271,8 +271,6 @@ namespace MPTanks.Engine
             _startDensity = density;
             _startRestitution = restitution;
 
-            LoadBaseComponents();
-
             if (!game.Authoritative && !authorized)
                 game.Logger.Error("Object Created without authorization. Type: " + this.GetType().ToString() + ", ID: " + ObjectId);
         }
@@ -284,6 +282,8 @@ namespace MPTanks.Engine
             {
                 Game.Logger.Fatal("Multiple calls to Create()");
             }
+
+            LoadBaseComponents();
 
             if (Size == Vector2.Zero)
                 Size = DefaultSize;
@@ -338,7 +338,7 @@ namespace MPTanks.Engine
         /// <param name="secondaryRotation">The secondary rotation of the object (provided by you).</param>
         /// <param name="transformOnlyBySecondaryRotation">Whether to calculate from both the object rotation and the provided rotation or just the provided rotation.</param>
         /// <returns></returns>
-        protected Vector2 TransformPoint(Vector2 point, float secondaryRotation = 0, bool transformOnlyBySecondaryRotation = false)
+        protected Vector2 TransformPoint(Vector2 point, float secondaryRotation = 0, bool transformOnlyBySecondaryRotation = false, bool ignoreScale = false)
         {
             float cos, sin;
             //Cache for performance
@@ -353,9 +353,12 @@ namespace MPTanks.Engine
                 sin = (float)Math.Sin(Rotation + secondaryRotation);
             }
 
-            point = point - (Size / 2);
-            var rotatedX = point.X * cos + point.Y * -sin;
-            var rotatedY = point.X * -sin + point.Y * cos;
+            if (ignoreScale)
+                point = point - (Size / 2);
+            else
+                point = (point * Scale) - (Size / 2);
+            var rotatedX = point.X * cos - point.Y * sin;
+            var rotatedY = point.X * sin + point.Y * cos;
             var centered = new Vector2(rotatedX, rotatedY);
             var transformed = centered + Position;
 

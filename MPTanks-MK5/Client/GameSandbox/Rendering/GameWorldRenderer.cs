@@ -16,12 +16,15 @@ namespace MPTanks.Client.GameSandbox.Rendering
         private BasicEffect _effect;
         private AssetCache _cache;
         private RectangleF _viewRect;
+        private Texture2D _tx;
 
         public GameWorldRenderer(Screens.Screen screen, MPTanks.Engine.GameCore game)
             : base(screen)
         {
             if (game == null) throw new ArgumentNullException("game");
 
+            _tx = new Texture2D(screen.Game.GraphicsDevice, 1, 1);
+            _tx.SetData(new[] { Color.White });
             _game = game;
             _cache = new AssetCache(screen.Game);
             _effect = new BasicEffect(screen.Game.GraphicsDevice);
@@ -80,6 +83,18 @@ namespace MPTanks.Client.GameSandbox.Rendering
             _game.Diagnostics.BeginMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
             DrawParticles(_game.ParticleEngine.Particles, _boundsRect, gameTime, sb, false);
             _game.Diagnostics.EndMeasurement("Draw Particles (Above Objects)", "World rendering", "Rendering");
+
+            if (GameSettings.Instance.DebugShowEmitterLocationBoxes)
+                foreach (var emitter in _game.ParticleEngine.Emitters)
+                {
+                    var sizeX = Math.Max(emitter.EmissionArea.Width, 0.5f);
+                    var sizeY = Math.Max(emitter.EmissionArea.Height, 0.5f);
+                    var pos = Scale(new Vector2(emitter.EmissionArea.X, emitter.EmissionArea.Y) - new Vector2(sizeX / 2, sizeY / 2));
+                    _effect.World = Matrix.CreateTranslation(new Vector3(pos, 0));
+                    sb.Begin(SpriteSortMode.Immediate, null, null, null, null, _effect);
+                    sb.Draw(_tx, new Rectangle(0, 0, Scale(sizeX), Scale(sizeY)), Color.SkyBlue);
+                    sb.End();
+                }
         }
         #region Object Rendering
         private SortedDictionary<int, SortListItem> _renderLayers =
@@ -140,26 +155,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
             var list = SortRenderList();
             foreach (var item in list)
                 DrawComponent(sb, item, gameTime);
-
-            if (GlobalSettings.Debug)
-            {
-                foreach (var obj in _game.GameObjects)
-                {
-                    //Cache position and size for perf reasons
-                    var objPos = Scale(obj.Position);
-                    var objSize = Scale(obj.Size);
-                    var fontMatrix = Matrix.CreateScale(new Vector3(1)) *
-                        Matrix.CreateTranslation(
-                            new Vector3(-objSize / 2, 0)) *
-                        Matrix.CreateRotationZ(obj.Rotation) *
-                        Matrix.CreateTranslation(
-                            new Vector3(objPos, 0));
-                    sb.Begin(SpriteSortMode.Immediate, null, null, null, null, null, fontMatrix);
-                    sb.DrawString(font, obj.Health.ToString(), Vector2.Zero, Color.HotPink);
-                    sb.End();
-                }
-            }
-
+            
             ClearLists();
         }
 

@@ -79,6 +79,7 @@ namespace MPTanks.Client.GameSandbox
 
         #region Screen Resolution
         public Setting<bool> Fullscreen { get; private set; }
+        public Setting<bool> DebugShowEmitterLocationBoxes { get; private set; }
         #endregion
         private GameSettings(string file)
             : base(file)
@@ -158,6 +159,9 @@ namespace MPTanks.Client.GameSandbox
 
             Fullscreen = new Setting<bool>(this, "Fullscreen mode",
                 "Whether to render the game in fullscreen mode", false);
+
+            DebugShowEmitterLocationBoxes = new Setting<bool>(this, "Show emitter locations",
+                "Whether to show the locations of emitters as large blue boxes", false);
         }
     }
 }

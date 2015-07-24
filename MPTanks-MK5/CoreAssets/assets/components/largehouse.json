@@ -30,11 +30,11 @@
       "activatesOn": "create",
       "colorChangedByObjectColorMask": false,
       "emissionArea": {
-        "h": 0.3,
+        "h": 0.01,
         "tracksObject": true,
-        "w": 0.3,
-        "x": -2.2,
-        "y": -1
+        "w": 0.01,
+        "x": 1.1,
+        "y": 3
       },
       "keepAliveAfterDeath": false,
       "maxAcceleration": { "x": 0, "y": 0 },

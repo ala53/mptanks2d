@@ -246,18 +246,21 @@ namespace MPTanks.Engine
                         else
                             infos.Add(new SpriteInfo(sprite.Frame,
                                 ResolveJSONSheet(sprite.Sheet)));
-                    }else
+                    }
+                    else
                     {
                         infos.Add(new SpriteInfo(null, null));
                     }
                 }
 
+                var emissionAreaTransformed = TransformPoint(
+                    new Vector2(emitter.EmissionArea.X, emitter.EmissionArea.Y));
                 var em = Game.ParticleEngine.CreateEmitter(infos.ToArray(),
                     emitter.MinFadeInTime, emitter.MaxFadeInTime,
                     emitter.MinFadeOutTime, emitter.MaxFadeOutTime,
                     emitter.MinLifeSpan, emitter.MaxFadeOutTime,
                     new RectangleF(
-                    emitter.EmissionArea.X, emitter.EmissionArea.Y,
+                    emissionAreaTransformed.X, emissionAreaTransformed.Y,
                     emitter.EmissionArea.W, emitter.EmissionArea.H),
                     emitter.MinVelocity, emitter.MaxVelocity,
                     emitter.MinAcceleration, emitter.MaxAcceleration,
@@ -380,9 +383,11 @@ namespace MPTanks.Engine
                 }
                 if (em.Information.EmissionArea.TracksObject)
                 {
+                    var newPt = TransformPoint(
+                        new Vector2(em.Information.EmissionArea.X, em.Information.EmissionArea.Y));
                     var emissionAreaNew = new RectangleF(
-                        em.Information.EmissionArea.X + Position.X,
-                        em.Information.EmissionArea.Y + Position.Y,
+                        newPt.X,
+                        newPt.Y,
                         em.Information.EmissionArea.W,
                         em.Information.EmissionArea.H);
 
