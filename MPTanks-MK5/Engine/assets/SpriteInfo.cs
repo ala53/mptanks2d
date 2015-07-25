@@ -6,68 +6,33 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Assets
 {
-    public struct SpriteAnimationInfo
+    public interface IHasSpriteInfo
     {
-        private readonly string _animationName;
-        private readonly string _sheetName;
-        public SpriteAnimationInfo(string animName, string sheetName)
-        {
-            _animationName = animName;
-            _sheetName = sheetName;
-        }
-
-        public string AnimationName
-        {
-            get
-            {
-                return _animationName;
-            }
-        }
-
-        public string SheetName
-        {
-            get
-            {
-                return _sheetName;
-            }
-        }
+        SpriteInfo SpriteInfo { get; set; }
     }
 
     public struct SpriteInfo
     {
-        private readonly string _frameName;
-        private readonly string _sheetName;
-
-        public string FrameName
+        public string FrameName { get; set; }
+        public string SheetName { get; set; }
+        public int LoopCount { get; set; }
+        public float PositionInAnimationMs { get; set; }
+        public bool IsAnimation { get; set; }
+        public SpriteInfo(string spriteName, string sheetName, bool animation = false, int loopCount = 1, float positionMs = 0)
         {
-            get
-            {
-                return _frameName;
-            }
+            FrameName = spriteName;
+            SheetName = sheetName;
+            LoopCount = loopCount;
+            IsAnimation = animation;
+            PositionInAnimationMs = positionMs;
         }
-
-        public string SheetName
+        public SpriteInfo (SpriteInfo info)
         {
-            get
-            {
-                return _sheetName;
-            }
-        }
-
-        public SpriteInfo(string spriteName, string sheetName)
-        {
-            _frameName = spriteName;
-            _sheetName = sheetName;
-        }
-
-        public static implicit operator SpriteInfo(SpriteAnimationInfo anim)
-        {
-            return new SpriteInfo(
-                Rendering.Animations.Animation.AnimationAsString(anim.AnimationName, anim.SheetName, 0, true), "");
-        }
-        public static explicit operator SpriteAnimationInfo(SpriteInfo anim)
-        {
-            return new SpriteAnimationInfo(anim.FrameName.Split(',')[2], anim.FrameName.Split(',')[1]);
+            FrameName = info.FrameName;
+            SheetName = info.SheetName;
+            LoopCount = info.LoopCount;
+            IsAnimation = info.IsAnimation;
+            PositionInAnimationMs = info.PositionInAnimationMs;
         }
     }
 }

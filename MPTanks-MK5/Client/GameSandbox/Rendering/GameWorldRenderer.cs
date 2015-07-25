@@ -155,7 +155,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
             var list = SortRenderList();
             foreach (var item in list)
                 DrawComponent(sb, item, gameTime);
-            
+
             ClearLists();
         }
 
@@ -211,7 +211,9 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 ScaleForRendering(component.Component.Size.X, component.Scale.X),
                 ScaleForRendering(component.Component.Size.Y, component.Scale.Y));
             //Get the cached asset
-            var asset = _cache.GetArtAsset(component.Component.CurrentSprite.SheetName, component.Component.CurrentSprite.FrameName, gameTime);
+            var info = component.Component.SpriteInfo;
+            var asset = _cache.GetArtAsset(ref info, gameTime);
+            component.Component.SpriteInfo = info;
             //And draw
             sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, component.ComputedColor);
 
@@ -245,10 +247,10 @@ namespace MPTanks.Client.GameSandbox.Rendering
             if (_game.AnimationEngine.Animations != null)
                 foreach (var anim in _game.AnimationEngine.Animations)
                 {
+                    var endedCheckInfo = anim.SpriteInfo;
+                    endedCheckInfo.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                     //Check if the animation will be done by next frame (approximately)
-                    if (_cache.AnimEnded(anim.AnimationName, //name
-                        anim.PositionInAnimationMs + (float)gameTime.ElapsedGameTime.TotalMilliseconds, //next frame time
-                        anim.SpriteSheetName, anim.LoopCount)) //sheet and number of loops
+                    if (_cache.AnimEnded(endedCheckInfo)) //sheet and number of loops
                         _endedAnimations.Add(anim); //track it as ended
                     //cull if invisible from rendering
                     if (!IsVisible(anim.Position - (anim.Size / 2), anim.Size, boundsRect))
@@ -270,7 +272,9 @@ namespace MPTanks.Client.GameSandbox.Rendering
                         SamplerState.PointWrap, DepthStencilState.Default,
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet and get it from the cache
-                    var asset = _cache.GetAnimation(anim.AnimationName, anim.PositionInAnimationMs, anim.SpriteSheetName);
+                    var info = anim.SpriteInfo;
+                    var asset = _cache.GetArtAsset(ref info, gameTime);
+                    anim.SpriteInfo = info;
                     //For safety: if the asset's name is "loading", we set alpha to 0
                     if (asset.Name == "loading")
                         _effect.Alpha = 0;
@@ -326,7 +330,8 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 if (!IsVisible(particle.Position, particle.Size, boundsRect)) continue;
 
                 //Get the cached asset (or load it). See asset management below.
-                var asset = _cache.GetArtAsset(particle.SheetName, particle.AssetName, gameTime);
+                var info = particle.SpriteInfo;
+                var asset = _cache.GetArtAsset(ref info, gameTime);
                 // A note to future me:
                 // I'm aware that the rotation is incorrectly drawn, but to do it correctly requires
                 // generating a matrix on the CPU which will be quite processor intensive. For now,

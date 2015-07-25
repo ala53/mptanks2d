@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,39 +13,22 @@ namespace MPTanks.Engine.Rendering.Animations
     /// set of images that should be rendered on screen at a 
     /// specific time. 
     /// </summary>
-    public class Animation
+    public class Animation: IHasSpriteInfo
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public float Rotation { get; set; }
-        public string AnimationName { get; private set; }
-        public string SpriteSheetName { get; private set; }
-        public float PositionInAnimationMs { get; set; }
+        public SpriteInfo SpriteInfo { get; set; }
         public Action<Animation> CompletionCallback { get; private set; }
-        public float LoopCount { get; private set; }
         public int DrawLayer { get; set; }
 
-        public Animation(string frameName, Vector2 center, Vector2 size, string sheetName = "", Action<Animation> callback = null, float loopCount = 1, int drawLayer = 0)
+        public Animation(SpriteInfo spriteInfo, Vector2 center, Vector2 size, Action<Animation> callback = null, int drawLayer = 0)
         {
             Position = center;
-            AnimationName = frameName;
-            SpriteSheetName = sheetName;
+            SpriteInfo = spriteInfo;
             Size = size;
             CompletionCallback = callback;
-            LoopCount = loopCount;
             DrawLayer = drawLayer;
-        }
-
-        /// <summary>
-        /// Converts animation info to a string so it can be stored in the 
-        /// "assetname" section of a renderable component.
-        /// </summary>
-        /// <param name="animationName"></param>
-        /// <param name="positionInAnimation"></param>
-        /// <returns></returns>
-        public static string AnimationAsString(string animationName, string spriteSheetName, float positionInAnimationMs = 0, bool loop = false)
-        {
-            return "[animation]" + positionInAnimationMs + "," + spriteSheetName + "," + animationName + "," + loop;
         }
     }
 }

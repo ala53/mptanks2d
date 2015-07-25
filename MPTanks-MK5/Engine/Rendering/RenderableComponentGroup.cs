@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Rendering
 {
-    public class RenderableComponentGroup
+    public class RenderableComponentGroup 
     {
         public RenderableComponent[] Components { get; set; }
         public Vector2 Offset

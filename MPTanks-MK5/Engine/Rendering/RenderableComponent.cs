@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Rendering
 {
-    public class RenderableComponent
+    public class RenderableComponent : IHasSpriteInfo
     {
         public Vector2 Offset { get; set; } = Vector2.Zero;
         /// <summary>
@@ -32,29 +32,30 @@ namespace MPTanks.Engine.Rendering
         public SpriteInfo DefaultSprite { get; set; }
         public bool HasDamageLevels => DamageLevels != null && DamageLevels.Length > 0;
         public RenderableComponentDamageLevel[] DamageLevels { get; set; }
-        public SpriteInfo CurrentSprite
+        public SpriteInfo SpriteInfo
         {
             get
             {
                 if (!HasDamageLevels) return DefaultSprite;
 
-                foreach (var damageLevel in DamageLevels)
-                {
-                    if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
-                        return damageLevel.Info;
-                }
+                if (DamageLevels != null)
+                    foreach (var damageLevel in DamageLevels)
+                    {
+                        if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
+                            return damageLevel.Info;
+                    }
 
                 return DefaultSprite;
             }
             set
             {
                 if (!HasDamageLevels) DefaultSprite = value;
-
-                foreach (var damageLevel in DamageLevels)
-                {
-                    if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
-                        damageLevel.Info = value;
-                }
+                if (DamageLevels != null)
+                    foreach (var damageLevel in DamageLevels)
+                    {
+                        if (Owner.Health >= damageLevel.MinHealth && Owner.Health <= damageLevel.MaxHealth)
+                            damageLevel.Info = value;
+                    }
 
                 DefaultSprite = value;
             }

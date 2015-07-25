@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 namespace MPTanks.Engine.Rendering.Particles
 {
     /// <summary>
-    /// A single in-engine particle, a 80-something byte struct.
+    /// A single in-engine particle, a very large struct.
     /// </summary>
-    public struct Particle
+    public struct Particle : IHasSpriteInfo
     {
         public float LifespanMs;
         public float FadeOutMs;
@@ -25,8 +26,7 @@ namespace MPTanks.Engine.Rendering.Particles
         }
         public Vector2 NonCenteredPosition;
         public Vector2 Size;
-        public string AssetName;
-        public string SheetName;
+        public SpriteInfo SpriteInfo { get; set; }
         public Color ColorMask;
         public float Rotation;
         public float RotationVelocity;

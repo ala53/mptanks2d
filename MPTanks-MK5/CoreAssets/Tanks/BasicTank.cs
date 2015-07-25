@@ -103,9 +103,9 @@ namespace MPTanks.CoreAssets.Tanks
 
         protected override bool DestroyInternal(GameObject destructor = null)
         {
-            var si = AnimatedSprites[BasicHelpers.ChooseRandom(_explosions)];
+            var si = Sprites[BasicHelpers.ChooseRandom(_explosions)];
             var anim = new Engine.Rendering.Animations.Animation(
-                    si.AnimationName, Position, new Vector2(10), si.SheetName);
+                    si, Position, new Vector2(10));
 
             Game.AnimationEngine.AddAnimation(anim);
 

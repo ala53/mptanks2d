@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,11 @@ namespace MPTanks.Engine.Rendering.Animations
         {
             foreach (var animation in animations)
             {
-                animation.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                animation.SpriteInfo = new SpriteInfo(animation.SpriteInfo)
+                {
+                    PositionInAnimationMs = animation.SpriteInfo.PositionInAnimationMs + 
+                    (float)gameTime.ElapsedGameTime.TotalMilliseconds
+                };
             }
         }
     }

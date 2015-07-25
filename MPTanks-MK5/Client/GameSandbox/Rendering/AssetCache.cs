@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Settings;
 using System.Runtime.CompilerServices;
+using MPTanks.Engine.Assets;
 
 namespace MPTanks.Client.GameSandbox.Rendering
 {
@@ -65,121 +66,93 @@ namespace MPTanks.Client.GameSandbox.Rendering
         /// <param name="assetName"></param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public Sprite GetArtAsset(string sheetName, string assetName, GameTime gameTime)
+        public Sprite GetArtAsset(ref SpriteInfo spriteInfo, GameTime gameTime)
         {
             //No texture is given, just return a generic white box
-            if (assetName == null && sheetName == null)
+            if (spriteInfo.SheetName == null && spriteInfo.FrameName == null)
                 return _blank;
 
-            //For safety, don't allow the sheet name to be null
-            if (sheetName == null) sheetName = "";
-
             //Special path for animations.
-            if (assetName.StartsWith("[animation]"))
-                return GetAnimation(assetName, gameTime);
+            if (spriteInfo.IsAnimation)
+                return GetAnimation(ref spriteInfo, gameTime);
 
             //Check if we've loaded the sprite sheet or not
-            if (!HasSpriteSheetLoadBeenCalled(sheetName))
+            if (spriteInfo.SheetName != null && !HasSpriteSheetLoadBeenCalled(spriteInfo.SheetName))
             {
-                AsyncLoadSpriteSheet(sheetName); //If not, load it
+                AsyncLoadSpriteSheet(spriteInfo.SheetName); //If not, load it
                 //and return
                 return _loading;
             }
             //If loading but not loaded...
-            if (!HasSpriteSheetLoadCompleted(sheetName))
+            if (!HasSpriteSheetLoadCompleted(spriteInfo.SheetName))
                 return _loading;
 
             //Check if the load failed
-            if (spriteSheets.ContainsKey(sheetName))
-                if (spriteSheets[sheetName].Sprites.ContainsKey(assetName)) //Check if the sprite exists
-                    return spriteSheets[sheetName].Sprites[assetName];
+            if (spriteInfo.SheetName != null && spriteInfo.FrameName != null &&
+                spriteSheets.ContainsKey(spriteInfo.SheetName))
+                if (spriteSheets[spriteInfo.SheetName].Sprites.ContainsKey(spriteInfo.FrameName)) //Check if the sprite exists
+                    return spriteSheets[spriteInfo.SheetName].Sprites[spriteInfo.FrameName];
 
             //Texture missing, return MISSING_Texture texture
             return _missingTexture;
         }
 
-        /// <summary>
-        /// Gets an animation by asset name, at time t
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <param name="gameTime"></param>
-        /// <returns></returns>
-        private Sprite GetAnimation(string assetName, GameTime gameTime)
+        public Sprite GetAnimation(ref SpriteInfo spriteInfo, GameTime gameTime)
         {
-            //Get the sheet name from the animation
-            var sheetName = Animation.Animation.GetSheetName(assetName);
             //Check if the sprite sheet is loading or loaded
-            if (!HasSpriteSheetLoadBeenCalled(sheetName))
+            if (!HasSpriteSheetLoadBeenCalled(spriteInfo.SheetName))
             {
-                AsyncLoadSpriteSheet(sheetName);
+                AsyncLoadSpriteSheet(spriteInfo.SheetName);
                 return _loading;
             }
             //If loading but not loaded...
-            if (!HasSpriteSheetLoadCompleted(sheetName)) return _loading;
+            if (!HasSpriteSheetLoadCompleted(spriteInfo.SheetName)) return _loading;
 
-            //get the sheet
-            var sheet = spriteSheets[sheetName];
-
-            //Get the animation ticked to the current frame
-            assetName = Animation.Animation.AdvanceAnimation(
-                assetName, (float)gameTime.ElapsedGameTime.TotalMilliseconds, sheet.Animations);
-            //and get the frame sprite
-            var anim = Animation.Animation.GetFrame(assetName, sheet.Animations);
-            //check if the animation was null
-            if (anim == null)
-            {
-                //If so, log it
-                Logger.Error("Missing texture for animation: " + assetName);
-                //Texture missing, return MISSING_Texture texture
-                return _missingTexture;
-            }
-            //If not, return the sprite
-            return anim;
-        }
-
-        public Sprite GetAnimation(string animName, float positionMs, string sheetName = null)
-        {
-            //Check if the sprite sheet is loading or loaded
-            if (!HasSpriteSheetLoadBeenCalled(sheetName))
-            {
-                AsyncLoadSpriteSheet(sheetName);
-                return _loading;
-            }
-            //If loading but not loaded...
-            if (!HasSpriteSheetLoadCompleted(sheetName)) return _loading;
+            //Safety dance
+            if (!spriteSheets.ContainsKey(spriteInfo.SheetName)) return _missingTexture;
             //Get the sheet
-            var sheet = spriteSheets[sheetName];
-            //And the animation frame
-            var anim = Animation.Animation.GetFrame(animName, sheet.Animations, positionMs);
-            //Check if the animation exists
-            if (anim == null)
+            var sheet = spriteSheets[spriteInfo.SheetName];
+            if (!sheet.Animations.ContainsKey(spriteInfo.FrameName)) return _missingTexture;
+            //Get the animation
+            var anim = sheet.Animations[spriteInfo.FrameName];
+
+            //Check if ended 
+            if ((anim.LengthMs * spriteInfo.LoopCount) <= spriteInfo.PositionInAnimationMs)
             {
-                //If not, log it
-                Logger.Error("Missing texture for animation: " +
-                    animName);
-                //Texture missing, return MISSING_Texture texture
+                if (sheet.Sprites.ContainsKey(anim.FrameNames.Last())) return sheet.Sprites[anim.FrameNames.Last()];
                 return _missingTexture;
             }
-            //If it exists, return it
-            return anim;
+            //get the frame number
+            var position = spriteInfo.PositionInAnimationMs;
+            var frame = (int)(position / anim.FrameLengthMs) % anim.FrameNames.Length;
+
+            //increment the animation
+            spriteInfo.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            //and return the frame
+            if (sheet.Sprites.ContainsKey(anim.FrameNames[frame]))
+                return sheet.Sprites[anim.FrameNames[frame]];
+            else return _missingTexture;
         }
 
-        public bool AnimEnded(string animName, float positionMs, string sheetName = null, float loopCount = 1)
+        public bool AnimEnded(SpriteInfo spriteInfo)
         {
             //Check if the sprite sheet is loading or loaded
-            if (!HasSpriteSheetLoadBeenCalled(sheetName))
+            if (!HasSpriteSheetLoadBeenCalled(spriteInfo.SheetName))
             {
-                AsyncLoadSpriteSheet(sheetName);
+                AsyncLoadSpriteSheet(spriteInfo.SheetName);
                 return false; //Be conservative
             }
             //If loading but not loaded...
-            if (!HasSpriteSheetLoadCompleted(sheetName))
+            if (!HasSpriteSheetLoadCompleted(spriteInfo.SheetName))
                 return false; //Be conservative and don't say it ended until we're sure
 
+            if (!spriteSheets.ContainsKey(spriteInfo.SheetName)) return true;
             //Get the sheet
-            var sheet = spriteSheets[sheetName];
+            var sheet = spriteSheets[spriteInfo.SheetName];
+            if (!sheet.Animations.ContainsKey(spriteInfo.FrameName)) return true;
             //And do the check
-            return Animation.Animation.Ended(animName, sheet.Animations, positionMs, loopCount);
+            var totalLength = sheet.Animations[spriteInfo.FrameName].LengthMs * spriteInfo.LoopCount;
+            return (spriteInfo.PositionInAnimationMs >= totalLength);
         }
 
         /// <summary>

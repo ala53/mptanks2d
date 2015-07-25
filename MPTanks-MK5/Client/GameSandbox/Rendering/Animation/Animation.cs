@@ -22,6 +22,7 @@ namespace MPTanks.Client.GameSandbox.Rendering.Animation
         }
         public string[] FrameNames { get; private set; }
         public float FramesPerSecond { get; private set; }
+        public float FrameLengthMs { get { return 1000 / FramesPerSecond; } }
 
         public float LengthMs { get { return (FrameNames.Length / FramesPerSecond) * 1000; } }
 

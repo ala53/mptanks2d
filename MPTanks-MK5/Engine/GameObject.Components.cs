@@ -48,9 +48,6 @@ namespace MPTanks.Engine
         [JsonIgnore]
         public IReadOnlyDictionary<string, SpriteInfo> Sprites { get { return _sprites; } }
         #endregion
-        protected Dictionary<string, SpriteAnimationInfo> _animatedSprites;
-        [JsonIgnore]
-        public IReadOnlyDictionary<string, SpriteAnimationInfo> AnimatedSprites { get { return _animatedSprites; } }
 
         protected Dictionary<string, Animation> _animations;
         [JsonIgnore]
@@ -139,9 +136,9 @@ namespace MPTanks.Engine
                 SpriteInfo asset = new SpriteInfo();
                 if (cmp.Image != null && cmp.Image.Frame != null)
                 {
-                    if (cmp.Image.Frame.StartsWith("[animation]"))
-                        asset = new SpriteAnimationInfo(cmp.Image.Frame.Substring("[animation]".Length),
-                            ResolveJSONSheet(cmp.Image.Sheet));
+                    if (cmp.Image.IsAnimation)
+                        asset = new SpriteInfo(cmp.Image.Frame,
+                            ResolveJSONSheet(cmp.Image.Sheet), true, int.MaxValue);
                     else
                         asset = new SpriteInfo(cmp.Image.Frame, ResolveJSONSheet(cmp.Image.Sheet));
                 }
@@ -166,9 +163,9 @@ namespace MPTanks.Engine
                     {
                         var dmgLevel = cmp.Image.DamageLevels[i];
                         SpriteInfo dmgAsset;
-                        if (dmgLevel.Sprite.Frame.StartsWith("[animation]"))
-                            dmgAsset = new SpriteAnimationInfo(dmgLevel.Sprite.Frame.Substring("[animation]".Length),
-                                ResolveJSONSheet(dmgLevel.Sprite.Sheet));
+                        if (dmgLevel.Sprite.IsAnimation)
+                            dmgAsset = new SpriteInfo(dmgLevel.Sprite.Frame,
+                                ResolveJSONSheet(dmgLevel.Sprite.Sheet), true, int.MaxValue);
                         else
                             dmgAsset = new SpriteInfo(dmgLevel.Sprite.Frame, ResolveJSONSheet(dmgLevel.Sprite.Sheet));
                         component.DamageLevels[i] = new RenderableComponent.RenderableComponentDamageLevel()
@@ -213,8 +210,9 @@ namespace MPTanks.Engine
                         _assets.Add(sp.Sheet.Key, ResolveJSONSheet(sp.Sheet));
 
             foreach (var light in lights)
-                if (light.Sheet.Key != null && !_assets.ContainsKey(light.Sheet.Key))
-                    _assets.Add(light.Sheet.Key, ResolveJSONSheet(light.Sheet));
+                if (light.Image != null && light.Image.Sheet != null &&
+                    light.Image.Sheet.Key != null && !_assets.ContainsKey(light.Image.Sheet.Key))
+                    _assets.Add(light.Image.Sheet.Key, ResolveJSONSheet(light.Image.Sheet));
         }
 
         private void LoadOtherSprites(GameObjectSpriteSpecifierJSON[] sprites)
@@ -223,10 +221,8 @@ namespace MPTanks.Engine
             {
                 if (sprite.IsAnimation)
                 {
-                    _animatedSprites.Add(sprite.Key,
-                        new SpriteAnimationInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet)));
                     _sprites.Add(sprite.Key,
-                        new SpriteAnimationInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet)));
+                        new SpriteInfo(sprite.Frame, ResolveJSONSheet(sprite.Sheet), true, int.MaxValue));
                 }
                 else
                 {
@@ -245,10 +241,10 @@ namespace MPTanks.Engine
                 {
                     if (sprite.Frame != null)
                     {
-                        if (sprite.Frame.StartsWith("[animation]"))
+                        if (sprite.IsAnimation)
                             infos.Add(
-                                new SpriteAnimationInfo(sprite.Frame.Substring("[animation]".Length),
-                                ResolveJSONSheet(sprite.Sheet)));
+                                new SpriteInfo(sprite.Frame,
+                                ResolveJSONSheet(sprite.Sheet), true, int.MaxValue));
                         else
                             infos.Add(new SpriteInfo(sprite.Frame,
                                 ResolveJSONSheet(sprite.Sheet)));
@@ -296,12 +292,13 @@ namespace MPTanks.Engine
             {
                 var sprite = anim.SpriteOptions[Game.SharedRandom.Next(0, anim.SpriteOptions.Length)];
                 var animation = new Animation(
-                    sprite.Frame,
-                    anim.Position,
-                    anim.Size,
+                   new SpriteInfo(sprite.Frame,
                     ResolveJSONSheet(sprite.Sheet),
+                    true, anim.LoopCount),
+                    TransformPoint(anim.Position),
+                    anim.Size,
                     null,
-                    anim.LoopCount
+                    0
                     );
 
                 _animations.Add(anim.Name, animation);
@@ -319,7 +316,7 @@ namespace MPTanks.Engine
             {
                 var l = new Light()
                 {
-                    SpriteInfo = new SpriteInfo(light.Frame, ResolveJSONSheet(light.Sheet)),
+                    SpriteInfo = new SpriteInfo(light?.Image?.Frame, ResolveJSONSheet(light?.Image?.Sheet)),
                     Color = light.Color,
                     //Intensity is nothing when not activated yet
                     Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
@@ -367,7 +364,6 @@ namespace MPTanks.Engine
             _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
             _groups = new Dictionary<string, RenderableComponentGroup>(StringComparer.InvariantCultureIgnoreCase);
             _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
-            _animatedSprites = new Dictionary<string, SpriteAnimationInfo>(StringComparer.InvariantCultureIgnoreCase);
             _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
             _lights = new Dictionary<string, Light>();
 
@@ -442,9 +438,20 @@ namespace MPTanks.Engine
         private void UpdateAnimations(GameTime gameTime)
         {
             foreach (var anim in _animationsWithData)
+            {
                 if (anim.Information.ActivatesAtTime && anim.Information.TimeMsToSpawnAt < TimeAliveMs &&
                     !Game.AnimationEngine.Animations.Contains(anim.Animation))
+                {
+                    anim.Animation.Position = TransformPoint(anim.Information.Position);
+                    anim.Animation.Size = anim.Information.Size * Scale;
                     Game.AnimationEngine.AddAnimation(anim.Animation);
+                }
+                if (anim.Information.TracksObject)
+                {
+                    anim.Animation.Position = TransformPoint(anim.Information.Position);
+                    anim.Animation.Size = anim.Information.Size * Scale;
+                }
+            }
 
         }
 
@@ -453,7 +460,11 @@ namespace MPTanks.Engine
             foreach (var anim in _animationsWithData)
                 if (anim.Information.ActivationIsTriggered &&
                     anim.Information.TriggerName.Equals(triggerName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    anim.Animation.Position = TransformPoint(anim.Information.Position);
+                    anim.Animation.Size = anim.Information.Size * Scale;
                     Game.AnimationEngine.AddAnimation(anim.Animation);
+                }
         }
         #endregion
 

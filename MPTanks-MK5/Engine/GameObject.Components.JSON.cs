@@ -71,9 +71,7 @@ namespace MPTanks.Engine.Serialization
             {
                 ValidateKey(sp);
 
-                sp.IsAnimation = sp.IsAnimation || sp.Frame.StartsWith("[animation]");
-                if (sp.Frame.StartsWith("[animation]"))
-                    sp.Frame = sp.Frame.Substring("[animation]".Length);
+                HandleSprite(sp);
 
                 HandleSheet(sp);
             }
@@ -98,6 +96,8 @@ namespace MPTanks.Engine.Serialization
                     var img = ResolveSpriteObjectReference(cmp.Image.Frame);
                     if (img != null)
                         cmp.Image = img;
+
+                    HandleSprite(cmp.Image);
                 }
 
                 if (cmp.Image != null && cmp.Image.DamageLevels != null)
@@ -108,6 +108,8 @@ namespace MPTanks.Engine.Serialization
                         HandleSheet(cmp.Image.DamageLevels[i].Sprite);
                         if (img != null)
                             cmp.Image.DamageLevels[i].Sprite = img;
+
+                        HandleSprite(cmp.Image.DamageLevels[i].Sprite);
                     }
                 }
 
@@ -122,10 +124,14 @@ namespace MPTanks.Engine.Serialization
                 //Handle namelessness
                 Validate(emitter);
                 //Deal with null refs in the sub-sprites
-                foreach (var sprite in emitter.Sprites)
+                for (var i = 0; i < emitter.Sprites.Length; i++)
                 {
+                    var img = ResolveSpriteObjectReference(emitter.Sprites[i].Frame);
+                    if (img != null)
+                        emitter.Sprites[i] = img;
+                    var sprite = emitter.Sprites[i];
                     HandleSheet(sprite);
-                    sprite.Frame = ResolveSpriteReference(sprite.Frame, sprite);
+                    HandleSprite(sprite);
                 }
 
                 HandleTriggers(emitter);
@@ -139,10 +145,15 @@ namespace MPTanks.Engine.Serialization
                 Validate(anim);
                 HandleTriggers(anim);
 
-                foreach (var cmp in anim.SpriteOptions)
+                for (var i = 0; i < anim.SpriteOptions.Length; i++)
                 {
-                    HandleSheet(cmp);
-                    cmp.Frame = ResolveSpriteReference(cmp.Frame, cmp);
+                    var img = ResolveSpriteObjectReference(anim.SpriteOptions[i].Frame);
+                    if (img != null)
+                        anim.SpriteOptions[i] = img;
+                    var sprite = anim.SpriteOptions[i];
+
+                    HandleSheet(sprite);
+                    HandleSprite(sprite);                                             
                 }
             }
         }
@@ -152,7 +163,11 @@ namespace MPTanks.Engine.Serialization
             foreach (var light in Lights)
             {
                 Validate(light);
-                HandleSheet(light);
+                var img = ResolveSpriteObjectReference(light.Image.Frame);
+                if (img != null)
+                    light.Image = img;
+                HandleSheet(light.Image);
+                HandleSprite(light.Image);
                 HandleTriggers(light);
 
                 //resolve the component
@@ -279,11 +294,11 @@ namespace MPTanks.Engine.Serialization
                             return sp.Sheet;
                         else return FindSheet(sp.Sheet.Reference);
             foreach (var light in Lights)
-                if (light.Sheet != null && light.Sheet.Key != null &&
-                    light.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-                    if (light.Sheet.Reference == null)
-                        return light.Sheet;
-                    else return FindSheet(light.Sheet.Reference);
+                if (light.Image !=null && light.Image.Sheet != null && light.Image.Sheet.Key != null &&
+                    light.Image.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    if (light.Image.Sheet.Reference == null)
+                        return light.Image.Sheet;
+                    else return FindSheet(light.Image.Sheet.Reference);
 
             return Sheet;
         }
@@ -311,6 +326,13 @@ namespace MPTanks.Engine.Serialization
 
             var spr = FindSprite(reference.Substring("[ref]".Length));
             return spr;
+        }
+
+        private void HandleSprite(GameObjectSpriteSpecifierJSON sprite)
+        {
+            if (sprite != null && sprite.Frame != null && sprite.Frame.StartsWith("[animation]")) sprite.IsAnimation = true;
+            if (sprite != null && sprite.Frame != null && sprite.Frame.StartsWith("[animation]"))
+                sprite.Frame = sprite.Frame.Substring("[animation]".Length);
         }
 
         private GameObjectSpriteSpecifierJSON FindSprite(string name)
@@ -424,14 +446,9 @@ namespace MPTanks.Engine.Serialization
         public bool ShrinkInsteadOfFadeOut { get; set; }
         public bool GrowInsteadOfFadeIn { get; set; }
         public bool SizeScalingUniform { get; set; }
-        public SpriteJSON[] Sprites { get; set; }
+        public GameObjectSpriteSpecifierJSON[] Sprites { get; set; }
         public bool VelocityAndAccelerationTrackRotation { get; set; }
         public bool VelocityRelativeToObject { get; set; }
-        public class SpriteJSON : IHasSheet
-        {
-            public string Frame { get; set; }
-            public GameObjectSheetSpecifierJSON Sheet { get; set; }
-        }
         public class EmissionAreaJSON
         {
             public float H { get; set; }
@@ -442,10 +459,9 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
-    class GameObjectLightJSON : ITriggerable, INameValidatable, IHasSheet
+    class GameObjectLightJSON : ITriggerable, INameValidatable
     {
         public string Name { get; set; }
-        public string Frame { get; set; }
         public float Intensity { get; set; }
         public JSONColor Color { get; set; }
         public JSONVector Position { get; set; }
@@ -455,7 +471,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectComponentJSON Component { get; set; }
         public string ComponentToTrack { get; set; }
         public JSONVector Size { get; set; }
-        public GameObjectSheetSpecifierJSON Sheet { get; set; }
+        public GameObjectSpriteSpecifierJSON Image { get; set; }
         public string ActivatesOn { get; set; }
         public bool ActivatesAtTime { get; set; }
         public float TimeMsToSpawnAt { get; set; }

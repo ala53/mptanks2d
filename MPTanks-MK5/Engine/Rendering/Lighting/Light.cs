@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using MPTanks.Engine.Gamemodes;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Rendering.Lighting
 {
-    public class Light
+    public class Light : IHasSpriteInfo
     {
         public float Intensity { get; set; }
         public Color Color { get; set; }
