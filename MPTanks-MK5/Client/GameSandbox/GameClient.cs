@@ -1,5 +1,6 @@
 ﻿#region Using Statements
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -214,6 +215,15 @@ namespace MPTanks.Client.GameSandbox
 
             if (e.Key == Keys.L)
                 game.UnsafeTickGameWorld(0.5f);
+
+            if (e.Key == Keys.F12)
+                debugEnabled = !debugEnabled;
+            if (e.Key == Keys.F10)
+                drawGraphDebug = !drawGraphDebug;
+            if (e.Key == Keys.F9)
+                drawTextDebug = !drawTextDebug;
+            if (e.Key == Keys.F8)
+                debugOverlayGraphsVertical = !debugOverlayGraphsVertical;
         }
 
         bool shouldTick = true;
@@ -247,7 +257,6 @@ namespace MPTanks.Client.GameSandbox
           gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
 
             updateNumber++;
-            DetectGC();
             if (game.GameStatus == GameCore.CurrentGameStatus.CountingDownToStart)
             {
                 loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
@@ -357,8 +366,8 @@ namespace MPTanks.Client.GameSandbox
             if (shouldTick)
             {
                 game.Update(gameTime);
-                var state = PseudoFullGameWorldState.Create(game);
-                state.Apply(game);
+                if (Keyboard.GetState().IsKeyDown(Keys.L))
+                    PseudoFullGameWorldState.Create(game).Apply(game);
             }
 
 
@@ -368,33 +377,6 @@ namespace MPTanks.Client.GameSandbox
             game.Diagnostics.EndMeasurement("Base.Update()");
             timer.Stop();
             physicsMs = (float)timer.Elapsed.TotalMilliseconds;
-            DetectGC();
-        }
-
-        private int _g0Gc = 0;
-        private int _g1Gc = 0;
-        private int _g2Gc = 0;
-        private void DetectGC()
-        {
-            var g0 = GC.CollectionCount(0);
-            var g1 = GC.CollectionCount(1);
-            var g2 = GC.CollectionCount(2);
-            if (g2 != _g2Gc)
-            {
-                Logger.Debug("Generation 2 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
-            }
-            else if (g1 != _g1Gc)
-            {
-                Logger.Debug("Generation 1 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
-            }
-            else if (g0 != _g0Gc)
-            {
-                Logger.Debug("Generation 0 GC (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
-            }
-
-            _g0Gc = g0;
-            _g1Gc = g1;
-            _g2Gc = g2;
         }
 
         private void LockCursor()
@@ -434,7 +416,6 @@ namespace MPTanks.Client.GameSandbox
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            DetectGC();
             frameNumber++;
             game.Diagnostics.BeginMeasurement("Rendering");
             timer.Restart(); //Stat tracking
@@ -519,9 +500,103 @@ namespace MPTanks.Client.GameSandbox
         }
 
         #region Debug info
-        private Process _prc;
-        private StringBuilder _bldr = new StringBuilder(1000);
+
+        private bool debugEnabled = true;
+        private bool drawTextDebug = true;
+        private bool drawGraphDebug = true;
+        private bool debugOverlayGraphsVertical = true;
         private void DrawDebugInfo(GameTime gameTime)
+        {
+            if (!debugEnabled) return;
+            LogDebugInfo(gameTime);
+            if (drawTextDebug) DrawTextDebugInfo(gameTime);
+            if (drawGraphDebug) DrawGraphDebugInfo(gameTime);
+        }
+
+        #region Data Logging
+        private float[] _debugFrameTimes;
+        private DebugMemoryUsageTick[] _debugMemoryUsages;
+        private Stopwatch _frameTimesTimer = Stopwatch.StartNew();
+        private void LogDebugInfo(GameTime gameTime)
+        {
+            if (_debugFrameTimes == null)
+            {
+                _debugFrameTimes = new float[graphWidth];
+                for (var i = 0; i < _debugFrameTimes.Length; i++)
+                    _debugFrameTimes[i] = 16.666666666666f;
+            }
+
+            if (_debugMemoryUsages == null)
+                _debugMemoryUsages = new DebugMemoryUsageTick[graphWidth];
+            
+            if ((DateTime.Now - _debugMemoryUsages[_debugMemoryUsages.Length - 1].Measured).TotalMilliseconds > 0)
+            {
+                //Shift back
+                for (var i = 1; i < _debugMemoryUsages.Length; i++)
+                    _debugMemoryUsages[i - 1] = _debugMemoryUsages[i];
+                //Measure
+                var gcData = DebugDetectGC();
+                _debugMemoryUsages[_debugMemoryUsages.Length - 1] = new DebugMemoryUsageTick
+                {
+                    Measured = DateTime.Now,
+                    BytesUsed = GC.GetTotalMemory(false),
+                    HasGen0GC = gcData.Gen0,
+                    HasGen1GC = gcData.Gen1,
+                    HasGen2GC = gcData.Gen2
+                };
+            }
+
+            for (var i = 1; i < _debugFrameTimes.Length; i++)
+                _debugFrameTimes[i - 1] = _debugFrameTimes[i];
+
+            _debugFrameTimes[_debugFrameTimes.Length - 1] = (float)_frameTimesTimer.Elapsed.TotalMilliseconds;
+            _frameTimesTimer.Restart();
+        }
+        private struct DebugMemoryUsageTick
+        {
+            public DateTime Measured;
+            public long BytesUsed;
+            public bool HasGen0GC;
+            public bool HasGen1GC;
+            public bool HasGen2GC;
+        }
+
+
+        private int _g0Gc = 0;
+        private int _g1Gc = 0;
+        private int _g2Gc = 0;
+        private DebugGCTuple DebugDetectGC()
+        {
+            var returnValue = new DebugGCTuple();
+
+            if (GC.MaxGeneration >= 0 && GC.CollectionCount(0) != _g0Gc)
+                returnValue.Gen0 = true;
+            if (GC.MaxGeneration >= 1 && GC.CollectionCount(1) != _g1Gc)
+                returnValue.Gen1 = true;
+            if (GC.MaxGeneration >= 2 && GC.CollectionCount(2) != _g2Gc)
+                returnValue.Gen2 = true;
+
+            if (GC.MaxGeneration >= 0)
+                _g0Gc = GC.CollectionCount(0);
+            if (GC.MaxGeneration >= 1)
+                _g1Gc = GC.CollectionCount(1);
+            if (GC.MaxGeneration >= 2)
+                _g2Gc = GC.CollectionCount(2);
+
+            return returnValue;
+        }
+        struct DebugGCTuple
+        {
+            public bool Gen0;
+            public bool Gen1;
+            public bool Gen2;
+        }
+        #endregion
+
+        #region Text Debug
+        private Process _prc;
+        private StringBuilder _bldr = new StringBuilder(2000);
+        private void DrawTextDebugInfo(GameTime gameTime)
         {
             _bldr.Clear();
             if (_prc == null)
@@ -530,45 +605,50 @@ namespace MPTanks.Client.GameSandbox
             spriteBatch.Begin();
             var tanksCount = 0;
             var projCount = 0;
+            var mapObjectCount = 0;
+            var otherCount = 0;
             foreach (var obj in game.GameObjects)
             {
                 if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Tanks.Tank)))
                     tanksCount++;
-                if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Projectiles.Projectile)))
+                else if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Projectiles.Projectile)))
                     projCount++;
+                else if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Maps.MapObjects.MapObject)))
+                    mapObjectCount++;
+                else otherCount++;
             }
-            var fps = CalculateAverageFPS((float)gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1");
             //Note: The debug screen generates a bit of garbage so don't try to use it to nail down allocations
             //Disable it first and then see if there's still a problem
             _bldr.Append("Tanks: ").Append(tanksCount)
-            .Append(", Projectiles: ").Append(projCount)
-            .Append(", Zoom: ").Append(zoom.ToString("N2"))
-            .Append(", Update: ").Append(physicsMs.ToString("N2"))
-            .Append(", Render: ").Append(renderMs.ToString("N2"))
-            .Append(",\nMouse: ").Append(Mouse.GetState().Position.ToString())
-            .Append(", Tank: ");
+                .Append(", Projectiles: ").Append(projCount)
+                .Append(", Map Objects: ").Append(mapObjectCount)
+                .Append(", Other: ").Append(otherCount)
+                .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount)
+                .Append("\n");
+            _bldr.Append("Update: ").Append(physicsMs.ToString("N2"))
+                        .Append(", Render: ").Append(renderMs.ToString("N2"));
 
-            if (player1.Tank != null)
-                _bldr.Append("{ ").Append(player1.Tank.Position.X.ToString("N1"))
-                  .Append(", ").Append(player1.Tank.Position.Y.ToString("N1"))
-                  .Append(" }");
-            else _bldr.Append("not spawned");
+            if (float.IsInfinity(CalculateAverageFPS()) || float.IsNaN(CalculateAverageFPS()))
+                _bldr.Append(", FPS: ").Append("Calculation Error").Append(" avg, ");
+            else
+                _bldr.Append(", FPS: ").Append((CalculateAverageFPS().ToString("N1"))).Append(" avg, ");
 
-            _bldr.Append(", Active Timers: ").Append(game.TimerFactory.ActiveTimersCount)
-                .Append(",\nAnimation layers: ").Append(game.AnimationEngine.Animations.Count)
+            _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
+            .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
+
+            _bldr.Append("Timers: ").Append(game.TimerFactory.ActiveTimersCount)
+                .Append(", Animations: ").Append(game.AnimationEngine.Animations.Count)
                 .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
-                .Append(", FPS: ").Append(fps).Append(" avg, ")
-                .Append((1000 / gameTime.ElapsedGameTime.TotalMilliseconds).ToString("N1")).Append(" now")
-                .Append(",\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
+                .Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used");
 
             if (game.Running)
             {
-                _bldr.Append(", Timescale: " + (int)timescale + "/" + limit);
+                _bldr.Append("\nTimescale: " + (int)timescale + "/" + limit);
             }
 
-            _bldr.Append("\nStatus: ");
+            _bldr.Append(", Status: ");
 
             if (game.CountingDown)
                 _bldr.Append("starting game");
@@ -582,42 +662,224 @@ namespace MPTanks.Client.GameSandbox
             if (game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
                 _bldr.Append(", Winner: ").Append(game.Gamemode.WinningTeam.TeamName);
 
+            _bldr.Append("\nF12: hide\n")
+                .Append("F10: Enable/Disable graphs\n")
+                .Append("F9: Enable/Disable debug text\n")
+                .Append("F8: Switch between vertical and horizontal graphs\n")
+                .Append("ESC: Exit\n");
+
             spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));
             spriteBatch.End();
         }
-
-        private float[] _fps;
-
-        private float CalculateAverageFPS(float deltaMs)
+        #endregion
+        #region FPS Calculations
+        private float CalculateAverageFPS()
         {
-            if (_fps == null)
-            {
-                _fps = new float[15];
-                for (int i = 0; i < _fps.Length; i++)
-                    _fps[i] = 16.666666f;
-            }
-
-            for (int i = 0; i < _fps.Length - 1; i++)
-                _fps[i] = _fps[i + 1];
-
-            _fps[_fps.Length - 1] = deltaMs;
-            return GetFps();
+            return _debugFrameTimes.Select(a => 1000 / a).Average();
         }
 
-        private float GetFps()
+        #endregion
+
+        const int graphHeight = 150;
+        const int graphWidth = 400;
+        const int graphOffset = 20;
+
+        private Texture2D _graphTexture;
+        private void DrawGraphDebugInfo(GameTime gameTime)
         {
-            if (_fps == null)
+            //3 graphs:
+            //1) memory usage: capped to max, colored blue. Spikes are colored red
+            //2) frame times: capped to 50ms, items above 20ms and below 6ms are highlighted red and yellow respectively
+            //above 50 is black
+            //3) frame rate: capped to 60fps, 60 is green, 20 is red - inbetween is lerped
+            //above 60 is black
+
+            //drawn at bottom left of screen, 150px high
+            //1st graph is 0-200 pixels
+            //2nd graph is 220-420 pixels
+            //3rd graph is 440-660 pixels
+
+            if (_graphTexture == null)
             {
-                _fps = new float[30];
-                for (int i = 0; i < _fps.Length; i++)
-                    _fps[i] = 16.666666f;
+                _graphTexture = new Texture2D(GraphicsDevice, 1, 1);
+                _graphTexture.SetData(new[] { Color.White });
             }
 
-            float tot = 0;
-            foreach (var f in _fps)
-                tot += f;
-            return 1000 / (tot / _fps.Length);
+            DrawMemoryUsageGraph();
+            DrawFrameTimesGraph();
+            DrawFrameRateGraph();
+        }
 
+        private void DrawMemoryUsageGraph()
+        {
+            //Memory Usage graph
+            var max = 0L;
+            var average = 0L;
+
+            var graphPosX = 0;
+            var graphBottomY = GraphicsDevice.Viewport.Height;
+
+            for (var i = 0; i < _debugMemoryUsages.Length; i++)
+            {
+                average += _debugMemoryUsages[i].BytesUsed;
+                if (_debugMemoryUsages[i].BytesUsed > max)
+                    max = _debugMemoryUsages[i].BytesUsed;
+            }
+
+            average /= _debugMemoryUsages.Length;
+            var spikeMinimum = average * 1.5d;
+
+            double pixelsPerByteH = (double)graphHeight / max;
+            double pixelsPerDataPointWidth = (double)graphWidth / _debugMemoryUsages.Length;
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
+                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            int pixelsUsed = 0;
+            for (var i = 0; i < _debugMemoryUsages.Length; i++)
+            {
+                var value = _debugMemoryUsages[i];
+                var maxPixels = pixelsPerDataPointWidth * i;
+                var width = (int)maxPixels - pixelsUsed;
+                if (pixelsUsed < (int)maxPixels)
+                {
+                    var color = (value.BytesUsed > spikeMinimum) ? Color.Red : Color.Blue;
+                    var height = (int)(pixelsPerByteH * value.BytesUsed);
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed,
+                        graphBottomY - height, width, height),
+                        color);
+                }
+
+                //Draw the GC marker
+                if (value.HasGen2GC)
+                {
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
+                        graphBottomY - 13, 8, 6), Color.Black);
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
+                        graphBottomY - 12, 4, 4), Color.Red);
+                }
+                else if (value.HasGen1GC)
+                {
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
+                        GraphicsDevice.Viewport.Height - 13, 8, 6), Color.Black);
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
+                        graphBottomY - 12, 4, 4), Color.Yellow);
+                }
+                else if (value.HasGen0GC)
+                {
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
+                        graphBottomY - 13, 8, 6), Color.Black);
+                    spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
+                        graphBottomY - 12, 4, 4), Color.Green);
+                }
+
+                if (pixelsUsed < (int)maxPixels)
+                    pixelsUsed += width;
+            }
+            //Draw the label 10, 10 px from the bottom left
+            var size = font.MeasureString("Memory usage");
+            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
+            spriteBatch.DrawString(font, "Memory usage", pos, Color.White);
+            spriteBatch.End();
+        }
+        private void DrawFrameTimesGraph()
+        {
+            double pixelsPerMsH = (double)graphHeight / 50;
+            double pixelsPerDataPointWidth = (double)graphWidth / _debugFrameTimes.Length;
+
+            var graphPosX = graphOffset + graphWidth;
+            var graphBottomY = GraphicsDevice.Viewport.Height;
+            if (debugOverlayGraphsVertical)
+            {
+                graphPosX = 0;
+                graphBottomY -= graphOffset + graphHeight;
+            }
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
+                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            int pixelsUsed = 0;
+            for (var i = 0; i < _debugFrameTimes.Length; i++)
+            {
+                var value = _debugFrameTimes[i];
+                var maxPixels = pixelsPerDataPointWidth * i;
+                var width = (int)maxPixels - pixelsUsed;
+                if (pixelsUsed < (int)maxPixels)
+                {
+                    Color color = Color.Green;
+                    if (value > 18 && value < 24)
+                        color = Color.Yellow;
+                    else if (value >= 24 && value < 50)
+                        color = Color.Orange;
+                    else if (value >= 50)
+                        color = Color.Red;
+                    var height = (int)(pixelsPerMsH * value);
+                    if (value > 50)
+                    {
+                        height = graphHeight;
+                    }
+                    spriteBatch.Draw(_graphTexture, new Rectangle(pixelsUsed + graphPosX,
+                        graphBottomY - height, width, height),
+                        color);
+                }
+
+                if (pixelsUsed < (int)maxPixels)
+                    pixelsUsed += width;
+            }
+            //Draw the label 10, 10 px from the bottom left
+            var size = font.MeasureString("Frame Times (max 50ms)");
+            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
+            spriteBatch.DrawString(font, "Frame Times (max 50ms)", pos, Color.White);
+            spriteBatch.End();
+        }
+        private void DrawFrameRateGraph()
+        {
+            double pixelsPerFpsH = (double)graphHeight / 70;
+            double pixelsPerDataPointWidth = (double)graphWidth / _debugFrameTimes.Length;
+
+            var graphPosX = graphOffset + graphWidth + graphOffset + graphWidth;
+            var graphBottomY = GraphicsDevice.Viewport.Height;
+            if (debugOverlayGraphsVertical)
+            {
+                graphPosX = 0;
+                graphBottomY -= graphOffset + graphHeight + graphOffset + graphHeight;
+            }
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
+                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            int pixelsUsed = 0;
+            for (var i = 0; i < _debugFrameTimes.Length; i++)
+            {
+                var value = 1000 / _debugFrameTimes[i];
+                var maxPixels = pixelsPerDataPointWidth * i;
+                var width = (int)maxPixels - pixelsUsed;
+                if (pixelsUsed < (int)maxPixels)
+                {
+                    Color color = Color.Green;
+
+                    if (value < 55 && value >= 30)
+                        color = Color.Yellow;
+                    else if (value < 30 && value >= 20)
+                        color = Color.Orange;
+                    else if (value < 20)
+                        color = Color.Red;
+                    var height = (int)(pixelsPerFpsH * value);
+                    if (value > 70)
+                    {
+                        color = Color.LimeGreen;
+                        height = graphHeight;
+                    }
+                    spriteBatch.Draw(_graphTexture, new Rectangle(pixelsUsed + graphPosX,
+                        graphBottomY - height, width, height),
+                        color);
+                }
+
+                if (pixelsUsed < (int)maxPixels)
+                    pixelsUsed += width;
+            }
+            //Draw the label 10, 10 px from the bottom left
+            var size = font.MeasureString("FPS (max 70fps)");
+            var pos = new Vector2( graphPosX, graphBottomY - size.Y);
+            spriteBatch.DrawString(font, "FPS (max 70fps)", pos, Color.White);
+            spriteBatch.End();
         }
         #endregion
     }
