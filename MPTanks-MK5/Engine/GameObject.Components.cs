@@ -319,12 +319,11 @@ namespace MPTanks.Engine
             {
                 var l = new Light()
                 {
-                    AssetName = light.Frame,
+                    SpriteInfo = new SpriteInfo(light.Frame, ResolveJSONSheet(light.Sheet)),
                     Color = light.Color,
                     //Intensity is nothing when not activated yet
                     Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
                     PositionCenter = light.Position,
-                    SpriteName = ResolveJSONSheet(light.Sheet),
                     Size = light.Size
                 };
 
@@ -422,8 +421,8 @@ namespace MPTanks.Engine
                         new Vector2(emitter.Information.EmissionArea.X, emitter.Information.EmissionArea.Y));
                     emitter.AttachedEmitter.Paused = false;
                     emitter.AttachedEmitter.EmissionArea = new RectangleF(
-                       pos.X, pos.Y, 
-                       emitter.AttachedEmitter.EmissionArea.Width, 
+                       pos.X, pos.Y,
+                       emitter.AttachedEmitter.EmissionArea.Width,
                        emitter.AttachedEmitter.EmissionArea.Height);
                 }
             }

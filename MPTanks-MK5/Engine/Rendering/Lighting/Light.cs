@@ -14,8 +14,7 @@ namespace MPTanks.Engine.Rendering.Lighting
         public Color Color { get; set; }
         public Vector2 PositionCenter { get; set; }
         public Vector2 Size { get; set; }
-        public string SpriteName { get; set; }
-        public string AssetName { get; set; }
+        public SpriteInfo SpriteInfo { get; set; }
 
         public short[] TeamIds { get; set; }
         private static short[] _allTeams = new short[] { Team.Null.TeamId };

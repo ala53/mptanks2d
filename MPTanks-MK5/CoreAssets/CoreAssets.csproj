@@ -58,6 +58,7 @@
     <None Include="assets\components\largehouse.json" />
     <None Include="assets\components\satellitedish.json" />
     <None Include="assets\components\wall_generic.json" />
+    <None Include="assets\sounds\basictank_firing.ogg" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
