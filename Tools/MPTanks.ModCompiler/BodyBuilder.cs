@@ -44,7 +44,7 @@ namespace MPTanks.ModCompiler
             var imgHeight = imageData.Length / width;
             var scale = new Vector2(objSize.X / width, objSize.Y / imgHeight);
             vertices.Scale(scale);
-            var decomposed = Triangulate.ConvexPartition(vertices, TriangulationAlgorithm.Delauny);
+            var decomposed = Triangulate.ConvexPartition(vertices, TriangulationAlgorithm.Seidel);
 
             var result = new Engine.Serialization.GameObjectBodySpecifierJSON();
             var fixtures = new List<Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON>();

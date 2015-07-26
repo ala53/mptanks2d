@@ -534,7 +534,12 @@ namespace MPTanks.Engine.Serialization
 
             var vertList = new List<Vertices>();
             foreach (var fixture in Fixtures)
-                vertList.Add(fixture.Rebuild(desiredSize / Size));
+            {
+                var vtx = fixture.Rebuild();
+                vtx.Translate(-(Vector2)Size / 2);
+                vtx.Scale(desiredSize / Size);
+                vertList.Add(vtx);
+            }
 
             _cache.Add(desiredSize, vertList);
             return vertList;
@@ -544,18 +549,18 @@ namespace MPTanks.Engine.Serialization
             public JSONVector[] Vertices { get; set; }
             public HolesSpecifierJSON[] Holes { get; set; }
 
-            internal Vertices Rebuild(Vector2 scale)
+            internal Vertices Rebuild()
             {
                 var verts = new Vertices(Vertices.Length);
                 foreach (var vert in Vertices)
-                    verts.Add(vert * scale);
+                    verts.Add(vert);
 
                 if (Holes != null && Holes.Length > 0)
                     foreach (var hole in Holes)
                     {
                         var hl = new Vertices(hole.Vertices.Length);
                         foreach (var vert in hole.Vertices)
-                            hl.Add(vert * scale);
+                            hl.Add(vert);
 
                         verts.Holes.Add(hl);
                     }
