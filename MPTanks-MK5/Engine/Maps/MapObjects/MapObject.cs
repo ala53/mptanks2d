@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,17 +57,20 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         public static MapObject ReflectiveInitialize(string objName, GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0, byte[] state = null)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
+            long totalMem = 0;
+            if (GlobalSettings.Debug)
+                totalMem = GC.GetTotalMemory(true);
+
             if (!_objTypes.ContainsKey(objName.ToLower())) throw new Exception("Map object type does not exist.");
 
             var inst = (MapObject)Activator.CreateInstance(_objTypes[objName.ToLower()], game, authorized, position, rotation);
             if (state != null) inst.ReceiveStateData(state);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            game.Logger.Trace($"Allocating (Map)Object {objName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
+
+            if (GlobalSettings.Debug)
+            {
+                var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+                game.Logger.Trace($"Allocating (Map)Object {objName}, size is: {memUsageBytes.ToString("N2")} KiB");
+            }
             return inst;
         }
 

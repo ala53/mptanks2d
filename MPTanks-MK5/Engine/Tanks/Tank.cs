@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MPTanks.Engine.Assets;
 using Newtonsoft.Json;
 using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Settings;
 
 namespace MPTanks.Engine.Tanks
 {
@@ -146,17 +147,20 @@ namespace MPTanks.Engine.Tanks
 
         public static Tank ReflectiveInitialize(string tankName, GamePlayer player, GameCore game, bool authorized, byte[] state = null)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
+            long totalMem = 0;
+            if (GlobalSettings.Debug)
+                totalMem = GC.GetTotalMemory(true);
+
             if (!_tankTypes.ContainsKey(tankName.ToLower())) throw new Exception("Tank type does not exist.");
 
             var inst = (Tank)Activator.CreateInstance(_tankTypes[tankName.ToLower()], player, game, authorized);
             if (state != null) inst.ReceiveStateData(state);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            game.Logger.Trace($"Allocating (Tank)Object {tankName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
+
+            if (GlobalSettings.Debug)
+            {
+                var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+                game.Logger.Trace($"Allocating Generic (Game)Object {tankName}, size is: {memUsageBytes.ToString("N2")} KiB");
+            }
             return inst;
         }
 

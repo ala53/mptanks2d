@@ -1,4 +1,5 @@
-﻿using MPTanks.Modding;
+﻿using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -80,14 +81,16 @@ namespace MPTanks.Engine
 
         public static GameObject ReflectiveInitialize(string reflectionName, GameCore game, bool authorized = false)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
+            long totalMem = 0;
+            if (GlobalSettings.Debug)
+                totalMem = GC.GetTotalMemory(true);
+
             var obj = Activator.CreateInstance(_types[reflectionName], game, authorized);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            game.Logger.Trace($"Allocating Generic (Game)Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
+            if (GlobalSettings.Debug)
+            {
+                var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
+                game.Logger.Trace($"Allocating Generic (Game)Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
+            }
             return (GameObject)obj;
         }
     }

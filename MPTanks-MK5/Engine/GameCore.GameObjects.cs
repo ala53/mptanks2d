@@ -29,12 +29,14 @@ namespace MPTanks.Engine
             }
 
             if (creator == null)
-                Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
+                if (GlobalSettings.Debug)
+                    Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
                     $"[{obj.ObjectId}]. Authorized: {authorized}");
-            else
-                Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
-                    $"[{obj.ObjectId}]. Created by {creator.GetType().FullName}" +
-                    $"[{creator.ObjectId}]. Authorized: {authorized}");
+                else
+                if (GlobalSettings.Debug)
+                    Logger.Trace("Object created: " + $"{obj.GetType().FullName}" +
+                        $"[{obj.ObjectId}]. Created by {creator.GetType().FullName}" +
+                        $"[{creator.ObjectId}]. Authorized: {authorized}");
 
             if (_inUpdateLoop) //In update loop, wait a frame.
             {
@@ -66,10 +68,12 @@ namespace MPTanks.Engine
             }
 
             if (destructor == null)
-                Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
+                if (GlobalSettings.Debug)
+                    Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
                     $"[{obj.ObjectId}]. Authorized: {authorized}");
-            else
-                Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
+                else
+                if (GlobalSettings.Debug)
+                    Logger.Trace("Object destroyed: " + $"{obj.GetType().FullName}" +
                     $"[{obj.ObjectId}]. Destroyed by {destructor.GetType().FullName}" +
                     $"[{destructor.ObjectId}]. Authorized: {authorized}");
 
@@ -183,18 +187,11 @@ namespace MPTanks.Engine
 
         public Tank AddTank(string reflectionName, GamePlayer player, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
             var tank = Tank.ReflectiveInitialize(reflectionName, player, this, authorized);
             tank.Position = position;
             tank.Rotation = rotation;
             player.Tank = tank;
             AddGameObject(tank, null, authorized);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            Logger.Trace($"Allocating Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
             return tank;
         }
 
@@ -204,18 +201,11 @@ namespace MPTanks.Engine
         }
         public Projectiles.Projectile AddProjectile(string reflectionName, Tank spawner, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
             var projectile = Projectiles.Projectile.ReflectiveInitialize(
                 reflectionName, spawner, this, authorized, position, rotation);
             projectile.Position = position;
             projectile.Rotation = rotation;
             AddGameObject(projectile, null, authorized);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            Logger.Trace($"Allocating Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
             return projectile;
         }
         public Maps.MapObjects.MapObject AddMapObject(string reflectionName, bool authorized)
@@ -224,15 +214,8 @@ namespace MPTanks.Engine
         }
         public Maps.MapObjects.MapObject AddMapObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
             var obj = Maps.MapObjects.MapObject.ReflectiveInitialize(reflectionName, this, authorized, position, rotation);
             AddGameObject(obj, null, authorized);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            Logger.Trace($"Allocating Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
             return obj;
         }
 
@@ -242,17 +225,10 @@ namespace MPTanks.Engine
         }
         public GameObject AddGameObject(string reflectionName, Vector2 position = default(Vector2), float rotation = 0, bool authorized = false)
         {
-#if DBG_WATCH_GAMEOBJECT_SIZES //Wrapped because of significant performance overhead
-            var totalMem = GC.GetTotalMemory(true);
-#endif
             var obj = GameObject.ReflectiveInitialize(reflectionName, this, authorized);
             obj.Position = position;
             obj.Rotation = rotation;
             AddGameObject(obj, null, authorized);
-#if DBG_WATCH_GAMEOBJECT_SIZES
-            var memUsageBytes = (GC.GetTotalMemory(true) - totalMem) / 1024f;
-            Logger.Trace($"Allocating Object {reflectionName}, size is: {memUsageBytes.ToString("N2")} KiB");
-#endif
             return obj;
         }
         #endregion

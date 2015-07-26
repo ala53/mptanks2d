@@ -6,10 +6,12 @@ using MPTanks.Engine.Rendering.Animations;
 using MPTanks.Engine.Rendering.Lighting;
 using MPTanks.Engine.Rendering.Particles;
 using MPTanks.Engine.Serialization;
+using MPTanks.Engine.Settings;
 using MPTanks.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -103,17 +105,31 @@ namespace MPTanks.Engine
         /// <param name="assetName"></param>
         protected GameObjectComponentsJSON LoadComponentsFromFile(string assetName)
         {
-            Game.Logger.Trace("Loading Components: " + assetName);
+            if (GlobalSettings.Debug)
+                Game.Logger.Trace("Loading Components: " + assetName);
             if (!_componentJSONCache.ContainsKey(assetName))
             {
+                Stopwatch sw = null;
+                if (GlobalSettings.Debug)
+                    sw = Stopwatch.StartNew();
+
                 _componentJSONCache.Add(assetName, GameObjectComponentsJSON.Create(File.ReadAllText(assetName)));
+
+                if (GlobalSettings.Debug)
+                {
+                    Game.Logger.Trace($"Components from {assetName} were not cached." +
+                        $"Took {sw.Elapsed.TotalMilliseconds.ToString("N1")}ms to parse");
+                    sw.Stop();
+                }
             }
+
             GameObjectComponentsJSON deserialized = _componentJSONCache[assetName];
 
             if (_otherComponentFiles.Contains(deserialized)) return null; //already loaded
             _otherComponentFiles.Add(deserialized);
 
-            Game.Logger.Trace("Begin load: " + deserialized.Name);
+            if (GlobalSettings.Debug)
+                Game.Logger.Trace("Begin load: " + deserialized.Name);
 
             if (deserialized.ReflectionName != ReflectionName)
                 Game.Logger.Warning(
@@ -133,6 +149,7 @@ namespace MPTanks.Engine
                 deserialized.Animations, deserialized.Lights);
             LoadOtherSprites(deserialized.OtherSprites);
             LoadEmitters(deserialized.Emitters);
+
 
             return deserialized;
         }
