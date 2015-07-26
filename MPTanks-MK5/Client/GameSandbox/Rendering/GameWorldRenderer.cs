@@ -381,10 +381,10 @@ namespace MPTanks.Client.GameSandbox.Rendering
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsVisible(Vector2 pos, Vector2 size, RectangleF viewRect)
         {
-            return pos.X < viewRect.Right &&
-                pos.Y < viewRect.Bottom &&
-                pos.X + size.X > viewRect.Left &&
-                pos.Y + size.Y > viewRect.Top;
+            return pos.X - size.X / 2 < viewRect.Right &&
+                pos.Y - size.Y / 2 < viewRect.Bottom &&
+                pos.X + size.X / 2 > viewRect.Left &&
+                pos.Y + size.Y / 2 > viewRect.Top;
         }
 
         #endregion
