@@ -162,7 +162,7 @@ namespace MPTanks.Engine
                     Body.OnCollision -= Body_OnCollision;
                     Body.Dispose();
                     //Build new shape
-                    Body = CreateBody(value * Game.Settings.PhysicsScale);
+                    Body = CreateBody(value * Game.Settings.PhysicsScale, pos, rot);
                     Position = pos;
                     Rotation = rot;
                     LinearVelocity = lin;
@@ -291,7 +291,7 @@ namespace MPTanks.Engine
                 Size = DefaultSize;
 
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
-            Body = CreateBody(Size * Game.Settings.PhysicsScale);
+            Body = CreateBody(Size * Game.Settings.PhysicsScale, _startPosition, _startRotation);
             Body.Restitution = Restitution;
             Body.OnCollision += Body_OnCollision;
 
@@ -313,19 +313,19 @@ namespace MPTanks.Engine
             CreateInternal();
         }
 
-        protected virtual Body CreateBody(Vector2 size)
+        protected virtual Body CreateBody(Vector2 size, Vector2 position, float rotation)
         {
             if (BaseComponents.Body != null)
             {
                 //Load from file
                 return BodyFactory.CreateCompoundPolygon(Game.World, BaseComponents.Body.GetFixtures(size),
-                    _startDensity, Vector2.Zero, 0, BodyType.Dynamic, this);
+                    _startDensity, position, rotation, BodyType.Dynamic, this);
             }
             else
             {
                 //Load rectangle
                 return BodyFactory.CreateRectangle(Game.World, size.X,
-                 size.Y, _startDensity, Vector2.Zero, 0,
+                 size.Y, _startDensity, position, rotation,
                  BodyType.Dynamic, this);
             }
         }
