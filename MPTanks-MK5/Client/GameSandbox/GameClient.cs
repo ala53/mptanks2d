@@ -305,7 +305,7 @@ namespace MPTanks.Client.GameSandbox
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
                 SetupGame(); //Start anew
 
-            if (game.GameStatus == GameCore.CurrentGameStatus.GameRunning)
+            if (game.Running)
             {
                 game.Diagnostics.BeginMeasurement("Input processing");
                 var iState = new InputState();
