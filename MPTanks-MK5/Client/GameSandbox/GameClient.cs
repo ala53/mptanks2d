@@ -171,10 +171,14 @@ namespace MPTanks.Client.GameSandbox
             // TODO: Unload any non ContentManager content here
             if (!GlobalSettings.Debug)
             {
-                CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
-                CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
-                CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
-                CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
+                try
+                {
+                    CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
+                    CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
+                    CrossDomainObject.Instance.WindowWidth = graphics.PreferredBackBufferWidth;
+                    CrossDomainObject.Instance.WindowHeight = graphics.PreferredBackBufferHeight;
+                }
+                catch { }
             }
         }
 
@@ -450,7 +454,7 @@ namespace MPTanks.Client.GameSandbox
                         10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
-                //renderer.Render(spriteBatch, gameTime);
+                renderer.Render(spriteBatch, gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
                 GraphicsDevice.SetRenderTarget(u);
                 GraphicsDevice.Clear(new Color(10, 10, 10, 255));
@@ -462,7 +466,7 @@ namespace MPTanks.Client.GameSandbox
                         10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
-                //renderer.Render(spriteBatch, gameTime);
+                renderer.Render(spriteBatch, gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
                 GraphicsDevice.SetRenderTarget(null);
                 spriteBatch.Begin(SpriteSortMode.Immediate);
@@ -636,12 +640,18 @@ namespace MPTanks.Client.GameSandbox
             _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
             .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
 
-            _bldr.Append("Timers: ").Append(game.TimerFactory.ActiveTimersCount)
+            long maxMem = 0;
+            foreach (var pt in _debugMemoryUsages)
+                if (pt.BytesUsed > maxMem)
+                    maxMem = pt.BytesUsed;
+
+            _bldr.Append(", Timers: ").Append(game.TimerFactory.ActiveTimersCount)
                 .Append(", Animations: ").Append(game.AnimationEngine.Animations.Count)
                 .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
                 .Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
-                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used");
+                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
+                .Append(", ").Append((maxMem / (1024d * 1024)).ToString("N1")).Append("MB max");
 
             if (game.Running)
             {
@@ -706,7 +716,6 @@ namespace MPTanks.Client.GameSandbox
             }
 
             DrawMemoryUsageGraph();
-            DrawFrameTimesGraph();
             DrawFrameRateGraph();
         }
 
@@ -776,14 +785,16 @@ namespace MPTanks.Client.GameSandbox
                     pixelsUsed += width;
             }
             //Draw the label 10, 10 px from the bottom left
-            var size = font.MeasureString("Memory usage");
+            //Draw the label 10, 10 px from the bottom left
+            var size = font.MeasureString("Memory Usage (managed only)");
             var pos = new Vector2(graphPosX, graphBottomY - size.Y);
-            spriteBatch.DrawString(font, "Memory usage", pos, Color.White);
+            spriteBatch.DrawString(font, "Memory Usage (managed only)", pos,
+                new Color(Color.Black, 150));
             spriteBatch.End();
         }
-        private void DrawFrameTimesGraph()
+        private void DrawFrameRateGraph()
         {
-            double pixelsPerMsH = (double)graphHeight / 50;
+            double pixelsPerFpsH = (double)graphHeight / 70;
             double pixelsPerDataPointWidth = (double)graphWidth / _debugFrameTimes.Length;
 
             var graphPosX = graphOffset + graphWidth;
@@ -794,56 +805,7 @@ namespace MPTanks.Client.GameSandbox
                 graphBottomY -= graphOffset + graphHeight;
             }
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
-                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
-            int pixelsUsed = 0;
-            for (var i = 0; i < _debugFrameTimes.Length; i++)
-            {
-                var value = _debugFrameTimes[i];
-                var maxPixels = pixelsPerDataPointWidth * i;
-                var width = (int)maxPixels - pixelsUsed;
-                if (pixelsUsed < (int)maxPixels)
-                {
-                    Color color = Color.Green;
-                    if (value > 18 && value < 24)
-                        color = Color.Yellow;
-                    else if (value >= 24 && value < 50)
-                        color = Color.Orange;
-                    else if (value >= 50)
-                        color = Color.Red;
-                    var height = (int)(pixelsPerMsH * value);
-                    if (value > 50)
-                    {
-                        height = graphHeight;
-                    }
-                    spriteBatch.Draw(_graphTexture, new Rectangle(pixelsUsed + graphPosX,
-                        graphBottomY - height, width, height),
-                        color);
-                }
-
-                if (pixelsUsed < (int)maxPixels)
-                    pixelsUsed += width;
-            }
-            //Draw the label 10, 10 px from the bottom left
-            var size = font.MeasureString("Frame Times (max 50ms)");
-            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
-            spriteBatch.DrawString(font, "Frame Times (max 50ms)", pos, Color.White);
-            spriteBatch.End();
-        }
-        private void DrawFrameRateGraph()
-        {
-            double pixelsPerFpsH = (double)graphHeight / 70;
-            double pixelsPerDataPointWidth = (double)graphWidth / _debugFrameTimes.Length;
-
-            var graphPosX = graphOffset + graphWidth + graphOffset + graphWidth;
-            var graphBottomY = GraphicsDevice.Viewport.Height;
-            if (debugOverlayGraphsVertical)
-            {
-                graphPosX = 0;
-                graphBottomY -= graphOffset + graphHeight + graphOffset + graphHeight;
-            }
-
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
                 SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
             int pixelsUsed = 0;
             for (var i = 0; i < _debugFrameTimes.Length; i++)
@@ -876,9 +838,10 @@ namespace MPTanks.Client.GameSandbox
                     pixelsUsed += width;
             }
             //Draw the label 10, 10 px from the bottom left
-            var size = font.MeasureString("FPS (max 70fps)");
+            var size = font.MeasureString("FPS: (max 70)");
             var pos = new Vector2(graphPosX, graphBottomY - size.Y);
-            spriteBatch.DrawString(font, "FPS (max 70fps)", pos, Color.White);
+            spriteBatch.DrawString(font, "FPS: (max 70)", pos,
+                new Color(Color.Black, 150));
             spriteBatch.End();
         }
         #endregion
