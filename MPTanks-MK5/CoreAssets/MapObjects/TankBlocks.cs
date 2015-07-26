@@ -14,15 +14,14 @@ namespace MPTanks.CoreAssets.MapObjects
     public class TankBlocks : MapObject
     {
         public TankBlocks(GameCore game, bool authorized, Vector2 position, float rotation)
-            : base(game, authorized, position, rotation, 10000, 0)
+            : base(game, authorized, position, rotation)
         {
             
         }
 
         protected override void CreateInternal()
         {
-            Body.LinearDamping = 5;
-            Body.AngularDamping = 5;
+            base.CreateInternal();
         }
 
         protected override bool CollideInternal(GameObject other, FarseerPhysics.Dynamics.Contacts.Contact contact)
