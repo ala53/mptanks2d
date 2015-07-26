@@ -18,6 +18,9 @@ namespace MPTanks.Engine
     public partial class GameObject
     {
         #region Associated Properties
+        public GameObjectComponentsJSON BaseComponents { get; private set; }
+        protected List<GameObjectComponentsJSON> _otherComponentFiles = new List<GameObjectComponentsJSON>();
+        public IReadOnlyList<GameObjectComponentsJSON> OtherComponentFiles { get { return _otherComponentFiles; } }
         #region Components
         protected Dictionary<string, RenderableComponent> _components;
         [JsonIgnore]
@@ -98,7 +101,7 @@ namespace MPTanks.Engine
         /// Loads the components from the specified asset and adds them to the internal dictionary.
         /// </summary>
         /// <param name="assetName"></param>
-        protected void LoadComponentsFromFile(string assetName)
+        protected GameObjectComponentsJSON LoadComponentsFromFile(string assetName)
         {
             Game.Logger.Trace("Loading Components: " + assetName);
             if (!_componentJSONCache.ContainsKey(assetName))
@@ -106,6 +109,9 @@ namespace MPTanks.Engine
                 _componentJSONCache.Add(assetName, GameObjectComponentsJSON.Create(File.ReadAllText(assetName)));
             }
             GameObjectComponentsJSON deserialized = _componentJSONCache[assetName];
+
+            if (_otherComponentFiles.Contains(deserialized)) return null; //already loaded
+            _otherComponentFiles.Add(deserialized);
 
             Game.Logger.Trace("Begin load: " + deserialized.Name);
 
@@ -127,6 +133,8 @@ namespace MPTanks.Engine
                 deserialized.Animations, deserialized.Lights);
             LoadOtherSprites(deserialized.OtherSprites);
             LoadEmitters(deserialized.Emitters);
+
+            return deserialized;
         }
 
         private void LoadComponents(GameObjectComponentJSON[] components)
@@ -367,7 +375,8 @@ namespace MPTanks.Engine
             _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
             _lights = new Dictionary<string, Light>();
 
-            LoadComponentsFromFile(ResolveAsset(componentFile));
+            BaseComponents = LoadComponentsFromFile(ResolveAsset(componentFile));
+
             AddComponents(_components);
         }
 

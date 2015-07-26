@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FarseerPhysics.Common;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Serialization
 {
-    class GameObjectComponentsJSON
+    public class GameObjectComponentsJSON
     {
         public string Name { get; set; }
         public string ReflectionName { get; set; }
@@ -29,9 +30,11 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
         public GameObjectLightJSON[] Lights { get; set; }
         public GameObjectAnimationJSON[] Animations { get; set; }
+        public GameObjectBodySpecifierJSON Body { get; set; }
+        public string __image__body { get; set; } //Disregard: just for compiler
         public string[] Flags { get; set; }
 
-        public static GameObjectComponentsJSON Create(string data)
+        internal static GameObjectComponentsJSON Create(string data)
         {
             //Deserialize
             var me = JsonConvert.DeserializeObject<GameObjectComponentsJSON>(data);
@@ -153,7 +156,7 @@ namespace MPTanks.Engine.Serialization
                     var sprite = anim.SpriteOptions[i];
 
                     HandleSheet(sprite);
-                    HandleSprite(sprite);                                             
+                    HandleSprite(sprite);
                 }
             }
         }
@@ -294,7 +297,7 @@ namespace MPTanks.Engine.Serialization
                             return sp.Sheet;
                         else return FindSheet(sp.Sheet.Reference);
             foreach (var light in Lights)
-                if (light.Image !=null && light.Image.Sheet != null && light.Image.Sheet.Key != null &&
+                if (light.Image != null && light.Image.Sheet != null && light.Image.Sheet.Key != null &&
                     light.Image.Sheet.Key.Equals(name, StringComparison.InvariantCultureIgnoreCase))
                     if (light.Image.Sheet.Reference == null)
                         return light.Image.Sheet;
@@ -351,7 +354,7 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
-    class GameObjectComponentGroupJSON : IRequiresKey
+    public class GameObjectComponentGroupJSON : IRequiresKey
     {
         public string Key { get; set; }
         [JsonProperty("components")]
@@ -360,7 +363,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectComponentJSON[] Components { get; set; }
     }
 
-    class GameObjectComponentJSON : INameValidatable
+    public class GameObjectComponentJSON : INameValidatable
     {
         public int DrawLayer { get; set; }
         public JSONColor Mask { get; set; }
@@ -375,7 +378,7 @@ namespace MPTanks.Engine.Serialization
         public bool Visible { get; set; }
         public GameObjectSpriteSpecifierJSON Image { get; set; }
     }
-    class GameObjectSheetSpecifierJSON
+    public class GameObjectSheetSpecifierJSON
     {
         public bool FromOtherMod { get; set; }
         public string Key { get; set; }
@@ -385,7 +388,7 @@ namespace MPTanks.Engine.Serialization
         public string ModName { get; set; }
     }
 
-    class GameObjectSpriteSpecifierJSON : IHasSheet, IRequiresKey
+    public class GameObjectSpriteSpecifierJSON : IHasSheet, IRequiresKey
     {
         public string Frame { get; set; }
         public string Key { get; set; }
@@ -401,7 +404,7 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
-    class GameObjectEmitterJSON : ITriggerable, INameValidatable
+    public class GameObjectEmitterJSON : ITriggerable, INameValidatable
     {
         public string Name { get; set; }
         public bool KeepAliveAfterDeath { get; set; }
@@ -459,7 +462,7 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
-    class GameObjectLightJSON : ITriggerable, INameValidatable
+    public class GameObjectLightJSON : ITriggerable, INameValidatable
     {
         public string Name { get; set; }
         public float Intensity { get; set; }
@@ -489,7 +492,7 @@ namespace MPTanks.Engine.Serialization
         public bool ShowForAllTeams { get; set; }
     }
 
-    class GameObjectAnimationJSON : ITriggerable, INameValidatable
+    public class GameObjectAnimationJSON : ITriggerable, INameValidatable
     {
         public string ActivatesOn { get; set; }
         public bool ActivatesAtTime { get; set; }
@@ -506,7 +509,7 @@ namespace MPTanks.Engine.Serialization
         public float StartPositionMs { get; set; }
     }
 
-    interface ITriggerable
+    public interface ITriggerable
     {
         string ActivatesOn { get; set; }
         [JsonIgnore]
@@ -519,17 +522,64 @@ namespace MPTanks.Engine.Serialization
         string TriggerName { get; set; }
     }
 
-    interface INameValidatable
+    public class GameObjectBodySpecifierJSON
+    {
+        public JSONVector Size { get; set; }
+        public FixtureSpecifierJSON[] Fixtures { get; set; }
+        private Dictionary<Vector2, List<Vertices>> _cache = new Dictionary<Vector2, List<Vertices>>();
+        internal List<Vertices> GetFixtures(Vector2 desiredSize)
+        {
+            if (_cache.ContainsKey(desiredSize))
+                return _cache[desiredSize];
+
+            var vertList = new List<Vertices>();
+            foreach (var fixture in Fixtures)
+                vertList.Add(fixture.Rebuild(desiredSize / Size));
+
+            _cache.Add(desiredSize, vertList);
+            return vertList;
+        }
+        public class FixtureSpecifierJSON
+        {
+            public JSONVector[] Vertices { get; set; }
+            public HolesSpecifierJSON[] Holes { get; set; }
+
+            internal Vertices Rebuild(Vector2 scale)
+            {
+                var verts = new Vertices(Vertices.Length);
+                foreach (var vert in Vertices)
+                    verts.Add(vert * scale);
+
+                if (Holes != null)
+                    foreach (var hole in Holes)
+                    {
+                        var hl = new Vertices(hole.Vertices.Length);
+                        foreach (var vert in hole.Vertices)
+                            hl.Add(vert * scale);
+
+                        verts.Holes.Add(hl);
+                    }
+                return verts;
+            }
+
+            public class HolesSpecifierJSON
+            {
+                public JSONVector[] Vertices { get; set; }
+            }
+        }
+    }
+
+    public interface INameValidatable
     {
         string Name { get; set; }
     }
 
-    interface IHasSheet
+    public interface IHasSheet
     {
         GameObjectSheetSpecifierJSON Sheet { get; set; }
     }
 
-    interface IRequiresKey
+    public interface IRequiresKey
     {
         string Key { get; set; }
     }

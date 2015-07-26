@@ -39,19 +39,32 @@ namespace MPTanks.ModCompiler.Packer
             WriteFile(zipFile, "mod.json", headerString);
 
             Archive(zipFile, Program.srcFiles);
-            Archive(zipFile, Program.components);
+            ArchiveComponents(zipFile, Program.components);
             Archive(zipFile, Program.dlls);
             Archive(zipFile, Program.imageAssets.SelectMany(a => new[] { a, a + ".json" }).ToList());
             Archive(zipFile, Program.soundAssets);
             Archive(zipFile, Program.maps);
 
             zipFile.Close();
-            zipFile.Dispose(); 
+            zipFile.Dispose();
 
             ms.Seek(0, SeekOrigin.Begin);
             var data = ms.ToArray();
             ms.Dispose();
             return ms.ToArray();
+        }
+
+        private static void ArchiveComponents(ZipOutputStream zf, List<string> src)
+        {
+            foreach (var a in src)
+            {
+                var result = Encoding.UTF8.GetBytes(
+                    BodyBuilder.ProcessObject(
+                        JsonConvert.DeserializeObject<Engine.Serialization.GameObjectComponentsJSON>(
+                            File.ReadAllText(a)
+                            )));
+                WriteFile(zf, GetFileNameOnly(a), result);
+            }
         }
 
         private static ModDependency[] BuildDependencies()

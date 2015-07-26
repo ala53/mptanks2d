@@ -150,24 +150,26 @@ namespace MPTanks.Engine
 
                 if (_hasBeenCreated)
                 {
-                    //Then correct for scaling
-                    value = value * Game.Settings.PhysicsScale;
-                    //Build new shape
-                    var vertices = new FarseerPhysics.Common.Vertices(new[] {
-                        new Vector2(-value.X / 2, -value.Y / 2),
-                        new Vector2(value.X / 2, -value.Y / 2),
-                        new Vector2(value.X / 2, value.Y / 2),
-                        new Vector2(-value.X / 2, value.Y /2)
-                    });
-                    var rect = new FarseerPhysics.Collision.Shapes.PolygonShape(
-                        vertices, Body.FixtureList[0].Shape.Density);
-
-                    //Destroy current fixture
-                    Body.DestroyFixture(Body.FixtureList[0]);
-                    //And add the new one
-                    Body.CreateFixture(rect, this);
-
+                    //store info
+                    var pos = Position;
+                    var rot = Rotation;
+                    var lin = LinearVelocity;
+                    var ang = AngularVelocity;
+                    var sen = IsSensor;
+                    var sta = IsStatic;
+                    var res = Restitution;
+                    //Remove old handler
                     Body.OnCollision -= Body_OnCollision;
+                    Body.Dispose();
+                    //Build new shape
+                    Body = CreateBody(value * Game.Settings.PhysicsScale);
+                    Position = pos;
+                    Rotation = rot;
+                    LinearVelocity = lin;
+                    AngularVelocity = ang;
+                    IsSensor = sen;
+                    IsStatic = sta;
+                    Restitution = res;
                     Body.OnCollision += Body_OnCollision;
                 }
             }
@@ -285,13 +287,11 @@ namespace MPTanks.Engine
 
             LoadBaseComponents();
 
-            if (Size == Vector2.Zero)
+            if (Size.X <= 0 || Size.Y <= 0)
                 Size = DefaultSize;
 
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
-            Body = BodyFactory.CreateRectangle(Game.World, Size.X * Game.Settings.PhysicsScale,
-                 Size.Y * Game.Settings.PhysicsScale, _startDensity, Vector2.Zero, Rotation,
-                 BodyType.Dynamic, this);
+            Body = CreateBody(Size * Game.Settings.PhysicsScale);
             Body.Restitution = Restitution;
             Body.OnCollision += Body_OnCollision;
 
@@ -311,6 +311,23 @@ namespace MPTanks.Engine
 
             //And call the internal function
             CreateInternal();
+        }
+
+        protected virtual Body CreateBody(Vector2 size)
+        {
+            if (BaseComponents.Body != null)
+            {
+                //Load from file
+                return BodyFactory.CreateCompoundPolygon(Game.World, BaseComponents.Body.GetFixtures(size),
+                    _startDensity, Vector2.Zero, 0, BodyType.Dynamic, this);
+            }
+            else
+            {
+                //Load rectangle
+                return BodyFactory.CreateRectangle(Game.World, size.X,
+                 size.Y, _startDensity, Vector2.Zero, 0,
+                 BodyType.Dynamic, this);
+            }
         }
 
         protected virtual void CreateInternal()
