@@ -15,7 +15,7 @@ namespace MPTanks.Engine.Assets
     {
         public string FrameName { get; set; }
         public string SheetName { get; set; }
-        public int LoopCount { get; set; }
+        public int LoopCount { get; set; } 
         public float PositionInAnimationMs { get; set; }
         public bool IsAnimation { get; set; }
         public SpriteInfo(string spriteName, string sheetName, bool animation = false, int loopCount = 1, float positionMs = 0)
@@ -26,7 +26,7 @@ namespace MPTanks.Engine.Assets
             IsAnimation = animation;
             PositionInAnimationMs = positionMs;
         }
-        public SpriteInfo (SpriteInfo info)
+        public SpriteInfo(SpriteInfo info)
         {
             FrameName = info.FrameName;
             SheetName = info.SheetName;

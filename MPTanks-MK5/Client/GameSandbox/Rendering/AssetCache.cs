@@ -66,7 +66,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
         /// <param name="assetName"></param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public Sprite GetArtAsset(ref SpriteInfo spriteInfo, GameTime gameTime)
+        public Sprite GetArtAsset(ref SpriteInfo spriteInfo, float timescale, GameTime gameTime)
         {
             //No texture is given, just return a generic white box
             if (spriteInfo.SheetName == null && spriteInfo.FrameName == null)
@@ -74,7 +74,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
 
             //Special path for animations.
             if (spriteInfo.IsAnimation)
-                return GetAnimation(ref spriteInfo, gameTime);
+                return GetAnimation(ref spriteInfo, timescale, gameTime);
 
             //Check if we've loaded the sprite sheet or not
             if (spriteInfo.SheetName != null && !HasSpriteSheetLoadBeenCalled(spriteInfo.SheetName))
@@ -97,7 +97,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
             return _missingTexture;
         }
 
-        public Sprite GetAnimation(ref SpriteInfo spriteInfo, GameTime gameTime)
+        public Sprite GetAnimation(ref SpriteInfo spriteInfo, float timescale, GameTime gameTime)
         {
             //Check if the sprite sheet is loading or loaded
             if (!HasSpriteSheetLoadBeenCalled(spriteInfo.SheetName))
@@ -127,7 +127,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
             var frame = (int)(position / anim.FrameLengthMs) % anim.FrameNames.Length;
 
             //increment the animation
-            spriteInfo.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            spriteInfo.PositionInAnimationMs += ((float)gameTime.ElapsedGameTime.TotalMilliseconds * timescale) / 2;
             //and return the frame
             if (sheet.Sprites.ContainsKey(anim.FrameNames[frame]))
                 return sheet.Sprites[anim.FrameNames[frame]];

@@ -9,9 +9,9 @@
       ],
       "loopCount": 1,
       "name": "death_explosion",
-      "position": { "x": 0, "y": 0 },
+      "position": { "x": 1.5, "y": 2.5 },
       "rotation": 0,
-      "size": { "x": 0, "y": 0 },
+      "size": { "x": 8, "y": 8 },
       "startPositionMs": 0,
       "tracksObject": true
     }
@@ -137,7 +137,7 @@
     }
   ],
   "reflectionName": "BasicTankMP",
-  "removeAfter": 500,
+  "removeAfter": 300,
   "health": 150,
   "sheet": {
     "key": "main_sheet",

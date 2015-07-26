@@ -147,6 +147,7 @@ namespace MPTanks.Engine
             LoadComponentGroups(deserialized.ComponentGroups);
             LoadKeyedAssets(deserialized.OtherAssets, deserialized.Components, deserialized.Emitters,
                 deserialized.Animations, deserialized.Lights);
+            LoadAnimations(deserialized.Animations);
             LoadOtherSprites(deserialized.OtherSprites);
             LoadEmitters(deserialized.Emitters);
 

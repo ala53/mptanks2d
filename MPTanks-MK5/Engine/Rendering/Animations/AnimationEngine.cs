@@ -52,14 +52,6 @@ namespace MPTanks.Engine.Rendering.Animations
         }
         public void Update(GameTime gameTime)
         {
-            foreach (var animation in animations)
-            {
-                animation.SpriteInfo = new SpriteInfo(animation.SpriteInfo)
-                {
-                    PositionInAnimationMs = animation.SpriteInfo.PositionInAnimationMs + 
-                    (float)gameTime.ElapsedGameTime.TotalMilliseconds
-                };
-            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace MPTanks.CoreAssets.Gamemodes
             AllowRespawn = false;
             RespawnTimeMs = 0;
         }
-        
+
         public override void MakeTeams(Engine.GamePlayer[] players)
         {
             players = ShufflePlayers(players);
@@ -81,8 +81,8 @@ namespace MPTanks.CoreAssets.Gamemodes
 
         public override void Update(GameTime gameTime)
         {
-            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => (p.Tank?.Alive).Value);
-            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => (p.Tank?.Alive).Value);
+            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
+            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
 
             if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue > 0)
                 return; //game still running

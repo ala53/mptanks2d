@@ -100,25 +100,7 @@ namespace MPTanks.CoreAssets.Tanks
             }
             base.UpdateInternal(time);
         }
-
-        protected override bool DestroyInternal(GameObject destructor = null)
-        {
-            var si = Sprites[BasicHelpers.ChooseRandom(_explosions)];
-            var anim = new Engine.Rendering.Animations.Animation(
-                    si, Position, new Vector2(10));
-
-            Game.AnimationEngine.AddAnimation(anim);
-
-            Game.TimerFactory.CreateReccuringTimer((timer) =>
-            {
-                if (timer.ElapsedMilliseconds > 500)
-                    Game.TimerFactory.RemoveTimer(timer);
-
-                anim.Position = Position;
-            }, 1);
-
-            return true;
-        }
+        
 
         protected override void ReceiveStateDataInternal(string state)
         {
