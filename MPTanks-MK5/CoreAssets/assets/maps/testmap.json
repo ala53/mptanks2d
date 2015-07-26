@@ -38,6 +38,13 @@
       "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
     },
     {
+      "typeName": "TankBlock",
+      "rotation": 0,
+      "position": { "x": 12, "y": 12 },
+      "size": { "x": 4, "y": 4 },
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+    },
+    {
       "typeName": "WallGeneric",
       "rotation": 0,
       "position": { "x": 0, "y": 0 },

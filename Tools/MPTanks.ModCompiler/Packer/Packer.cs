@@ -59,7 +59,7 @@ namespace MPTanks.ModCompiler.Packer
             foreach (var a in src)
             {
                 var result = Encoding.UTF8.GetBytes(
-                    BodyBuilder.ProcessObject(
+                    BodyBuilder.ProcessObject(a,
                         JsonConvert.DeserializeObject<Engine.Serialization.GameObjectComponentsJSON>(
                             File.ReadAllText(a)
                             )));

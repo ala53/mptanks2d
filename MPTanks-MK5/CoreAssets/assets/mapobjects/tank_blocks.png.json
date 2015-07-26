@@ -1,0 +1,12 @@
+{
+  "name": "Tank block",
+  "sprites": [
+    {
+      "name": "tank_block",
+      "x": 0,
+      "y": 0,
+      "width": 256,
+      "height": 256
+    }
+	]
+}

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,12 @@ namespace MPTanks.ModCompiler
 {
     public class BodyBuilder
     {
-        public static string ProcessObject(Engine.Serialization.GameObjectComponentsJSON componentObject)
+        public static string ProcessObject(string file, Engine.Serialization.GameObjectComponentsJSON componentObject)
         {
             if (componentObject.__image__body != null)
             {
-                var img = new Bitmap(componentObject.__image__body);
+                var folder = new FileInfo(file).Directory.FullName;
+                var img = new Bitmap(System.IO.Path.Combine(folder, componentObject.__image__body));
                 var data = new uint[img.Width * img.Height];
                 for (var y = 0; y < img.Height; y++)
                     for (var x = 0; x < img.Width; x++)
@@ -42,7 +44,7 @@ namespace MPTanks.ModCompiler
             var imgHeight = imageData.Length / width;
             var scale = new Vector2(objSize.X / width, objSize.Y / imgHeight);
             vertices.Scale(scale);
-            var decomposed = Triangulate.ConvexPartition(vertices, TriangulationAlgorithm.Bayazit);
+            var decomposed = Triangulate.ConvexPartition(vertices, TriangulationAlgorithm.Delauny);
 
             var result = new Engine.Serialization.GameObjectBodySpecifierJSON();
             var fixtures = new List<Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON>();
@@ -55,15 +57,17 @@ namespace MPTanks.ModCompiler
                 foreach (var vert in fixture)
                     vertList.Add(new Engine.Serialization.JSONVector { X = vert.X, Y = vert.Y });
 
-                foreach (var h in fixture.Holes) {
-                    var hole = new Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON.HolesSpecifierJSON();
-                    var vList = new List<Engine.Serialization.JSONVector>();
-                    foreach (var v in h)
-                        vList.Add(new Engine.Serialization.JSONVector { X = v.X, Y = v.Y });
-                    hole.Vertices = vList.ToArray();
+                if (fixture.Holes != null)
+                    foreach (var h in fixture.Holes)
+                    {
+                        var hole = new Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON.HolesSpecifierJSON();
+                        var vList = new List<Engine.Serialization.JSONVector>();
+                        foreach (var v in h)
+                            vList.Add(new Engine.Serialization.JSONVector { X = v.X, Y = v.Y });
+                        hole.Vertices = vList.ToArray();
 
-                    holeList.Add(hole);
-                }
+                        holeList.Add(hole);
+                    }
 
                 fx.Vertices = vertList.ToArray();
                 fx.Holes = holeList.ToArray();

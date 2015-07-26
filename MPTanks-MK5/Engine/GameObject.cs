@@ -318,15 +318,19 @@ namespace MPTanks.Engine
             if (BaseComponents.Body != null)
             {
                 //Load from file
-                return BodyFactory.CreateCompoundPolygon(Game.World, BaseComponents.Body.GetFixtures(size),
+                var b = BodyFactory.CreateCompoundPolygon(Game.World, BaseComponents.Body.GetFixtures(size),
                     _startDensity, position, rotation, BodyType.Dynamic, this);
+                b.UserData = this;
+                return b;
             }
             else
             {
                 //Load rectangle
-                return BodyFactory.CreateRectangle(Game.World, size.X,
+                var b = BodyFactory.CreateRectangle(Game.World, size.X,
                  size.Y, _startDensity, position, rotation,
                  BodyType.Dynamic, this);
+                b.UserData = this;
+                return b;
             }
         }
 

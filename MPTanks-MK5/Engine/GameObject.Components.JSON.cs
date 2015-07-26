@@ -550,7 +550,7 @@ namespace MPTanks.Engine.Serialization
                 foreach (var vert in Vertices)
                     verts.Add(vert * scale);
 
-                if (Holes != null)
+                if (Holes != null && Holes.Length > 0)
                     foreach (var hole in Holes)
                     {
                         var hl = new Vertices(hole.Vertices.Length);

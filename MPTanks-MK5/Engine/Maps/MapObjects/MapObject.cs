@@ -11,14 +11,16 @@ namespace MPTanks.Engine.Maps.MapObjects
     public abstract class MapObject : GameObject
     {
         public MapObject(GameCore game, bool authorized,
-            Vector2 position = default(Vector2), float rotation = 0)
-            : base(game, authorized, 100, 0, position, rotation)
+            Vector2 position = default(Vector2), float rotation = 0, float density = 100, float restitution = 0f)
+            : base(game, authorized, density, restitution, position, rotation)
         {
         }
 
         protected override void CreateInternal()
         {
-            Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            if (((Modding.MapObjectAttribute)(GetType().GetCustomAttributes(
+                typeof(Modding.MapObjectAttribute), true)[0])).IsStatic)
+                Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
             base.CreateInternal();
         }
 

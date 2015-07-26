@@ -1,0 +1,22 @@
+﻿{
+  "components": [
+    {
+      "drawLayer": 0,
+      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
+      "name": "base",
+      "image": { "frame": "tank_block" },
+      "offset": { "x": 0, "y": 0 },
+      "rotation": 0,
+      "rotationOrigin": { "x": 0, "y": 0 },
+      "size": { "x": 3, "y": 3 }
+    }
+  ],
+  "__image__body": "../mapobjects/tank_blocks_physics_object.png",
+  "name": "Tank blocks",
+  "reflectionName": "TankBlock",
+  "health": 2000,
+  "sheet": {
+    "file": "tank_blocks.png"
+  },
+  "size": { "x": 3, "y": 3 }
+}

@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FarseerPhysics.Portable, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FarseerPhysics.Portable.3.5.1\lib\portable-net4+sl4+wp8+win8\FarseerPhysics.Portable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>False</Private>
@@ -43,11 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\components\tankblocks.json" />
     <None Include="assets\components\basictank.json" />
     <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
     <Compile Include="MapObjects\SatelliteDishLarge.cs" />
+    <Compile Include="MapObjects\TankBlocks.cs" />
     <Compile Include="MapObjects\Wall.cs" />
     <Compile Include="ModuleInfo.cs" />
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
@@ -58,6 +64,7 @@
     <None Include="assets\components\largehouse.json" />
     <None Include="assets\components\satellitedish.json" />
     <None Include="assets\components\wall_generic.json" />
+    <None Include="assets\mapobjects\tank_blocks.png.json" />
     <None Include="assets\sounds\basictank_firing.ogg" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -82,6 +89,8 @@
     <Content Include="assets\animations\explosion3.png" />
     <Content Include="assets\mapobjects\housetexturebasic.png" />
     <Content Include="assets\mapobjects\moving\satellite_dish.png" />
+    <Content Include="assets\mapobjects\tank_blocks.png" />
+    <Content Include="assets\mapobjects\tank_blocks_physics_object.png" />
     <Content Include="assets\other\lowresfont.png" />
     <Content Include="assets\other\smokepuff.png" />
     <Content Include="assets\tanks\basictank2d.png" />

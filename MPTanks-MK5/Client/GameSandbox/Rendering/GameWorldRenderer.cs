@@ -41,7 +41,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
         public override void Render(SpriteBatch sb, GameTime gameTime)
         {
             _game.Diagnostics.BeginMeasurement("Compute view matrix", "World rendering", "Rendering");
-            const float overdraw = 0.15f;
+            const float overdraw = 0.02f;
 
             var _boundsRect = new RectangleF( //Compute the bounds for visibility checks which have overdraw for simplicity
                 _viewRect.X - (_viewRect.Width * overdraw),
