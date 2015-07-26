@@ -333,6 +333,56 @@ namespace MPTanks.Engine
             call();
             EndMeasurement(measurement);
         }
+        #region MonitorCall Overloads
+        public void MonitorCall(Action call, string name) => MonitorCall(call, name, _noneArray);
+        public void MonitorCall(Action call, string name, string h1)
+        {
+            _oneArray[0] = h1;
+            MonitorCall(call, name, _oneArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2)
+        {
+            _twoArray[0] = h1; _twoArray[1] = h2;
+            MonitorCall(call, name, _twoArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3)
+        {
+            _threeArray[0] = h1; _threeArray[1] = h2; _threeArray[2] = h3;
+            MonitorCall(call, name, _threeArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3, string h4)
+        {
+            _fourArray[0] = h1; _fourArray[1] = h2; _fourArray[2] = h3; _fourArray[3] = h4;
+            MonitorCall(call, name, _fourArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3, string h4, string h5)
+        {
+            _fiveArray[0] = h1; _fiveArray[1] = h2; _fiveArray[2] = h3; _fiveArray[3] = h4;
+            _fiveArray[4] = h5;
+            MonitorCall(call, name, _fiveArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3, string h4, string h5, string h6)
+        {
+            _sixArray[0] = h1; _sixArray[1] = h2; _sixArray[2] = h3;
+            _sixArray[3] = h4; _sixArray[4] = h5; _sixArray[5] = h6;
+
+            MonitorCall(call, name, _sixArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3, string h4, string h5,
+            string h6, string h7)
+        {
+            _sevenArray[0] = h1; _sevenArray[1] = h2; _sevenArray[2] = h3; _sevenArray[3] = h4;
+            _sevenArray[4] = h5; _sevenArray[5] = h6; _sevenArray[6] = h7;
+            MonitorCall(call, name, _sevenArray);
+        }
+        public void MonitorCall(Action call, string name, string h1, string h2, string h3, string h4, string h5,
+            string h6, string h7, string h8)
+        {
+            _eightArray[0] = h1; _eightArray[1] = h2; _eightArray[2] = h3; _eightArray[3] = h4;
+            _eightArray[4] = h5; _eightArray[5] = h6; _eightArray[6] = h7; _eightArray[7] = h8;
+            MonitorCall(call, name, _eightArray);
+        }
+        #endregion
         public void MonitorCall<TArg1>(Action<TArg1> call, TArg1 arg1, string name, params string[] ownerHierarchy)
         {
             var measurement = BeginMeasurement(name, ownerHierarchy);
@@ -416,12 +466,30 @@ namespace MPTanks.Engine
 
             iterationAverage.AddMeasurement(new TimeSpan((long)timings.Average()));
         }
+        private object _monitorForEachTempVariable;
+        private object _monitorForEachCallFunction;
         public void MonitorForEach<T>(IEnumerable<T> items, Action<T> itemIterator, string name, params string[] ownerHierarchy)
         {
+            _monitorForEachTempVariable = items;
+            _monitorForEachCallFunction = itemIterator;
             MonitorCall(() =>
             {
-                foreach (var itm in items) itemIterator(itm);
+                var a = (IEnumerable<T>)_monitorForEachTempVariable;
+                var c = _monitorForEachCallFunction as Action<T>;
+                foreach (var itm in a) c(itm);
             }, name, ownerHierarchy);
+            _monitorForEachCallFunction = null;
+            _monitorForEachTempVariable = null;
+        }
+
+        public void MonitorForEach<T>(IEnumerable<T> items, Action<T> itemIterator, string name)
+        {
+            MonitorForEach(items, itemIterator, name, _noneArray);
+        }
+        public void MonitorForEach<T>(IEnumerable<T> items, Action<T> itemIterator, string name, string h1)
+        {
+            _oneArray[0] = h1;
+            MonitorForEach(items, itemIterator, name, _oneArray);
         }
 
         public void MonitorWhile(Action loopBody, Func<bool> breakEvaluator, string name, params string[] ownerHierarchy)
@@ -459,6 +527,56 @@ namespace MPTanks.Engine
 
         public void EndMeasurement(string name, params string[] ownerHierarchy) =>
             EndMeasurement(GetMeasurement(name, ownerHierarchy));
+        #region Beginvoid overloads
+        public void EndMeasurement(string name) => EndMeasurement(name, _noneArray);
+        public void EndMeasurement(string name, string h1)
+        {
+            _oneArray[0] = h1;
+            EndMeasurement(name, _oneArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2)
+        {
+            _twoArray[0] = h1; _twoArray[1] = h2;
+            EndMeasurement(name, _twoArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3)
+        {
+            _threeArray[0] = h1; _threeArray[1] = h2; _threeArray[2] = h3;
+            EndMeasurement(name, _threeArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3, string h4)
+        {
+            _fourArray[0] = h1; _fourArray[1] = h2; _fourArray[2] = h3; _fourArray[3] = h4;
+            EndMeasurement(name, _fourArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3, string h4, string h5)
+        {
+            _fiveArray[0] = h1; _fiveArray[1] = h2; _fiveArray[2] = h3; _fiveArray[3] = h4;
+            _fiveArray[4] = h5;
+            EndMeasurement(name, _fiveArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3, string h4, string h5, string h6)
+        {
+            _sixArray[0] = h1; _sixArray[1] = h2; _sixArray[2] = h3;
+            _sixArray[3] = h4; _sixArray[4] = h5; _sixArray[5] = h6;
+
+            EndMeasurement(name, _sixArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3, string h4, string h5,
+            string h6, string h7)
+        {
+            _sevenArray[0] = h1; _sevenArray[1] = h2; _sevenArray[2] = h3; _sevenArray[3] = h4;
+            _sevenArray[4] = h5; _sevenArray[5] = h6; _sevenArray[6] = h7;
+            EndMeasurement(name, _sevenArray);
+        }
+        public void EndMeasurement(string name, string h1, string h2, string h3, string h4, string h5,
+            string h6, string h7, string h8)
+        {
+            _eightArray[0] = h1; _eightArray[1] = h2; _eightArray[2] = h3; _eightArray[3] = h4;
+            _eightArray[4] = h5; _eightArray[5] = h6; _eightArray[6] = h7; _eightArray[7] = h8;
+            EndMeasurement(name, _eightArray);
+        }
+        #endregion
 
         public override string ToString()
         {

@@ -246,7 +246,8 @@ namespace MPTanks.Engine
                 Settings = settings;
 
             _skipInit = skipInit;
-            if (skipInit) { 
+            if (skipInit)
+            {
                 GameStatus = CurrentGameStatus.GameRunning;
                 _gameCountDownHasBegun = true;
                 RemainingCountdownSeconds = 0;
@@ -418,22 +419,22 @@ namespace MPTanks.Engine
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
 
-            Diagnostics.MonitorCall(() => TimerFactory.Update(_currentGameTime), "Timer Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(TimerFactory.Update, _currentGameTime, "Timer Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => AnimationEngine.Update(_currentGameTime), "Animation Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(AnimationEngine.Update, _currentGameTime, "Animation Updates", DiagnosticsParent);
 
             Diagnostics.MonitorForEach(GameObjects, o => o.Update(_currentGameTime),
                 "GameObject.Update() calls", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => World.Step((float)_currentGameTime.ElapsedGameTime.TotalSeconds),
+            Diagnostics.MonitorCall(World.Step, (float)_currentGameTime.ElapsedGameTime.TotalSeconds,
                 "Physics step", DiagnosticsParent);
 
             Diagnostics.MonitorForEach(GameObjects, o => o.UpdatePostPhysics(_currentGameTime),
                 "GameObject.UpdatePostPhysics() calls", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => ParticleEngine.Update(_currentGameTime), "Particle Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(ParticleEngine.Update, _currentGameTime, "Particle Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => Gamemode.Update(_currentGameTime), "Gamemode update", DiagnosticsParent);
+            Diagnostics.MonitorCall(Gamemode.Update, _currentGameTime, "Gamemode update", DiagnosticsParent);
 
             //And notify that we exited the update loop
             _inUpdateLoop = false;
