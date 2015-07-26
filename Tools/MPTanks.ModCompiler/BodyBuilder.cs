@@ -55,7 +55,11 @@ namespace MPTanks.ModCompiler
                 var vertList = new List<Engine.Serialization.JSONVector>();
                 var holeList = new List<Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON.HolesSpecifierJSON>();
                 foreach (var vert in fixture)
-                    vertList.Add(new Engine.Serialization.JSONVector { X = vert.X, Y = vert.Y });
+                    vertList.Add(new Engine.Serialization.JSONVector
+                    {
+                        X = vert.X - (objSize.X / 2),
+                        Y = vert.Y - (objSize.Y / 2)
+                    });
 
                 if (fixture.Holes != null)
                     foreach (var h in fixture.Holes)
@@ -63,7 +67,11 @@ namespace MPTanks.ModCompiler
                         var hole = new Engine.Serialization.GameObjectBodySpecifierJSON.FixtureSpecifierJSON.HolesSpecifierJSON();
                         var vList = new List<Engine.Serialization.JSONVector>();
                         foreach (var v in h)
-                            vList.Add(new Engine.Serialization.JSONVector { X = v.X, Y = v.Y });
+                            vList.Add(new Engine.Serialization.JSONVector
+                            {
+                                X = v.X - (objSize.X / 2),
+                                Y = v.Y - (objSize.Y / 2)
+                            });
                         hole.Vertices = vList.ToArray();
 
                         holeList.Add(hole);

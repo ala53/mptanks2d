@@ -536,7 +536,6 @@ namespace MPTanks.Engine.Serialization
             foreach (var fixture in Fixtures)
             {
                 var vtx = fixture.Rebuild();
-                vtx.Translate(-(Vector2)Size / 2);
                 vtx.Scale(desiredSize / Size);
                 vertList.Add(vtx);
             }

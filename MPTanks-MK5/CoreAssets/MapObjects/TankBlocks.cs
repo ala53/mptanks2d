@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [Modding.MapObject("TankBlock", "tankblocks.json", IsStatic = false)]
+    [Modding.MapObject("TankBlock", "tankblocks.json", IsStatic = true)]
     public class TankBlocks : MapObject
     {
         public TankBlocks(GameCore game, bool authorized, Vector2 position, float rotation)
