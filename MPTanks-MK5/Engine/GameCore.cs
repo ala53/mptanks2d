@@ -406,8 +406,10 @@ namespace MPTanks.Engine
         /// The core update loop of the game
         /// </summary>
         /// <param name="gameTime"></param>
+        private GameTime _currentGameTime;
         private void UpdateInGame(GameTime gameTime)
         {
+            _currentGameTime = gameTime;
             var hasControlOfParent = !Diagnostics.IsMeasuring(DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.BeginMeasurement(DiagnosticsParent);
 
@@ -416,22 +418,22 @@ namespace MPTanks.Engine
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
 
-            Diagnostics.MonitorCall(() => TimerFactory.Update(gameTime), "Timer Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(() => TimerFactory.Update(_currentGameTime), "Timer Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => AnimationEngine.Update(gameTime), "Animation Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(() => AnimationEngine.Update(_currentGameTime), "Animation Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorForEach(GameObjects, o => o.Update(gameTime),
+            Diagnostics.MonitorForEach(GameObjects, o => o.Update(_currentGameTime),
                 "GameObject.Update() calls", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => World.Step((float)gameTime.ElapsedGameTime.TotalSeconds),
+            Diagnostics.MonitorCall(() => World.Step((float)_currentGameTime.ElapsedGameTime.TotalSeconds),
                 "Physics step", DiagnosticsParent);
 
-            Diagnostics.MonitorForEach(GameObjects, o => o.UpdatePostPhysics(gameTime),
+            Diagnostics.MonitorForEach(GameObjects, o => o.UpdatePostPhysics(_currentGameTime),
                 "GameObject.UpdatePostPhysics() calls", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => ParticleEngine.Update(gameTime), "Particle Updates", DiagnosticsParent);
+            Diagnostics.MonitorCall(() => ParticleEngine.Update(_currentGameTime), "Particle Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(() => Gamemode.Update(gameTime), "Gamemode update", DiagnosticsParent);
+            Diagnostics.MonitorCall(() => Gamemode.Update(_currentGameTime), "Gamemode update", DiagnosticsParent);
 
             //And notify that we exited the update loop
             _inUpdateLoop = false;

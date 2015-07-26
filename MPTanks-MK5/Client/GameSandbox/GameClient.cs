@@ -252,7 +252,7 @@ namespace MPTanks.Client.GameSandbox
                 slow = true;
             else slow = false;
 
-            if (slow)
+            if (slow && GlobalSettings.Debug)
                 Logger.Debug("Last frame was slow according to real time (" + el.TotalMilliseconds + "ms). Last frame was update " + updateNumber + ", frame " + frameNumber + " GameTime says: " +
           gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
 
@@ -450,7 +450,7 @@ namespace MPTanks.Client.GameSandbox
                         10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
-                renderer.Render(spriteBatch, gameTime);
+                //renderer.Render(spriteBatch, gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
                 GraphicsDevice.SetRenderTarget(u);
                 GraphicsDevice.Clear(new Color(10, 10, 10, 255));
@@ -462,7 +462,7 @@ namespace MPTanks.Client.GameSandbox
                         10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
                 renderer.SetViewport(drawRect);
-                renderer.Render(spriteBatch, gameTime);
+                //renderer.Render(spriteBatch, gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
                 GraphicsDevice.SetRenderTarget(null);
                 spriteBatch.Begin(SpriteSortMode.Immediate);
@@ -528,7 +528,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (_debugMemoryUsages == null)
                 _debugMemoryUsages = new DebugMemoryUsageTick[graphWidth];
-            
+
             if ((DateTime.Now - _debugMemoryUsages[_debugMemoryUsages.Length - 1].Measured).TotalMilliseconds > 0)
             {
                 //Shift back
@@ -877,7 +877,7 @@ namespace MPTanks.Client.GameSandbox
             }
             //Draw the label 10, 10 px from the bottom left
             var size = font.MeasureString("FPS (max 70fps)");
-            var pos = new Vector2( graphPosX, graphBottomY - size.Y);
+            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
             spriteBatch.DrawString(font, "FPS (max 70fps)", pos, Color.White);
             spriteBatch.End();
         }
