@@ -19,10 +19,10 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
                 {
                     _sheet = value;
                     Rectangle = new Vector4(
-                        X / value.Texture.Width,
-                        Y / value.Texture.Height,
-                        Width / value.Texture.Width,
-                        Height / value.Texture.Height);
+                        X / (float)value.Texture.Width,
+                        Y / (float)value.Texture.Height,
+                        Width / (float)value.Texture.Width,
+                        Height / (float)value.Texture.Height);
                 }
 
                 else throw new MemberAccessException("Cannot change attached sprite sheet");

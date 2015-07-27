@@ -6,6 +6,7 @@ float4 shadowColor;
 struct VertexShaderInput
 {
 	float2 Position : SV_Position;
+	float2 Offset : TEXCOORD6;
 	float2 RotationOrigin : TEXCOORD0;
 	float2 Scale : TEXCOORD1;
 	float2 Size : TEXCOORD2;
@@ -42,6 +43,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 	posTemp = posTemp + shadowOffset;
 
+	posTemp = posTemp + input.Offset;
 
 	float4 viewPosition = mul(posTemp, view);
 	output.Position = mul(viewPosition, projection);
@@ -62,8 +64,8 @@ technique Draw
 	pass Pass1
 	{
 #if SM4
-		VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
-		PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+		VertexShader = compile vs_4_0_level_9_3 VertexShaderFunction();
+		PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
 #else
 		VertexShader = compile vs_2_0 VertexShaderFunction();
 		PixelShader = compile ps_2_0 PixelShaderFunction();

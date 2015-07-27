@@ -34,7 +34,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         Rotation = obj.Rotation + component.Rotation,
                         RotationOrigin = component.RotationOrigin,
                         Scale = obj.Scale * component.Scale,
-                        Size = obj.Size,
+                        Size = obj.DefaultSize,
                         Texture = asset
                     }, component.DrawLayer);
                 }

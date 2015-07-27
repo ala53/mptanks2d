@@ -15,6 +15,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
     {
         public const string LoadingTextureSpriteName = "loading_texture_sprite";
         public const string MissingTextureSpriteName = "missing_texture_sprite";
+        public const string BlankTextureSpriteName = "blank_texture_sprite";
 
         private GraphicsDevice _graphics;
         private AssetLoader _loader;
@@ -38,6 +39,13 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         public Sprite LoadingTextureSprite
         {
             get { return _internalSprites[LoadingTextureSpriteName]; }
+        }
+        /// <summary>
+        /// A white, flat color texture that can be used for anything.
+        /// </summary>
+        public Sprite BlankTextureSprite
+        {
+            get { return _internalSprites[BlankTextureSpriteName]; }
         }
 
         private Dictionary<string, SpriteSheet> _spriteSheets = new Dictionary<string, SpriteSheet>(
@@ -84,7 +92,8 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
             var sprites = new Dictionary<string, Sprite>();
             sprites.Add(MissingTextureSpriteName, new Sprite(0, 0, 48, 48, MissingTextureSpriteName));
-            sprites.Add(LoadingTextureSpriteName, new Sprite(52, 52, 54, 54, LoadingTextureSpriteName));
+            sprites.Add(BlankTextureSpriteName, new Sprite(0, 0, 4, 4, BlankTextureSpriteName));
+            sprites.Add(LoadingTextureSpriteName, new Sprite(0, 0, 4, 4, LoadingTextureSpriteName));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
                 new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
@@ -107,6 +116,8 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         public Sprite GetSprite(SpriteInfo info) => GetSprite(info.FrameName, info.SheetName);
         public Sprite GetSprite(string spriteName, string sheetName)
         {
+            if (spriteName == null || sheetName == null) return BlankTextureSprite;
+
             //special cases
             if (spriteName == LoadingTextureSpriteName) return LoadingTextureSprite;
             if (spriteName == MissingTextureSpriteName) return MissingTextureSprite;

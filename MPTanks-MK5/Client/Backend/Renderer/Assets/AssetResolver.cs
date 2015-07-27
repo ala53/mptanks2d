@@ -17,16 +17,32 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
         public string ResolveAssetFile(string sheetName)
         {
-            foreach (var directory in SearchPaths)
+            string addedPath = null;
+            var fName = sheetName;
+            if (sheetName.Contains("\\"))
             {
-                foreach (var file in Directory.GetFiles(directory))
-                {
-                    var fi = new FileInfo(file);
-                    if (fi.Name.Equals(sheetName, StringComparison.OrdinalIgnoreCase))
+                addedPath = sheetName.Substring(0, sheetName.LastIndexOf("\\"));
+                fName = sheetName.Substring(sheetName.LastIndexOf("\\") + 1);
+            }
+            if (sheetName.Contains("/"))
+            {
+                addedPath = sheetName.Substring(0, sheetName.LastIndexOf("//"));
+                fName = sheetName.Substring(sheetName.LastIndexOf("/"));
+            }
+            foreach (var dirBase in SearchPaths)
+            {
+                var directory = dirBase;
+                if (addedPath != null)
+                    directory += "\\" + addedPath;
+                if (Directory.Exists(directory))
+                    foreach (var file in Directory.GetFiles(directory))
                     {
-                        return file;
+                        var fi = new FileInfo(file);
+                        if (fi.Name.Equals(fName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return file;
+                        }
                     }
-                }
             }
             return null;
         }
