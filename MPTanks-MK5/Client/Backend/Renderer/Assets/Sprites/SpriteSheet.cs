@@ -148,6 +148,8 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
             _animations = animations.Values.ToList();
             _sprites = sprites.Values.ToList();
 
+            Texture = texture;
+
             foreach (var sprite in _sprites) sprite.SpriteSheet = this;
             foreach (var anim in _animations)
             {
@@ -155,7 +157,6 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
                 anim.FindFrames(sprites, missingTextureSprite);
             }
 
-            Texture = texture;
             Name = name;
         }
     }

@@ -25,6 +25,7 @@ using MPTanks.Networking.Common.Game;
 using MPTanks.Networking.Common;
 using System.Threading.Tasks;
 using MPTanks.Client.GameSandbox.Mods;
+using MPTanks.Client.Backend.Renderer;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -49,6 +50,8 @@ namespace MPTanks.Client.GameSandbox
         private Screens.Screen currentScreen;
         private UIRoot root;
         private MonoGameEngine eng;
+
+        private GameCoreRenderer _gcRenderer;
 
         private bool _unlockCursor = false;
 
@@ -146,6 +149,8 @@ namespace MPTanks.Client.GameSandbox
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
+            if (_gcRenderer != null) _gcRenderer.Dispose();
+            _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
 
             player1 = new NetworkPlayer()
             {
@@ -454,8 +459,9 @@ namespace MPTanks.Client.GameSandbox
                         30 * zoom,
                         10 * zoom);
                 game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
-                renderer.SetViewport(drawRect);
-                renderer.Render(spriteBatch, gameTime);
+                _gcRenderer.View = drawRect;
+                _gcRenderer.Target = t;
+                _gcRenderer.Draw(gameTime);
                 game.Diagnostics.EndMeasurement("World rendering", "Rendering");
                 GraphicsDevice.SetRenderTarget(u);
                 GraphicsDevice.Clear(new Color(10, 10, 10, 255));

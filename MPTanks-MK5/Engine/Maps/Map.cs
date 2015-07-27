@@ -28,6 +28,9 @@ namespace MPTanks.Engine.Maps
         private string _data;
         public string RawData { get { return _data; } }
 
+        public Color ShadowColor { get; set; }
+        public Vector2 ShadowOffset { get; set; }
+
         public static Map LoadMap(string mapData, GameCore game)
         {
             var map = new Map()
@@ -61,6 +64,13 @@ namespace MPTanks.Engine.Maps
         /// </summary>
         public void CreateObjects()
         {
+            if (ShadowOffset == null)
+                ShadowOffset = new Vector2(0.25f);
+            else ShadowOffset = _deserialized.ShadowOffset;
+            if (ShadowColor == null)
+                ShadowColor = new Color(50, 50, 50, 100);
+            else ShadowColor = _deserialized.ShadowColor;
+
             foreach (var mapObj in _deserialized.Objects)
             {
                 MapObject obj = MapObject.ReflectiveInitialize(mapObj.TypeName, _game, true, mapObj.Position, mapObj.Rotation);

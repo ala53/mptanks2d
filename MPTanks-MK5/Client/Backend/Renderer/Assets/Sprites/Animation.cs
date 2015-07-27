@@ -25,6 +25,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
         public IReadOnlyList<Sprite> Frames { get { return _sprites; } }
         public string Name { get; private set; }
         public float FramesPerSecond { get; private set; }
+        public float FrameLengthMs => 1000 / FramesPerSecond;
         public TimeSpan Length
         {
             get { return TimeSpan.FromSeconds(Frames.Count / FramesPerSecond); }

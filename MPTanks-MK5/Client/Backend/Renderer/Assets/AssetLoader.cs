@@ -10,10 +10,10 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 {
     class AssetLoader
     {
-        private GameWorldRenderer _renderer;
+        private GameCoreRenderer _renderer;
         private GraphicsDevice _graphics;
         private AssetResolver _resolver;
-        public AssetLoader(GameWorldRenderer renderer, GraphicsDevice gd, AssetResolver resolver)
+        public AssetLoader(GameCoreRenderer renderer, GraphicsDevice gd, AssetResolver resolver)
         {
             _renderer = renderer;
             _graphics = gd;

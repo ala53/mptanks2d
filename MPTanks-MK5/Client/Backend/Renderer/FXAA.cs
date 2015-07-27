@@ -19,6 +19,13 @@ namespace MPTanks.Client.Backend.Renderer
 
         }
 
+        public void Resize(int width, int height)
+        {
+            //if (width > 0 && height > 0)
+            //if (Target.Width != width || Target.Height != height)
+            //...
+        }
+
         public void Draw(RenderTarget2D _outputTarget = null)
         {
 

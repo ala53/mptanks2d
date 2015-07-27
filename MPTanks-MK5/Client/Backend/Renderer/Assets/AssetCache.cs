@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Client.Backend.Renderer.Assets
 {
-    class AssetCache
+    class AssetCache : IDisposable
     {
         public const string LoadingTextureSpriteName = "loading_texture_sprite";
         public const string MissingTextureSpriteName = "missing_texture_sprite";
 
         private GraphicsDevice _graphics;
         private AssetLoader _loader;
-        private GameWorldRenderer _renderer;
+        private GameCoreRenderer _renderer;
 
         private SpriteSheet _internalSprites
         {
@@ -48,7 +48,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             StringComparer.InvariantCultureIgnoreCase);
 
 
-        public AssetCache(GraphicsDevice gd, AssetLoader loader, GameWorldRenderer renderer)
+        public AssetCache(GraphicsDevice gd, AssetLoader loader, GameCoreRenderer renderer)
         {
             _graphics = gd;
             _loader = loader;
@@ -75,9 +75,9 @@ namespace MPTanks.Client.Backend.Renderer.Assets
                 {
                     Color checkerBoardColor = y % 16 == 0 && x % 16 != 0 ? Color.Purple : Color.White;
                     //i is y offset, j is x offset
-                    for (var i = 0; i < 8; i++)
-                        for (var j = 0; j < 8; i++)
-                            data[((y + i) * checkerboardSize) + x + j] = checkerBoardColor;
+                    for (var j = 0; j < 8; j++)
+                        for (var k = 0; k < 8; k++)
+                            data[((y + j) * checkerboardSize) + x + k] = checkerBoardColor;
                 }
 
             tx.SetData(data);
@@ -152,5 +152,29 @@ namespace MPTanks.Client.Backend.Renderer.Assets
                 _sheetsThatAreCurrentlyLoading.Remove(sheetName);
             }, MissingTextureSprite);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                foreach (var spriteSheet in _spriteSheets)
+                    spriteSheet.Value.Texture.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
