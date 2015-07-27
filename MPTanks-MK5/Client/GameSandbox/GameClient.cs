@@ -68,8 +68,7 @@ namespace MPTanks.Client.GameSandbox
 
 
             // IsMouseVisible = true;
-            // IsFixedTimeStep = false;
-            // graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
             // TargetElapsedTime = TimeSpan.FromMilliseconds(66.3333333);
 
             CoreModLoader.LoadTrustedMods(GameSettings.Instance);
@@ -84,6 +83,9 @@ namespace MPTanks.Client.GameSandbox
             Window.Position = new Point(
                 CrossDomainObject.Instance.WindowPositionX,
                 CrossDomainObject.Instance.WindowPositionY);
+
+            graphics.SynchronizeWithVerticalRetrace = GameSettings.Instance.VSync;
+
             _graphicsDeviceIsDirty = true;
             //And the UI renderer
             eng = new MonoGameEngine(GraphicsDevice, 800, 480);
@@ -135,7 +137,6 @@ namespace MPTanks.Client.GameSandbox
 
         private void SetupGame()
         {
-            Modding.ModDatabase.Get("MPTanks Core Assets").Metadata.ToString();
             game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
@@ -630,7 +631,10 @@ namespace MPTanks.Client.GameSandbox
                 .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount)
                 .Append("\n");
             _bldr.Append("Update: ").Append(physicsMs.ToString("N2"))
-                        .Append(", Render: ").Append(renderMs.ToString("N2"));
+                        .Append(", Render: ").Append(renderMs.ToString("N2"))
+                        .Append(", Update #: ").Append(updateNumber)
+                        .Append(", Frame #: ").Append(frameNumber)
+                        ;
 
             if (float.IsInfinity(CalculateAverageFPS()) || float.IsNaN(CalculateAverageFPS()))
                 _bldr.Append(", FPS: ").Append("Calculation Error").Append(" avg, ");

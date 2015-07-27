@@ -80,6 +80,7 @@ namespace MPTanks.Client.GameSandbox
         #region Screen Resolution
         public Setting<bool> Fullscreen { get; private set; }
         public Setting<bool> DebugShowEmitterLocationBoxes { get; private set; }
+        public Setting<bool> VSync { get; private set; }
         #endregion
         private GameSettings(string file)
             : base(file)
@@ -162,6 +163,9 @@ namespace MPTanks.Client.GameSandbox
 
             DebugShowEmitterLocationBoxes = new Setting<bool>(this, "Show emitter locations",
                 "Whether to show the locations of emitters as large blue boxes", false);
+
+            VSync = new Setting<bool>(this, "Enable vertical blank sync", 
+                "Whether v-blank-sync should be enabled.", true);
         }
     }
 }
