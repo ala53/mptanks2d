@@ -76,22 +76,18 @@ namespace MPTanks.Client.Backend.Renderer
             var layer = GetOrAddLayer(layerNumber);
             layer.AddObject(drawable);
         }
-
+        
         private RenderCompositorLayer GetOrAddLayer(int number)
         {
             if (_layers.ContainsKey(number)) return _layers[number];
+            if (number < -100000000 || number > 100000000)
+                throw new ArgumentOutOfRangeException("number", "Must be between -100,000,000 and +100,000,000");
 
             //Create layer
             var layer = new RenderCompositorLayer(number);
             _layers.Add(number, layer);
-            int insertPoint = 0;
-            for (int i = 0; i < _sorted.Count; i++)
-            {
-                insertPoint = i;
-                if (_sorted[i].LayerNumber > layer.LayerNumber)
-                    break;
-            }
-            _sorted.Insert(insertPoint, layer);
+            _sorted.Add(layer);
+            _sorted.Sort((a, b) => a.LayerNumber - b.LayerNumber);
             return layer;
         }
 
@@ -100,9 +96,8 @@ namespace MPTanks.Client.Backend.Renderer
             _gd.RasterizerState = RasterizerState.CullNone;
             _gd.BlendState = BlendState.NonPremultiplied;
 
-            for (var i = _sorted.Count - 1; i >= 0; i--)
+            foreach (var layer in _sorted)
             {
-                var layer = _sorted[i];
                 foreach (var kvp in layer.SpriteSorted)
                 {
 

@@ -26,7 +26,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                     Rectangle = new Engine.Core.RectangleF(0, 0, particle.Size.X, particle.Size.Y),
                     Size = particle.Size,
                     Texture = Finder.RetrieveAsset(particle.SpriteInfo)
-                }, particle.RenderBelowObjects ? int.MinValue : int.MaxValue);
+                }, particle.RenderBelowObjects ? -100000000 : 100000000);
             }
         }
     }
