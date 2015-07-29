@@ -78,14 +78,16 @@ namespace MPTanks.Client.Backend.Renderer
             layer.AddObject(drawable);
         }
 
-        private RenderCompositorLayer GetOrAddLayer(int number)
+        public RenderCompositorLayer GetOrAddLayer(int number)
         {
             if (_layers.ContainsKey(number)) return _layers[number];
             if (number < -100000000 || number > 100000000)
                 throw new ArgumentOutOfRangeException("number", "Must be between -100,000,000 and +100,000,000");
 
             //Create layer
-            var layer = new RenderCompositorLayer(number);
+            var spriteInfo = new Engine.Assets.SpriteInfo(null, null);
+            var layer = new RenderCompositorLayer(number,
+                _renderer.Finder.RetrieveAsset(ref spriteInfo).SpriteSheet);
             _layers.Add(number, layer);
             _sorted.Add(layer);
             _sorted.Sort((a, b) => a.LayerNumber - b.LayerNumber);
@@ -222,21 +224,34 @@ namespace MPTanks.Client.Backend.Renderer
         public Dictionary<SpriteSheet, ResizableArray<GPUDrawable>> SpriteSorted
         { get; set; }
         = new Dictionary<SpriteSheet, ResizableArray<GPUDrawable>>();
-        public RenderCompositorLayer(int number)
+        private ResizableArray<GPUDrawable> _baseSheetArr;
+        private SpriteSheet _baseSheet;
+        public RenderCompositorLayer(int number, SpriteSheet baseSheet)
         {
             LayerNumber = number;
+            _baseSheetArr = new ResizableArray<GPUDrawable>();
+            _baseSheet = baseSheet;
+            SpriteSorted.Add(baseSheet, _baseSheetArr);
         }
         public void AddObject(DrawableObject obj)
         {
-            if (!SpriteSorted.ContainsKey(obj.Texture.SpriteSheet))
-                SpriteSorted.Add(obj.Texture.SpriteSheet, new ResizableArray<GPUDrawable>());
+            ResizableArray<GPUDrawable> list;
+            if (obj.Texture.SpriteSheet == _baseSheet)
+            {
+                list = _baseSheetArr;
+            }
+            else
+            {
+                if (!SpriteSorted.ContainsKey(obj.Texture.SpriteSheet))
+                    SpriteSorted.Add(obj.Texture.SpriteSheet, new ResizableArray<GPUDrawable>());
+                list = SpriteSorted[obj.Texture.SpriteSheet];
+            }
             //Tesellate into 2 triangles
             //
             // A--B
             // -\ -
             // - \-
             // D--C
-            var list = SpriteSorted[obj.Texture.SpriteSheet];
             list.Add(new GPUDrawable( //A / 0
                 obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
                 obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
