@@ -2,61 +2,59 @@
 float4x4 projection;
 float2 shadowOffset;
 float4 shadowColor;
-
+sampler txt;
 struct VertexShaderInput
 {
-	float2 Position : SV_Position;
-	float2 Offset : TEXCOORD6;
-	float2 RotationOrigin : TEXCOORD0;
-	float2 Scale : TEXCOORD1;
-	float2 Size : TEXCOORD2;
-	float Rotation : TEXCOORD3;
-	float4 Color : COLOR0;
-	float4 TextureInfo : TEXCOORD4;
-	float2 TexCoord : TEXCOORD5;
+	float4 Position : SV_Position;
+	float4 Offset : TEXCOORD0;
+	float4 Size : TEXCOORD1;
+	float4 RotationOrigin : TEXCOORD2;
+	float4 Scale : TEXCOORD3;
+	float Rotation : TEXCOORD4;
+	float ObjectRotation : TEXCOORD5;
+	float4 Color : COLOR;
+	float4 TexCoord : TEXCOORD6;
 };
 
 struct VertexShaderOutput
 {
 	float4 Position : SV_Position;
-	float4 Color : COLOR0;
-	float4 TextureInfo : TEXCOORD0;
-	float2 TexCoord : TEXCOORD1;
+	float4 Color : COLOR;
+	float4 TexCoord: TEXCOORD;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
 	VertexShaderOutput output;
+	float4 pos = input.Position;
 
-	//compute world pos
-	float2 posTemp = input.Position;
-	//Shift for rotation
-	posTemp = posTemp - input.RotationOrigin;
-	//Rotate
-	posTemp.x = posTemp.x * cos(input.Rotation) - posTemp.y * sin(input.Rotation);
-	posTemp.y = posTemp.x * sin(input.Rotation) + posTemp.y * cos(input.Rotation);
-	posTemp = posTemp + input.RotationOrigin;
-	//Center the point
-	posTemp = posTemp - (input.Size / 2);
+	float4 rotTemp = pos;
+	pos.xy -= input.RotationOrigin.xy;
+	//Rotation
+	rotTemp = pos;
+	rotTemp.x = pos.x * cos(input.Rotation) - pos.y * sin(input.Rotation);
+	rotTemp.y = pos.x * sin(input.Rotation) + pos.y * cos(input.Rotation);
+	pos = rotTemp;
+	pos.xy += input.RotationOrigin.xy;
+	//Scaling and offset
+	pos.xy -= input.Size.xy / float2(2, 2);
+	rotTemp = pos;
+	rotTemp.x = pos.x * cos(input.ObjectRotation) - pos.y * sin(input.ObjectRotation);
+	rotTemp.y = pos.x * sin(input.ObjectRotation) + pos.y * cos(input.ObjectRotation);
+	pos = rotTemp;
+	pos.xy *= input.Scale.xy;
+	pos.xy += input.Offset.xy;
 
-	posTemp = posTemp * input.Scale;
-
-	posTemp = posTemp + shadowOffset;
-
-	posTemp = posTemp + input.Offset;
-
-	float4 viewPosition = mul(posTemp, view);
-	output.Position = mul(viewPosition, projection);
+	output.Position = mul(pos, projection);
 	output.Color = input.Color;
-	output.TextureInfo = input.TextureInfo;
 	output.TexCoord = input.TexCoord;
 
 	return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target0
 {
-	return shadowColor;
+	return shadowColor * float4(1,1,1,tex2D(txt, input.TexCoord).a);
 }
 
 technique Draw
@@ -64,8 +62,8 @@ technique Draw
 	pass Pass1
 	{
 #if SM4
-		VertexShader = compile vs_4_0_level_9_3 VertexShaderFunction();
-		PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
+		VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
+		PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
 #else
 		VertexShader = compile vs_2_0 VertexShaderFunction();
 		PixelShader = compile ps_2_0 PixelShaderFunction();

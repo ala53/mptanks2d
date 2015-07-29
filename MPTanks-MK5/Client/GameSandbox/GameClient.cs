@@ -346,6 +346,8 @@ namespace MPTanks.Client.GameSandbox
                 if (Keyboard.GetState().IsKeyDown(Keys.M))
                     iState2.FirePressed = true;
 
+                iState2.LookDirection = 1.2F;
+
                 game.InjectPlayerInput(player2, iState2);
 
                 //Complicated look state calcuation below

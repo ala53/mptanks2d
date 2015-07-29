@@ -37,7 +37,7 @@
       "size": { "x": 3, "y": 5 }
     },
     {
-      "drawLayer": 0,
+      "drawLayer": 1,
       "image": { "frame": "[ref]grillmask" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "tankFront",
@@ -47,7 +47,7 @@
       "size": { "x": 3, "y": 0.25 }
     },
     {
-      "drawLayer": 0,
+      "drawLayer": 2,
       "mask": { "r": 255, "g": 150, "b": 150, "a": 150 },
       "name": "turret",
       "offset": { "x": 1.25, "y": -1 },
@@ -56,7 +56,7 @@
       "size": { "x": 0.5, "y": 2.35 }
     },
     {
-      "drawLayer": 0,
+      "drawLayer": 2,
       "image": { "frame": "turretbase" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "turretBase",
@@ -66,7 +66,7 @@
       "size": { "x": 2, "y": 2.5 }
     },
     {
-      "drawLayer": 0,
+      "drawLayer": 3,
       "mask": { "r": 200, "g": 200, "b": 200, "a": 100 },
       "name": "turretDoor",
       "offset": { "x": 0.75, "y": 1.75 },

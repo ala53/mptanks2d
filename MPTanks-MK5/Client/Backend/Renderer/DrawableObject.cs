@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MPTanks.Client.Backend.Renderer.Assets.Sprites;
+using MPTanks.Engine.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace MPTanks.Client.Backend.Renderer
 {
     struct DrawableObject
     {
-        public Vector2 Size { get; set; }
         public Vector2 Position { get; set; }
         public Vector2 RotationOrigin { get; set; }
         public Vector2 Scale { get; set; }
         public float Rotation { get; set; }
+        public float ObjectRotation { get; set; }
+        public RectangleF Rectangle { get; set; }
+        public Vector2 Size { get; set; }
         public Sprite Texture { get; set; }
         public Color Mask { get; set; }
     }
@@ -30,8 +33,8 @@ namespace MPTanks.Client.Backend.Renderer
         public Vector2 RotationOrigin;
         public Vector2 Scale;
         public float Rotation;
+        public float ObjectRotation;
         public Color Color;
-        public Vector4 TextureBounds;
         public Vector2 TexCoord;
 
         private static VertexDeclaration _decl = new VertexDeclaration(
@@ -41,9 +44,9 @@ namespace MPTanks.Client.Backend.Renderer
             new VertexElement(24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2),
             new VertexElement(32, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 3),
             new VertexElement(40, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 4),
-            new VertexElement(44, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-            new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 5),
-            new VertexElement(64, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 6));
+            new VertexElement(44, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 5),
+            new VertexElement(48, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            new VertexElement(52, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 6));
         public static VertexDeclaration VertexDeclaration => _decl;
 
         VertexDeclaration IVertexType.VertexDeclaration
@@ -55,16 +58,16 @@ namespace MPTanks.Client.Backend.Renderer
         }
 
         public GPUDrawable(Vector2 vertex, Vector2 offset, Vector2 size, Vector2 rotationOrigin, Vector2 scale, 
-            float rotation, Color color, Vector4 texBounds, Vector2 texCoord)
+            float rotation, float objectRotation, Color color, Vector2 texCoord)
         {
             Position = vertex;
             Offset = offset;
             Size = size;
             Scale = scale;
             RotationOrigin = rotationOrigin;
+            ObjectRotation = objectRotation;
             Rotation = rotation;
             Color = color;
-            TextureBounds = texBounds;
             TexCoord = texCoord;
         }
     }

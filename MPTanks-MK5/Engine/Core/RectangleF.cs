@@ -17,6 +17,10 @@ namespace MPTanks.Engine.Core
         public float Right { get { return X + Width; } }
         public float Top { get { return Y; } }
         public float Bottom { get { return Y + Height; } }
+        public Vector2 TopLeft  => new Vector2(Left, Top);
+        public Vector2 TopRight => new Vector2(Right, Top);
+        public Vector2 BottomLeft => new Vector2(Left, Bottom);
+        public Vector2 BottomRight => new Vector2(Right, Bottom);
 
         public RectangleF(float x, float y, float w, float h)
         {

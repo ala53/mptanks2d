@@ -1,6 +1,7 @@
 ﻿{
   "components": [
     {
+      "drawLayer": 0,
       "name": "base",
       "image": { "frame": "baseblock" },
       "size": { "x": 4, "y": 4 }

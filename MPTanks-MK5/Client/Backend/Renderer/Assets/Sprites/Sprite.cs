@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
                 if (_sheet == null)
                 {
                     _sheet = value;
-                    Rectangle = new Vector4(
+                    Rectangle = new RectangleF(
                         X / (float)value.Texture.Width,
                         Y / (float)value.Texture.Height,
                         Width / (float)value.Texture.Width,
@@ -33,7 +34,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
         public int Y { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public Vector4 Rectangle { get; private set; }
+        public RectangleF Rectangle { get; private set; }
 
         public string Name { get; private set; }
 

@@ -55,7 +55,7 @@ namespace MPTanks.Client.Backend.Renderer
         }
         public void SetView(RectangleF viewRect)
         {
-            _projection = Matrix.CreateOrthographic(128, 36, -1, float.MaxValue);
+            _projection = Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, float.MaxValue);
         }
         public void SetShadowParameters(Vector2 offset, Color color)
         {
@@ -101,8 +101,9 @@ namespace MPTanks.Client.Backend.Renderer
             _gd.RasterizerState = RasterizerState.CullNone;
             _gd.BlendState = BlendState.NonPremultiplied;
 
-            foreach (var layer in _sorted)
+            for (var i = _sorted.Count - 1; i >= 0; i--)
             {
+                var layer = _sorted[i];
                 foreach (var kvp in layer.SpriteSorted)
                 {
 
@@ -118,25 +119,25 @@ namespace MPTanks.Client.Backend.Renderer
 
                     //Upload vertices
                     _vertexBuffer.SetData(kvp.Value.InternalArray, 0, kvp.Value.Count, SetDataOptions.Discard);
-
-                    //foreach (var technique in _shadowEffect.Techniques)
-                    //    foreach (var pass in technique.Passes)
-                    //    {
-                    //_shadowEffect.Parameters["view"].SetValue(Matrix.Identity);
-                    //_shadowEffect.Parameters["projection"].SetValue(_projection);
-                    //_shadowEffect.Parameters["shadowOffset"].SetValue(_shadowOffset);
-                    //_shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
-                    //        pass.Apply();
-                    //        _gd.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0,
-                    //            0, kvp.Value.Count, 0, kvp.Value.Count / 2);
-                    //    }
-
                     _gd.SetVertexBuffer(_vertexBuffer);
+
+                    foreach (var technique in _shadowEffect.Techniques)
+                        foreach (var pass in technique.Passes)
+                        {
+                            _shadowEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
+                            _shadowEffect.Parameters["view"].SetValue(Matrix.Identity);
+                            _shadowEffect.Parameters["projection"].SetValue(_projection);
+                            _shadowEffect.Parameters["shadowOffset"].SetValue(_shadowOffset);
+                            _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
+                            pass.Apply();
+                            _gd.DrawPrimitives(PrimitiveType.TriangleList, 0, kvp.Value.Count / 3);
+                        }
+
 
                     foreach (var technique in _drawEffect.Techniques)
                         foreach (var pass in technique.Passes)
                         {
-                            _drawEffect.Parameters["txt"].SetValue(_tx);
+                            _drawEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
                             _drawEffect.Parameters["projection"].SetValue(_projection);
                             pass.Apply();
                             var rot = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -207,23 +208,23 @@ namespace MPTanks.Client.Backend.Renderer
             // D--C
             var list = SpriteSorted[obj.Texture.SpriteSheet];
             list.Add(new GPUDrawable( //A / 0
-                Vector2.Zero, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, Vector2.Zero));
+                obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
             list.Add(new GPUDrawable( //B / 1
-                new Vector2(obj.Size.X, 0), obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, new Vector2(1, 0)));
+                obj.Rectangle.TopRight, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopRight));
             list.Add(new GPUDrawable( //C / 2
-                obj.Size, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, Vector2.One));
+                obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
             list.Add(new GPUDrawable( //C / 2
-                obj.Size, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, Vector2.One));
+                obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
             list.Add(new GPUDrawable( //D / 3
-                new Vector2(0, obj.Size.Y), obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, new Vector2(0, 1)));
+                obj.Rectangle.BottomLeft, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomLeft));
             list.Add(new GPUDrawable( //A / 0
-                Vector2.Zero, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.Mask, obj.Texture.Rectangle, Vector2.Zero));
+                obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
+                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
             //list.Add(new GPUDrawable //A
             //{
             //    Mask = obj.Mask,
