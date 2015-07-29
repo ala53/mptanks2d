@@ -40,12 +40,13 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         {
             get { return _internalSprites[LoadingTextureSpriteName]; }
         }
+        private Sprite _blankSprite;
         /// <summary>
         /// A white, flat color texture that can be used for anything.
         /// </summary>
         public Sprite BlankTextureSprite
         {
-            get { return _internalSprites[BlankTextureSpriteName]; }
+            get { return _blankSprite; }
         }
 
         private Dictionary<string, SpriteSheet> _spriteSheets = new Dictionary<string, SpriteSheet>(
@@ -97,6 +98,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
                 new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
+            _blankSprite = _internalSprites[BlankTextureSpriteName];
         }
 
         public Animation GetAnimation(string animationName, string sheetName)

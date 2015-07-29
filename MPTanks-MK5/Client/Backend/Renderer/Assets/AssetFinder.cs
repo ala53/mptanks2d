@@ -27,8 +27,9 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         /// <param name="asset"></param>
         /// <param name="sheet"></param>
         /// <returns></returns>
-        public Sprite RetrieveAsset(SpriteInfo info)
+        public Sprite RetrieveAsset(ref SpriteInfo info)
         {
+            if (info.FrameName == null) return _cache.BlankTextureSprite;
             if (info.IsAnimation)
             {
                 var frame = GetAnimationFrameInfo(info);

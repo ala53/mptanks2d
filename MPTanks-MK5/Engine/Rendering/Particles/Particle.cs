@@ -11,7 +11,7 @@ namespace MPTanks.Engine.Rendering.Particles
     /// <summary>
     /// A single in-engine particle, a very large struct.
     /// </summary>
-    public struct Particle : IHasSpriteInfo
+    public struct Particle 
     {
         public float LifespanMs;
         public float FadeOutMs;
@@ -26,7 +26,7 @@ namespace MPTanks.Engine.Rendering.Particles
         }
         public Vector2 NonCenteredPosition;
         public Vector2 Size;
-        public SpriteInfo SpriteInfo { get; set; }
+        public SpriteInfo SpriteInfo;
         public Color ColorMask;
         public float Rotation;
         public float RotationVelocity;

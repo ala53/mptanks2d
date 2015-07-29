@@ -21,7 +21,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                 foreach (var component in obj.Components.Values)
                 {
                     var info = component.SpriteInfo;
-                    var asset = Finder.RetrieveAsset(info);
+                    var asset = Finder.RetrieveAsset(ref info);
                     if (info.IsAnimation)
                     {
                         Finder.IncrementAnimation(ref info, gameTime);
