@@ -28,6 +28,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         component.SpriteInfo = info;
                     }
 
+                    var physCompensation = 
+                        new Vector2(Renderer.PhysicsCompensation, Renderer.PhysicsCompensation) / obj.Scale;
+
                     Compositor.AddDrawable(new DrawableObject
                     {
                         Mask = new Color(component.Mask.ToVector4() * obj.ColorMask.ToVector4()),
@@ -36,9 +39,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         ObjectRotation = obj.Rotation,
                         RotationOrigin = component.RotationOrigin + component.Offset,
                         Scale = obj.Scale,
-                        Rectangle = new RectangleF(component.Offset.X - Renderer.PhysicsCompensation,
-                        component.Offset.Y - Renderer.PhysicsCompensation,
-                        component.Size.X + Renderer.PhysicsCompensation, component.Size.Y + Renderer.PhysicsCompensation),
+                        Rectangle = new RectangleF(component.Offset.X - physCompensation.X,
+                        component.Offset.Y - physCompensation.Y,
+                        component.Size.X + physCompensation.X * 2, component.Size.Y + physCompensation.Y * 2),
                         Size = obj.DefaultSize,
                         Texture = asset
                     }, component.DrawLayer);

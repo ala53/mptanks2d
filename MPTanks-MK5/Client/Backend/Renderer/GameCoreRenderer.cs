@@ -65,7 +65,7 @@ namespace MPTanks.Client.Backend.Renderer
 
             //Compositor.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
             Compositor.SetView(View);
-            Compositor.Draw(gameTime);
+            Compositor.Draw(gameTime, Target);
 
             if (EnableFxaa)
                 Fxaa.Draw(Target);

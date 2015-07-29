@@ -17,11 +17,12 @@ namespace MPTanks.Client.Backend.Renderer
         private GraphicsDevice _gd;
         private Effect _shadowEffect;
         private Effect _drawEffect;
-        private Matrix _projection;
-        private Vector2 _shadowOffset = new Vector2(1.5f, 1f);
+        private RectangleF _viewRect;
+        private Vector2 _shadowOffset = new Vector2(0.2f);
         private Color _shadowColor = new Color(50, 50, 50, 100);
         private DynamicVertexBuffer _vertexBuffer;
         private IndexBuffer _indexBuffer;
+        private RenderTarget2D _shadowBuffer;
         public RenderCompositor(GameCoreRenderer worldRenderer)
         {
             _renderer = worldRenderer;
@@ -54,7 +55,7 @@ namespace MPTanks.Client.Backend.Renderer
         }
         public void SetView(RectangleF viewRect)
         {
-            _projection = Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, float.MaxValue);
+            _viewRect = viewRect;
         }
         public void SetShadowParameters(Vector2 offset, Color color)
         {
@@ -76,7 +77,7 @@ namespace MPTanks.Client.Backend.Renderer
             var layer = GetOrAddLayer(layerNumber);
             layer.AddObject(drawable);
         }
-        
+
         private RenderCompositorLayer GetOrAddLayer(int number)
         {
             if (_layers.ContainsKey(number)) return _layers[number];
@@ -91,10 +92,18 @@ namespace MPTanks.Client.Backend.Renderer
             return layer;
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, RenderTarget2D target)
         {
             _gd.RasterizerState = RasterizerState.CullNone;
             _gd.BlendState = BlendState.NonPremultiplied;
+
+            var projection = Matrix.CreateOrthographicOffCenter(
+                _viewRect.Left, _viewRect.Right, _viewRect.Bottom, _viewRect.Top, -1, float.MaxValue);
+
+            CheckTarget(target.Width, target.Height);
+
+            _gd.SetRenderTarget(_shadowBuffer);
+            _gd.Clear(Color.Transparent);
 
             foreach (var layer in _sorted)
             {
@@ -116,38 +125,63 @@ namespace MPTanks.Client.Backend.Renderer
                     _vertexBuffer.SetData(kvp.Value.InternalArray, 0, kvp.Value.Count, SetDataOptions.Discard);
                     _gd.SetVertexBuffer(_vertexBuffer);
                     _gd.Indices = _indexBuffer;
-
-                    //foreach (var technique in _shadowEffect.Techniques)
-                    //    foreach (var pass in technique.Passes)
-                    //    {
-                    //        _shadowEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
-                    //        _shadowEffect.Parameters["view"].SetValue(Matrix.Identity);
-                    //        _shadowEffect.Parameters["projection"].SetValue(_projection);
-                    //        _shadowEffect.Parameters["shadowOffset"].SetValue(_shadowOffset);
-                    //        _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
-                    //        pass.Apply();
-                    //        _gd.DrawPrimitives(PrimitiveType.TriangleList, 0, kvp.Value.Count / 3);
-                    //    }
-
-
+                    //Draw the object
                     foreach (var technique in _drawEffect.Techniques)
                         foreach (var pass in technique.Passes)
                         {
                             _drawEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
-                            _drawEffect.Parameters["projection"].SetValue(_projection);
+                            _drawEffect.Parameters["projection"].SetValue(projection);
                             pass.Apply();
-                            var rot = (float)gameTime.TotalGameTime.TotalSeconds;
                             _gd.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, kvp.Value.Count, 0, kvp.Value.Count / 2);
                         }
                 }
             }
 
+            _gd.SetRenderTarget(target);
+
+            _gd.SetVertexBuffer(null);
+            _gd.Indices = null;
+            //And do shadowing
+            foreach (var technique in _shadowEffect.Techniques)
+                foreach (var pass in technique.Passes)
+                {
+                    _shadowEffect.Parameters["txt"].SetValue(_shadowBuffer);
+                    //Compute shadow offset in 0-1 scale of the render target
+                    var blocksToPixels = new Vector2(
+                        target.Width / _viewRect.Width,
+                        target.Height / _viewRect.Height
+                        );
+                    _shadowEffect.Parameters["projection"].SetValue(Matrix.CreateOrthographicOffCenter(
+                        0, 1, 1, 0, -1, 1));
+                    _shadowEffect.Parameters["shadowOffset"].SetValue(
+                        (_shadowOffset * blocksToPixels) / new Vector2(target.Width, target.Height));
+                    _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
+                    pass.Apply();
+                    _gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, new[]
+                    {
+                        new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
+                        new VertexPositionTexture(new Vector3(1, 0, 0), new Vector2(1, 0)),
+                        new VertexPositionTexture(new Vector3(0, 1, 0), new Vector2(0, 1)),
+                        new VertexPositionTexture(new Vector3(1, 1, 0), Vector2.One),
+                    }, 0, 2);
+                }
 
 
             //And finally, clear the layers so we can draw for the next frame
             foreach (var layer in _sorted)
             {
                 layer.Clear();
+            }
+        }
+
+        private void CheckTarget(int drawWidth, int drawHeight)
+        {
+            if (_shadowBuffer == null)
+                _shadowBuffer = new RenderTarget2D(_gd, drawWidth, drawHeight);
+            else if (_shadowBuffer.Width != drawWidth || _shadowBuffer.Height != drawHeight)
+            {
+                _shadowBuffer.Dispose();
+                _shadowBuffer = new RenderTarget2D(_gd, drawWidth, drawHeight);
             }
         }
 

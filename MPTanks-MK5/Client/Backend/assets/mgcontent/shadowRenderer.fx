@@ -1,60 +1,38 @@
-﻿float4x4 view;
-float4x4 projection;
-float2 shadowOffset;
+﻿float2 shadowOffset;
 float4 shadowColor;
-sampler txt;
-struct VertexShaderInput
-{
-	float4 Position : SV_Position;
-	float4 Offset : TEXCOORD0;
-	float4 Size : TEXCOORD1;
-	float4 RotationOrigin : TEXCOORD2;
-	float4 Scale : TEXCOORD3;
-	float Rotation : TEXCOORD4;
-	float ObjectRotation : TEXCOORD5;
-	float4 Color : COLOR;
-	float4 TexCoord : TEXCOORD6;
+float4x4 projection;
+texture txt;
+sampler samp = sampler_state {
+	Texture = <txt>;
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+	AddressU = CLAMP;
+	AddressV = CLAMP;
 };
 
-struct VertexShaderOutput
-{
+struct VShader {
 	float4 Position : SV_Position;
-	float4 Color : COLOR;
-	float4 TexCoord: TEXCOORD;
+	float4 TexCoord : TEXCOORD;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
-{
-	VertexShaderOutput output;
-	float4 pos = input.Position;
-
-	float4 rotTemp = pos;
-	pos.xy -= input.RotationOrigin.xy;
-	//Rotation
-	rotTemp = pos;
-	rotTemp.x = pos.x * cos(input.Rotation) - pos.y * sin(input.Rotation);
-	rotTemp.y = pos.x * sin(input.Rotation) + pos.y * cos(input.Rotation);
-	pos = rotTemp;
-	pos.xy += input.RotationOrigin.xy;
-	//Scaling and offset
-	pos.xy -= input.Size.xy / float2(2, 2);
-	rotTemp = pos;
-	rotTemp.x = pos.x * cos(input.ObjectRotation) - pos.y * sin(input.ObjectRotation);
-	rotTemp.y = pos.x * sin(input.ObjectRotation) + pos.y * cos(input.ObjectRotation);
-	pos = rotTemp;
-	pos.xy *= input.Scale.xy;
-	pos.xy += input.Offset.xy;
-
-	output.Position = mul(pos, projection);
-	output.Color = input.Color;
+VShader VertexShaderFunction(VShader input) {
+	VShader output;
+	output.Position = mul(input.Position, projection);
 	output.TexCoord = input.TexCoord;
-
 	return output;
+
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target0
+float4 ShadowSamplerFunction(VShader input) : SV_Target0
 {
-	return shadowColor * float4(1,1,1,tex2D(txt, input.TexCoord).a);
+	float4 color = tex2D(samp, input.TexCoord.xy + shadowOffset);
+	return color.a * shadowColor;
+}
+
+float4 RenderDrawerFunction(VShader input) : SV_Target0
+{
+	return tex2D(samp, input.TexCoord.xy);
 }
 
 technique Draw
@@ -63,10 +41,20 @@ technique Draw
 	{
 #if SM4
 		VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
-		PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+		PixelShader = compile ps_4_0_level_9_1 ShadowSamplerFunction();
 #else
 		VertexShader = compile vs_2_0 VertexShaderFunction();
-		PixelShader = compile ps_2_0 PixelShaderFunction();
+		PixelShader = compile ps_2_0 ShadowSamplerFunction();
+#endif
+	}
+
+	pass Pass2 {
+#if SM4
+		VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
+		PixelShader = compile ps_4_0_level_9_1 RenderDrawerFunction();
+#else
+		VertexShader = compile vs_2_0 VertexShaderFunction();
+		PixelShader = compile ps_2_0 RenderDrawerFunction();
 #endif
 	}
 }
