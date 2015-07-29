@@ -42,7 +42,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	pos = rotTemp;
 	pos.xy *= input.Scale.xy;
 	pos.xy += input.Offset.xy;
-
+	
 	output.Position = mul(pos, projection);
 	output.Color = input.Color;
 	output.TexCoord = input.TexCoord;

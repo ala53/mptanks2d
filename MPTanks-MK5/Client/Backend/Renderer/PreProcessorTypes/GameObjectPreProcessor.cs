@@ -36,8 +36,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         ObjectRotation = obj.Rotation,
                         RotationOrigin = component.RotationOrigin + component.Offset,
                         Scale = obj.Scale,
-                        Rectangle = new RectangleF(component.Offset.X, component.Offset.Y,
-                        component.Size.X, component.Size.Y),
+                        Rectangle = new RectangleF(component.Offset.X - Renderer.PhysicsCompensation,
+                        component.Offset.Y - Renderer.PhysicsCompensation,
+                        component.Size.X + Renderer.PhysicsCompensation, component.Size.Y + Renderer.PhysicsCompensation),
                         Size = obj.DefaultSize,
                         Texture = asset
                     }, component.DrawLayer);

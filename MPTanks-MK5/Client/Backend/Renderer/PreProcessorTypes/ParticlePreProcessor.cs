@@ -15,6 +15,19 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
         { }
         public override void Process(GameTime gameTime)
         {
+            foreach (var particle in Game.ParticleEngine.Particles)
+            {
+                Compositor.AddDrawable(new DrawableObject
+                {
+                    Mask = particle.ColorMask,
+                    ObjectRotation = particle.Rotation,
+                    Position = particle.Position,
+                    Scale = Vector2.One,
+                    Rectangle = new Engine.Core.RectangleF(0, 0, particle.Size.X, particle.Size.Y),
+                    Size = particle.Size,
+                    Texture = Finder.RetrieveAsset(particle.SpriteInfo)
+                }, particle.RenderBelowObjects ? int.MinValue : int.MaxValue);
+            }
         }
     }
 }

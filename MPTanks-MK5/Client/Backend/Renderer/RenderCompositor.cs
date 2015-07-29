@@ -18,11 +18,10 @@ namespace MPTanks.Client.Backend.Renderer
         private Effect _shadowEffect;
         private Effect _drawEffect;
         private Matrix _projection;
-        private Vector2 _shadowOffset = new Vector2(0.5f, 0.3f);
+        private Vector2 _shadowOffset = new Vector2(1.5f, 1f);
         private Color _shadowColor = new Color(50, 50, 50, 100);
         private DynamicVertexBuffer _vertexBuffer;
         private IndexBuffer _indexBuffer;
-        private Texture2D _tx;
         public RenderCompositor(GameCoreRenderer worldRenderer)
         {
             _renderer = worldRenderer;
@@ -31,23 +30,23 @@ namespace MPTanks.Client.Backend.Renderer
             _drawEffect = worldRenderer.Client.Content.Load<Effect>("componentRenderer");
             _vertexBuffer = new DynamicVertexBuffer(_gd, GPUDrawable.VertexDeclaration, 1000, BufferUsage.None);
 
-            _tx = new Texture2D(_gd, 1, 1);
-            _tx.SetData(new[] { Color.White });
             //Generate indices
-            ushort[] indices = new ushort[ushort.MaxValue];
+            var indices = new ushort[ushort.MaxValue];
 
             //6 to 4 ratio
-            //0, 1, 2 | 2, 3, 1
+            //0, 1, 2 | 2, 3, 0
 
-            for (ushort i = 0; i < indices.Length - 8; i += 6)
+            int arrCounter = 0;
+            ushort vertCounter = 0;
+            while (arrCounter < indices.Length - 8)
             {
-                indices[i] = (ushort)(0 + i);
-                indices[i + 1] = (ushort)(1 + i);
-                indices[i + 2] = (ushort)(2 + i);
-
-                indices[i + 3] = (ushort)(2 + i);
-                indices[i + 4] = (ushort)(3 + i);
-                indices[i + 5] = (ushort)(0 + i);
+                indices[arrCounter++] = (ushort)(vertCounter);
+                indices[arrCounter++] = (ushort)(vertCounter + 1);
+                indices[arrCounter++] = (ushort)(vertCounter + 2);
+                indices[arrCounter++] = (ushort)(vertCounter + 2);
+                indices[arrCounter++] = (ushort)(vertCounter + 3);
+                indices[arrCounter++] = (ushort)(vertCounter);
+                vertCounter += 4;
             }
 
             _indexBuffer = new IndexBuffer(_gd, IndexElementSize.SixteenBits, ushort.MaxValue, BufferUsage.WriteOnly);
@@ -117,21 +116,23 @@ namespace MPTanks.Client.Backend.Renderer
                             kvp.Value.Count, BufferUsage.WriteOnly);
                     }
 
+
                     //Upload vertices
                     _vertexBuffer.SetData(kvp.Value.InternalArray, 0, kvp.Value.Count, SetDataOptions.Discard);
                     _gd.SetVertexBuffer(_vertexBuffer);
+                    _gd.Indices = _indexBuffer;
 
-                    foreach (var technique in _shadowEffect.Techniques)
-                        foreach (var pass in technique.Passes)
-                        {
-                            _shadowEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
-                            _shadowEffect.Parameters["view"].SetValue(Matrix.Identity);
-                            _shadowEffect.Parameters["projection"].SetValue(_projection);
-                            _shadowEffect.Parameters["shadowOffset"].SetValue(_shadowOffset);
-                            _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
-                            pass.Apply();
-                            _gd.DrawPrimitives(PrimitiveType.TriangleList, 0, kvp.Value.Count / 3);
-                        }
+                    //foreach (var technique in _shadowEffect.Techniques)
+                    //    foreach (var pass in technique.Passes)
+                    //    {
+                    //        _shadowEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
+                    //        _shadowEffect.Parameters["view"].SetValue(Matrix.Identity);
+                    //        _shadowEffect.Parameters["projection"].SetValue(_projection);
+                    //        _shadowEffect.Parameters["shadowOffset"].SetValue(_shadowOffset);
+                    //        _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
+                    //        pass.Apply();
+                    //        _gd.DrawPrimitives(PrimitiveType.TriangleList, 0, kvp.Value.Count / 3);
+                    //    }
 
 
                     foreach (var technique in _drawEffect.Techniques)
@@ -141,7 +142,7 @@ namespace MPTanks.Client.Backend.Renderer
                             _drawEffect.Parameters["projection"].SetValue(_projection);
                             pass.Apply();
                             var rot = (float)gameTime.TotalGameTime.TotalSeconds;
-                            _gd.DrawPrimitives(PrimitiveType.TriangleList, 0, kvp.Value.Count / 3);
+                            _gd.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, kvp.Value.Count, 0, kvp.Value.Count / 2);
                         }
                 }
             }
@@ -216,15 +217,9 @@ namespace MPTanks.Client.Backend.Renderer
             list.Add(new GPUDrawable( //C / 2
                 obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
                 obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
-            list.Add(new GPUDrawable( //C / 2
-                obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
             list.Add(new GPUDrawable( //D / 3
                 obj.Rectangle.BottomLeft, obj.Position, obj.Size, obj.RotationOrigin,
                 obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomLeft));
-            list.Add(new GPUDrawable( //A / 0
-                obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
             //list.Add(new GPUDrawable //A
             //{
             //    Mask = obj.Mask,

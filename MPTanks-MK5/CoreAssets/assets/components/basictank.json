@@ -47,8 +47,8 @@
       "size": { "x": 3, "y": 0.25 }
     },
     {
-      "drawLayer": 2,
-      "mask": { "r": 255, "g": 150, "b": 150, "a": 150 },
+      "drawLayer": 3,
+      "mask": { "r": 255, "g": 150, "b": 150, "a": 255 },
       "name": "turret",
       "offset": { "x": 1.25, "y": -1 },
       "rotation": 0,

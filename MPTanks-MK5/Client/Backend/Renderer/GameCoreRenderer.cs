@@ -16,6 +16,7 @@ namespace MPTanks.Client.Backend.Renderer
     {
         public Game Client { get; private set; }
         public GameCore Game { get; private set; }
+        public float PhysicsCompensation { get; set; } = 0.085f;
         public ILogger Logger => Game.Logger;
         internal AssetFinder Finder { get; private set; }
         internal RenderCompositor Compositor { get; private set; }
@@ -62,7 +63,7 @@ namespace MPTanks.Client.Backend.Renderer
             foreach (var processor in PreProcessors)
                 processor.Process(gameTime);
 
-            Compositor.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
+            //Compositor.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
             Compositor.SetView(View);
             Compositor.Draw(gameTime);
 
