@@ -27,7 +27,8 @@ VShader VertexShaderFunction(VShader input) {
 float4 ShadowSamplerFunction(VShader input) : SV_Target0
 {
 	float4 color = tex2D(samp, input.TexCoord.xy + shadowOffset);
-	return color.a * shadowColor;
+	if (color.a > 0.25)	return shadowColor;
+	else return float4(0, 0, 0, 0);
 }
 
 float4 RenderDrawerFunction(VShader input) : SV_Target0

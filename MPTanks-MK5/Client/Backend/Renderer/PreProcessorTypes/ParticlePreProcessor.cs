@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MPTanks.Engine;
+using MPTanks.Client.Backend.Renderer.LayerRenderers;
 
 namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
 {
     class ParticlePreProcessor : PreProcessor
     {
-        public ParticlePreProcessor(GameCoreRenderer renderer, Assets.AssetFinder finder, RenderCompositor compositor)
+        public ParticlePreProcessor(GameCoreRenderer renderer, Assets.AssetFinder finder, GameWorldRenderer compositor)
             : base(renderer, finder, compositor)
         { }
         public override void Process(GameTime gameTime)

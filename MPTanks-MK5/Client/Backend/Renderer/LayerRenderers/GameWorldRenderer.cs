@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MPTanks.Client.Backend.Renderer.Assets;
 using MPTanks.Client.Backend.Renderer.Assets.Sprites;
 using MPTanks.Engine.Core;
 using System;
@@ -9,29 +11,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Client.Backend.Renderer
+namespace MPTanks.Client.Backend.Renderer.LayerRenderers
 {
-    class RenderCompositor : IDisposable
+    class GameWorldRenderer : LayerRenderer, IDisposable
     {
-        private GameCoreRenderer _renderer;
-        private GraphicsDevice _gd;
         private static Effect _shadowEffect;
         private static Effect _drawEffect;
-        private RectangleF _viewRect;
         private Vector2 _shadowOffset = new Vector2(0.2f);
         private Color _shadowColor = new Color(50, 50, 50, 100);
         private DynamicVertexBuffer _vertexBuffer;
         private IndexBuffer _indexBuffer;
         private RenderTarget2D _shadowBuffer;
-        public RenderCompositor(GameCoreRenderer worldRenderer)
+        private PreProcessor[] _preProcessors;
+        public GameWorldRenderer(GameCoreRenderer renderer, GraphicsDevice gd, ContentManager content,
+            AssetFinder finder)
+            : base(renderer, gd, content, finder)
         {
-            _renderer = worldRenderer;
-            _gd = _renderer.Client.GraphicsDevice;
             if (_shadowEffect == null)
-                _shadowEffect = worldRenderer.Client.Content.Load<Effect>("shadowRenderer");
+                _shadowEffect = Content.Load<Effect>("shadowRenderer");
             if (_drawEffect == null)
-                _drawEffect = worldRenderer.Client.Content.Load<Effect>("componentRenderer");
-            _vertexBuffer = new DynamicVertexBuffer(_gd, GPUDrawable.VertexDeclaration, 1000, BufferUsage.None);
+                _drawEffect = Content.Load<Effect>("componentRenderer");
+            _vertexBuffer = new DynamicVertexBuffer(
+                GraphicsDevice, GPUDrawable.VertexDeclaration, 1000, BufferUsage.None);
+
+            _preProcessors = new PreProcessor[] {
+                new PreProcessorTypes.AnimationPreProcessor(renderer, finder, this),
+                new PreProcessorTypes.GameObjectPreProcessor(renderer, finder, this),
+                new PreProcessorTypes.ParticlePreProcessor(renderer, finder, this)
+            };
 
             //Generate indices
             var indices = new ushort[ushort.MaxValue];
@@ -52,12 +59,9 @@ namespace MPTanks.Client.Backend.Renderer
                 vertCounter += 4;
             }
 
-            _indexBuffer = new IndexBuffer(_gd, IndexElementSize.SixteenBits, ushort.MaxValue, BufferUsage.WriteOnly);
+            _indexBuffer = new IndexBuffer(
+                GraphicsDevice, IndexElementSize.SixteenBits, ushort.MaxValue, BufferUsage.WriteOnly);
             _indexBuffer.SetData(indices);
-        }
-        public void SetView(RectangleF viewRect)
-        {
-            _viewRect = viewRect;
         }
         public void SetShadowParameters(Vector2 offset, Color color)
         {
@@ -91,7 +95,7 @@ namespace MPTanks.Client.Backend.Renderer
                 //Create layer
                 var spriteInfo = new Engine.Assets.SpriteInfo(null, null);
                 var layer = new RenderCompositorLayer(number,
-                    _renderer.Finder.RetrieveAsset(ref spriteInfo).SpriteSheet);
+                    Finder.RetrieveAsset(ref spriteInfo).SpriteSheet);
                 _layers.Add(number, layer);
                 _sorted.Add(layer);
                 _sorted.Sort((a, b) => a.LayerNumber - b.LayerNumber);
@@ -99,21 +103,23 @@ namespace MPTanks.Client.Backend.Renderer
             }
         }
 
-        public void Draw(GameTime gameTime, RenderTarget2D target)
+        public override void Draw(GameTime gameTime, RenderTarget2D target)
         {
             if (disposedValue)
                 return;
 
-            _gd.RasterizerState = RasterizerState.CullNone;
-            _gd.BlendState = BlendState.NonPremultiplied;
+            CallPreProcessors(gameTime);
+
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             var projection = Matrix.CreateOrthographicOffCenter(
-                _viewRect.Left, _viewRect.Right, _viewRect.Bottom, _viewRect.Top, -1, float.MaxValue);
+                ViewRect.Left, ViewRect.Right, ViewRect.Bottom, ViewRect.Top, -1, float.MaxValue);
 
             CheckTarget(target.Width, target.Height);
 
-            _gd.SetRenderTarget(_shadowBuffer);
-            _gd.Clear(Color.Transparent);
+            GraphicsDevice.SetRenderTarget(_shadowBuffer);
+            GraphicsDevice.Clear(Color.Transparent);
 
             DrawObjects(gameTime, projection);
             DrawShadows(target);
@@ -123,6 +129,12 @@ namespace MPTanks.Client.Backend.Renderer
             {
                 layer.Clear();
             }
+        }
+
+        private void CallPreProcessors(GameTime gameTime)
+        {
+            foreach (var preProcessor in _preProcessors)
+                preProcessor.Process(gameTime);
         }
 
         private void DrawObjects(GameTime gameTime, Matrix projection)
@@ -139,15 +151,15 @@ namespace MPTanks.Client.Backend.Renderer
                     {
                         //New buffer, larger
                         _vertexBuffer.Dispose();
-                        _vertexBuffer = new DynamicVertexBuffer(_gd, GPUDrawable.VertexDeclaration,
+                        _vertexBuffer = new DynamicVertexBuffer(GraphicsDevice, GPUDrawable.VertexDeclaration,
                             kvp.Value.Count, BufferUsage.WriteOnly);
                     }
 
 
                     //Upload vertices
                     _vertexBuffer.SetData(kvp.Value.InternalArray, 0, kvp.Value.Count, SetDataOptions.Discard);
-                    _gd.SetVertexBuffer(_vertexBuffer);
-                    _gd.Indices = _indexBuffer;
+                    GraphicsDevice.SetVertexBuffer(_vertexBuffer);
+                    GraphicsDevice.Indices = _indexBuffer;
                     //Draw the object
                     foreach (var technique in _drawEffect.Techniques)
                         foreach (var pass in technique.Passes)
@@ -155,7 +167,8 @@ namespace MPTanks.Client.Backend.Renderer
                             _drawEffect.Parameters["txt"].SetValue(kvp.Key.Texture);
                             _drawEffect.Parameters["projection"].SetValue(projection);
                             pass.Apply();
-                            _gd.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, kvp.Value.Count, 0, kvp.Value.Count / 2);
+                            GraphicsDevice.DrawIndexedPrimitives(
+                                PrimitiveType.TriangleList, 0, 0, kvp.Value.Count, 0, kvp.Value.Count / 2);
                         }
                 }
             }
@@ -170,10 +183,10 @@ namespace MPTanks.Client.Backend.Renderer
                     };
         private void DrawShadows(RenderTarget2D target)
         {
-            _gd.SetRenderTarget(target);
+            GraphicsDevice.SetRenderTarget(target);
 
-            _gd.SetVertexBuffer(null);
-            _gd.Indices = null;
+            GraphicsDevice.SetVertexBuffer(null);
+            GraphicsDevice.Indices = null;
             //And do shadowing
             foreach (var technique in _shadowEffect.Techniques)
                 foreach (var pass in technique.Passes)
@@ -181,8 +194,8 @@ namespace MPTanks.Client.Backend.Renderer
                     _shadowEffect.Parameters["txt"].SetValue(_shadowBuffer);
                     //Compute shadow offset in 0-1 scale of the render target
                     var blocksToPixels = new Vector2(
-                        target.Width / _viewRect.Width,
-                        target.Height / _viewRect.Height
+                        target.Width / ViewRect.Width,
+                        target.Height / ViewRect.Height
                         );
                     _shadowEffect.Parameters["projection"].SetValue(Matrix.CreateOrthographicOffCenter(
                         0, 1, 1, 0, -1, 1));
@@ -190,18 +203,18 @@ namespace MPTanks.Client.Backend.Renderer
                         (_shadowOffset * blocksToPixels) / new Vector2(target.Width, target.Height));
                     _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
                     pass.Apply();
-                    _gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, _shadowScreenPrimitiveArray, 0, 2);
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, _shadowScreenPrimitiveArray, 0, 2);
                 }
         }
 
         private void CheckTarget(int drawWidth, int drawHeight)
         {
             if (_shadowBuffer == null)
-                _shadowBuffer = new RenderTarget2D(_gd, drawWidth, drawHeight);
+                _shadowBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
             else if (_shadowBuffer.Width != drawWidth || _shadowBuffer.Height != drawHeight)
             {
                 _shadowBuffer.Dispose();
-                _shadowBuffer = new RenderTarget2D(_gd, drawWidth, drawHeight);
+                _shadowBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
             }
         }
 

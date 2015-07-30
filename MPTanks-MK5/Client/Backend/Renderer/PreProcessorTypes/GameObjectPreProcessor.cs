@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MPTanks.Engine;
 using MPTanks.Engine.Core;
+using MPTanks.Client.Backend.Renderer.LayerRenderers;
 
 namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
 {
     class GameObjectPreProcessor : PreProcessor
     {
-        public GameObjectPreProcessor(GameCoreRenderer renderer, Assets.AssetFinder finder, RenderCompositor compositor)
+        public GameObjectPreProcessor(GameCoreRenderer renderer, Assets.AssetFinder finder, GameWorldRenderer compositor)
             : base(renderer, finder, compositor)
         { }
         public override void Process(GameTime gameTime)

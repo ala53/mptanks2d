@@ -64,10 +64,10 @@ namespace MPTanks.Engine.Maps
         /// </summary>
         public void CreateObjects()
         {
-            if (ShadowOffset == null)
-                ShadowOffset = new Vector2(0.25f);
+            if (_deserialized.ShadowOffset == null)
+                ShadowOffset = new Vector2(5f, -5f);
             else ShadowOffset = _deserialized.ShadowOffset;
-            if (ShadowColor == null)
+            if (_deserialized.ShadowColor == null)
                 ShadowColor = new Color(50, 50, 50, 100);
             else ShadowColor = _deserialized.ShadowColor;
 
