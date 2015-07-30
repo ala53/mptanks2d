@@ -212,10 +212,10 @@ namespace MPTanks.Client.Backend.Renderer
         {
             if (!disposedValue)
             {
-                disposedValue = true;
                 _shadowBuffer.Dispose();
                 _vertexBuffer.Dispose();
                 _indexBuffer.Dispose();
+                disposedValue = true;
                 //These are left commented out because
                 //MonoGame leaves shaders as singleton objects,
                 //which means that if we dispose here, we corrupt the entire appdomain 
