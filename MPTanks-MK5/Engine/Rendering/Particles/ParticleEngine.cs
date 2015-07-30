@@ -10,7 +10,7 @@ namespace MPTanks.Engine.Rendering.Particles
     public partial class ParticleEngine
     {
         private List<Emitter> _emitters = new List<Emitter>();
-        public IList<Emitter> Emitters { get { return _emitters.AsReadOnly(); } }
+        public IReadOnlyList<Emitter> Emitters { get { return _emitters; } }
         private Particle[] _particles;
         public Particle[] Particles { get { return _particles; } }
         public GameCore Game { get; private set; }
