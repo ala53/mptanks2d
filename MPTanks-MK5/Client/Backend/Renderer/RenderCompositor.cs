@@ -99,6 +99,9 @@ namespace MPTanks.Client.Backend.Renderer
 
         public void Draw(GameTime gameTime, RenderTarget2D target)
         {
+            if (disposedValue)
+                return;
+
             _gd.RasterizerState = RasterizerState.CullNone;
             _gd.BlendState = BlendState.NonPremultiplied;
 
@@ -191,17 +194,23 @@ namespace MPTanks.Client.Backend.Renderer
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
+                disposedValue = true;
+                _gd.Flush();
+                _shadowBuffer.Dispose();
                 _vertexBuffer.Dispose();
                 _indexBuffer.Dispose();
-                _shadowEffect.Dispose();
-                _drawEffect.Dispose();
-                disposedValue = true;
+                //These are left commented out because
+                //MonoGame leaves shaders as singleton objects,
+                //which means that if we dispose here, we corrupt the entire appdomain 
+                //and will never be able to use the shaders again
+                //_shadowEffect.Dispose();
+                //_drawEffect.Dispose();
             }
         }
 

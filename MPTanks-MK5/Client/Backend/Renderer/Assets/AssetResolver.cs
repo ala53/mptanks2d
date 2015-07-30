@@ -17,6 +17,9 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
         public string ResolveAssetFile(string sheetName)
         {
+            if (Path.IsPathRooted(sheetName) && 
+                File.Exists(sheetName)) return sheetName;
+
             string addedPath = null;
             var fName = sheetName;
             if (sheetName.Contains("\\"))

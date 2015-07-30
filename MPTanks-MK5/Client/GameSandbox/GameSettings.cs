@@ -149,7 +149,8 @@ namespace MPTanks.Client.GameSandbox
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "other"),
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "tanks"),
                     Path.Combine(ModUnpackPath, "assets"),
-                    Path.Combine(ConfigDir, "assets")
+                    Path.Combine(ConfigDir, "assets"),
+                    ConfigDir
                 });
 
             RenderScale = new Setting<float>(this, "Render Scale",
