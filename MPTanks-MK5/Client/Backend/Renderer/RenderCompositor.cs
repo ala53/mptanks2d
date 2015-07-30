@@ -15,8 +15,8 @@ namespace MPTanks.Client.Backend.Renderer
     {
         private GameCoreRenderer _renderer;
         private GraphicsDevice _gd;
-        private Effect _shadowEffect;
-        private Effect _drawEffect;
+        private static Effect _shadowEffect;
+        private static Effect _drawEffect;
         private RectangleF _viewRect;
         private Vector2 _shadowOffset = new Vector2(0.2f);
         private Color _shadowColor = new Color(50, 50, 50, 100);
@@ -27,8 +27,10 @@ namespace MPTanks.Client.Backend.Renderer
         {
             _renderer = worldRenderer;
             _gd = _renderer.Client.GraphicsDevice;
-            _shadowEffect = worldRenderer.Client.Content.Load<Effect>("shadowRenderer");
-            _drawEffect = worldRenderer.Client.Content.Load<Effect>("componentRenderer");
+            if (_shadowEffect == null)
+                _shadowEffect = worldRenderer.Client.Content.Load<Effect>("shadowRenderer");
+            if (_drawEffect == null)
+                _drawEffect = worldRenderer.Client.Content.Load<Effect>("componentRenderer");
             _vertexBuffer = new DynamicVertexBuffer(_gd, GPUDrawable.VertexDeclaration, 1000, BufferUsage.None);
 
             //Generate indices
@@ -113,6 +115,19 @@ namespace MPTanks.Client.Backend.Renderer
             _gd.SetRenderTarget(_shadowBuffer);
             _gd.Clear(Color.Transparent);
 
+            DrawObjects(gameTime, projection);
+            DrawShadows(target);
+
+            //And finally, clear the layers so we can draw for the next frame
+            foreach (var layer in _sorted)
+            {
+                layer.Clear();
+            }
+        }
+
+        private void DrawObjects(GameTime gameTime, Matrix projection)
+        {
+
             foreach (var layer in _sorted)
             {
                 foreach (var kvp in layer.SpriteSorted)
@@ -144,7 +159,17 @@ namespace MPTanks.Client.Backend.Renderer
                         }
                 }
             }
+        }
 
+        private VertexPositionTexture[] _shadowScreenPrimitiveArray = new[]
+                    {
+                        new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
+                        new VertexPositionTexture(new Vector3(1, 0, 0), new Vector2(1, 0)),
+                        new VertexPositionTexture(new Vector3(0, 1, 0), new Vector2(0, 1)),
+                        new VertexPositionTexture(new Vector3(1, 1, 0), Vector2.One),
+                    };
+        private void DrawShadows(RenderTarget2D target)
+        {
             _gd.SetRenderTarget(target);
 
             _gd.SetVertexBuffer(null);
@@ -165,21 +190,8 @@ namespace MPTanks.Client.Backend.Renderer
                         (_shadowOffset * blocksToPixels) / new Vector2(target.Width, target.Height));
                     _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
                     pass.Apply();
-                    _gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, new[]
-                    {
-                        new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
-                        new VertexPositionTexture(new Vector3(1, 0, 0), new Vector2(1, 0)),
-                        new VertexPositionTexture(new Vector3(0, 1, 0), new Vector2(0, 1)),
-                        new VertexPositionTexture(new Vector3(1, 1, 0), Vector2.One),
-                    }, 0, 2);
+                    _gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, _shadowScreenPrimitiveArray, 0, 2);
                 }
-
-
-            //And finally, clear the layers so we can draw for the next frame
-            foreach (var layer in _sorted)
-            {
-                layer.Clear();
-            }
         }
 
         private void CheckTarget(int drawWidth, int drawHeight)
@@ -201,7 +213,6 @@ namespace MPTanks.Client.Backend.Renderer
             if (!disposedValue)
             {
                 disposedValue = true;
-                _gd.Flush();
                 _shadowBuffer.Dispose();
                 _vertexBuffer.Dispose();
                 _indexBuffer.Dispose();

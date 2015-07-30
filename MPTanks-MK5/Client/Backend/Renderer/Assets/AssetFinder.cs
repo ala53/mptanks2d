@@ -14,11 +14,11 @@ namespace MPTanks.Client.Backend.Renderer.Assets
     class AssetFinder
     {
         private GameCoreRenderer _renderer;
-        private AssetCache _cache;
+        public AssetCache Cache { get; private set; }
         public AssetFinder(GameCoreRenderer renderer, AssetCache cache)
         {
             _renderer = renderer;
-            _cache = cache;
+            Cache = cache;
         }
 
         /// <summary>
@@ -32,11 +32,11 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             if (info.IsAnimation)
             {
                 var frame = GetAnimationFrameInfo(info);
-                return _cache.GetSprite(frame);
+                return Cache.GetSprite(frame);
             }
 
             //If not animated, just do the simple thing and...
-            return _cache.GetSprite(info);
+            return Cache.GetSprite(info);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -47,10 +47,10 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
         private SpriteInfo GetAnimationFrameInfo(SpriteInfo info)
         {
-            if (_cache.IsLoading(info.SheetName))
+            if (Cache.IsLoading(info.SheetName))
                 return new SpriteInfo(AssetCache.LoadingTextureSpriteName, null);
 
-            var anim = _cache.GetAnimation(info.FrameName, info.SheetName);
+            var anim = Cache.GetAnimation(info.FrameName, info.SheetName);
             if (anim == null) return new SpriteInfo(AssetCache.MissingTextureSpriteName, null);
 
             int frame = (int)((info.PositionInAnimationMs % anim.Length.TotalMilliseconds) / anim.FrameLengthMs);

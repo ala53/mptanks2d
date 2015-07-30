@@ -79,6 +79,7 @@ namespace MPTanks.Client.Backend.Renderer
             if (!disposedValue)
             {
                 Compositor.Dispose();
+                Finder.Cache.Dispose();
 
                 disposedValue = true;
             }

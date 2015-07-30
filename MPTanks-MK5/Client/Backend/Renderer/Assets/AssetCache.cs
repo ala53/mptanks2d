@@ -96,7 +96,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             var sprites = new Dictionary<string, Sprite>();
             sprites.Add(MissingTextureSpriteName, new Sprite(0, 0, 48, 48, MissingTextureSpriteName));
             sprites.Add(BlankTextureSpriteName, new Sprite(0, 0, 4, 4, BlankTextureSpriteName));
-            sprites.Add(LoadingTextureSpriteName, new Sprite(0, 0, 4, 4, LoadingTextureSpriteName));
+            sprites.Add(LoadingTextureSpriteName, new Sprite(60, 60, 4, 4, LoadingTextureSpriteName));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
                 new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));

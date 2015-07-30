@@ -48,13 +48,16 @@ namespace MPTanks.Engine.Settings
                 ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
 #endif
 
-            Directory.CreateDirectory(ConfigDir);
+            if (Path.IsPathRooted(ConfigDir))
+                Directory.CreateDirectory(ConfigDir);
         }
 
         //We only look one place for the setting for this: configpath.txt in the current directory
         //The first line contains the debug path and the second contains the release path
         //If the file doesn't exist, go to default
-        public static readonly string ConfigDir =
+        public static string ConfigDir
+        { get; private set; }
+        =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D");
 
         public void LoadFromFile(string file)
