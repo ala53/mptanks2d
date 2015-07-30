@@ -26,19 +26,21 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             get { return _spriteSheets["asset_cache_internal_spritesheet"]; }
         }
 
+        private Sprite _missingSprite;
         /// <summary>
         /// A checkerboard purple and white sprite sheet to use when we can't find the sprite sheet or sprite
         /// </summary>
         public Sprite MissingTextureSprite
         {
-            get { return _internalSprites[MissingTextureSpriteName]; }
+            get { return _missingSprite; }
         }
+        private Sprite _loadingSprite;
         /// <summary>
         /// A completely transparent, black, sprite to display while the actual texture is loading.
         /// </summary>
         public Sprite LoadingTextureSprite
         {
-            get { return _internalSprites[LoadingTextureSpriteName]; }
+            get { return _loadingSprite; }
         }
         private Sprite _blankSprite;
         /// <summary>
@@ -99,6 +101,8 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             _spriteSheets.Add("asset_cache_internal_spritesheet",
                 new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
             _blankSprite = _internalSprites[BlankTextureSpriteName];
+            _loadingSprite = _internalSprites[LoadingTextureSpriteName];
+            _missingSprite = _internalSprites[MissingTextureSpriteName];
         }
 
         public Animation GetAnimation(string animationName, string sheetName)

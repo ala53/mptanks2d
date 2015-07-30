@@ -20,6 +20,11 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
             foreach (var particle in Game.ParticleEngine.Particles)
             {
                 if (!particle.Alive) continue;
+                if (particle.NonCenteredPosition.X < Renderer.View.Left ||
+                    particle.NonCenteredPosition.X > Renderer.View.Right ||
+                    particle.NonCenteredPosition.Y < Renderer.View.Top ||
+                    particle.NonCenteredPosition.Y > Renderer.View.Bottom)
+                    continue;
                 var info = particle.SpriteInfo;
                 var part = new DrawableObject
                 {
