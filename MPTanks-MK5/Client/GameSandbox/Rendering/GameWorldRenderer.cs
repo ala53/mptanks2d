@@ -322,6 +322,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
             {
                 //Stop drawing if we've hit the on screen particle limit
                 if (remainingAllowedParticles == 0) break;
+                if (!particle.Alive) continue;
                 //Ignore particles in wrong order
                 if (particle.RenderBelowObjects != renderParticlesBelow) continue;
                 //And ignore off screen particles

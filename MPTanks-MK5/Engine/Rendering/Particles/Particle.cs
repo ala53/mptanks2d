@@ -19,6 +19,7 @@ namespace MPTanks.Engine.Rendering.Particles
         public Vector2 Velocity;
         public Vector2 Acceleration;
         public bool RenderBelowObjects;
+        public bool Alive;
         public Vector2 Position
         {
             get { return NonCenteredPosition - (Size / 2); }

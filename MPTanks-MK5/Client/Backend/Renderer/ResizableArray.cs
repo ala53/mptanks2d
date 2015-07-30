@@ -22,19 +22,25 @@ namespace MPTanks.Client.Backend.Renderer
 
         public void Add(T element)
         {
-            if (_count == _array.Length)
+            lock (_array)
             {
-                Array.Resize(ref _array, _array.Length * 2);
-            }
+                if (_count == _array.Length)
+                {
+                    Array.Resize(ref _array, _array.Length * 2);
+                }
 
-            _array[_count++] = element;
+                _array[_count++] = element;
+            }
         }
         public void Clear()
         {
-            for (var i = 0; i < _array.Length; i++)
-                _array[i] = default(T);
+            lock (_array)
+            {
+                for (var i = 0; i < _array.Length; i++)
+                    _array[i] = default(T);
 
-            _count = 0;
+                _count = 0;
+            }
         }
     }
 }

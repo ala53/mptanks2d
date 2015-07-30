@@ -15,11 +15,11 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
         { }
         public override void Process(GameTime gameTime)
         {
-            int max = 20000;
+            var belowLayer = Compositor.GetOrAddLayer(-100000000);
+            var aboveLayer = Compositor.GetOrAddLayer(100000000);
             foreach (var particle in Game.ParticleEngine.Particles)
             {
-                max--;
-                if (max == 0) break;
+                if (!particle.Alive) continue;
                 var info = particle.SpriteInfo;
                 var part = new DrawableObject
                 {
@@ -31,7 +31,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                     Size = particle.Size,
                     Texture = Finder.RetrieveAsset(ref info)
                 };
-                Compositor.AddDrawable(ref part, particle.RenderBelowObjects ? -100000000 : 100000000);
+                if (particle.RenderBelowObjects)
+                    belowLayer.AddObject(part);
+                else aboveLayer.AddObject(part);
             }
         }
     }

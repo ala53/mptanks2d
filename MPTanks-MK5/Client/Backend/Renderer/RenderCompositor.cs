@@ -80,18 +80,21 @@ namespace MPTanks.Client.Backend.Renderer
 
         public RenderCompositorLayer GetOrAddLayer(int number)
         {
-            if (_layers.ContainsKey(number)) return _layers[number];
-            if (number < -100000000 || number > 100000000)
-                throw new ArgumentOutOfRangeException("number", "Must be between -100,000,000 and +100,000,000");
+            lock (_layers)
+            {
+                if (_layers.ContainsKey(number)) return _layers[number];
+                if (number < -100000000 || number > 100000000)
+                    throw new ArgumentOutOfRangeException("number", "Must be between -100,000,000 and +100,000,000");
 
-            //Create layer
-            var spriteInfo = new Engine.Assets.SpriteInfo(null, null);
-            var layer = new RenderCompositorLayer(number,
-                _renderer.Finder.RetrieveAsset(ref spriteInfo).SpriteSheet);
-            _layers.Add(number, layer);
-            _sorted.Add(layer);
-            _sorted.Sort((a, b) => a.LayerNumber - b.LayerNumber);
-            return layer;
+                //Create layer
+                var spriteInfo = new Engine.Assets.SpriteInfo(null, null);
+                var layer = new RenderCompositorLayer(number,
+                    _renderer.Finder.RetrieveAsset(ref spriteInfo).SpriteSheet);
+                _layers.Add(number, layer);
+                _sorted.Add(layer);
+                _sorted.Sort((a, b) => a.LayerNumber - b.LayerNumber);
+                return layer;
+            }
         }
 
         public void Draw(GameTime gameTime, RenderTarget2D target)
@@ -235,107 +238,38 @@ namespace MPTanks.Client.Backend.Renderer
         }
         public void AddObject(DrawableObject obj)
         {
-            ResizableArray<GPUDrawable> list;
-            if (obj.Texture.SpriteSheet == _baseSheet)
+            lock (SpriteSorted)
             {
-                list = _baseSheetArr;
+                ResizableArray<GPUDrawable> list;
+                if (obj.Texture.SpriteSheet == _baseSheet)
+                {
+                    list = _baseSheetArr;
+                }
+                else
+                {
+                    if (!SpriteSorted.ContainsKey(obj.Texture.SpriteSheet))
+                        SpriteSorted.Add(obj.Texture.SpriteSheet, new ResizableArray<GPUDrawable>());
+                    list = SpriteSorted[obj.Texture.SpriteSheet];
+                }
+                //Tesellate into 2 triangles
+                //
+                // A--B
+                // -\ -
+                // - \-
+                // D--C
+                list.Add(new GPUDrawable( //A / 0
+                    obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
+                    obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
+                list.Add(new GPUDrawable( //B / 1
+                    obj.Rectangle.TopRight, obj.Position, obj.Size, obj.RotationOrigin,
+                    obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopRight));
+                list.Add(new GPUDrawable( //C / 2
+                    obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
+                    obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
+                list.Add(new GPUDrawable( //D / 3
+                    obj.Rectangle.BottomLeft, obj.Position, obj.Size, obj.RotationOrigin,
+                    obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomLeft));
             }
-            else
-            {
-                if (!SpriteSorted.ContainsKey(obj.Texture.SpriteSheet))
-                    SpriteSorted.Add(obj.Texture.SpriteSheet, new ResizableArray<GPUDrawable>());
-                list = SpriteSorted[obj.Texture.SpriteSheet];
-            }
-            //Tesellate into 2 triangles
-            //
-            // A--B
-            // -\ -
-            // - \-
-            // D--C
-            list.Add(new GPUDrawable( //A / 0
-                obj.Rectangle.TopLeft, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopLeft));
-            list.Add(new GPUDrawable( //B / 1
-                obj.Rectangle.TopRight, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.TopRight));
-            list.Add(new GPUDrawable( //C / 2
-                obj.Rectangle.BottomRight, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomRight));
-            list.Add(new GPUDrawable( //D / 3
-                obj.Rectangle.BottomLeft, obj.Position, obj.Size, obj.RotationOrigin,
-                obj.Scale, obj.Rotation, obj.ObjectRotation, obj.Mask, obj.Texture.Rectangle.BottomLeft));
-            //list.Add(new GPUDrawable //A
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = Vector2.Zero,
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(0, 0)
-            //});
-            //list.Add(new GPUDrawable //B
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = new Vector2(obj.Size.X, 0),
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(1, 0)
-            //});
-            //list.Add(new GPUDrawable //C
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = obj.Size,
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(1, 1)
-            //});
-            //list.Add(new GPUDrawable //C
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = obj.Size,
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(1, 1)
-            //});
-            //list.Add(new GPUDrawable //D
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = new Vector2(0, obj.Size.Y),
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(0, 1)
-            //});
-            //list.Add(new GPUDrawable //A
-            //{
-            //    Mask = obj.Mask,
-            //    Position = obj.Position,
-            //    Vertex = Vector2.Zero,
-            //    Rotation = obj.Rotation,
-            //    RotationOrigin = obj.RotationOrigin,
-            //    Scale = obj.Scale,
-            //    Size = obj.Size,
-            //    SpritePosition = obj.Texture.Rectangle,
-            //    TextureCoordinates = new Vector2(0, 0)
-            //});
         }
 
         public void Clear()
