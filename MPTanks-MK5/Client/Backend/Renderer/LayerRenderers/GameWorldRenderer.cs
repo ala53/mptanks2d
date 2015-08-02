@@ -22,6 +22,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
         private DynamicVertexBuffer _vertexBuffer;
         private IndexBuffer _indexBuffer;
         private RenderTarget2D _shadowBuffer;
+        private RenderTarget2D _outputBuffer;
+        private SpriteBatch _spriteBatch;
         private PreProcessor[] _preProcessors;
         public GameWorldRenderer(GameCoreRenderer renderer, GraphicsDevice gd, ContentManager content,
             AssetFinder finder)
@@ -39,6 +41,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
                 new PreProcessorTypes.GameObjectPreProcessor(renderer, finder, this),
                 new PreProcessorTypes.ParticlePreProcessor(renderer, finder, this)
             };
+
+            _spriteBatch = new SpriteBatch(gd);
 
             //Generate indices
             var indices = new ushort[ushort.MaxValue];
@@ -183,7 +187,7 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
                     };
         private void DrawShadows(RenderTarget2D target)
         {
-            GraphicsDevice.SetRenderTarget(target);
+            GraphicsDevice.SetRenderTarget(_outputBuffer);
 
             GraphicsDevice.SetVertexBuffer(null);
             GraphicsDevice.Indices = null;
@@ -202,9 +206,15 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
                     _shadowEffect.Parameters["shadowOffset"].SetValue(
                         (_shadowOffset * blocksToPixels) / new Vector2(target.Width, target.Height));
                     _shadowEffect.Parameters["shadowColor"].SetValue(_shadowColor.ToVector4());
+                    _shadowEffect.Parameters["belowLayer"].SetValue(target);
                     pass.Apply();
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, _shadowScreenPrimitiveArray, 0, 2);
                 }
+
+            GraphicsDevice.SetRenderTarget(target);
+            _spriteBatch.Begin(SpriteSortMode.Immediate);
+            _spriteBatch.Draw(_outputBuffer, new Rectangle(0, 0, target.Width, target.Height), Color.White);
+            _spriteBatch.End();
         }
 
         private void CheckTarget(int drawWidth, int drawHeight)
@@ -215,6 +225,13 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             {
                 _shadowBuffer.Dispose();
                 _shadowBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
+            }
+            if (_outputBuffer == null)
+                _outputBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
+            else if (_outputBuffer.Width != drawWidth || _outputBuffer.Height != drawHeight)
+            {
+                _outputBuffer.Dispose();
+                _outputBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
             }
         }
 

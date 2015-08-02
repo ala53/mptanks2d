@@ -50,6 +50,7 @@ namespace MPTanks.Client.GameSandbox
         private Screens.Screen currentScreen;
         private UIRoot root;
         private MonoGameEngine eng;
+        private Texture2D _helperTexture;
 
         private GameCoreRenderer _gcRenderer;
 
@@ -133,6 +134,9 @@ namespace MPTanks.Client.GameSandbox
             SetupGame();
             loadingScreen = new LoadingScreen(this);
             font = Content.Load<SpriteFont>("font");
+
+            _helperTexture = new Texture2D(GraphicsDevice, 1, 1);
+            _helperTexture.SetData(new[] { Color.White });
 
             root = new EmptyKeys.UserInterface.Generated.CreateAccountPage(800, 480);
 
@@ -472,7 +476,7 @@ namespace MPTanks.Client.GameSandbox
                 if (onesToDraw == 0 || onesToDraw == 1)
                 {
                     GraphicsDevice.SetRenderTarget(t);
-                    GraphicsDevice.Clear(new Color(20, 20, 20, 255));
+                    GraphicsDevice.Clear(new Color(120, 120, 120, 255));
                     if (player1.Tank != null)
                         drawRect = new RectangleF(
                             player1.Tank.Position.X - (15 * zoom),

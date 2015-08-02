@@ -49,7 +49,6 @@ namespace MPTanks.Client.Backend.Renderer
         
         public void Draw(GameTime gameTime)
         {
-            
             _gameRenderer.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
             foreach (var renderer in _renderers)
             {

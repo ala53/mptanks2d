@@ -15,9 +15,15 @@ namespace AssetCompileHelper
         private static Dictionary<string, string> _filesAndMD5s = new Dictionary<string, string>();
         static int Main(string[] args)
         {
+            string output = "";
+
+            Console.WriteLine("Started!");
+
             var mono = args[0] == "mono";
             var mgcbPath = args[1];
             var inDir = args[2];
+
+            output += $"Searching folder {inDir}\n";
 
             bool ok = true;
 
@@ -32,18 +38,30 @@ namespace AssetCompileHelper
                     fi.Extension.Contains("tif") || fi.Extension.Contains("gif") ||
                     fi.Extension.Contains("wav") || fi.Extension.Contains("ogg"))
                 {
+                    output += $"File found: {file}\n";
                     files.Add(file);
                 }
             }
 
             if (files.Count == 0)
+            {
+                output += "No files found \n";
+                File.WriteAllText("asset_compile_helper_log.log", output);
                 return -2;
+            }
 
             string cmdArgs = "";
             var needingRecompile = GetAssetsNeedingRecompile(files);
-            if (needingRecompile.Length == 0) return 0;
+            if (needingRecompile.Length == 0)
+            {
+                output += "No files need recompile.\n";
+                File.WriteAllText("asset_compile_helper_log.log", output);
+                return 0;
+            }
+            cmdArgs += "/incremental ";
             foreach (var file in needingRecompile)
             {
+                output += $"Recompiling {file}\n";
                 cmdArgs += String.Format("/build:\"{0}\" ", file);
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
             }
@@ -60,6 +78,8 @@ namespace AssetCompileHelper
             if (prc.ExitCode != 0) ok = false;
             WriteDictionary();
 
+            output += $"Finished (ok: {ok})";
+            File.WriteAllText("asset_compile_helper_log.log", output);
             return ok ? 0 : -2;
         }
 
