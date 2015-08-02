@@ -506,6 +506,8 @@ namespace MPTanks.Engine.Serialization
         public bool TracksObject { get; set; }
         public float Rotation { get; set; }
         public JSONVector Size { get; set; }
+        public JSONColor Mask { get; set; }
+        public int DrawLayer { get; set; }
         public float StartPositionMs { get; set; }
     }
 

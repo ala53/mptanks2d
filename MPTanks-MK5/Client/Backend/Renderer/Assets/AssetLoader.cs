@@ -72,7 +72,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
                 foreach (var sprite in metadata.Sprites)
                     sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
             //And build the output sprite sheet
-            return new SpriteSheet(animations, sprites, texture, metadata.Name, missingTextureSprite);
+            return new SpriteSheet(animations, sprites, texture, metadata.Name, sheetName, missingTextureSprite);
         }
 
         private Texture2D LoadTexture(string fn)

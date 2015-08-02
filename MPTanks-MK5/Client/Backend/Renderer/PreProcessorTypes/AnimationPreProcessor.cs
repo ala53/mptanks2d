@@ -16,6 +16,31 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
         { }
         public override void Process(GameTime gameTime)
         {
+            foreach (var animation in Renderer.Game.AnimationEngine.Animations)
+            {
+                var animInfo = Finder.Cache.GetAnimation(
+                    animation.SpriteInfo.FrameName, animation.SpriteInfo.SheetName);
+                //Check if the animation has ended
+                if (animInfo != null && animInfo.Length.TotalMilliseconds * animation.SpriteInfo.LoopCount
+                        < animation.SpriteInfo.PositionInAnimationMs)
+                    Renderer.Game.AnimationEngine.MarkAnimationCompleted(animation);
+
+
+                var info = animation.SpriteInfo;
+                Compositor.AddDrawable(new DrawableObject
+                {
+                    Mask = animation.Mask,
+                    ObjectRotation = animation.Rotation,
+                    Size = animation.Size,
+                    Scale = new Vector2(1),
+                    Position = animation.Position,
+                    Rectangle = new Engine.Core.RectangleF(0, 0, animation.Size.X, animation.Size.Y),
+                    Texture = Finder.RetrieveAsset(ref info)
+                }, animation.DrawLayer);
+
+                Finder.IncrementAnimation(ref info, gameTime);
+                animation.SpriteInfo = info;
+            }
         }
     }
 }

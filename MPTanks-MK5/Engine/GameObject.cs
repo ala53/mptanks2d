@@ -389,13 +389,13 @@ namespace MPTanks.Engine
         public void Update(GameTime gameTime)
         {
             UpdateEmitters(gameTime);
+            ActivateAtTimeEmitters();
+
+            UpdateRenderableComponentRotations(gameTime);
 
             if (TimeAliveMs > LifespanMs && LifespanMs != 0) Kill();
 
             TimeAliveMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            ActivateAtTimeEmitters();
-
-            UpdateRenderableComponentRotations(gameTime);
 
             UpdateInternal(gameTime);
         }
@@ -415,6 +415,7 @@ namespace MPTanks.Engine
         }
         public void UpdatePostPhysics(GameTime gameTime)
         {
+
             UpdatePostPhysicsInternal(gameTime);
         }
 

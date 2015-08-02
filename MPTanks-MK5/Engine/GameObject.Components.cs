@@ -323,8 +323,9 @@ namespace MPTanks.Engine
                     true, anim.LoopCount),
                     TransformPoint(anim.Position),
                     anim.Size,
+                    anim.Mask ?? Color.White,
                     null,
-                    0
+                    anim.DrawLayer
                     );
 
                 _animations.Add(anim.Name, animation);
@@ -538,9 +539,6 @@ namespace MPTanks.Engine
                     " but the call failed (method does exist).", ex);
             }
         }
-        #endregion
-
-        #region Component Groups 
         #endregion
     }
 }

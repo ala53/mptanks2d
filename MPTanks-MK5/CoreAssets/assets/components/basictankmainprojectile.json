@@ -5,7 +5,7 @@
       "image": { "frame": "[animation]projectileAnim" },
       "mask": { "r": 255, "g": 255, "b": 255, "a": 200 },
       "name": "bullet",
-      "offset": { "x": -0.2, "y": -0.2 },
+      "offset": { "x": -0.25, "y": -0.25 },
       "rotation": 0,
       "rotationOrigin": { "x": 0.25, "y": 0.25 },
       "size": { "x": 0.5, "y": 0.5 }
@@ -16,9 +16,9 @@
       "activatesOn": "create",
       "colorChangedByObjectColorMask": true,
       "emissionArea": {
-        "h": 0,
+        "h": 0.1,
         "tracksObject": true,
-        "w": 0,
+        "w": 0.1,
         "x": 0,
         "y": 0
       },
@@ -130,7 +130,7 @@
       "lifespan": 200,
       "maxAcceleration": { "x": 0, "y": 0 },
       "maxColorMask": { "r": 205, "g": 245, "b": 225, "a": 255 },
-      "maxFadeInTime": 40,
+      "maxFadeInTime": 0,
       "maxFadeOutTime": 75,
       "maxLifeSpan": 350,
       "maxParticlesPerSecond": 150,
@@ -140,7 +140,7 @@
       "maxVelocity": { "x": 4, "y": 4 },
       "minAcceleration": { "x": 0, "y": 0 },
       "minColorMask": { "r": 225, "g": 255, "b": 255, "a": 127 },
-      "minFadeInTime": 20,
+      "minFadeInTime": 0,
       "minFadeOutTime": 30,
       "minLifeSpan": 150,
       "minParticlesPerSecond": 75,

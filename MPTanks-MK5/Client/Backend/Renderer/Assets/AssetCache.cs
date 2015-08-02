@@ -99,7 +99,8 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             sprites.Add(LoadingTextureSpriteName, new Sprite(60, 60, 4, 4, LoadingTextureSpriteName));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
-                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, "asset_cache_internal_spritesheet"));
+                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, 
+                "asset_cache_internal_spritesheet", "asset_cache_internal_spritesheet"));
             _blankSprite = _internalSprites[BlankTextureSpriteName];
             _loadingSprite = _internalSprites[LoadingTextureSpriteName];
             _missingSprite = _internalSprites[MissingTextureSpriteName];
@@ -109,7 +110,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         {
             var sheet = GetSpriteSheet(sheetName);
             if (sheet == null) return null;
-            if (!sheet.AnimationsByName.ContainsKey(animationName))
+            if (sheet.AnimationsByName.ContainsKey(animationName))
                 return sheet.AnimationsByName[animationName];
 
             return null;
@@ -122,18 +123,18 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         public Sprite GetSprite(SpriteInfo info) => GetSprite(info.FrameName, info.SheetName);
         public Sprite GetSprite(string spriteName, string sheetName)
         {
-            if (spriteName == null || sheetName == null) return BlankTextureSprite;
-
             //special cases
             if (spriteName == LoadingTextureSpriteName) return LoadingTextureSprite;
             if (spriteName == MissingTextureSpriteName) return MissingTextureSprite;
+            if (spriteName == null || sheetName == null) return BlankTextureSprite;
 
             if (IsLoading(sheetName)) return LoadingTextureSprite;
 
             var sheet = GetSpriteSheet(sheetName); //get the sheet
             if (sheet != null && sheet.ContainsKey(spriteName)) //And see if the sprite exists
                 return _spriteSheets[sheetName][spriteName]; //so return it
-            else return MissingTextureSprite; //otherwise, die horribly
+            else
+                return MissingTextureSprite; //otherwise, die horribly
         }
 
         private SpriteSheet GetSpriteSheet(string sheetName)

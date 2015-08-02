@@ -21,14 +21,16 @@ namespace MPTanks.Engine.Rendering.Animations
         public SpriteInfo SpriteInfo { get; set; }
         public Action<Animation> CompletionCallback { get; private set; }
         public int DrawLayer { get; set; }
+        public Color Mask { get; set; }
 
-        public Animation(SpriteInfo spriteInfo, Vector2 center, Vector2 size, Action<Animation> callback = null, int drawLayer = 0)
+        public Animation(SpriteInfo spriteInfo, Vector2 center, Vector2 size, Color? mask, Action<Animation> callback = null, int drawLayer = 0)
         {
             Position = center;
             SpriteInfo = spriteInfo;
             Size = size;
             CompletionCallback = callback;
             DrawLayer = drawLayer;
+            Mask = mask ?? Color.White;
         }
     }
 }

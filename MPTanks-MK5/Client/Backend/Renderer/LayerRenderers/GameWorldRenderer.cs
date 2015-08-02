@@ -135,10 +135,14 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             }
         }
 
+        private GameTime _preProcessorGameTime = new GameTime();
         private void CallPreProcessors(GameTime gameTime)
         {
+            _preProcessorGameTime.TotalGameTime = gameTime.TotalGameTime;
+            _preProcessorGameTime.ElapsedGameTime = 
+                new TimeSpan((long)(gameTime.ElapsedGameTime.Ticks * (double)Renderer.Game.Timescale));
             foreach (var preProcessor in _preProcessors)
-                preProcessor.Process(gameTime);
+                preProcessor.Process(_preProcessorGameTime);
         }
 
         private void DrawObjects(GameTime gameTime, Matrix projection)

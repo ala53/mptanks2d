@@ -10,6 +10,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
     class SpriteSheet : IReadOnlyDictionary<string, Sprite>, IReadOnlyDictionary<string, Animation>, IReadOnlyList<Sprite>, IReadOnlyList<Animation>
     {
         public string Name { get; private set; }
+        public string FileName { get; private set; }
 
         private List<Animation> _animations = new List<Animation>();
         private List<Sprite> _sprites = new List<Sprite>();
@@ -140,7 +141,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
         #endregion
 
         public SpriteSheet(Dictionary<string, Animation> animations, Dictionary<string, Sprite> sprites, Texture2D texture,
-            string name, Sprite missingTextureSprite = null)
+            string name, string fileName, Sprite missingTextureSprite = null)
         {
             _animsByName = new Dictionary<string, Animation>(animations);
             _spritesByName = new Dictionary<string, Sprite>(sprites);
@@ -158,6 +159,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets.Sprites
             }
 
             Name = name;
+            FileName = fileName;
         }
     }
 }

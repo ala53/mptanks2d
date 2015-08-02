@@ -2,16 +2,17 @@
   "animations": [
     {
       "activatesOn": "destroy",
-      "spriteOptions": [
-        { "frame": "[ref]explosion1" },
-        { "frame": "[ref]explosion2" },
-        { "frame": "[ref]explosion3" }
-      ],
+      "drawLayer": 5,
       "loopCount": 1,
       "name": "death_explosion",
       "position": { "x": 1.5, "y": 2.5 },
       "rotation": 0,
       "size": { "x": 8, "y": 8 },
+      "spriteOptions": [
+        { "frame": "[ref]explosion1" },
+        { "frame": "[ref]explosion2" },
+        { "frame": "[ref]explosion3" }
+      ],
       "startPositionMs": 0,
       "tracksObject": true
     }

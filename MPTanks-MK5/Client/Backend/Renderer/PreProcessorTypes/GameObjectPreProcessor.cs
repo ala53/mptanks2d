@@ -29,8 +29,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         component.SpriteInfo = info;
                     }
 
-                    var physCompensation = 
-                        new Vector2(Renderer.PhysicsCompensation, Renderer.PhysicsCompensation) / obj.Scale;
+                    var physCompensation =
+                        new Vector2(Renderer.PhysicsCompensation, Renderer.PhysicsCompensation) / 
+                        (obj.Scale * component.Scale);
 
                     Compositor.AddDrawable(new DrawableObject
                     {
@@ -39,7 +40,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         Rotation = component.Rotation,
                         ObjectRotation = obj.Rotation,
                         RotationOrigin = component.RotationOrigin + component.Offset,
-                        Scale = obj.Scale,
+                        Scale = obj.Scale * component.Scale,
                         Rectangle = new RectangleF(component.Offset.X - physCompensation.X,
                         component.Offset.Y - physCompensation.Y,
                         component.Size.X + physCompensation.X * 2, component.Size.Y + physCompensation.Y * 2),

@@ -10,8 +10,8 @@ namespace MPTanks.Engine.Rendering.Animations
 {
     public class AnimationEngine
     {
-        private HashSet<Animation> animations = new HashSet<Animation>();
-        public ISet<Animation> Animations { get { return animations; } }
+        private HashSet<Animation> _animations = new HashSet<Animation>();
+        public ISet<Animation> Animations { get { return _animations; } }
 
         private bool _dirty = false;
         /// <summary>
@@ -27,17 +27,19 @@ namespace MPTanks.Engine.Rendering.Animations
             }
         }
 
+        private List<Animation> _animAddCache = new List<Animation>();
         public void AddAnimation(Animation anim)
         {
             _dirty = true;
-            if (!animations.Contains(anim))
-                animations.Add(anim);
+            if (!_animations.Contains(anim) && !_animAddCache.Contains(anim))
+                _animAddCache.Add(anim);
         }
+        private List<Animation> _animRemovalCache = new List<Animation>();
         public void RemoveAnimation(Animation anim)
         {
             _dirty = true;
-            if (animations.Contains(anim))
-                animations.Remove(anim);
+            if (_animations.Contains(anim) || _animRemovalCache.Contains(anim))
+                _animRemovalCache.Add(anim);
         }
         /// <summary>
         /// For the renderer to use: Marks an animation as completed/finished and removes it.
@@ -52,6 +54,12 @@ namespace MPTanks.Engine.Rendering.Animations
         }
         public void Update(GameTime gameTime)
         {
+            foreach (var anim in _animAddCache)
+                _animations.Add(anim);
+            foreach (var anim in _animRemovalCache)
+                _animations.Remove(anim);
+            _animAddCache.Clear();
+            _animRemovalCache.Clear();
         }
     }
 }
