@@ -243,6 +243,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             if (!disposedValue)
             {
                 _shadowBuffer.Dispose();
+                _spriteBatch.Dispose();
+                _outputBuffer.Dispose();
                 _vertexBuffer.Dispose();
                 _indexBuffer.Dispose();
                 disposedValue = true;
