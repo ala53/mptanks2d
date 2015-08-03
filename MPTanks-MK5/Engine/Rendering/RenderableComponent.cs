@@ -21,6 +21,7 @@ namespace MPTanks.Engine.Rendering
         public Color Mask { get; set; } = Color.White;
         public Vector2 Size { get; set; }
         public bool Visible { get; set; } = true;
+        public bool IgnoresObjectMask { get; set; } = true;
 
         /// <summary>
         /// The layer that the object draws on. Higher layers are drawn last while lower ones are drawn first.

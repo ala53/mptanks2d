@@ -377,6 +377,7 @@ namespace MPTanks.Engine.Serialization
         [DefaultValue(true)]
         public bool Visible { get; set; }
         public GameObjectSpriteSpecifierJSON Image { get; set; }
+        public bool IgnoresObjectMask { get; set; }
     }
     public class GameObjectSheetSpecifierJSON
     {

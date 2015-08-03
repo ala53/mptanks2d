@@ -47,6 +47,11 @@ namespace MPTanks.Engine.Rendering
             set { foreach (var cmp in Components) cmp.Visible = value; }
         }
 
+        public bool AffectedByObjectColorMask
+        {
+            set { foreach (var cmp in Components) cmp.IgnoresObjectMask = value; }
+        }
+
         /// <summary>
         /// The layer that the object draws on. Higher layers are drawn last while lower ones are drawn first.
         /// So, 0 is below 1 which is below 2 which...etc.

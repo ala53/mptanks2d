@@ -179,7 +179,8 @@ namespace MPTanks.Engine
                     RotationOrigin = cmp.RotationOrigin,
                     Scale = cmp.Scale,
                     Size = cmp.Size,
-                    Visible = cmp.Visible
+                    Visible = cmp.Visible,
+                    IgnoresObjectMask = cmp.IgnoresObjectMask
                 };
                 if (cmp.Image != null && cmp.Image.DamageLevels != null && cmp.Image.DamageLevels.Length > 0)
                 {

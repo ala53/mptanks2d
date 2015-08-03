@@ -30,12 +30,17 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                     }
 
                     var physCompensation =
-                        new Vector2(Renderer.PhysicsCompensation, Renderer.PhysicsCompensation) / 
+                        new Vector2(Renderer.PhysicsCompensation, Renderer.PhysicsCompensation) /
                         (obj.Scale * component.Scale);
+
+                    Color mask;
+                    if (component.IgnoresObjectMask)
+                        mask = component.Mask;
+                    else mask = new Color(component.Mask.ToVector4() * obj.ColorMask.ToVector4());
 
                     Compositor.AddDrawable(new DrawableObject
                     {
-                        Mask = new Color(component.Mask.ToVector4() * obj.ColorMask.ToVector4()),
+                        Mask = mask,
                         Position = obj.Position,
                         Rotation = component.Rotation,
                         ObjectRotation = obj.Rotation,

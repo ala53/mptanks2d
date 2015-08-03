@@ -95,6 +95,8 @@ namespace MPTanks.Engine.Tanks
         {
             UnsafeDisableEvents();
 
+            Body.SleepingAllowed = false;
+
             var velocity = InputState.MovementSpeed *
                 MovementSpeed;
 
