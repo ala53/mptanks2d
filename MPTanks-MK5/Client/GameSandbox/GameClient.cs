@@ -153,8 +153,6 @@ namespace MPTanks.Client.GameSandbox
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
-            if (_gcRenderer != null) _gcRenderer.Dispose();
-            _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
 
             player1 = new NetworkPlayer()
             {
@@ -166,10 +164,17 @@ namespace MPTanks.Client.GameSandbox
             };
             game.AddPlayer(player1);
             game.AddPlayer(player2);
+
+            for(var i = 0; i < 5; i++)
+            {
+                game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
+            }
             //Set up rendering
             if (renderer != null)
                 renderer.Destroy();
             renderer = new GameWorldRenderer(currentScreen, game);
+            if (_gcRenderer != null) _gcRenderer.Dispose();
+            _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
         }
 
         /// <summary>

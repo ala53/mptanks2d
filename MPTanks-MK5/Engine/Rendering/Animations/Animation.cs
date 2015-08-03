@@ -18,12 +18,13 @@ namespace MPTanks.Engine.Rendering.Animations
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public float Rotation { get; set; }
+        public Vector2 RotationOrigin { get; set; }
         public SpriteInfo SpriteInfo { get; set; }
         public Action<Animation> CompletionCallback { get; private set; }
         public int DrawLayer { get; set; }
         public Color Mask { get; set; }
 
-        public Animation(SpriteInfo spriteInfo, Vector2 center, Vector2 size, Color? mask, Action<Animation> callback = null, int drawLayer = 0)
+        public Animation(SpriteInfo spriteInfo, Vector2 center, Vector2 size, Color? mask = null, Vector2? rotationOrigin = null, Action<Animation> callback = null, int drawLayer = 0)
         {
             Position = center;
             SpriteInfo = spriteInfo;
@@ -31,6 +32,7 @@ namespace MPTanks.Engine.Rendering.Animations
             CompletionCallback = callback;
             DrawLayer = drawLayer;
             Mask = mask ?? Color.White;
+            RotationOrigin = rotationOrigin ?? Size / 2;
         }
     }
 }

@@ -30,8 +30,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                 Compositor.AddDrawable(new DrawableObject
                 {
                     Mask = animation.Mask,
-                    ObjectRotation = animation.Rotation,
+                    Rotation = animation.Rotation,
                     Size = animation.Size,
+                    RotationOrigin = animation.RotationOrigin,
                     Scale = new Vector2(1),
                     Position = animation.Position,
                     Rectangle = new Engine.Core.RectangleF(0, 0, animation.Size.X, animation.Size.Y),

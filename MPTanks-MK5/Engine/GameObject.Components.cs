@@ -324,6 +324,7 @@ namespace MPTanks.Engine
                     TransformPoint(anim.Position),
                     anim.Size,
                     anim.Mask ?? Color.White,
+                    anim.RotationOrigin ?? ((Vector2)anim.Size) / 2,
                     null,
                     anim.DrawLayer
                     );

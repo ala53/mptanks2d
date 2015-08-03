@@ -88,6 +88,7 @@ namespace MPTanks.CoreAssets.Tanks
                 WeaponRechargeTimeMs = 3000,
                 FireCallback = (w, p) => InvokeTrigger("tertiary_fired")
             };
+            Animations["death_explosion"].Mask = ColorMask;
         }
 
         protected override void UpdateInternal(GameTime time)
@@ -100,8 +101,6 @@ namespace MPTanks.CoreAssets.Tanks
             }
             base.UpdateInternal(time);
         }
-        
-
         protected override void ReceiveStateDataInternal(string state)
         {
         }
