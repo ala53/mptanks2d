@@ -33,25 +33,35 @@ namespace MPTanks.Engine.Maps
 
         public static Map LoadMap(string mapData, GameCore game)
         {
-            var map = new Map()
-            {
-                _game = game,
-                _deserialized = MapJSON.Load(mapData),
-                _data = mapData
-            };
+            var map = new Map(game, MapJSON.Load(mapData), mapData);
+
+            return map;
+        }
+
+        private Map(GameCore game, MapJSON deserialized, string mapData)
+        {
+            _game = game;
+            _deserialized = deserialized;
+            _data = mapData;
+
+            if (_deserialized.ShadowOffset == null)
+                ShadowOffset = new Vector2(0.25f, -0.25f);
+            else ShadowOffset = _deserialized.ShadowOffset;
+            if (_deserialized.ShadowColor == null)
+                ShadowColor = new Color(50, 50, 50, 100);
+            else ShadowColor = _deserialized.ShadowColor;
+
 
             //Process basic
-            foreach (var team in map._deserialized.Spawns)
+            foreach (var team in _deserialized.Spawns)
             {
                 var ts = new TeamSpawn();
                 ts.TeamIndex = team.TeamIndex;
                 foreach (var pos in team.SpawnPositions)
                     ts.Positions.Add(new TeamSpawn.SpawnPosition(pos));
 
-                map._spawnsByTeam.Add(team.TeamIndex, ts);
+                _spawnsByTeam.Add(team.TeamIndex, ts);
             }
-
-            return map;
         }
 
         public override string ToString()
@@ -64,13 +74,6 @@ namespace MPTanks.Engine.Maps
         /// </summary>
         public void CreateObjects()
         {
-            if (_deserialized.ShadowOffset == null)
-                ShadowOffset = new Vector2(0.25f, -0.25f);
-            else ShadowOffset = _deserialized.ShadowOffset;
-            if (_deserialized.ShadowColor == null)
-                ShadowColor = new Color(50, 50, 50, 100);
-            else ShadowColor = _deserialized.ShadowColor;
-
             foreach (var mapObj in _deserialized.Objects)
             {
                 MapObject obj = MapObject.ReflectiveInitialize(mapObj.TypeName, _game, true, mapObj.Position, mapObj.Rotation);

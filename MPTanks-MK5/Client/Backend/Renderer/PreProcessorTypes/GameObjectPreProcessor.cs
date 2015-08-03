@@ -51,7 +51,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                         component.Size.X + physCompensation.X * 2, component.Size.Y + physCompensation.Y * 2),
                         Size = obj.DefaultSize,
                         Texture = asset
-                    }, component.DrawLayer);
+                    }, component.DrawLayer + obj.DrawLayer);
                 }
             }
         }

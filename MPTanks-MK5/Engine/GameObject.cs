@@ -16,8 +16,9 @@ namespace MPTanks.Engine
         #region Basic Properties
         public Color ColorMask { get; set; }
         public ushort ObjectId { get; private set; }
+        public int DrawLayer { get; set; }
         [JsonIgnore]
-        public Body Body { get; private set; }
+        public Body Body { get; protected set; }
         [JsonIgnore]
         public GameCore Game { get; private set; }
         /// <summary>
@@ -28,7 +29,7 @@ namespace MPTanks.Engine
         /// Whether the object will be deestroyed if its health goes below 0; if not, the minimum possible health
         /// will be 0.01 and the system will not allow you to go below said point.
         /// </summary>
-        public bool CanBeDestroyed { get; private set; } = true;
+        public bool CanBeDestroyed { get; protected set; } = true;
         private float _health;
         /// <summary>
         /// The current health level for the tank.
@@ -51,8 +52,8 @@ namespace MPTanks.Engine
         /// <summary>
         /// The lifespan in milliseconds of the object
         /// </summary>
-        public TimeSpan Lifespan { get; private set; }
-        public float PostDeathExistenceTime { get; private set; }
+        public TimeSpan Lifespan { get; protected set; }
+        public float PostDeathExistenceTime { get; protected set; }
         public bool IsDestructionCompleted { get; protected set; }
         #endregion
 

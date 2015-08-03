@@ -139,6 +139,7 @@ namespace MPTanks.Engine
             Lifespan = TimeSpan.FromMilliseconds(deserialized.Lifespan);
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
+            DrawLayer = deserialized.DrawLayer;
             Health = deserialized.Health;
             foreach (var flag in deserialized.Flags)
                 _flags.Add(flag);
