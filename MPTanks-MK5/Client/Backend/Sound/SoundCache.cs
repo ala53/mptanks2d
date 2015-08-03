@@ -10,7 +10,7 @@ namespace MPTanks.Client.Backend.Sound
     {
         public Sound GetSound(string assetName)
         {
-
+            return null;
         }
     }
 }

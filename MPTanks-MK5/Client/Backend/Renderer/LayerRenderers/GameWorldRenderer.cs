@@ -140,7 +140,7 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
         {
             _preProcessorGameTime.TotalGameTime = gameTime.TotalGameTime;
             _preProcessorGameTime.ElapsedGameTime = 
-                new TimeSpan((long)(gameTime.ElapsedGameTime.Ticks * (double)Renderer.Game.Timescale));
+                new TimeSpan((long)(gameTime.ElapsedGameTime.Ticks * Renderer.Game.Timescale.Fractional));
             foreach (var preProcessor in _preProcessors)
                 preProcessor.Process(_preProcessorGameTime);
         }

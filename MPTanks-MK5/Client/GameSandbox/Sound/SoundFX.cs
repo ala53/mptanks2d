@@ -34,7 +34,12 @@ namespace MPTanks.Client.GameSandbox.Sound
                 }
                 //And create emitters
                 for (var i = 0; i < GameSettings.Instance.MaxInstancesOfOneSoundAllowed; i++)
-                    _emitters.Enqueue(new AudioEmitter() { Up = Vector3.UnitZ, Forward = Vector3.UnitY, Velocity = 0 });
+                    _emitters.Enqueue(new AudioEmitter()
+                    {
+                        Up = Vector3.UnitZ,
+                        Forward = Vector3.UnitY,
+                        Velocity = Vector3.Zero
+                    });
             }
         }
 

@@ -64,6 +64,7 @@
     <Compile Include="Assets\JSONVector.cs" />
     <Compile Include="Assets\SpriteInfo.cs" />
     <Compile Include="GameObject.Serialization.cs" />
+    <Compile Include="GameCore.Timescale.cs" />
     <Compile Include="Helpers\HalfFloat.cs" />
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Core\Events\Types\GameCore\EndedEventArgs.cs" />

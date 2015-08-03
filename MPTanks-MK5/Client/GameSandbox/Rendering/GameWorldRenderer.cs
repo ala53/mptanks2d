@@ -212,7 +212,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
                 ScaleForRendering(component.Component.Size.Y, component.Scale.Y));
             //Get the cached asset
             var info = component.Component.SpriteInfo;
-            var asset = _cache.GetArtAsset(ref info, _game.Timescale, gameTime);
+            var asset = _cache.GetArtAsset(ref info, _game.Timescale.Fractional, gameTime);
             component.Component.SpriteInfo = info;
             //And draw
             sb.Draw(asset.SpriteSheet.Texture, drawRect, asset.Bounds, component.ComputedColor);
@@ -271,7 +271,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
                         RasterizerState.CullNone, _effect);
                     //Load the sprite sheet and get it from the cache
                     var info = anim.SpriteInfo;
-                    var asset = _cache.GetArtAsset(ref info, _game.Timescale, gameTime);
+                    var asset = _cache.GetArtAsset(ref info, _game.Timescale.Fractional, gameTime);
                     anim.SpriteInfo = info;
                     //For safety: if the asset's name is "loading", we set alpha to 0
                     if (asset.Name == "loading")
@@ -330,7 +330,7 @@ namespace MPTanks.Client.GameSandbox.Rendering
 
                 //Get the cached asset (or load it). See asset management below.
                 var info = particle.SpriteInfo;
-                var asset = _cache.GetArtAsset(ref info, _game.Timescale, gameTime);
+                var asset = _cache.GetArtAsset(ref info, _game.Timescale.Fractional, gameTime);
                 // A note to future me:
                 // I'm aware that the rotation is incorrectly drawn, but to do it correctly requires
                 // generating a matrix on the CPU which will be quite processor intensive. For now,

@@ -165,7 +165,7 @@ namespace MPTanks.Client.GameSandbox
             game.AddPlayer(player1);
             game.AddPlayer(player2);
 
-            for(var i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
             }
@@ -251,12 +251,15 @@ namespace MPTanks.Client.GameSandbox
                 drawTextDebug = !drawTextDebug;
             if (e.Key == Keys.F8)
                 debugOverlayGraphsVertical = !debugOverlayGraphsVertical;
+
+            if (e.Key == Keys.Y)
+                timescaleIndex++;
+            if (e.Key == Keys.U)
+                timescaleIndex--;
         }
 
         bool shouldTick = true;
-        const float limit = 1024;
-        private float timescale = limit;
-        private float timescaleShiftAmount = 0;
+        private int timescaleIndex = GameCore.TimescaleValue.One.Index;
         private long updateNumber;
         private long frameNumber;
         private float physicsMs = 0;
@@ -301,25 +304,11 @@ namespace MPTanks.Client.GameSandbox
                 _graphicsDeviceIsDirty = false;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Y))
-            {
-                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.0001f);
-                timescale -= timescaleShiftAmount;
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.U))
-            {
-                timescaleShiftAmount = MathHelper.Lerp(timescaleShiftAmount, limit, 0.0001f);
-                timescale += timescaleShiftAmount;
-            }
-            else timescaleShiftAmount = 0;
+            if (timescaleIndex < 0) timescaleIndex = 0;
+            if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
+                timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
 
-            if (timescale <= 0)
-                timescale = 1;
-
-            if (timescale > limit * 128)
-                timescale = limit * 128;
-
-            game.Timescale = (timescale / limit);
+            game.Timescale = GameCore.TimescaleValue.Values[timescaleIndex];
             timer.Restart();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -703,7 +692,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (game.Running)
             {
-                _bldr.Append("\nTimescale: " + (int)timescale + "/" + limit);
+                _bldr.Append("\nTimescale: " + GameCore.TimescaleValue.Values[timescaleIndex].DisplayString);
             }
 
             _bldr.Append(", Status: ");

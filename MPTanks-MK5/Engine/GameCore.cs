@@ -102,7 +102,6 @@ namespace MPTanks.Engine
         public EngineSettings Settings { get; private set; }
         [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
-        public float Timescale { get; set; }
         #region Game Status
         public float RemainingCountdownSeconds { get; private set; }
         #endregion
@@ -260,7 +259,7 @@ namespace MPTanks.Engine
             Gamemode.SetGame(this);
 
             //Initialize game
-            Timescale = 1;
+            Timescale = TimescaleValue.One;
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
             AnimationEngine = new Rendering.Animations.AnimationEngine();
@@ -290,7 +289,7 @@ namespace MPTanks.Engine
         private double _deficitGameTime;
         public void Update(GameTime gameTime)
         {
-            _deficitGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * Timescale;
+            _deficitGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * Timescale.Fractional;
             if (_deficitGameTime <= 0) return;
             //
             var totalGameTime = gameTime.TotalGameTime - TimeSpan.FromMilliseconds(_deficitGameTime);

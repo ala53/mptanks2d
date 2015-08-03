@@ -19,7 +19,6 @@ namespace MPTanks.Client.Backend.Sound
             Emitter.Position = new Vector3(position, 0);
             Emitter.Velocity = Vector3.Zero;
             Instance.Apply3D(listener, Emitter);
-            var ins = new SoundEffect
         }
     }
 }

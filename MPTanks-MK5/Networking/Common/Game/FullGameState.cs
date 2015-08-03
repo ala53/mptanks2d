@@ -22,7 +22,7 @@ namespace MPTanks.Networking.Common.Game
         public string MapData { get; set; }
         public string GamemodeReflectionName { get; set; }
         public float CurrentGameTimeMilliseconds { get; set; }
-        public float Timescale { get; set; }
+        public string TimescaleString { get; set; }
         public bool FriendlyFireEnabled { get; set; }
         public GameCore.CurrentGameStatus Status { get; set; }
         public byte[] GamemodeState { get; set; }
@@ -32,7 +32,12 @@ namespace MPTanks.Networking.Common.Game
         {
             var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
             game.Gamemode.FullState = GamemodeState;
-            game.Timescale = Timescale;
+
+            GameCore.TimescaleValue timescale = GameCore.TimescaleValue.One;
+            foreach (var ts in GameCore.TimescaleValue.Values)
+                if (ts.DisplayString == TimescaleString) timescale = ts;
+
+            game.Timescale = timescale;
             game.FriendlyFireEnabled = FriendlyFireEnabled;
 
             //Do it via reflection to keep api private
@@ -118,7 +123,7 @@ namespace MPTanks.Networking.Common.Game
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.GameStatus;
-            state.Timescale = game.Timescale;
+            state.TimescaleString = game.Timescale.DisplayString;
             state.FriendlyFireEnabled = game.FriendlyFireEnabled;
 
             return state;
@@ -168,7 +173,7 @@ namespace MPTanks.Networking.Common.Game
             message.ReadPadBits();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
             state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
-            state.Timescale = message.ReadFloat();
+            state.TimescaleString = message.ReadString();
 
             var objCount = message.ReadInt32();
             for (var i = 0; i < objCount; i++)
@@ -226,7 +231,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);
             message.Write((byte)Status);
-            message.Write(Timescale);
+            message.Write(TimescaleString);
 
             message.Write(ObjectStates.Count);
             foreach (var obj in ObjectStates)
