@@ -61,7 +61,7 @@ namespace MPTanks.Engine
         /// <summary>
         /// The game time, accounting for slow motion, that the game is currently at.
         /// </summary>
-        public float TimeMilliseconds { get; private set; }
+        public TimeSpan Time { get; private set; }
         /// <summary>
         /// The particle system for the game. Use this for short lived objects that
         /// do not need fine grain control. Once created, you have no control over the particle.
@@ -443,7 +443,7 @@ namespace MPTanks.Engine
             Diagnostics.EndMeasurement("Begin UpdateInGame()", DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.EndMeasurement(DiagnosticsParent);
 
-            TimeMilliseconds += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            Time += gameTime.ElapsedGameTime;
         }
     }
 }

@@ -68,15 +68,6 @@
     <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\Animation\Animation.cs" />
-    <Compile Include="Rendering\AssetCache.cs" />
-    <Compile Include="Rendering\AssetResolver.cs" />
-    <Compile Include="Rendering\FXAA.cs" />
-    <Compile Include="Rendering\GameWorldRenderer.cs" />
-    <Compile Include="Rendering\LoadingScreen.cs" />
-    <Compile Include="Rendering\Renderer.cs" />
-    <Compile Include="Rendering\Sprites\Sprite.cs" />
-    <Compile Include="Rendering\Sprites\SpriteSheet.cs" />
     <Compile Include="Screens\Component\DebugRenderer.cs" />
     <Compile Include="Screens\Component\Dialog.cs" />
     <Compile Include="Screens\Component\ScreenComponent.cs" />

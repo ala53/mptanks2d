@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Common.Game
         /// </summary>
         public string MapData { get; set; }
         public string GamemodeReflectionName { get; set; }
-        public float CurrentGameTimeMilliseconds { get; set; }
+        public double CurrentGameTimeMilliseconds { get; set; }
         public string TimescaleString { get; set; }
         public bool FriendlyFireEnabled { get; set; }
         public GameCore.CurrentGameStatus Status { get; set; }
@@ -45,8 +45,8 @@ namespace MPTanks.Networking.Common.Game
             statusProp.SetValue(game, Status);
 
             //Do this with reflection because we want to keep the api private (set game time)
-            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds));
-            timeProp.SetValue(game, CurrentGameTimeMilliseconds);
+            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.Time));
+            timeProp.SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
 
             foreach (var player in Players)
             {
@@ -119,7 +119,7 @@ namespace MPTanks.Networking.Common.Game
             state.SetObjects(game);
 
             state.MapData = game.Map.ToString();
-            state.CurrentGameTimeMilliseconds = game.TimeMilliseconds;
+            state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.GameStatus;

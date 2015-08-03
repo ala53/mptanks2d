@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Common.Game
             = new Dictionary<ushort, PseudoFullObjectState>();
 
         public GameCore.CurrentGameStatus CurrentGameStatus { get; private set; }
-        public float CurrentGameTimeMilliseconds { get; private set; }
+        public double CurrentGameTimeMilliseconds { get; private set; }
         public bool FriendlyFireEnabled { get; private set; }
 
         public static PseudoFullGameWorldState Create(GameCore game)
@@ -33,7 +33,7 @@ namespace MPTanks.Networking.Common.Game
             }
 
             state.CurrentGameStatus = game.GameStatus;
-            state.CurrentGameTimeMilliseconds = game.TimeMilliseconds;
+            state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.FriendlyFireEnabled = game.FriendlyFireEnabled;
 
             return state;
@@ -77,8 +77,8 @@ namespace MPTanks.Networking.Common.Game
             statusProp.SetValue(game, CurrentGameStatus);
 
             //Do this with reflection because we want to keep the api private (set game time)
-            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.TimeMilliseconds));
-            timeProp.SetValue(game, CurrentGameTimeMilliseconds);
+            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.Time));
+            timeProp.SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
 
             game.FriendlyFireEnabled = FriendlyFireEnabled;
 

@@ -426,7 +426,8 @@ namespace MPTanks.Engine
         }
         public void UpdatePostPhysics(GameTime gameTime)
         {
-
+            if (_health <= 0 && CanBeDestroyed && Alive)
+                Kill();
             UpdatePostPhysicsInternal(gameTime);
         }
 

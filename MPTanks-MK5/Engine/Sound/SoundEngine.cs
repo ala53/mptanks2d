@@ -62,7 +62,7 @@ namespace MPTanks.Engine.Sound
                 PlayerData = tag,
                 Position = position,
                 PositioningMode = positioning,
-                PositionMs = beginningOffset,
+                Time = TimeSpan.FromMilliseconds(beginningOffset),
                 LoopCount = loopCount,
             };
             _sounds.AddLast(_sound);

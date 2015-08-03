@@ -140,12 +140,12 @@ namespace MPTanks.Engine.Gamemodes
         private Core.Events.Types.Gamemodes.StateChangedEventArgs _args =
             new Core.Events.Types.Gamemodes.StateChangedEventArgs();
 
-        private float _lastStateChange = -10000000;
+        private TimeSpan _lastStateChange = TimeSpan.Zero;
         protected bool RaiseStateChangeEvent(byte[] newStateData)
         {
             if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
                 || newStateData.Length > Game.Settings.MaxStateChangeSize ||
-                (Game.TimeMilliseconds - _lastStateChange) < Game.Settings.MaxStateChangeFrequency)
+                (Game.Time - _lastStateChange).TotalMilliseconds < Game.Settings.MaxStateChangeFrequency)
                 return false;
 
             _args.Gamemode = this;
