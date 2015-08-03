@@ -9,6 +9,8 @@ namespace MPTanks.Engine.Sound
 {
     public class Sound
     {
+        private static int _currentId = int.MinValue;
+        public int UniqueId { get; private set; }
         #region Constants
         public enum SoundPositioning
         {
@@ -25,36 +27,15 @@ namespace MPTanks.Engine.Sound
             /// </summary>
             NonPositional
         }
-
-        public enum SoundRepeat
-        {
-            /// <summary>
-            /// Loops indefinitely
-            /// </summary>
-            Loop,
-            /// <summary>
-            /// Repeats the sound once
-            /// </summary>
-            RepeatOnce,
-            /// <summary>
-            /// Repeats the sound twice
-            /// </summary>
-            RepeatTwice,
-            /// <summary>
-            /// Only play the sound once
-            /// </summary>
-            NoRepeat
-
-        }
         #endregion
 
         public virtual string AssetName { get; private set; }
         /// <summary>
-        /// The data stored by the actual sound player on the server side.
+        /// The data stored by the actual sound player on the client side.
         /// </summary>
         public virtual object PlayerData { get; set; }
 
-        public virtual int TotalRepeatCount { get; set; }
+        public virtual int LoopCount { get; set; }
         public virtual float PositionMs { get; set; }
         /// <summary>
         /// The timescale that the sound is played at (1, 2, 1/2, 1/4, 1/8, etc.)
@@ -64,6 +45,8 @@ namespace MPTanks.Engine.Sound
         public virtual Vector2 Position { get; set; }
         public virtual Vector2 Velocity { get; set; }
 
+        public virtual float Volume { get; set; } = 1;
+
         public virtual Action<Sound> CompletionCallback { get; set; }
         public virtual SoundPositioning PositioningMode { get; set; }
 
@@ -71,10 +54,11 @@ namespace MPTanks.Engine.Sound
 
         internal Sound(SoundEngine engine, string _asset)
         {
+            UniqueId = _currentId++;
             AssetName = _asset;
             Engine = engine;
             Timescale = 1;
-            TotalRepeatCount = 1;
+            LoopCount = 1;
         }
 
     }

@@ -88,6 +88,11 @@
     <Compile Include="Renderer\LayerRenderers\GameWorldRenderer.cs" />
     <Compile Include="Renderer\GameCoreRenderer.cs" />
     <Compile Include="Renderer\ResizableArray.cs" />
+    <Compile Include="Sound\ActiveSoundCache.cs" />
+    <Compile Include="Sound\ActiveSoundObject.cs" />
+    <Compile Include="Sound\Sound.cs" />
+    <Compile Include="Sound\SoundCache.cs" />
+    <Compile Include="Sound\SoundPlayer.cs" />
     <Compile Include="UI\Binders\ConnectingToServerPage.cs" />
     <Compile Include="UI\Binders\MainMenu.cs" />
     <Compile Include="UI\Binders\MainMenuPlayerIsInGamePage.cs" />
@@ -121,9 +126,7 @@
       <Name>Strings</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sound\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="assets\mgcontent\componentRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

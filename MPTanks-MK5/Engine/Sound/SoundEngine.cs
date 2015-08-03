@@ -55,30 +55,23 @@ namespace MPTanks.Engine.Sound
         /// <returns></returns>
         public Sound PlaySound(string soundName,
             float beginningOffset, Sound.SoundPositioning positioning,
-            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat, object tag = null)
+            Vector2 position = default(Vector2), int loopCount = 0, object tag = null)
         {
-            int repeatCount = 0;
-            if (repeat == Sound.SoundRepeat.RepeatOnce)
-                repeatCount = 1;
-            if (repeat == Sound.SoundRepeat.RepeatTwice)
-                repeatCount = 2;
-            if (repeat == Sound.SoundRepeat.Loop)
-                repeatCount = int.MaxValue;
             var _sound = new Sound(this, soundName)
             {
                 PlayerData = tag,
                 Position = position,
                 PositioningMode = positioning,
                 PositionMs = beginningOffset,
-                TotalRepeatCount = repeatCount,
+                LoopCount = loopCount,
             };
             _sounds.AddLast(_sound);
             return _sound;
         }
         public Sound PlaySound(string soundName, Sound.SoundPositioning positioning = Sound.SoundPositioning.Static,
-            Vector2 position = default(Vector2), Sound.SoundRepeat repeat = Sound.SoundRepeat.NoRepeat, object tag = null)
+            Vector2 position = default(Vector2), int loopCount = 0, object tag = null)
         {
-            return PlaySound(soundName, 0, positioning, position, repeat);
+            return PlaySound(soundName, 0, positioning, position, loopCount);
         }
 
         /// <summary>
