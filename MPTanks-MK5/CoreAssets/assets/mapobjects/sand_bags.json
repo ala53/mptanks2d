@@ -1,0 +1,12 @@
+{
+  "name": "Sand Bag (pre-colored)",
+  "sprites": [
+    {
+      "name": "sand_bag",
+      "x": 0,
+      "y": 0,
+      "width": 54,
+      "height": 31
+    }
+	]
+}
