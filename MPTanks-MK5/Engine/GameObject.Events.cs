@@ -101,7 +101,17 @@ namespace MPTanks.Engine
         #endregion
 
         #region Base Property Changes 
-        public event EventHandler<BasicPropertyChangeEventType> OnBasicPropertyChanged = delegate { };
+        public event EventHandler<BasicPropertyChangeArgs> OnBasicPropertyChanged = delegate { };
+        public struct BasicPropertyChangeArgs
+        {
+            public BasicPropertyChangeEventType Type { get; set; }
+            public bool BoolValue { get; set; }
+            public Vector2 VectorValue { get; set; }
+            public float FloatValue { get; set; }
+            public bool OldBoolValue { get; set; }
+            public Vector2 OldVectorValue { get; set; }
+            public float OldFloatValue { get; set; }
+        }
         public enum BasicPropertyChangeEventType : byte
         {
             Position,
@@ -115,10 +125,41 @@ namespace MPTanks.Engine
             Restitution,
         }
 
-        private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type)
+        private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type, Vector2 oldValue, Vector2 newValue)
         {
             if (_eventsEnabled)
-                OnBasicPropertyChanged(this, type);
+            {
+                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                {
+                    Type = type,
+                    VectorValue = newValue,
+                    OldVectorValue = oldValue
+                });
+            }
+        }
+        private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type, bool oldValue, bool newValue)
+        {
+            if (_eventsEnabled)
+            {
+                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                {
+                    Type = type,
+                    BoolValue = newValue,
+                    OldBoolValue = oldValue
+                });
+            }
+        }
+        private void RaiseBasicPropertyChange(BasicPropertyChangeEventType type, float oldValue, float newValue)
+        {
+            if (_eventsEnabled)
+            {
+                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                {
+                    Type = type,
+                    FloatValue = newValue,
+                    OldFloatValue = oldValue
+                });
+            }
         }
 
         public void ReceiveBasicPropertyChange(BasicPropertyChangeEventType type, float value)

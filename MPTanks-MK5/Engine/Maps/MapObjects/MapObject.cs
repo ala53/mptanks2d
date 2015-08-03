@@ -51,6 +51,15 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         protected virtual bool CanBeDamaged(Team team) => true;
 
+        protected sealed override byte[] GetTypeStateHeader()
+        {
+            return base.GetTypeStateHeader();
+        }
+        protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
+        {
+            base.SetTypeStateHeader(header, ref offset);
+        }
+
         #region Static initialization
         private static Dictionary<string, Type> _objTypes =
             new Dictionary<string, Type>();

@@ -20,7 +20,15 @@ namespace MPTanks.Engine
         public Body Body { get; private set; }
         [JsonIgnore]
         public GameCore Game { get; private set; }
+        /// <summary>
+        /// Whether the object is alive or not;
+        /// </summary>
         public bool Alive { get; private set; }
+        /// <summary>
+        /// Whether the object will be deestroyed if its health goes below 0; if not, the minimum possible health
+        /// will be 0.01 and the system will not allow you to go below said point.
+        /// </summary>
+        public bool CanBeDestroyed { get; private set; } = true;
         private float _health;
         /// <summary>
         /// The current health level for the tank.
@@ -30,8 +38,9 @@ namespace MPTanks.Engine
             get { return _health; }
             set
             {
-                if (_health != value) RaiseBasicPropertyChange(BasicPropertyChangeEventType.Health);
+                if (_health != value) RaiseBasicPropertyChange(BasicPropertyChangeEventType.Health, Health, value);
                 _health = value;
+                if (!CanBeDestroyed && _health <= 0) _health = 0.01f;
             }
         }
         public bool Authoritative { get { return Game.Authoritative; } }
@@ -61,7 +70,7 @@ namespace MPTanks.Engine
             set
             {
                 if (Position != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Position);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Position, Position, value);
 
                 if (_hasBeenCreated)
                     Body.Position = value * Game.Settings.PhysicsScale;
@@ -85,7 +94,7 @@ namespace MPTanks.Engine
             set
             {
                 if (Rotation != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Rotation);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Rotation, Rotation, value);
 
                 if (_hasBeenCreated)
                     Body.Rotation = value;
@@ -106,7 +115,7 @@ namespace MPTanks.Engine
             set
             {
                 if (LinearVelocity != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.LinearVelocity);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.LinearVelocity, LinearVelocity, value);
 
                 if (_hasBeenCreated)
                     Body.LinearVelocity = value * Game.Settings.PhysicsScale;
@@ -127,7 +136,7 @@ namespace MPTanks.Engine
             set
             {
                 if (AngularVelocity != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.AngularVelocity);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.AngularVelocity, AngularVelocity, value);
 
                 if (_hasBeenCreated)
                     Body.AngularVelocity = value;
@@ -143,7 +152,7 @@ namespace MPTanks.Engine
             {
                 if (Size == value || value.X <= 0 || value.Y <= 0) return;
 
-                RaiseBasicPropertyChange(BasicPropertyChangeEventType.Size);
+                RaiseBasicPropertyChange(BasicPropertyChangeEventType.Size, Size, value);
 
                 //Set the internal note
                 _size = value;
@@ -191,7 +200,7 @@ namespace MPTanks.Engine
             set
             {
                 if (IsStatic != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsStatic);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsStatic, IsStatic, value);
 
                 if (_hasBeenCreated)
                     Body.IsStatic = value;
@@ -212,7 +221,7 @@ namespace MPTanks.Engine
             set
             {
                 if (IsSensor != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsSensor);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.IsSensor, IsSensor, value);
 
                 if (_hasBeenCreated)
                 {
@@ -236,7 +245,7 @@ namespace MPTanks.Engine
             set
             {
                 if (Restitution != value)
-                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Restitution);
+                    RaiseBasicPropertyChange(BasicPropertyChangeEventType.Restitution, Restitution, value);
 
                 if (_hasBeenCreated)
                 {
