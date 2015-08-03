@@ -253,9 +253,20 @@ namespace MPTanks.Client.GameSandbox
                 debugOverlayGraphsVertical = !debugOverlayGraphsVertical;
 
             if (e.Key == Keys.Y)
+            {
                 timescaleIndex++;
+
+                if (timescaleIndex < 0) timescaleIndex = 0;
+                if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
+                    timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
+            }
             if (e.Key == Keys.U)
+            {
                 timescaleIndex--;
+                if (timescaleIndex < 0) timescaleIndex = 0;
+                if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
+                    timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
+            }
         }
 
         bool shouldTick = true;
@@ -303,10 +314,6 @@ namespace MPTanks.Client.GameSandbox
                 graphics.ApplyChanges();
                 _graphicsDeviceIsDirty = false;
             }
-
-            if (timescaleIndex < 0) timescaleIndex = 0;
-            if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
-                timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
 
             game.Timescale = GameCore.TimescaleValue.Values[timescaleIndex];
             timer.Restart();

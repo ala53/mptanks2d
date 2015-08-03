@@ -31,7 +31,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                 {
                     Mask = particle.ColorMask,
                     ObjectRotation = particle.Rotation,
-                    Position = particle.Position,
+                    Position = particle.NonCenteredPosition,
                     Scale = Vector2.One,
                     Rectangle = new Engine.Core.RectangleF(0, 0, particle.Size.X, particle.Size.Y),
                     Size = particle.Size,
