@@ -14,7 +14,7 @@ namespace MPTanks.Engine.Serialization
     {
         public string Name { get; set; }
         public string ReflectionName { get; set; }
-        public float Lifespan { get; set; }
+        public double Lifespan { get; set; }
         public int Health { get; set; }
         /// <summary>
         /// The number of milliseconds to wait after death to remove the object from the game.
@@ -246,11 +246,11 @@ namespace MPTanks.Engine.Serialization
             //And actually deal with the activation triggers
             if (obj.ActivatesOn.StartsWith("t=") && obj.ActivatesOn.Length > 2)
             {
-                float parse = 0;
-                if (float.TryParse(obj.ActivatesOn.Substring(2), out parse))
+                double parse = 0;
+                if (double.TryParse(obj.ActivatesOn.Substring(2), out parse))
                 {
                     obj.ActivatesAtTime = true;
-                    obj.TimeMsToSpawnAt = parse;
+                    obj.TimeToSpawnAt = TimeSpan.FromMilliseconds(parse);
                 }
             }
             else
@@ -420,7 +420,7 @@ namespace MPTanks.Engine.Serialization
         public bool ActivationIsTriggered { get; set; }
         public string TriggerName { get; set; }
         public bool ActivatesAtTime { get; set; }
-        public float TimeMsToSpawnAt { get; set; }
+        public TimeSpan TimeToSpawnAt { get; set; }
 
         public float Lifespan { get; set; }
 
@@ -478,7 +478,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSpriteSpecifierJSON Image { get; set; }
         public string ActivatesOn { get; set; }
         public bool ActivatesAtTime { get; set; }
-        public float TimeMsToSpawnAt { get; set; }
+        public TimeSpan TimeToSpawnAt { get; set; }
         public bool ActivationIsTriggered { get; set; }
         public string TriggerName { get; set; }
         /// <summary>
@@ -497,7 +497,7 @@ namespace MPTanks.Engine.Serialization
     {
         public string ActivatesOn { get; set; }
         public bool ActivatesAtTime { get; set; }
-        public float TimeMsToSpawnAt { get; set; }
+        public TimeSpan TimeToSpawnAt { get; set; }
         public bool ActivationIsTriggered { get; set; }
         public string TriggerName { get; set; }
         public GameObjectSpriteSpecifierJSON[] SpriteOptions { get; set; }
@@ -521,7 +521,7 @@ namespace MPTanks.Engine.Serialization
         [JsonIgnore]
         bool ActivationIsTriggered { get; set; }
         [JsonIgnore]
-        float TimeMsToSpawnAt { get; set; }
+        TimeSpan TimeToSpawnAt { get; set; }
         [JsonIgnore]
         string TriggerName { get; set; }
     }

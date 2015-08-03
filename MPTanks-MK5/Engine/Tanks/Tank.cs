@@ -59,7 +59,7 @@ namespace MPTanks.Engine.Tanks
 
                 //In case of friendly firing the spawning tank
                 //because it spawned too close, ignore the collision to give it a chance.
-                if (o.Owner == this && o.TimeAliveMs < 500)
+                if (o.Owner == this && o.TimeAlive < TimeSpan.FromMilliseconds(500))
                     return false;
 
                 Health -= o.DamageAmount;

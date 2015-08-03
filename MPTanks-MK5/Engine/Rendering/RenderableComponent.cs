@@ -15,7 +15,12 @@ namespace MPTanks.Engine.Rendering
         /// The origin of the rotation, relative to the offset
         /// </summary>
         public Vector2 RotationOrigin { get; set; } = Vector2.Zero;
-        public float Rotation { get; set; } = 0;
+        private float _rotation;
+        public float Rotation
+        {
+            get { return _rotation; }
+            set { _rotation = value % (float)(Math.PI * 2); }
+        }
         public float RotationVelocity { get; set; } = 0;
         public Vector2 Scale { get; set; } = new Vector2();
         public Color Mask { get; set; } = Color.White;

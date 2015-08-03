@@ -47,11 +47,11 @@ namespace MPTanks.Engine
         /// <summary>
         /// The number of milliseconds that the object has been alive
         /// </summary>
-        public float TimeAliveMs { get; private set; }
+        public TimeSpan TimeAlive { get; private set; }
         /// <summary>
         /// The lifespan in milliseconds of the object
         /// </summary>
-        public float LifespanMs { get; private set; }
+        public TimeSpan Lifespan { get; private set; }
         public float PostDeathExistenceTime { get; private set; }
         public bool IsDestructionCompleted { get; protected set; }
         #endregion
@@ -95,6 +95,8 @@ namespace MPTanks.Engine
             {
                 if (Rotation != value)
                     RaiseBasicPropertyChange(BasicPropertyChangeEventType.Rotation, Rotation, value);
+
+                value = value % ((float)Math.PI * 2);
 
                 if (_hasBeenCreated)
                     Body.Rotation = value;
@@ -402,9 +404,9 @@ namespace MPTanks.Engine
 
             UpdateRenderableComponentRotations(gameTime);
 
-            if (TimeAliveMs > LifespanMs && LifespanMs != 0) Kill();
+            if (TimeAlive > Lifespan && Lifespan.TotalMilliseconds > 0) Kill();
 
-            TimeAliveMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            TimeAlive = TimeAlive.Add(gameTime.ElapsedGameTime);
 
             UpdateInternal(gameTime);
         }

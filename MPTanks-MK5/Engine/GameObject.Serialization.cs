@@ -85,7 +85,7 @@ namespace MPTanks.Engine
             IsSensor,
             IsStatic,
             ColorMask,
-            TimeAliveMs,
+            TimeAlive.TotalMilliseconds,
             Size,
             Position,
             LinearVelocity,
@@ -152,7 +152,7 @@ namespace MPTanks.Engine
             var isSensor = header[offset++] == 1;
             var isStatic = header[offset++] == 1;
             var color = header.GetColor(offset); offset += 4;
-            var timeAlive = header.GetFloat(offset); offset += 4;
+            var timeAlive = header.GetDouble(offset); offset += 8;
             var size = header.GetVector(offset); offset += 8;
             var position = header.GetVector(offset); offset += 8;
             var linVel = header.GetVector(offset); offset += 8;
@@ -167,7 +167,7 @@ namespace MPTanks.Engine
             IsStatic = isStatic;
             ObjectId = id;
             ColorMask = color;
-            TimeAliveMs = timeAlive;
+            TimeAlive = TimeSpan.FromMilliseconds(timeAlive);
             Size = size;
             Position = position;
             LinearVelocity = linVel;

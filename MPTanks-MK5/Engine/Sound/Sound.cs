@@ -36,7 +36,7 @@ namespace MPTanks.Engine.Sound
         public virtual object PlayerData { get; set; }
 
         public virtual int LoopCount { get; set; }
-        public virtual float PositionMs { get; set; }
+        public virtual TimeSpan Time { get; set; }
         /// <summary>
         /// The timescale that the sound is played at (1, 2, 1/2, 1/4, 1/8, etc.)
         /// </summary>

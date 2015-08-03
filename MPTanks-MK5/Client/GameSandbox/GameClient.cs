@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
-using MPTanks.Client.GameSandbox.Rendering;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
 using System.Diagnostics;
@@ -37,7 +36,6 @@ namespace MPTanks.Client.GameSandbox
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        private GameWorldRenderer renderer;
         private NetworkPlayer player1;
         private NetworkPlayer player2;
         private MPTanks.Engine.GameCore game { get; set; }
@@ -45,8 +43,6 @@ namespace MPTanks.Client.GameSandbox
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
         private RectangleF drawRect;
-        private bool loading { get { return !loadingScreen.Completed || !loadingScreen.IsSlidingOut; } }
-        private LoadingScreen loadingScreen;
         private Screens.Screen currentScreen;
         private UIRoot root;
         private MonoGameEngine eng;
@@ -132,7 +128,6 @@ namespace MPTanks.Client.GameSandbox
             spriteBatch = new SpriteBatch(GraphicsDevice);
             currentScreen = new Screens.InGameScreen(this);
             SetupGame();
-            loadingScreen = new LoadingScreen(this);
             font = Content.Load<SpriteFont>("font");
 
             _helperTexture = new Texture2D(GraphicsDevice, 1, 1);
@@ -169,10 +164,6 @@ namespace MPTanks.Client.GameSandbox
             {
                 game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
             }
-            //Set up rendering
-            if (renderer != null)
-                renderer.Destroy();
-            renderer = new GameWorldRenderer(currentScreen, game);
             if (_gcRenderer != null) _gcRenderer.Dispose();
             _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
         }
@@ -213,12 +204,6 @@ namespace MPTanks.Client.GameSandbox
                 IsMouseVisible = !IsMouseVisible;
             }
 
-            if (e.Key == Keys.F6)
-            {
-                onesToDraw++;
-                onesToDraw %= 3;
-            }
-
             if (e.Key == Keys.LeftAlt)
             {
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
@@ -228,8 +213,6 @@ namespace MPTanks.Client.GameSandbox
                 game.Authoritative = true;
 
                 //shouldTick = false;
-
-                renderer = new GameWorldRenderer(currentScreen, game);
                 _gcRenderer.Dispose();
                 _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
             }
@@ -298,13 +281,6 @@ namespace MPTanks.Client.GameSandbox
           gameTime.ElapsedGameTime.TotalMilliseconds + "ms, running slowly: " + gameTime.IsRunningSlowly);
 
             updateNumber++;
-            if (game.GameStatus == GameCore.CurrentGameStatus.CountingDownToStart)
-            {
-                loadingScreen.Value = 5 - game.RemainingCountdownSeconds;
-                loadingScreen.Maximum = game.Settings.TimeToWaitBeforeStartingGame / 1000;
-                loadingScreen.Status = game.RemainingCountdownSeconds.ToString("N1") + " seconds remaining";
-                loadingScreen.Billboard = "Setting up...";
-            }
 
             //Check for GD changes 
             //It's done here because applychanges can cause issues
@@ -440,9 +416,7 @@ namespace MPTanks.Client.GameSandbox
             }
         }
 
-        int onesToDraw = 0;
-        RenderTarget2D t;
-        RenderTarget2D u;
+        RenderTarget2D _worldRenderTarget;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -453,73 +427,42 @@ namespace MPTanks.Client.GameSandbox
             game.Diagnostics.BeginMeasurement("Rendering");
             timer.Restart(); //Stat tracking
             GraphicsDevice.Clear(Color.Black);
-
-            if (!loading || loadingScreen.IsSlidingOut)
-            { //in game
-                if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
-                {
-                    if (t == null || t.Width != GraphicsDevice.Viewport.Width || t.Height != GraphicsDevice.Viewport.Height / 2)
-                    {
-                        if (t != null)
-                            t.Dispose();
-
-                        t = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
-
-                    }
-                    if (u == null || u.Width != GraphicsDevice.Viewport.Width || u.Height != GraphicsDevice.Viewport.Height / 2)
-                    {
-                        if (u != null) u.Dispose();
-                        u = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2);
-
-                    }
-                }
-                //First
-                if (onesToDraw == 0 || onesToDraw == 1)
-                {
-                    GraphicsDevice.SetRenderTarget(t);
-                    GraphicsDevice.Clear(new Color(120, 120, 120, 255));
-                    if (player1.Tank != null)
-                        drawRect = new RectangleF(
-                            player1.Tank.Position.X - (15 * zoom),
-                            player1.Tank.Position.Y - (5 * zoom),
-                            30 * zoom,
-                            10 * zoom);
-                    game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
-                    _gcRenderer.View = drawRect;
-                    _gcRenderer.Target = t;
-                    _gcRenderer.Draw(gameTime);
-                    game.Diagnostics.EndMeasurement("World rendering", "Rendering");
-                }
-                if (onesToDraw == 0 || onesToDraw == 2)
-                {
-                    //Second
-                    GraphicsDevice.SetRenderTarget(u);
-                    GraphicsDevice.Clear(new Color(10, 10, 10, 255));
-                    if (player2.Tank != null)
-                        drawRect = new RectangleF(
-                            player2.Tank.Position.X - (15 * zoom),
-                            player2.Tank.Position.Y - (5 * zoom),
-                            30 * zoom,
-                            10 * zoom);
-                    game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
-                    renderer.SetViewport(drawRect);
-                    renderer.Render(spriteBatch, gameTime);
-                    game.Diagnostics.EndMeasurement("World rendering", "Rendering");
-                }
-                GraphicsDevice.SetRenderTarget(null);
-                spriteBatch.Begin(SpriteSortMode.Immediate);
-                if (onesToDraw == 0 || onesToDraw == 1)
-                    spriteBatch.Draw(t, new Rectangle(-50, 0, GraphicsDevice.Viewport.Width, (GraphicsDevice.Viewport.Height / 2) - 2), Color.White);
-
-                if (onesToDraw == 0 || onesToDraw == 2)
-                    spriteBatch.Draw(u, new Rectangle(50, (GraphicsDevice.Viewport.Height / 2) + 2, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height / 2), Color.White);
-                spriteBatch.End();
-            }
-            //And draw the loading screen last so its over everything
-            if (loading || loadingScreen.IsSlidingOut)
+            //in game
+            if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0 &&
+                (_worldRenderTarget == null ||
+                    _worldRenderTarget.Width != GraphicsDevice.Viewport.Width ||
+                    _worldRenderTarget.Height != GraphicsDevice.Viewport.Height))
             {
-                loadingScreen.Render(spriteBatch, gameTime);
+                if (_worldRenderTarget != null)
+                    _worldRenderTarget.Dispose();
+
+                _worldRenderTarget = new RenderTarget2D(
+                    GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
             }
+            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+            GraphicsDevice.Clear(new Color(120, 120, 120, 255));
+
+            if (player1.Tank != null)
+            {
+                var widthHeightRelative =
+                    (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
+                drawRect = new RectangleF(
+                    player1.Tank.Position.X - ((10 * widthHeightRelative) * zoom),
+                    player1.Tank.Position.Y - (10 * zoom),
+                    (20 * widthHeightRelative) * zoom,
+                    20 * zoom);
+            }
+            game.Diagnostics.BeginMeasurement("World rendering", "Rendering");
+            _gcRenderer.View = drawRect;
+            _gcRenderer.Target = _worldRenderTarget;
+            _gcRenderer.Draw(gameTime);
+            game.Diagnostics.EndMeasurement("World rendering", "Rendering");
+            GraphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin(SpriteSortMode.Immediate);
+            spriteBatch.Draw(_worldRenderTarget, _worldRenderTarget.Bounds, Color.White);
+            spriteBatch.End();
+
             game.Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
             DrawDebugInfo(gameTime);
             game.Diagnostics.EndMeasurement("Draw debug text", "Rendering");
@@ -534,12 +477,6 @@ namespace MPTanks.Client.GameSandbox
             base.Draw(gameTime);
             game.Diagnostics.EndMeasurement("Base.Draw()", "Rendering");
             game.Diagnostics.EndMeasurement("Rendering");
-            if (physicsMs + renderMs > 10 && game.GameStatus == GameCore.CurrentGameStatus.GameRunning)
-            {
-                Logger.Debug("Frame took too long! (Update: " + updateNumber + ", Frame: " + frameNumber + ")");
-                Logger.Debug("\n\n\n" + game.Diagnostics.ToString());
-            }
-
             timer.Stop();
             renderMs = (float)timer.Elapsed.TotalMilliseconds;
         }

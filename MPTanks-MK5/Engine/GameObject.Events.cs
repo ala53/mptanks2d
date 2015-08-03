@@ -22,12 +22,12 @@ namespace MPTanks.Engine
 
         public event EventHandler<Core.Events.Types.GameObjects.StateChangedEventArgs> OnStateChanged = delegate { };
 
-        private float _lastStateChange = -10000000;
+        private TimeSpan _lastStateChange = TimeSpan.Zero;
         protected bool RaiseStateChangeEvent(byte[] newStateData)
         {
             if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
                 || newStateData.Length > Game.Settings.MaxStateChangeSize ||
-                (TimeAliveMs - _lastStateChange) < Game.Settings.MaxStateChangeFrequency ||
+                (TimeAlive - _lastStateChange) < TimeSpan.FromMilliseconds(Game.Settings.MaxStateChangeFrequency) ||
                 !_eventsEnabled)
                 return false;
 

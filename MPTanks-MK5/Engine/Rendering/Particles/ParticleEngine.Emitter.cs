@@ -345,7 +345,7 @@ namespace MPTanks.Engine.Rendering.Particles
             public Vector2 MinSize { get; set; }
             public Vector2 MaxSize { get; set; }
             public RectangleF EmissionArea { get; set; }
-            public float EmitterLifespanMs { get; set; }
+            public double EmitterLifespanMs { get; set; }
             public Action<Emitter> RemovedCallback { get; set; }
             public ParticleEngine Container { get; private set; }
 

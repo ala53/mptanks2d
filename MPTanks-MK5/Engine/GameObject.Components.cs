@@ -136,7 +136,7 @@ namespace MPTanks.Engine
                     $"GameObject-{ObjectId}.LoadComponentsFromFile():" +
                     $"{deserialized.ReflectionName} does not match {ReflectionName}");
 
-            LifespanMs = deserialized.Lifespan;
+            Lifespan = TimeSpan.FromMilliseconds(deserialized.Lifespan);
             PostDeathExistenceTime = deserialized.RemoveAfter;
             DefaultSize = deserialized.DefaultSize;
             Health = deserialized.Health;
@@ -457,7 +457,7 @@ namespace MPTanks.Engine
         {
             foreach (var emitter in _emittersWithData)
                 if (emitter.Information.ActivatesAtTime)
-                    if (emitter.Information.TimeMsToSpawnAt < TimeAliveMs)
+                    if (emitter.Information.TimeToSpawnAt < TimeAlive)
                         emitter.AttachedEmitter.Paused = false;
                     else emitter.AttachedEmitter.Paused = true;
         }
@@ -469,7 +469,7 @@ namespace MPTanks.Engine
         {
             foreach (var anim in _animationsWithData)
             {
-                if (anim.Information.ActivatesAtTime && anim.Information.TimeMsToSpawnAt < TimeAliveMs &&
+                if (anim.Information.ActivatesAtTime && anim.Information.TimeToSpawnAt < TimeAlive &&
                     !Game.AnimationEngine.Animations.Contains(anim.Animation))
                 {
                     anim.Animation.Position = TransformPoint(anim.Information.Position);
@@ -503,7 +503,7 @@ namespace MPTanks.Engine
         {
             foreach (var light in _lightsWithData)
                 if (light.Information.ActivatesAtTime &&
-                    light.Information.TimeMsToSpawnAt < TimeAliveMs &&
+                    light.Information.TimeToSpawnAt < TimeAlive &&
                     light.Light.Intensity == 0)
                     light.Light.Intensity = light.Information.Intensity;
         }

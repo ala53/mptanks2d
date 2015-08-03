@@ -22,7 +22,7 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                     animation.SpriteInfo.FrameName, animation.SpriteInfo.SheetName);
                 //Check if the animation has ended
                 if (animInfo != null && animInfo.Length.TotalMilliseconds * animation.SpriteInfo.LoopCount
-                        < animation.SpriteInfo.PositionInAnimationMs)
+                        < animation.SpriteInfo.PositionInAnimation.TotalMilliseconds)
                     Renderer.Game.AnimationEngine.MarkAnimationCompleted(animation);
 
 

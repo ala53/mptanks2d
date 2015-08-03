@@ -42,7 +42,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void IncrementAnimation(ref SpriteInfo info, GameTime gameTime)
         {
-            info.PositionInAnimationMs += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            info.PositionInAnimation += gameTime.ElapsedGameTime;
         }
 
         private SpriteInfo GetAnimationFrameInfo(SpriteInfo info)
@@ -53,10 +53,10 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             var anim = Cache.GetAnimation(info.FrameName, info.SheetName);
             if (anim == null) return new SpriteInfo(AssetCache.MissingTextureSpriteName, null);
 
-            int frame = (int)((info.PositionInAnimationMs % anim.Length.TotalMilliseconds) / anim.FrameLengthMs);
+            int frame = (int)((info.PositionInAnimation.TotalMilliseconds % anim.Length.TotalMilliseconds) / anim.FrameLengthMs);
 
-            if (frame >= anim.FrameNames.Count || 
-                info.PositionInAnimationMs > (anim.Length.TotalMilliseconds * info.LoopCount))
+            if (frame >= anim.FrameNames.Count ||
+                info.PositionInAnimation.TotalMilliseconds > (anim.Length.TotalMilliseconds * info.LoopCount))
                 return new SpriteInfo(anim.FrameNames[0], anim.SpriteSheet.FileName);
             else
                 return new SpriteInfo(anim.FrameNames[frame], anim.SpriteSheet.FileName);

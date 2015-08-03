@@ -212,6 +212,7 @@ namespace MPTanks.Engine.Helpers
         }
 
         public static float GetFloat(this byte[] src, int offset) => BitConverter.ToSingle(src, offset);
+        public static double GetDouble(this byte[] src, int offset) => BitConverter.ToDouble(src, offset);
         public static Half GetHalf(this byte[] src, int offset) => new Half() { InternalValue = BitConverter.ToUInt16(src, offset) };
         public static ushort GetUShort(this byte[] src, int offset) => BitConverter.ToUInt16(src, offset);
         public static short GetShort(this byte[] src, int offset) => BitConverter.ToInt16(src, offset);
