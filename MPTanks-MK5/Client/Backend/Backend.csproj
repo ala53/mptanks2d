@@ -228,13 +228,8 @@
     <Content Include="assets\mgcontent\componentRenderer.fx" />
     <Content Include="assets\mgcontent\lightMaskRenderer.fx" />
     <Content Include="assets\mgcontent\shadowRenderer.fx" />
-    <Content Include="fmod.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fmodstudio.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="license.txt" />
+    <Content Include="fmod.dll" />
+    <Content Include="fmodstudio.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
