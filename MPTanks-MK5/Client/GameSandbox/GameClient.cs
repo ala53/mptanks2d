@@ -630,7 +630,7 @@ namespace MPTanks.Client.GameSandbox
 
             _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
             .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
-            
+
             long maxMem = 0;
             foreach (var pt in _debugMemoryUsages)
                 if (pt.BytesUsed > maxMem)
@@ -640,8 +640,15 @@ namespace MPTanks.Client.GameSandbox
                 .Append(", Animations: ").Append(game.AnimationEngine.Animations.Count)
                 .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
                 .Append("\nSounds (Engine): ").Append(game.SoundEngine.SoundCount)
-                .Append(", Sounds (Backend): ").Append(_soundPlayer.ActiveSoundCount)
-                .Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
+                .Append(", Sounds (Backend): ").Append(_soundPlayer.ActiveSoundCount);
+
+            var info = _soundPlayer.Diagnostics;
+            _bldr.Append("\nSound CPU (DSP, Streaming, Total): ")
+            .Append(info.DSPCPU.ToString("N2")).Append("%, ")
+            .Append(info.StreamCPU.ToString("N2")).Append("%, ")
+            .Append(info.TotalCPU.ToString("N2")).Append("%");
+
+            _bldr.Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
                 .Append(", ").Append((maxMem / (1024d * 1024)).ToString("N1")).Append("MB max");

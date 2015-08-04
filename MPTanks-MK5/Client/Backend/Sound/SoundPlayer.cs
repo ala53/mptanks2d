@@ -121,19 +121,15 @@ namespace MPTanks.Client.Backend.Sound
             get
             {
                 var diag = new DiagnosticInfo();
-                _system.getCPUUsage(
+                FMOD.Error.Check(_system.getCPUUsage(
                     out diag.DSPCPU, out diag.StreamCPU, out diag.GeometryCPU,
-                    out diag.UpdateCPU, out diag.TotalCPU);
-                _system.getSoundRAM(
-                    out diag.CurrentBytesAllocated, out diag.MaximumBytesAllocated,
-                    out diag.TotalBytesAvaliable);
+                    out diag.UpdateCPU, out diag.TotalCPU));
                 return diag;
             }
         }
         public struct DiagnosticInfo
         {
             public float DSPCPU, StreamCPU, GeometryCPU, UpdateCPU, TotalCPU;
-            public int CurrentBytesAllocated, MaximumBytesAllocated, TotalBytesAvaliable;
         }
         #endregion
 
@@ -144,7 +140,9 @@ namespace MPTanks.Client.Backend.Sound
             MaxChannels = maxChannels;
 
             FMOD.Error.Check(FMOD.Factory.System_Create(out _system));
-            FMOD.Error.Check(_system.init(maxChannels, FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
+            FMOD.Error.Check(_system.init(maxChannels,
+                FMOD.INITFLAGS.NORMAL | FMOD.INITFLAGS.PROFILE_METER_ALL |
+                FMOD.INITFLAGS.PROFILE_ENABLE, IntPtr.Zero));
             FMOD.Error.Check(_system.set3DNumListeners(1));
             FMOD.Error.Check(_system.createChannelGroup("Background Sounds", out _backgroundGroup));
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
