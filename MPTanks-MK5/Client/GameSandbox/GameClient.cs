@@ -206,7 +206,7 @@ namespace MPTanks.Client.GameSandbox
                 IsMouseVisible = !IsMouseVisible;
             }
 
-            if (e.Key == Keys.LeftAlt)
+            if (e.Key == Keys.LeftAlt && ((e.Modifiers & Starbound.Input.Modifiers.Control) == Starbound.Input.Modifiers.Control))
             {
                 game = FullGameState.Create(game).CreateGameFromState(new NLogLogger(Logger.Instance), null, 0);
                 player1 = (NetworkPlayer)game.PlayersById[player1.Id];
@@ -217,6 +217,8 @@ namespace MPTanks.Client.GameSandbox
                 //shouldTick = false;
                 _gcRenderer.Dispose();
                 _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+
+                _soundPlayer = new Backend.Sound.SoundPlayer(game);
             }
 
             if (e.Key == Keys.N)
@@ -380,7 +382,12 @@ namespace MPTanks.Client.GameSandbox
                     PseudoFullGameWorldState.Create(game).Apply(game);
             }
 
-
+            if (player1.Tank != null)
+            {
+                _soundPlayer.PlayerPosition = player1.Tank.Position;
+                _soundPlayer.PlayerVelocity = player1.Tank.LinearVelocity;
+            }
+            _soundPlayer.Update(gameTime);
 
             game.Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);

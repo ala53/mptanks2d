@@ -97,6 +97,7 @@
     <Compile Include="Sound\Native\fmod_studio.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundCache.cs" />
+    <Compile Include="Sound\SoundInstance.cs" />
     <Compile Include="Sound\SoundPlayer.cs" />
     <Compile Include="UI\Binders\ConnectingToServerPage.cs" />
     <Compile Include="UI\Binders\MainMenu.cs" />

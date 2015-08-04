@@ -36,10 +36,14 @@ namespace MPTanks.Client.Backend.Sound
             }
             set
             {
-                FMOD.VECTOR pos = value;
-                FMOD.VECTOR vel = PlayerVelocity;
-                FMOD.VECTOR forward = new FMOD.VECTOR { y = 1 };
-                FMOD.VECTOR up = new FMOD.VECTOR { z = 1 };
+                FMOD.VECTOR pos;
+                FMOD.VECTOR vel;
+                FMOD.VECTOR forward;
+                FMOD.VECTOR up;
+                FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
+                pos = value;
+                up = new FMOD.VECTOR { z = 1 };
+                forward = new FMOD.VECTOR { y = 1 };
                 FMOD.Error.Check(_system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up));
             }
         }
@@ -53,11 +57,31 @@ namespace MPTanks.Client.Backend.Sound
             }
             set
             {
-                FMOD.VECTOR pos = value;
-                FMOD.VECTOR vel = PlayerVelocity;
-                FMOD.VECTOR forward = new FMOD.VECTOR { y = 1 };
-                FMOD.VECTOR up = new FMOD.VECTOR { z = 1 };
+                FMOD.VECTOR pos;
+                FMOD.VECTOR vel;
+                FMOD.VECTOR forward;
+                FMOD.VECTOR up;
+                FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
+                vel = value;
+                up = new FMOD.VECTOR { z = 1 };
+                forward = new FMOD.VECTOR { y = -1 };
                 FMOD.Error.Check(_system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up));
+            }
+        }
+
+        public float SoundDistanceScale
+        {
+            get
+            {
+                float doppler, distance, rolloff;
+                _system.get3DSettings(out doppler, out distance, out rolloff);
+                return 1 / rolloff;
+            }
+            set
+            {
+                float doppler, distance, rolloff;
+                _system.get3DSettings(out doppler, out distance, out rolloff);
+                _system.set3DSettings(doppler, distance, 1 / value);
             }
         }
 
@@ -107,6 +131,7 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(_system.createChannelGroup("Background Sounds", out _backgroundGroup));
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
             FMOD.Error.Check(_system.createChannelGroup("Sound Effects", out _effectsGroup));
+            SoundDistanceScale = 25;
             Game = game;
             ActiveSounds = new ActiveGameEffectContainer(this);
             Cache = new SoundCache(this);
@@ -121,11 +146,6 @@ namespace MPTanks.Client.Backend.Sound
 
         public void Update(GameTime gameTime)
         {
-            foreach (var sound in Cache.Sounds)
-            {
-                sound.Value.Speed = (float)Game.Timescale.Fractional;
-            }
-
             ActiveSounds.UpdateSounds(gameTime);
 
             FMOD.Error.Check(_system.update());

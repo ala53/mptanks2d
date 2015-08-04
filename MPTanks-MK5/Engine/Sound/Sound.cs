@@ -32,9 +32,9 @@ namespace MPTanks.Engine.Sound
             set { _time = value; _timeDirty = true; }
         }
 
-        public bool Playing { get; set; }
+        public bool Playing { get; set; } = true;
 
-        public float Pitch { get; set; }
+        public float Pitch { get; set; } = 1;
 
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; }

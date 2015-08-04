@@ -10,7 +10,7 @@ namespace MPTanks.Client.Backend.Sound
 {
     class ActiveGameEffect
     {
-        public Sound.SoundInstance Instance { get; private set; }
+        public SoundInstance Instance { get; private set; }
         public Engine.Sound.Sound SoundObject { get; private set; }
         public Action<ActiveGameEffect> Ended { get; set; }
 
@@ -24,19 +24,19 @@ namespace MPTanks.Client.Backend.Sound
         public void Update(GameTime gameTime)
         {
             Instance.Velocity = SoundObject.Velocity * (float)Instance.Sound.Player.Game.Timescale.Fractional;
-            Instance.LoopCount = SoundObject.LoopCount;
+            Instance.LoopCount = SoundObject.LoopCount; //TODO: fix this: 
             Instance.Pitch = SoundObject.Pitch;
             Instance.Playing = SoundObject.Playing;
             Instance.Volume = SoundObject.Volume;
-            Instance.Playing = SoundObject.Playing;
+            Instance.Timescale = (float)Instance.Sound.Player.Game.Timescale.Fractional;
             if (SoundObject.Positional)
                 Instance.Position = SoundObject.Position;
             if (SoundObject.TimeDirty)
                 Instance.Time = SoundObject.Time;
-            SoundObject.UnsafeSetTime(Instance.Time); 
+            SoundObject.UnsafeSetTime(Instance.Time);
         }
 
-        public void EndedHook(Sound.SoundInstance instance)
+        public void EndedHook(SoundInstance instance)
         {
             SoundObject.Engine.MarkSoundCompleted(SoundObject);
 

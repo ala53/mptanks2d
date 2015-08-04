@@ -18,7 +18,9 @@ namespace MPTanks.Client.Backend.Sound
 
         public Sound GetSound(string assetName)
         {
-            return new Sound(_player, assetName);
+            if (!_soundCache.ContainsKey(assetName))
+                _soundCache.Add(assetName, new Sound(_player, assetName));
+            return _soundCache[assetName];
         }
     }
 }

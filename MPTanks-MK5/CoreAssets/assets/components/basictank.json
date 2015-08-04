@@ -105,6 +105,10 @@
     {
       "file": "explosion3.png",
       "key": "explosion3"
+    },
+    {
+      "file": "basictank_firing.ogg",
+      "key": "primary_fire_sound"
     }
   ],
   "otherSprites": [

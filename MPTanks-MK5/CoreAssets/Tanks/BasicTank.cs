@@ -105,5 +105,9 @@ namespace MPTanks.CoreAssets.Tanks
         {
         }
 
+        public void OnPrimary_Fired()
+        {
+            Game.SoundEngine.PlaySound(Assets["primary_fire_sound"], true, Position, 0);
+        }
     }
 }
