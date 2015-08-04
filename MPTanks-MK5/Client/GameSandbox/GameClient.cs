@@ -47,6 +47,7 @@ namespace MPTanks.Client.GameSandbox
         private UIRoot root;
         private MonoGameEngine eng;
         private Texture2D _helperTexture;
+        private Backend.Sound.SoundPlayer _soundPlayer;
 
         private GameCoreRenderer _gcRenderer;
 
@@ -166,6 +167,7 @@ namespace MPTanks.Client.GameSandbox
             }
             if (_gcRenderer != null) _gcRenderer.Dispose();
             _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            _soundPlayer = new Backend.Sound.SoundPlayer(game);
         }
 
         /// <summary>
