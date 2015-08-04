@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Modding;
+using MPTanks.Engine.Sound;
 
 namespace MPTanks.CoreAssets.Gamemodes
 {
@@ -75,8 +76,9 @@ namespace MPTanks.CoreAssets.Gamemodes
             return false;
         }
 
-        public override void StartGame()
+        public override void Create()
         {
+            MusicHelper.PlaySongs(Game, Assets.GetSongNames());
         }
 
         public override void Update(GameTime gameTime)

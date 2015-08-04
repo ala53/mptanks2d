@@ -56,16 +56,16 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(player.System.createSound(file,
                 FMOD.MODE._3D_WORLDRELATIVE | FMOD.MODE.LOOP_NORMAL | FMOD.MODE.CREATECOMPRESSEDSAMPLE,
                 out _sound));
-            
+
         }
 
-        private static Queue<SoundInstance> _activeInstances = new Queue<SoundInstance>();
         public SoundInstance Play(SoundPlayer.ChannelGroup group, bool paused = false)
         {
 
             if (Player.ActiveChannels >= Player.MaxChannels - 1)
             {
-                var oldest = _activeInstances.Dequeue();
+                var oldest = Player.ActiveSoundInstanceQueue[0];
+                Player.ActiveSoundInstanceQueue.RemoveAt(0);
                 oldest.Channel.stop();
                 if (oldest != null)
                     oldest.Ended(oldest);
@@ -81,7 +81,7 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Channel channel;
             FMOD.Error.Check(Player.System.playSound(SoundEffect, playGroup, paused, out channel));
             var result = new SoundInstance(channel, this);
-            _activeInstances.Enqueue(result);
+            Player.ActiveSoundInstanceQueue.Add(result);
             return result;
         }
     }

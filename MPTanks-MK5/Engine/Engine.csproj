@@ -106,11 +106,12 @@
     <Compile Include="Rendering\Particles\ParticleEngine.cs" />
     <Compile Include="Rendering\RenderableComponent.cs" />
     <Compile Include="Rendering\RenderableComponentGroup.cs" />
-    <Compile Include="Rendering\SpriteSheetLookupHelper.cs" />
+    <Compile Include="AssetResolver.cs" />
     <Compile Include="RPC\RemoteProcedureCallHelper.cs" />
     <Compile Include="Settings\EngineSettings.cs" />
     <Compile Include="Settings\GlobalSettings.cs" />
     <Compile Include="Settings\SettingsBase.cs" />
+    <Compile Include="Sound\MusicHelper.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundEvents.cs" />

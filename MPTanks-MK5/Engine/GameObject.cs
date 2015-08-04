@@ -504,15 +504,15 @@ namespace MPTanks.Engine
         protected string ResolveAsset(string assetName)
         {
             if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                return SpriteSheetLookupHelper.ResolveAsset(ContainingModule.Name, assetName, ((Tanks.Tank)this).Player);
-            return SpriteSheetLookupHelper.ResolveAsset(ContainingModule.Name, assetName);
+                return AssetResolver.ResolveAsset(ContainingModule.Name, assetName, ((Tanks.Tank)this).Player);
+            return AssetResolver.ResolveAsset(ContainingModule.Name, assetName);
         }
 
         protected string ResolveAsset(string modName, string assetName)
         {
             if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                return SpriteSheetLookupHelper.ResolveAsset(modName, assetName, ((Tanks.Tank)this).Player);
-            return SpriteSheetLookupHelper.ResolveAsset(modName, assetName);
+                return AssetResolver.ResolveAsset(modName, assetName, ((Tanks.Tank)this).Player);
+            return AssetResolver.ResolveAsset(modName, assetName);
         }
         #endregion
         public override string ToString()

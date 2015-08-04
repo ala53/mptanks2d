@@ -324,6 +324,7 @@ namespace MPTanks.Engine
             {
                 _gameCountDownHasBegun = true;
                 GameStatus = CurrentGameStatus.CountingDownToStart;
+                Gamemode.Create();
             }
 
             if (Gamemode.GameEnded)
@@ -400,6 +401,8 @@ namespace MPTanks.Engine
             SetUpGamePlayers();
             //And load the map / create the map objects
             CreateMapObjects();
+
+            Gamemode.StartGame();
         }
 
         /// <summary>

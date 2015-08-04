@@ -167,6 +167,7 @@ namespace MPTanks.Client.GameSandbox
             }
             if (_gcRenderer != null) _gcRenderer.Dispose();
             _gcRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            if (_soundPlayer != null) _soundPlayer.Dispose();
             _soundPlayer = new Backend.Sound.SoundPlayer(game);
         }
 
@@ -629,7 +630,7 @@ namespace MPTanks.Client.GameSandbox
 
             _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
             .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
-
+            
             long maxMem = 0;
             foreach (var pt in _debugMemoryUsages)
                 if (pt.BytesUsed > maxMem)
@@ -638,6 +639,8 @@ namespace MPTanks.Client.GameSandbox
             _bldr.Append(", Timers: ").Append(game.TimerFactory.ActiveTimersCount)
                 .Append(", Animations: ").Append(game.AnimationEngine.Animations.Count)
                 .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
+                .Append("\nSounds (Engine): ").Append(game.SoundEngine.SoundCount)
+                .Append(", Sounds (Backend): ").Append(_soundPlayer.ActiveSoundCount)
                 .Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
@@ -668,7 +671,7 @@ namespace MPTanks.Client.GameSandbox
                 .Append("F8: Switch between vertical and horizontal graphs\n")
                 .Append("ESC: Exit\n");
 
-            spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), (slow ? Color.Red : Color.MediumPurple));
+            spriteBatch.DrawString(font, _bldr.ToString(), new Vector2(10, 10), Color.MediumPurple);
             spriteBatch.End();
         }
         #endregion

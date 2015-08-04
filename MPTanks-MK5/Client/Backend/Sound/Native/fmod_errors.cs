@@ -6,6 +6,7 @@
 /*                                                                                                     */
 /* =================================================================================================== */
 
+using MPTanks.Engine.Settings;
 using System;
 
 namespace FMOD
@@ -17,7 +18,8 @@ namespace FMOD
             if (errcode == RESULT.OK)
                 return;
             else
-                throw new FMODException(String(errcode));
+               if (GlobalSettings.Debug) throw new FMODException(String(errcode));
+
         }
         public static string String(FMOD.RESULT errcode)
         {

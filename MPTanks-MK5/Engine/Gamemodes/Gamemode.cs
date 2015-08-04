@@ -96,6 +96,11 @@ namespace MPTanks.Engine.Gamemodes
             Game = game;
         }
 
+        public virtual void Create()
+        {
+
+        }
+
         /// <summary>
         /// Puts all of the tanks on teams
         /// </summary>
@@ -121,7 +126,7 @@ namespace MPTanks.Engine.Gamemodes
         /// Notifies the Gamemode that the game has started. It can do whatever it wants 
         /// in terms of startup logic.
         /// </summary>
-        public abstract void StartGame();
+        public virtual void StartGame() { }
         /// <summary>
         /// Lets the game mode run its internal logic for players
         /// </summary>

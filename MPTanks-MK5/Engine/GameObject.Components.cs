@@ -524,23 +524,6 @@ namespace MPTanks.Engine
             TriggerEmitters(triggerName);
             TriggerAnimations(triggerName);
             TriggerLights(triggerName);
-            //Look for a function with the name and signature of "void On[TriggerName]() {}"
-            try
-            {
-                var method = GetType().GetMethod("on" + triggerName,
-                    BindingFlags.NonPublic |
-                    BindingFlags.Public |
-                    BindingFlags.Instance |
-                    BindingFlags.IgnoreCase);
-
-                if (method != null && method.ReturnType == typeof(void))
-                    method.Invoke(this, null);
-            }
-            catch (Exception ex)
-            {
-                Game.Logger.Error($"GameObject (ID {ObjectId}): Tried to call \"On{triggerName}\" as triggered" +
-                    " but the call failed (method does exist).", ex);
-            }
         }
         #endregion
     }

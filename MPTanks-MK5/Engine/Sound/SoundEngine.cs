@@ -11,7 +11,21 @@ namespace MPTanks.Engine.Sound
     {
         private LinkedList<Sound> _sounds = new LinkedList<Sound>();
         public IEnumerable<Sound> Sounds { get { return _sounds; } }
+        public int SoundCount => _sounds.Count + (BackgroundSong == null ? 0 : 1);
         private GameCore _game;
+
+        private Sound _backgroundSong;
+        public Sound BackgroundSong
+        {
+            get { return _backgroundSong; }
+            set
+            {
+                _backgroundSong = value;
+                OnBackgroundSongChanged(this, _backgroundSong);
+            }
+        }
+
+        public event EventHandler<Sound> OnBackgroundSongChanged = delegate { };
 
         public SoundEngine(GameCore game)
         {

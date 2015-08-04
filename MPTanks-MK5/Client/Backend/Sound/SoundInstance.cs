@@ -11,6 +11,7 @@ namespace MPTanks.Client.Backend.Sound
     class SoundInstance
     {
         private FMOD.CHANNEL_CALLBACK _callback;
+        private bool _ended;
         public SoundInstance(FMOD.Channel channel, Sound sound)
         {
             Sound = sound;
@@ -18,10 +19,12 @@ namespace MPTanks.Client.Backend.Sound
             //We have to hold a reference or the GC will collect and crash everything
             _callback = (channelPtr, controlType, callbackType, data1, data2) =>
             {
-                if (callbackType == FMOD.CHANNELCONTROL_CALLBACK_TYPE.END &&
-                _endedCallback != null)
+                if (callbackType == FMOD.CHANNELCONTROL_CALLBACK_TYPE.END)
                 {
-                    _endedCallback(this);
+                    _ended = true;
+                    Sound.Player.ActiveSoundInstanceQueue.Remove(this);
+                    if (_endedCallback != null)
+                        _endedCallback(this);
                 }
                 return FMOD.RESULT.OK;
             };
@@ -129,7 +132,9 @@ namespace MPTanks.Client.Backend.Sound
                 FMOD.Error.Check(Channel.set3DAttributes(ref position, ref velocity, ref alt_pan_pos));
             }
         }
-        
+
+        public bool HasEnded => _ended;
+
         public int LoopCount
         {
             get
@@ -177,6 +182,13 @@ namespace MPTanks.Client.Backend.Sound
             {
                 FMOD.Error.Check(Channel.setPosition((uint)value.TotalMilliseconds, FMOD.TIMEUNIT.MS));
             }
+        }
+
+        public void End()
+        {
+            if (_ended) return;
+            _ended = true;
+            Channel.stop();
         }
 
     }

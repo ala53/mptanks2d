@@ -11,7 +11,7 @@ namespace MPTanks.CoreAssets
     /// Explanation: This is the core module where all of the ZSB assets are.
     /// </summary>
     [ModuleDeclaration(
-        "MPTanks Core Assets",
+        Assets.ModuleName,
         "Don't screw with this, it's the core of MPTanks. That means Basic Tank, TDM Gamemode, etc. are here.",
         "ZSB Games",
         "0.1 DEV"

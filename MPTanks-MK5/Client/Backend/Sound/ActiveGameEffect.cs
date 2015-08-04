@@ -24,11 +24,11 @@ namespace MPTanks.Client.Backend.Sound
         public void Update(GameTime gameTime)
         {
             Instance.Velocity = SoundObject.Velocity * (float)Instance.Sound.Player.Game.Timescale.Fractional;
-            Instance.LoopCount = SoundObject.LoopCount; //TODO: fix this: 
+            Instance.LoopCount = SoundObject.LoopCount; 
             Instance.Pitch = SoundObject.Pitch;
             Instance.Playing = SoundObject.Playing;
             Instance.Volume = SoundObject.Volume;
-            Instance.Timescale = (float)Instance.Sound.Player.Game.Timescale.Fractional;
+            Instance.Timescale = (float)Instance.Sound.Player.Game.Timescale.Fractional * SoundObject.Timescale; 
             if (SoundObject.Positional)
                 Instance.Position = SoundObject.Position;
             if (SoundObject.TimeDirty)

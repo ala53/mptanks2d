@@ -91,6 +91,7 @@
     <Compile Include="Renderer\ResizableArray.cs" />
     <Compile Include="Sound\ActiveGameEffectContainer.cs" />
     <Compile Include="Sound\ActiveGameEffect.cs" />
+    <Compile Include="Sound\MusicHelper.cs" />
     <Compile Include="Sound\Native\fmod.cs" />
     <Compile Include="Sound\Native\fmod_dsp.cs" />
     <Compile Include="Sound\Native\fmod_errors.cs" />

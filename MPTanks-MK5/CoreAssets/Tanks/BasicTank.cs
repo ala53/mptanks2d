@@ -32,7 +32,7 @@ namespace MPTanks.CoreAssets.Tanks
         public BasicTank(GamePlayer player, GameCore game, bool authorized = false)
             : base(player, game, authorized)
         {
-            
+
         }
 
         protected override void CreateInternal()
@@ -52,7 +52,11 @@ namespace MPTanks.CoreAssets.Tanks
                 WeaponName = "120mm cannon",
                 WeaponDisplaySprite = Sprites["tank_cannon"],
                 WeaponRechargeTimeMs = 500,
-                FireCallback = (w, p) => InvokeTrigger("primary_fired")
+                FireCallback = (w, p) =>
+                {
+                    InvokeTrigger("primary_fired");
+                    Game.SoundEngine.PlaySound(Assets["primary_fire_sound"], true, Position, 0);
+                }
             };
             SecondaryWeapon = new Weapon(this)
             {
@@ -105,9 +109,5 @@ namespace MPTanks.CoreAssets.Tanks
         {
         }
 
-        public void OnPrimary_Fired()
-        {
-            Game.SoundEngine.PlaySound(Assets["primary_fire_sound"], true, Position, 0);
-        }
     }
 }

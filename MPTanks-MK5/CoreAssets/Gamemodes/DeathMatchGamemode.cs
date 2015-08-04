@@ -6,6 +6,7 @@ using MPTanks.Modding;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Sound;
 
 namespace MPTanks.CoreAssets.Gamemodes
 {
@@ -19,7 +20,12 @@ namespace MPTanks.CoreAssets.Gamemodes
             AllowRespawn = false;
             RespawnTimeMs = 0;
         }
-        
+
+        public override void Create()
+        {
+            MusicHelper.PlaySongs(Game, Assets.GetSongNames());
+        }
+
         public override void MakeTeams(Engine.GamePlayer[] players)
         {
             var rnd = new Random();
@@ -56,10 +62,6 @@ namespace MPTanks.CoreAssets.Gamemodes
                 return true;
             }
             return false;
-        }
-
-        public override void StartGame()
-        {
         }
 
         public override void Update(GameTime gameTime)

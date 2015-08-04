@@ -11,10 +11,10 @@ namespace MPTanks.Engine.Helpers
     public static partial class BasicHelpers
     {
         private static Random _rand = new Random();
-        
+
         public static T ChooseRandom<T>(this T[] options)
         {
-            var index = _rand.Next(0, options.Length - 1);
+            var index = _rand.Next(0, options.Length);
             return options[index];
         }
 

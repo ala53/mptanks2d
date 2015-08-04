@@ -49,6 +49,7 @@
   <ItemGroup>
     <None Include="assets\components\tankblocks.json" />
     <None Include="assets\components\basictank.json" />
+    <Compile Include="Assets.cs" />
     <Compile Include="Gamemodes\DeathMatchGamemode.cs" />
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
@@ -91,6 +92,8 @@
     <Content Include="assets\mapobjects\moving\satellite_dish.png" />
     <Content Include="assets\mapobjects\tank_blocks.png" />
     <Content Include="assets\mapobjects\tank_blocks_physics_object.png" />
+    <Content Include="assets\music\alien_technology.mp3" />
+    <Content Include="assets\music\summer_shade.mp3" />
     <Content Include="assets\other\lowresfont.png" />
     <Content Include="assets\other\smokepuff.png" />
     <Content Include="assets\tanks\basictank2d.png" />

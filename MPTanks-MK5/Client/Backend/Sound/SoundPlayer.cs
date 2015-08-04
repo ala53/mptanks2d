@@ -5,12 +5,13 @@ using MPTanks.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MPTanks.Client.Backend.Sound
 {
-    public class SoundPlayer
+    public class SoundPlayer : IDisposable
     {
         private FMOD.System _system;
         public FMOD.System System => _system;
@@ -24,16 +25,25 @@ namespace MPTanks.Client.Backend.Sound
         private FMOD.ChannelGroup _effectsGroup;
         public FMOD.ChannelGroup EffectsGroup => _effectsGroup;
 
+        internal MusicHelper MusicPlayer { get; set; }
+
         public GameCore Game { get; private set; }
+
+        internal List<SoundInstance> ActiveSoundInstanceQueue
+        { get; private set; }
+        = new List<SoundInstance>();
+        public int ActiveSoundCount => ActiveSoundInstanceQueue.Count;
 
         public Vector2 PlayerPosition
         {
+            [MethodImpl(MethodImplOptions.NoOptimization)]
             get
             {
                 FMOD.VECTOR pos, vel, forward, up;
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 return pos;
             }
+            [MethodImpl(MethodImplOptions.NoOptimization)]
             set
             {
                 FMOD.VECTOR pos;
@@ -42,19 +52,24 @@ namespace MPTanks.Client.Backend.Sound
                 FMOD.VECTOR up;
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 pos = value;
-                up = new FMOD.VECTOR { z = 1 };
-                forward = new FMOD.VECTOR { y = 1 };
-                FMOD.Error.Check(_system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up));
+                up = Vector3.UnitZ;
+                forward = Vector2.UnitY;
+                //No error checking because there are bugs that don't affect operation
+                //Sometimes rounding errors cause the call to crash due to denormalization of the
+                //forward and up vectors.
+                _system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up);
             }
         }
         public Vector2 PlayerVelocity
         {
+            [MethodImpl(MethodImplOptions.NoOptimization)]
             get
             {
                 FMOD.VECTOR pos, vel, forward, up;
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 return vel;
             }
+            [MethodImpl(MethodImplOptions.NoOptimization)]
             set
             {
                 FMOD.VECTOR pos;
@@ -63,9 +78,12 @@ namespace MPTanks.Client.Backend.Sound
                 FMOD.VECTOR up;
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 vel = value;
-                up = new FMOD.VECTOR { z = 1 };
-                forward = new FMOD.VECTOR { y = -1 };
-                FMOD.Error.Check(_system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up));
+                up = Vector3.UnitZ;
+                forward = Vector2.UnitY;
+                //No error checking because there are errors that don't affect operation
+                //Sometimes rounding errors cause the call to crash due to denormalization of the
+                //forward and up vectors.
+                _system.set3DListenerAttributes(0, ref pos, ref vel, ref forward, ref up);
             }
         }
 
@@ -131,10 +149,11 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(_system.createChannelGroup("Background Sounds", out _backgroundGroup));
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
             FMOD.Error.Check(_system.createChannelGroup("Sound Effects", out _effectsGroup));
-            SoundDistanceScale = 25;
+            SoundDistanceScale = 15;
             Game = game;
-            ActiveSounds = new ActiveGameEffectContainer(this);
             Cache = new SoundCache(this);
+            ActiveSounds = new ActiveGameEffectContainer(this);
+            MusicPlayer = new MusicHelper(game, this);
         }
 
         public enum ChannelGroup
@@ -147,8 +166,51 @@ namespace MPTanks.Client.Backend.Sound
         public void Update(GameTime gameTime)
         {
             ActiveSounds.UpdateSounds(gameTime);
-
+            MusicPlayer.Update();
             FMOD.Error.Check(_system.update());
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                foreach (var snd in Cache.Sounds)
+                    FMOD.Error.Check(snd.Value.SoundEffect.release());
+
+                _system.release();
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        ~SoundPlayer()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+
     }
 }

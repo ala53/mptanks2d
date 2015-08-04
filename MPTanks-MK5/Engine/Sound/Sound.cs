@@ -32,6 +32,8 @@ namespace MPTanks.Engine.Sound
             set { _time = value; _timeDirty = true; }
         }
 
+        public float Timescale { get; set; } = 1;
+
         public bool Playing { get; set; } = true;
 
         public float Pitch { get; set; } = 1;
@@ -46,7 +48,7 @@ namespace MPTanks.Engine.Sound
 
         public SoundEngine Engine { get; private set; }
 
-        internal Sound(SoundEngine engine, string _asset)
+        public Sound(SoundEngine engine, string _asset)
         {
             UniqueId = _currentId++;
             AssetName = _asset;
