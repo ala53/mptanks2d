@@ -1,0 +1,20 @@
+﻿Programmer Alastair Bennett
+Artist Alastair Bennett
+Artist Jacob Sortors
+----------------------- -----------------------
+"Moral Support" Xander Moore
+----------------------- -----------------------
+Tools FMOD Studio by Firelight Technologies (© 1994-2015) 
+Tools MonoGame Framework
+Tools JSON.Net by James Newton-King
+Tools SharpDX
+Tools Mono.Cecil
+Tools SharpZipLib
+Tools Microsoft (R) .NET Framework
+Tools Farseer Physics by "GenBox"
+Tools NLog
+Tools Lidgren UDP Network Library by Michael Lidgren
+Tools EmptyKeys by Filip Dušek
+----------------------- -----------------------
+Servers DigitalOcean
+Servers Microsoft Azure

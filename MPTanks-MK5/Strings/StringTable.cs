@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -9,9 +10,10 @@ namespace MPTanks.StringData
 {
     public class StringTable : DynamicObject, IReadOnlyDictionary<string, string>
     {
-        const string unrecognizedStringDisplayValue = "E_STRING_NOT_FOUND: {0}";
+        public const string unrecognizedStringDisplayValue = "E_STRING_NOT_FOUND: {0}";
         private string _filename;
         private Dictionary<string, string> _loadedStrings;
+        private List<KeyValuePair<string, string>> _orderedLoadedStrings;
         internal StringTable(string filename)
         {
             _filename = filename;
@@ -30,16 +32,28 @@ namespace MPTanks.StringData
 
             var lines = System.IO.File.ReadAllLines(GetLocalizedFile(_filename));
             _loadedStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //optimize searches to avoid .ToLower() allocations
-
+            _orderedLoadedStrings = new List<KeyValuePair<string, string>>();
             //It's a flat file of type: key<space>value pairs
             for (var i = 0; i < lines.Length; i++)
             {
                 try
                 {
                     if (lines[i].Split(' ').Length < 2 || lines[i].Trim().StartsWith("###")) continue;
-                    var name = lines[i].TrimStart().Split(' ')[0];
-                    var value = String.Join(" ", lines[i].Split(' ').Skip(1)).Replace(@"\n", "\n").TrimEnd();
-                    _loadedStrings.Add(name, value);
+                    if (lines[i].Trim().StartsWith("\""))
+                    {//The name is in quotes 
+                        var lastIndex = lines[i].Trim().IndexOf("\"", 1);
+                        var name = lines[i].Trim().Substring(1, lastIndex - 2);
+                        var value = lines[i].Trim().Substring(lastIndex + 1);
+                        _loadedStrings.Add(name, value);
+                        _orderedLoadedStrings.Add(new KeyValuePair<string, string>(name, value));
+                    }
+                    else
+                    {
+                        var name = lines[i].TrimStart().Split(' ')[0];
+                        var value = String.Join(" ", lines[i].Split(' ').Skip(1)).Replace(@"\n", "\n").TrimEnd();
+                        _loadedStrings.Add(name, value);
+                        _orderedLoadedStrings.Add(new KeyValuePair<string, string>(name, value));
+                    }
                 }
                 catch (Exception)
                 {
@@ -84,7 +98,15 @@ namespace MPTanks.StringData
             return _loadedStrings.ContainsKey(key);
         }
 
-        public IEnumerable<string> Keys
+        public Dictionary<string, string>.KeyCollection Keys
+        {
+            get
+            {
+                Load();
+                return _loadedStrings.Keys;
+            }
+        }
+        IEnumerable<string> IReadOnlyDictionary<string, string>.Keys
         {
             get
             {
@@ -99,7 +121,16 @@ namespace MPTanks.StringData
             return _loadedStrings.TryGetValue(key, out value);
         }
 
-        public IEnumerable<string> Values
+        public Dictionary<string, string>.ValueCollection Values
+        {
+            get
+            {
+                Load();
+                return _loadedStrings.Values;
+            }
+        }
+
+        IEnumerable<string> IReadOnlyDictionary<string, string>.Values
         {
             get
             {
@@ -126,16 +157,50 @@ namespace MPTanks.StringData
             }
         }
 
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        public StringTableEnumerator GetEnumerator()
         {
             Load();
-            return _loadedStrings.GetEnumerator();
+            return new StringTableEnumerator(_orderedLoadedStrings);
+        }
+        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+        {
+            Load();
+            return new StringTableEnumerator(_orderedLoadedStrings);
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             Load();
-            return _loadedStrings.GetEnumerator();
+            return new StringTableEnumerator(_orderedLoadedStrings);
+        }
+
+        public struct StringTableEnumerator : IEnumerator<KeyValuePair<string, string>>
+        {
+            private List<KeyValuePair<string, string>> _list;
+            private int _index;
+            internal StringTableEnumerator(List<KeyValuePair<string, string>> list)
+            {
+                _list = list;
+                _index = 0;
+            }
+            public KeyValuePair<string, string> Current => _list[_index];
+
+            object IEnumerator.Current => _list[_index];
+
+            public void Dispose()
+            {
+            }
+
+            public bool MoveNext()
+            {
+                _index++;
+                return _index < _list.Count;
+            }
+
+            public void Reset()
+            {
+                _index = 0;
+            }
         }
     }
 }

@@ -48,6 +48,9 @@
     <Content Include="assets\strings\clientmenus.en.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\strings\credits.en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\strings\engine.en.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
