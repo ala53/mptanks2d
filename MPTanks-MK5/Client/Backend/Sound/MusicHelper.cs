@@ -23,16 +23,15 @@ namespace MPTanks.Client.Backend.Sound
 
         private void SoundEngine_OnBackgroundSongChanged(object sender, Engine.Sound.Sound e)
         {
-            if (_active != null)
-                _active.End();
-
-            if (_activeSound != null)
+            if (_activeSound != null && !_active.HasEnded)
             {
                 var asnd = _activeSound;
                 _activeSound = null;
                 asnd.CompletionCallback(_activeSound);
-                return;
             }
+
+            if (_active != null)
+                _active.End();
 
             _activeSound = e;
 
