@@ -10,9 +10,15 @@ namespace MPTanks.Client.Backend.Sound
     {
         private Dictionary<string, Sound> _soundCache = new Dictionary<string, Sound>();
         public IReadOnlyDictionary<string, Sound> Sounds => _soundCache;
+        private SoundPlayer _player;
+        public SoundCache(SoundPlayer player)
+        {
+            _player = player;
+        }
+
         public Sound GetSound(string assetName)
         {
-            return null;
+            return new Sound(_player, assetName);
         }
     }
 }

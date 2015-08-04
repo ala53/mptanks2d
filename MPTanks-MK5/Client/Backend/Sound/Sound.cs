@@ -74,8 +74,24 @@ namespace MPTanks.Client.Backend.Sound
 
         public class SoundInstance
         {
-            public FMOD.Channel Channel;
-            public Sound Sound { get; set; }
+            public SoundInstance(FMOD.Channel channel, Sound sound)
+            {
+                Sound = sound;
+                Channel = channel;
+                FMOD.Error.Check(Channel.setCallback(new FMOD.CHANNEL_CALLBACK(
+                    (channelPtr, controlType, callbackType, data1, data2) =>
+                    {
+                        if (callbackType == FMOD.CHANNELCONTROL_CALLBACK_TYPE.END &&
+                        _endedCallback != null)
+                            _endedCallback(this);
+                        return FMOD.RESULT.OK;
+                    })));
+            }
+
+            public FMOD.Channel Channel { get; private set; }
+            public Sound Sound { get; private set; }
+
+            public FMOD.Sound SoundEffect => Sound.SoundEffect;
 
             public bool Playing
             {
@@ -179,17 +195,7 @@ namespace MPTanks.Client.Backend.Sound
             public Action<SoundInstance> Ended
             {
                 get { return _endedCallback; }
-                set
-                {
-                    _endedCallback = value;
-                    FMOD.Error.Check(Channel.setCallback(new FMOD.CHANNEL_CALLBACK(
-                        (channelPtr, controlType, callbackType, data1, data2) =>
-                        {
-                            if (callbackType == FMOD.CHANNELCONTROL_CALLBACK_TYPE.END)
-                                value(this);
-                            return FMOD.RESULT.OK;
-                        })));
-                }
+                set { _endedCallback = value; }
             }
 
             public TimeSpan Time
@@ -207,10 +213,18 @@ namespace MPTanks.Client.Backend.Sound
             }
 
         }
+
+        private static Queue<SoundInstance> _activeInstances = new Queue<SoundInstance>();
         public SoundInstance Play(SoundPlayer.ChannelGroup group, bool paused = false)
         {
-            var result = new SoundInstance();
-            result.Sound = this;
+
+            if (Player.ActiveChannels >= Player.MaxChannels - 1)
+            {
+                var oldest = _activeInstances.Dequeue();
+                oldest.Channel.stop();
+                if (oldest != null)
+                    oldest.Ended(oldest);
+            }
 
             FMOD.ChannelGroup playGroup;
             if (group == SoundPlayer.ChannelGroup.Background)
@@ -219,7 +233,10 @@ namespace MPTanks.Client.Backend.Sound
                 playGroup = Player.VoiceGroup;
             else playGroup = Player.EffectsGroup;
 
-            FMOD.Error.Check(Player.System.playSound(SoundEffect, playGroup, paused, out result.Channel));
+            FMOD.Channel channel;
+            FMOD.Error.Check(Player.System.playSound(SoundEffect, playGroup, paused, out channel));
+            var result = new SoundInstance(channel, this);
+            _activeInstances.Enqueue(result);
             return result;
         }
     }

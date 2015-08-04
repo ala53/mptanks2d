@@ -11,55 +11,55 @@ namespace MPTanks.Engine.Sound
     {
         private static int _currentId = int.MinValue;
         public int UniqueId { get; private set; }
-        #region Constants
-        public enum SoundPositioning
+
+        public string AssetName { get; private set; }
+
+        public int LoopCount { get; set; }
+        private TimeSpan _time;
+        private bool _timeDirty;
+        public bool TimeDirty
         {
-            /// <summary>
-            /// The sound is non-moving
-            /// </summary>
-            Static,
-            /// <summary>
-            /// The sound moves on along a path defined by the velocity vector
-            /// </summary>
-            Moving,
-            /// <summary>
-            /// Sound tracks the player
-            /// </summary>
-            NonPositional
+            get
+            {
+                var dirty = _timeDirty;
+                _timeDirty = false;
+                return dirty;
+            }
         }
-        #endregion
+        public TimeSpan Time
+        {
+            get { return _time; }
+            set { _time = value; _timeDirty = true; }
+        }
 
-        public virtual string AssetName { get; private set; }
-        /// <summary>
-        /// The data stored by the actual sound player on the client side.
-        /// </summary>
-        public virtual object PlayerData { get; set; }
+        public bool Playing { get; set; }
 
-        public virtual int LoopCount { get; set; }
-        public virtual TimeSpan Time { get; set; }
-        /// <summary>
-        /// The timescale that the sound is played at (1, 2, 1/2, 1/4, 1/8, etc.)
-        /// </summary>
-        public virtual float Timescale { get; set; }
+        public float Pitch { get; set; }
 
-        public virtual Vector2 Position { get; set; }
-        public virtual Vector2 Velocity { get; set; }
+        public Vector2 Position { get; set; }
+        public Vector2 Velocity { get; set; }
 
-        public virtual float Volume { get; set; } = 1;
+        public float Volume { get; set; } = 1;
 
-        public virtual Action<Sound> CompletionCallback { get; set; }
-        public virtual SoundPositioning PositioningMode { get; set; }
+        public Action<Sound> CompletionCallback { get; set; }
+        public bool Positional { get; set; }
 
-        public virtual SoundEngine Engine { get; private set; }
+        public SoundEngine Engine { get; private set; }
 
         internal Sound(SoundEngine engine, string _asset)
         {
             UniqueId = _currentId++;
             AssetName = _asset;
             Engine = engine;
-            Timescale = 1;
-            LoopCount = 1;
+            LoopCount = 0;
         }
-
+        /// <summary>
+        /// Do not use!
+        /// </summary>
+        /// <param name="time"></param>
+        public void UnsafeSetTime(TimeSpan time)
+        {
+            _time = time;
+        }
     }
 }
