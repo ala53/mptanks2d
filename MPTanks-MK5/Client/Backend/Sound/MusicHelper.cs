@@ -64,7 +64,7 @@ namespace MPTanks.Client.Backend.Sound
                     _active.Time = _activeSound.Time;
                 _activeSound.UnsafeSetTime(_active.Time);
                 _active.Timescale = (float)_game.Timescale.Fractional * _activeSound.Timescale;
-                _active.Volume = _activeSound.Volume;
+                _active.Volume = (float)Math.Pow(_activeSound.Volume, 2);
             }
         }
     }
