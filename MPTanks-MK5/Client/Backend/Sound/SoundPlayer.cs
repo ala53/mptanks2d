@@ -95,7 +95,7 @@ namespace MPTanks.Client.Backend.Sound
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 pos = value;
                 up = Vector3.UnitZ;
-                forward = Vector2.UnitY;
+                forward = -Vector2.UnitY;
                 //No error checking because there are bugs that don't affect operation
                 //Sometimes rounding errors cause the call to crash due to denormalization of the
                 //forward and up vectors.
@@ -121,7 +121,7 @@ namespace MPTanks.Client.Backend.Sound
                 FMOD.Error.Check(_system.get3DListenerAttributes(0, out pos, out vel, out forward, out up));
                 vel = value;
                 up = Vector3.UnitZ;
-                forward = Vector2.UnitY;
+                forward = -Vector2.UnitY;
                 //No error checking because there are errors that don't affect operation
                 //Sometimes rounding errors cause the call to crash due to denormalization of the
                 //forward and up vectors.

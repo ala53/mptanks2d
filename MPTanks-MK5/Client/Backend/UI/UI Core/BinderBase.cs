@@ -9,6 +9,6 @@ namespace MPTanks.Client.Backend.UI
 {
     public abstract class BinderBase : ViewModelBase
     {
-        public UserInterfacePage Owner { get; set; }
+        public UserInterfacePage Owner { get; internal set; }
     }
 }

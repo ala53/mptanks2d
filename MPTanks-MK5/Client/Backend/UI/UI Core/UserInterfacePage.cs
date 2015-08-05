@@ -21,7 +21,11 @@ namespace MPTanks.Client.Backend.UI
         {
             //Generate an instance of the page
             Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
-            Binder = Activator.CreateInstance(Type.GetType("MPTanks.Client.Backend.UI.Binders." + pageName, true, true));
+            var binderType = Type.GetType("MPTanks.Client.Backend.UI.Binders." + pageName, true, true);
+            if (binderType != null)
+                Binder = Activator.CreateInstance(binderType);
+            else Binder = new Binders.EmptyBinder();
+
             if (Binder is BinderBase)
                 Binder.Owner = this;
 

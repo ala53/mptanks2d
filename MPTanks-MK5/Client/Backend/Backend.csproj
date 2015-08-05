@@ -101,6 +101,7 @@
     <Compile Include="Sound\SoundInstance.cs" />
     <Compile Include="Sound\SoundPlayer.cs" />
     <Compile Include="UI\Binders\ConnectingToServerPage.cs" />
+    <Compile Include="UI\Binders\EmptyBinder.cs" />
     <Compile Include="UI\Binders\MainMenu.cs" />
     <Compile Include="UI\Binders\MainMenuPlayerIsInGamePage.cs" />
     <Compile Include="UI\Binders\MessageBoxes\ErrorMessageBox.cs" />
