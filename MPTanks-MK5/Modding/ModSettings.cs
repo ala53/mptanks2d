@@ -3,11 +3,11 @@ using System.IO;
 
 namespace MPTanks.Modding
 {
-    static class Settings
+    static class ModSettings
     {
         public static readonly string ConfigDir = "";
 
-        static Settings()
+        static ModSettings()
         {
             Directory.CreateDirectory(MetadataModUnpackDir);
             if (File.Exists("configpath.txt"))

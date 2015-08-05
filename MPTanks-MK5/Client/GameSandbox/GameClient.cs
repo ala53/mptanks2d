@@ -145,7 +145,7 @@ namespace MPTanks.Client.GameSandbox
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetPackedFileString("testmap.json"),
                 false,
-                new EngineSettings("Engine Settings.json")
+                new EngineSettings("enginesettings.json")
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;

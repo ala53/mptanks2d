@@ -9,7 +9,7 @@ namespace MPTanks.Networking.Common
 {
     public class Settings : SettingsBase
     {
-        public static Settings Instance { get; private set; } = new Settings("Common Networking.json");
+        public static Settings Instance { get; private set; } = new Settings("networkingcommon.json");
 
         public Setting<string> MasterServer { get; private set; }
 

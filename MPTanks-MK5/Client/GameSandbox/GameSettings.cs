@@ -15,7 +15,7 @@ namespace MPTanks.Client.GameSandbox
 
         static GameSettings()
         {
-            Instance = new GameSettings("Game Settings.json");
+            Instance = new GameSettings("gamesettings.json");
         }
 
         public Setting<string> GameLogLocation { get; private set; }
@@ -121,6 +121,10 @@ namespace MPTanks.Client.GameSandbox
 
             VSync = Setting.Create(this, "Enable vertical blank sync",
                 "Whether v-blank-sync should be enabled.", true);
+
+            UserTankImageDownloadCache = Setting.Create(this, "Custom Tank Image Download Path",
+                "The path in which to download custom images that users make for their tanks",
+                Path.Combine(ConfigDir, "tankimages"));
         }
     }
 }

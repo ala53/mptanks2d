@@ -24,7 +24,7 @@ namespace MPTanks.Modding
 
         static ModDatabase()
         {
-            var fName = Path.Combine(Settings.ConfigDir, "Mod Database.json");
+            var fName = Path.Combine(Settings.ConfigDir, "moddatabase.json");
             if (File.Exists(fName))
                 _items = JsonConvert.DeserializeObject<List<ModDatabaseItem>>(
                     File.ReadAllText(fName));

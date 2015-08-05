@@ -10,7 +10,7 @@ namespace MPTanks.Engine.Settings
     public class GlobalSettings : SettingsBase
     {
         public static bool Debug { get { return Instance.DebugMode; } }
-        public static GlobalSettings Instance { get; private set; } = new GlobalSettings("Global Settings.json");
+        public static GlobalSettings Instance { get; private set; } = new GlobalSettings("globalsettings.json");
 
         public Setting<bool> DebugMode { get; private set; }
 

@@ -72,9 +72,16 @@ namespace MPTanks.Engine.Settings
 
         protected abstract void SetDefaults();
 
+        private Task _saveTask;
         public void Save(string fileToSaveTo)
         {
-            File.WriteAllText(fileToSaveTo, Save());
+            if (_saveTask != null && !_saveTask.IsCompleted && !_saveTask.IsFaulted && !_saveTask.IsCanceled)
+                return; //already saving
+            _saveTask = Task.Factory.StartNew(async () =>
+            {
+                await Task.Delay(10000); //Delay 30 seconds so we don't save too often
+                File.WriteAllText(fileToSaveTo, Save());
+            });
         }
 
         public string Save()

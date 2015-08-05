@@ -11,13 +11,15 @@ namespace MPTanks.Client
 {
     class ClientSettings : SettingsBase
     {
-        public static ClientSettings Instance { get; private set; } = new ClientSettings("Client Settings.json");
+        public static ClientSettings Instance { get; private set; } = new ClientSettings("clientsettings.json");
 
         public Setting<string[]> ModSearchPaths { get; private set; }
 
         public Setting<string> ClientLogLocation { get; private set; }
 
         public Setting<bool> SandboxGames { get; private set; }
+
+        public Setting<Rectangle> WindowPosition { get; private set; }
 
         public ClientSettings(string file) : base(file) { }
 
@@ -28,7 +30,7 @@ namespace MPTanks.Client
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(ConfigDir, "mods")
                 });
-            
+
             ClientLogLocation = Setting.Create(this, "Client log directory",
                 "The directory where the client (menus and watchdog) logs are stored.",
                 Path.Combine(ConfigDir, "clientlogs", "client.log"));
@@ -36,6 +38,9 @@ namespace MPTanks.Client
             SandboxGames = Setting.Create(this, "Sandbox servers and game instances",
                 "WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. " +
                 "This says whether to run game instances in an isolated appdomain.", true);
+
+            WindowPosition = Setting.Create(this, "Window Location", "The location of the MPTanks window on screen",
+                new Rectangle(0, 0, 800, 600));
         }
 
     }

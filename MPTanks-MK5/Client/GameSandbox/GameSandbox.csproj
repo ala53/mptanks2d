@@ -57,11 +57,6 @@
     <Compile Include="Screens\InGameScreen.cs" />
     <Compile Include="Screens\MainMenuScreen.cs" />
     <Compile Include="Screens\Screen.cs" />
-    <Compile Include="Sound\MusicCache.cs" />
-    <Compile Include="Sound\Song.cs" />
-    <Compile Include="Sound\SoundFX.cs" />
-    <Compile Include="Sound\SoundFXCache.cs" />
-    <Compile Include="Sound\SoundProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EmptyKeys.UserInterface">

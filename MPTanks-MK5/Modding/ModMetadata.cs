@@ -22,9 +22,9 @@ namespace MPTanks.Modding
             if (AppDomain.CurrentDomain.GetData("__metadata__creation__domain") != null) return;
 
             //Load
-            if (File.Exists(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json")))
+            if (File.Exists(Path.Combine(Settings.ConfigDir, "modmetadatacache.json")))
                 _cache = JsonConvert.DeserializeObject<Dictionary<string, ModMetadata>>(
-                    File.ReadAllText(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json")),
+                    File.ReadAllText(Path.Combine(Settings.ConfigDir, "modmetadatacache.json")),
                     new JsonSerializerSettings
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.All,
@@ -34,7 +34,7 @@ namespace MPTanks.Modding
 
         private static void Save()
         {
-            File.WriteAllText(Path.Combine(Settings.ConfigDir, "Mod Metadata Cache.json"),
+            File.WriteAllText(Path.Combine(Settings.ConfigDir, "modmetadatacache.json"),
                 JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.All,
