@@ -643,9 +643,10 @@ namespace MPTanks.Client.GameSandbox
                 .Append(", Sounds (Backend): ").Append(_soundPlayer.ActiveSoundCount);
 
             var info = _soundPlayer.Diagnostics;
-            _bldr.Append("\nSound CPU (DSP, Streaming, Total): ")
+            _bldr.Append("\nSound CPU (DSP, Streaming, Update, Total): ")
             .Append(info.DSPCPU.ToString("N2")).Append("%, ")
             .Append(info.StreamCPU.ToString("N2")).Append("%, ")
+            .Append(info.UpdateCPU.ToString("N2")).Append("%, ")
             .Append(info.TotalCPU.ToString("N2")).Append("%");
 
             _bldr.Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
