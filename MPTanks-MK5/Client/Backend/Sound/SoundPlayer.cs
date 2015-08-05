@@ -25,6 +25,48 @@ namespace MPTanks.Client.Backend.Sound
         private FMOD.ChannelGroup _effectsGroup;
         public FMOD.ChannelGroup EffectsGroup => _effectsGroup;
 
+        public float EffectVolume
+        {
+            get
+            {
+                float vol;
+                FMOD.Error.Check(_effectsGroup.getVolume(out vol));
+                return (float)Math.Pow(vol, 1d / 2);
+            }
+            set
+            {
+                FMOD.Error.Check(_effectsGroup.setVolume((float)Math.Pow(value, 2)));
+            }
+        }
+
+        public float BackgroundVolume
+        {
+            get
+            {
+                float vol;
+                FMOD.Error.Check(_backgroundGroup.getVolume(out vol));
+                return (float)Math.Pow(vol, 1d / 2);
+            }
+            set
+            {
+                FMOD.Error.Check(_backgroundGroup.setVolume((float)Math.Pow(value, 2)));
+            }
+        }
+
+        public float VoiceVolume
+        {
+            get
+            {
+                float vol;
+                FMOD.Error.Check(_voiceGroup.getVolume(out vol));
+                return (float)Math.Pow(vol, 1d / 2);
+            }
+            set
+            {
+                FMOD.Error.Check(_voiceGroup.setVolume((float)Math.Pow(value, 2)));
+            }
+        }
+
         internal MusicHelper MusicPlayer { get; set; }
 
         public GameCore Game { get; private set; }
@@ -99,7 +141,7 @@ namespace MPTanks.Client.Backend.Sound
             {
                 float doppler, distance, rolloff;
                 _system.get3DSettings(out doppler, out distance, out rolloff);
-                _system.set3DSettings(doppler, distance, 1 / value);
+                _system.set3DSettings(0, distance, 1 / value);
             }
         }
 
@@ -147,12 +189,13 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(_system.createChannelGroup("Background Sounds", out _backgroundGroup));
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
             FMOD.Error.Check(_system.createChannelGroup("Sound Effects", out _effectsGroup));
-            SoundDistanceScale = 15;
+            SoundDistanceScale = 20;
             Game = game;
             Cache = new SoundCache(this);
             ActiveSounds = new ActiveGameEffectContainer(this);
             MusicPlayer = new MusicHelper(game, this);
         }
+
 
         public enum ChannelGroup
         {

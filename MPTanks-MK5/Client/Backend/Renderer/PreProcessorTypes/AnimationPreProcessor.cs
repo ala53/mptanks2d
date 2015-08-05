@@ -20,13 +20,14 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
             {
                 var animInfo = Finder.Cache.GetAnimation(
                     animation.SpriteInfo.FrameName, animation.SpriteInfo.SheetName);
-                //Check if the animation has ended
+                //Check if the animation has ended (or rather, if it will end one frame from now
+                var info = animation.SpriteInfo;
+                Finder.IncrementAnimation(ref info, gameTime);
                 if (animInfo != null && animInfo.Length.TotalMilliseconds * animation.SpriteInfo.LoopCount
-                        < animation.SpriteInfo.PositionInAnimation.TotalMilliseconds)
+                        < info.PositionInAnimation.TotalMilliseconds)
                     Renderer.Game.AnimationEngine.MarkAnimationCompleted(animation);
 
-
-                var info = animation.SpriteInfo;
+                info = animation.SpriteInfo;
                 Compositor.AddDrawable(new DrawableObject
                 {
                     Mask = animation.Mask,
@@ -38,9 +39,9 @@ namespace MPTanks.Client.Backend.Renderer.PreProcessorTypes
                     Rectangle = new Engine.Core.RectangleF(0, 0, animation.Size.X, animation.Size.Y),
                     Texture = Finder.RetrieveAsset(ref info)
                 }, animation.DrawLayer);
-
                 Finder.IncrementAnimation(ref info, gameTime);
                 animation.SpriteInfo = info;
+
             }
         }
     }

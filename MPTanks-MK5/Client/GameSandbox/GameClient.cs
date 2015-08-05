@@ -342,13 +342,6 @@ namespace MPTanks.Client.GameSandbox
                 if (Keyboard.GetState().IsKeyDown(Keys.M))
                     iState2.FirePressed = true;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.V))
-                {
-                    game.ParticleEngine.CreateEmitter(0, new Engine.Assets.SpriteInfo(null, null),
-                        Color.Gray, new RectangleF(50, 50, 20, 20), Vector2.One, true, 0, 0, 1000, Vector2.Zero,
-                        Vector2.Zero, Vector2.Zero, 0, 0, 500, 10000000);
-                }
-
                 iState2.LookDirection = 1.2F;
 
                 game.InjectPlayerInput(player2, iState2);
@@ -376,7 +369,13 @@ namespace MPTanks.Client.GameSandbox
 
             if (Keyboard.GetState().IsKeyDown(Keys.B))
             {
-                game.Timescale = new GameCore.TimescaleValue(MathHelper.Lerp((float)game.Timescale.Fractional, 0, 0.01f), "Custom");
+                _soundPlayer.BackgroundVolume = _soundPlayer.BackgroundVolume + 0.01f;
+                // game.Timescale = new GameCore.TimescaleValue(MathHelper.Lerp((float)game.Timescale.Fractional, 0, 0.01f), "Custom");
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.V))
+            {
+                _soundPlayer.BackgroundVolume = _soundPlayer.BackgroundVolume - 0.01f;
+                // game.Timescale = new GameCore.TimescaleValue(MathHelper.Lerp((float)game.Timescale.Fractional, 0, 0.01f), "Custom");
             }
             if (shouldTick)
             {
@@ -495,7 +494,7 @@ namespace MPTanks.Client.GameSandbox
 
         #region Debug info
 
-        private bool debugEnabled = true;
+        private bool debugEnabled = false;
         private bool drawTextDebug = true;
         private bool drawGraphDebug = true;
         private bool debugOverlayGraphsVertical = true;
@@ -641,8 +640,12 @@ namespace MPTanks.Client.GameSandbox
             _bldr.Append(", Timers: ").Append(game.TimerFactory.ActiveTimersCount)
                 .Append(", Animations: ").Append(game.AnimationEngine.Animations.Count)
                 .Append(", Particles: ").Append(game.ParticleEngine.LivingParticlesCount)
-                .Append("\nSounds (Engine): ").Append(game.SoundEngine.SoundCount)
-                .Append(", Sounds (Backend): ").Append(_soundPlayer.ActiveSoundCount);
+                .Append("\nSounds (Engine, Backend): ").Append(game.SoundEngine.SoundCount)
+                .Append(", ").Append(_soundPlayer.ActiveSoundCount)
+                .Append(", Volumes (Background, Effects, Voice): ")
+                .Append((_soundPlayer.BackgroundVolume * 100).ToString("N0")).Append("%")
+                .Append(", ").Append((_soundPlayer.EffectVolume * 100).ToString("N0")).Append("%")
+                .Append(", ").Append((_soundPlayer.VoiceVolume * 100).ToString("N0")).Append("%");
 
             var info = _soundPlayer.Diagnostics;
             _bldr.Append("\nSound CPU (DSP, Streaming, Update, Total): ")
