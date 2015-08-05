@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Reflection;
@@ -57,8 +58,7 @@ namespace MPTanks.Engine.Settings
         //If the file doesn't exist, go to default
         public static string ConfigDir
         { get; private set; }
-        =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "MP Tanks 2D");
+        = Directory.GetCurrentDirectory();
 
         public void LoadFromFile(string file)
         {
@@ -136,11 +136,57 @@ namespace MPTanks.Engine.Settings
             [JsonIgnore]
             public virtual SettingDisplayType DisplayType { get; protected set; }
             [JsonIgnore]
-            public SettingsBase SettingsInstance { get; private set; }
+            public SettingsBase SettingsInstance { get; protected set; }
 
-            protected Setting(SettingsBase instance)
+            protected Setting()
             {
-                SettingsInstance = instance;
+            }
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, params T[] allowedValues)
+           => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
+
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType, params T[] allowedValues)
+            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, displayType);
+
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues)
+            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
+            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, displayType);
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider)
+            => Setting<T>.Create(settings, name, description, defaultValue, valueProvider, DetectType(typeof(T)));
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider, SettingDisplayType displayType)
+            => Setting<T>.Create(settings, name, description, defaultValue, valueProvider, displayType);
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue)
+            => Setting<T>.Create(settings, name, description, defaultValue, DetectType(typeof(T)));
+
+            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType)
+            => Setting<T>.Create(settings, name, description, defaultValue, displayType);
+
+            private static SettingDisplayType DetectType(Type t)
+            {
+                if (t == typeof(int) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) ||
+                    t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong))
+                    return SettingDisplayType.Integer;
+
+                if (t == typeof(float) || t == typeof(double))
+                    return SettingDisplayType.FloatingPointNumber;
+
+                if (t == typeof(string))
+                    return SettingDisplayType.String;
+
+                if (t == typeof(string[]))
+                    return SettingDisplayType.StringArray;
+
+                if (t == typeof(bool))
+                    return SettingDisplayType.Boolean;
+
+                return SettingDisplayType.Object;
             }
 
             public enum SettingDisplayType
@@ -169,7 +215,7 @@ namespace MPTanks.Engine.Settings
             }
         }
 
-        public class Setting<T> : Setting
+        public class Setting<TArg> : Setting
         {
             public override object ObjectValue
             {
@@ -179,13 +225,13 @@ namespace MPTanks.Engine.Settings
                 }
                 set
                 {
-                    Value = (T)value;
+                    Value = (TArg)value;
                     SettingsInstance.OnSettingChanged(this);
                 }
             }
-            public T Value { get; set; }
+            public TArg Value { get; set; }
             [JsonIgnore]
-            public IEnumerable<T> AllowedValues
+            public IEnumerable<TArg> AllowedValues
             {
                 get
                 {
@@ -198,96 +244,59 @@ namespace MPTanks.Engine.Settings
             {
                 get
                 {
-                    return (IEnumerable<object>)AllowedValues;
+                    return AllowedValues.Select((a) => (object)a);
                 }
                 protected set
                 {
-                    _allowedValues = (IEnumerable<T>)value;
+                    _allowedValues = value
+                        .Where(a => a.GetType() == typeof(TArg) ||
+                        a.GetType().IsSubclassOf(typeof(TArg)))
+                        .Select(a => (TArg)a);
                 }
             }
 
-            private IEnumerable<T> _allowedValues;
-            private Func<Setting<T>, IEnumerable<T>> _allowedValueProvider;
+            private IEnumerable<TArg> _allowedValues;
+            private Func<Setting<TArg>, IEnumerable<TArg>> _allowedValueProvider;
 
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, params T[] allowedValues)
-                : this(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)))
+
+            private Setting() { }
+
+            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
             {
+                var setting = new Setting<T>();
+                setting.Name = name;
+                setting.Description = description;
+                setting.Value = defaultValue;
+                setting._allowedValues = allowedValues;
+                setting.DisplayType = displayType;
+                setting.SettingsInstance = settings;
+                return setting;
             }
 
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType, params T[] allowedValues)
-                : this(settings, name, description, defaultValue, allowedValues, displayType)
+            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider, SettingDisplayType displayType)
             {
+                var setting = new Setting<T>();
+                setting.SettingsInstance = settings;
+                setting.Name = name;
+                setting.Description = description;
+                setting.Value = defaultValue;
+                setting._allowedValueProvider = valueProvider;
+                setting.DisplayType = displayType;
+                return setting;
             }
 
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues)
-                : this(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)))
+            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType)
             {
-
+                var setting = new Setting<T>();
+                setting.SettingsInstance = settings;
+                setting.Name = name;
+                setting.Description = description;
+                setting.Value = defaultValue;
+                setting.DisplayType = displayType;
+                return setting;
             }
 
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
-                : base(settings)
-            {
-                Name = name;
-                Description = description;
-                Value = defaultValue;
-                _allowedValues = allowedValues;
-                DisplayType = displayType;
-            }
-
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider)
-                : this(settings, name, description, defaultValue, valueProvider, DetectType(typeof(T)))
-            {
-
-            }
-
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider, SettingDisplayType displayType)
-                : base(settings)
-            {
-                Name = name;
-                Description = description;
-                Value = defaultValue;
-                _allowedValueProvider = valueProvider;
-                DisplayType = displayType;
-            }
-
-            public Setting(SettingsBase settings, string name, string description, T defaultValue)
-                : this(settings, name, description, defaultValue, DetectType(typeof(T)))
-            {
-
-            }
-
-            public Setting(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType)
-                : base(settings)
-            {
-                Name = name;
-                Description = description;
-                Value = defaultValue;
-                DisplayType = displayType;
-            }
-
-            private static SettingDisplayType DetectType(Type t)
-            {
-                if (t == typeof(int) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) ||
-                    t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong))
-                    return SettingDisplayType.Integer;
-
-                if (t == typeof(float) || t == typeof(double))
-                    return SettingDisplayType.FloatingPointNumber;
-
-                if (t == typeof(string))
-                    return SettingDisplayType.String;
-
-                if (t == typeof(string[]))
-                    return SettingDisplayType.StringArray;
-
-                if (t == typeof(bool))
-                    return SettingDisplayType.Boolean;
-
-                return SettingDisplayType.Object;
-            }
-
-            public static implicit operator T(Setting<T> my)
+            public static implicit operator TArg(Setting<TArg> my)
             {
                 return my.Value;
             }

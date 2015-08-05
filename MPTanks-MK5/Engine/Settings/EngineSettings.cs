@@ -68,50 +68,50 @@ namespace MPTanks.Engine.Settings
 
         protected override void SetDefaults()
         {
-            PhysicsScale = new Setting<float>(this, "Physics Scale",
+            PhysicsScale = Setting.Create(this, "Physics Scale",
                   "The scale of the physics engine relative to game world space",
                   0.1f, Setting.SettingDisplayType.Percentage);
 
-            TankDensity = new Setting<float>(this, "Tank density",
+            TankDensity = Setting.Create(this, "Tank density",
             "The density of a tank in the physics engine.", 15f);
 
-            TimeToWaitBeforeStartingGame = new Setting<float>(this, "Pre game connection wait time",
+            TimeToWaitBeforeStartingGame = Setting.Create(this, "Pre game connection wait time",
             "The amount of time, in seconds, to wait before starting a game." +
             " This is here primarily to give users time to connect to the server and download map" +
             " and server data (mods, etc) before the game starts.", 5000f, Setting.SettingDisplayType.TimeMS);
 
-            TimePostGameToContinueRunning = new Setting<float>(this, "Post game time",
+            TimePostGameToContinueRunning = Setting.Create(this, "Post game time",
             "The amount of time to keep the game running after the winner has been determined." +
             " Sort of a post round deathmatch phase and a phase that helps people read the outcome" +
-            " of the game.", 5000, Setting.SettingDisplayType.TimeMS);
+            " of the game.", 5000f, Setting.SettingDisplayType.TimeMS);
 
-            ParticleLimit = new Setting<int>(this, "Particle limit",
+            ParticleLimit = Setting.Create(this, "Particle limit",
             "The maximum number of particles to allow in a game. The default is 20,000 for good reason." +
             " If it's more, there is a quite a chance of lag (even here, it happens on occasion)." +
             " If you set it past 100,000, you deserve to die a slow and painful lag death and you probably will.", 20000);
 
-            MinDeltaTimeGameTick = new Setting<float>(this, "Minimum Game Tick Time",
+            MinDeltaTimeGameTick = Setting.Create(this, "Minimum Game Tick Time",
             "The smallest amount of time allowed for a single game tick." +
             " This probably should not be less than 1/3 of a millisecond or we run into numeric" +
             " precision issues in the physics engine.", 0.5f, Setting.SettingDisplayType.TimeMS);
 
-            MaxDeltaTimeGameTick = new Setting<float>(this, "Maximum Game Tick Time",
+            MaxDeltaTimeGameTick = Setting.Create(this, "Maximum Game Tick Time",
             "The maximum amount of time allowed for a single game tick. If it's greater," +
             " multiple game ticks will be performed for the one tick. Unfortunately, while" +
             " this improves the stability of collisions, it can cause a 'spiral of death' if the" +
             " game tick loop is the bottleneck of the game.", 34f, Setting.SettingDisplayType.TimeMS);
 
-            ParticleEmitterMaxDeltaTime = new Setting<float>(this, "Particle Emitter max tick time",
+            ParticleEmitterMaxDeltaTime = Setting.Create(this, "Particle Emitter max tick time",
             "The maximum amount of time each tick of the particle engine can be. Changes to this value" +
             " can stop some particle rendering bugs due to faulty velocity calculations. Higher values lower" +
             " CPU time needed while lower values increase particle trail accuracy.",
             17f, Setting.SettingDisplayType.TimeMS);
 
-            MaxStateChangeSize = new Setting<int>(this, "Maximum GameObject State Change Size",
+            MaxStateChangeSize = Setting.Create(this, "Maximum GameObject State Change Size",
                 "The maximum size, in bytes, of a single state change for a GameObject.", 3072);
 
-            MaxStateChangeFrequency = new Setting<float>(this, "Max state change frequency",
-                "The maximum frequency of state changes in milliseconds, basically rate limiting.", 100,
+            MaxStateChangeFrequency = Setting.Create(this, "Max state change frequency",
+                "The maximum frequency of state changes in milliseconds, basically rate limiting.", 100f,
                 Setting.SettingDisplayType.TimeMS); //10 of them per second
 
         }

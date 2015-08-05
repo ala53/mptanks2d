@@ -87,60 +87,60 @@ namespace MPTanks.Client.GameSandbox
         { }
         protected override void SetDefaults()
         {
-            GameLogLocation = new Setting<string>(this, "Log storage location",
+            GameLogLocation = Setting.Create(this, "Log storage location",
                    "Where to store runtime logs for the game. This uses NLog storage conventions." +
                    " So, ${basedir} is the program's installation directory.",
                    Path.Combine(ConfigDir, "gamelogs", "game.log"));
 
-            MaxParticlesToRender = new Setting<int>(this, "Max particles allowed on screen",
+            MaxParticlesToRender = Setting.Create(this, "Max particles allowed on screen",
             "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +
             " can increase visual fidelity (some particles may not be rendered at lower settings) while lower ones" +
             " substantially increase performance. See the related Particle Limit settings.",
             5000);
 
-            ForceFullGCEveryFrame = new Setting<bool>(this, "Force Full GC every frame",
+            ForceFullGCEveryFrame = Setting.Create(this, "Force Full GC every frame",
             "Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance.", false);
 
-            ForceGen0GCEveryFrame = new Setting<bool>(this, "Force Gen 0 GC every frame",
+            ForceGen0GCEveryFrame = Setting.Create(this, "Force Gen 0 GC every frame",
             "Whether to force a fast GC every frame. This is rarely a significant performance problem so" +
             " it's useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
 
-            MaxInstancesOfOneSoundAllowed = new Setting<int>(this, "Max instances of 1 sound",
+            MaxInstancesOfOneSoundAllowed = Setting.Create(this, "Max instances of 1 sound",
             "The maximum number of instaces of a single sound that can be playing simultaneously." +
             " If more sounds than that try to play simultaneously, the oldest one will be cut off. Increase" +
             " this if you are hearing audible cutoffs, at the cost of memory usage and performace.", 4);
 
-            ImageAllowedFileExtensions = new Setting<string[]>(this, "Image asset file extensions",
+            ImageAllowedFileExtensions = Setting.Create(this, "Image asset file extensions",
                 "The extensions to search for when trying to load an image, in the correct search order.",
                 new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
 
-            SoundAllowedFileExtensions = new Setting<string[]>(this, "Sound asset file extensions",
+            SoundAllowedFileExtensions = Setting.Create(this, "Sound asset file extensions",
                 "The extensions to search for when trying to load a sound, in the correct search order.",
                 new[] { ".ogg", ".wav", ".mp3" });
 
-            ModUnpackPath = new Setting<string>(this, "Mod temp directory",
+            ModUnpackPath = Setting.Create(this, "Mod temp directory",
                 "The place to store mods that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into.",
                 Path.Combine(ConfigDir, "tempmodunpack"));
 
-            ModAssetPath = new Setting<string>(this, "Mod temp directory for assets",
+            ModAssetPath = Setting.Create(this, "Mod temp directory for assets",
                 "The place to store mods assets that are used at runtime. In other words, this is the directory" +
                 " that *.mod files are unpacked into (but not the code).",
                 Path.Combine(ConfigDir, "tempmodunpack", "assets"));
 
-            ModMapPath = new Setting<string>(this, "Mod temp directory for maps",
+            ModMapPath = Setting.Create(this, "Mod temp directory for maps",
                 "The place where maps from *.mod files are unpacked to.", Path.Combine(ConfigDir, "tempmodunpack", "maps"));
 
-            ModDownloadPath = new Setting<string>(this, "Mod download directory",
+            ModDownloadPath = Setting.Create(this, "Mod download directory",
                 "The directory to store mods downloaded from servers in.",
                 Path.Combine(ConfigDir, "mods"));
 
 
-            CoreMods = new Setting<string[]>(this, "Core Mods",
+            CoreMods = Setting.Create(this, "Core Mods",
                 "The core mods that will be autoinjected into every game without verification." +
                 "They must be DLL files.", DefaultTrustedMods);
 
-            AssetSearchPaths = new Setting<string[]>(this, "Asset search paths", "The paths in which to look for assets assets.",
+            AssetSearchPaths = Setting.Create(this, "Asset search paths", "The paths in which to look for assets assets.",
                 new[] {
                     Directory.GetCurrentDirectory(), //current directory
                     Path.Combine(Directory.GetCurrentDirectory(), "assets"),
@@ -153,19 +153,19 @@ namespace MPTanks.Client.GameSandbox
                     ConfigDir
                 });
 
-            RenderScale = new Setting<float>(this, "Render Scale",
+            RenderScale = Setting.Create(this, "Render Scale",
             "The scale of rendering relative to game space so integer conversions work", 100f);
 
-            PhysicsCompensationForRendering = new Setting<float>(this, "Physics Skin Compensation",
+            PhysicsCompensationForRendering = Setting.Create(this, "Physics Skin Compensation",
                 "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
 
-            Fullscreen = new Setting<bool>(this, "Fullscreen mode",
+            Fullscreen = Setting.Create(this, "Fullscreen mode",
                 "Whether to render the game in fullscreen mode", false);
 
-            DebugShowEmitterLocationBoxes = new Setting<bool>(this, "Show emitter locations",
+            DebugShowEmitterLocationBoxes = Setting.Create(this, "Show emitter locations",
                 "Whether to show the locations of emitters as large blue boxes", false);
 
-            VSync = new Setting<bool>(this, "Enable vertical blank sync", 
+            VSync = Setting.Create(this, "Enable vertical blank sync", 
                 "Whether v-blank-sync should be enabled.", true);
         }
     }

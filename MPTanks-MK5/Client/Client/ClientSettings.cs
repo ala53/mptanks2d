@@ -22,17 +22,17 @@ namespace MPTanks.Client
 
         protected override void SetDefaults()
         {
-            ModSearchPaths = new Setting<string[]>(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
+            ModSearchPaths = Setting.Create(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
                 new[] {
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(ConfigDir, "mods")
                 });
 
-            ClientLogLocation = new Setting<string>(this, "Client log directory",
+            ClientLogLocation = Setting.Create(this, "Client log directory",
                 "The directory where the client (menus and watchdog) logs are stored.",
                 Path.Combine(ConfigDir, "clientlogs", "client.log"));
 
-            SandboxGames = new Setting<bool>(this, "Sandbox servers and game instances",
+            SandboxGames = Setting.Create(this, "Sandbox servers and game instances",
                 "WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. " +
                 "This says whether to run game instances in an isolated appdomain.", true);
         }
