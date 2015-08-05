@@ -117,7 +117,7 @@ namespace MPTanks.Engine.Settings
             }
             private object _val;
             [JsonIgnore]
-            public virtual object ObjectValue
+            public virtual dynamic ObjectValue
             {
                 get
                 {
@@ -132,7 +132,7 @@ namespace MPTanks.Engine.Settings
             [JsonIgnore]
             public virtual bool HasWhitelistOfAllowedValues { get; protected set; }
             [JsonIgnore]
-            public virtual IEnumerable<object> ObjectAllowedValues { get; protected set; }
+            public virtual IEnumerable<dynamic> ObjectAllowedValues { get; protected set; }
             [JsonIgnore]
             public virtual SettingDisplayType DisplayType { get; protected set; }
             [JsonIgnore]

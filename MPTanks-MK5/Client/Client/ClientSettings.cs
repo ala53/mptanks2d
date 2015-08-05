@@ -27,7 +27,7 @@ namespace MPTanks.Client
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(ConfigDir, "mods")
                 });
-
+            
             ClientLogLocation = Setting.Create(this, "Client log directory",
                 "The directory where the client (menus and watchdog) logs are stored.",
                 Path.Combine(ConfigDir, "clientlogs", "client.log"));
