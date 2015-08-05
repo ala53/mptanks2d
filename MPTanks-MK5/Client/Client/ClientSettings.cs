@@ -19,7 +19,7 @@ namespace MPTanks.Client
 
         public Setting<bool> SandboxGames { get; private set; }
 
-        public Setting<Rectangle> WindowPosition { get; private set; }
+        public Setting<Rectangle> WindowRectangle { get; private set; }
 
         public ClientSettings(string file) : base(file) { }
 
@@ -39,7 +39,7 @@ namespace MPTanks.Client
                 "WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. " +
                 "This says whether to run game instances in an isolated appdomain.", true);
 
-            WindowPosition = Setting.Create(this, "Window Location", "The location of the MPTanks window on screen",
+            WindowRectangle = Setting.Create(this, "Window Rectangle", "The location and size of the MPTanks window on screen",
                 new Rectangle(0, 0, 800, 600));
         }
 

@@ -199,6 +199,7 @@ namespace MPTanks.Client.GameSandbox
             if (e.Key == Keys.F11)
             {
                 graphics.ToggleFullScreen();
+                GameSettings.Instance.Fullscreen.Value = graphics.IsFullScreen;
             }
 
             if (e.Key == Keys.RightControl)

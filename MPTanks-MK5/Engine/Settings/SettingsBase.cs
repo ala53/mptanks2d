@@ -236,7 +236,16 @@ namespace MPTanks.Engine.Settings
                     SettingsInstance.OnSettingChanged(this);
                 }
             }
-            public TArg Value { get; set; }
+            private TArg _value;
+            public TArg Value
+            {
+                get { return _value; }
+                set
+                {
+                    _value = value;
+                    SettingsInstance.OnSettingChanged(this);
+                }
+            }
             [JsonIgnore]
             public IEnumerable<TArg> AllowedValues
             {

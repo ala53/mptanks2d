@@ -30,6 +30,27 @@ namespace MPTanks.Client
             get { return new Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight); }
         }
 
+        private Rectangle? _windowRect;
+        public bool WindowRectangleChanged
+        {
+            get
+            {
+                if (_windowRect == null)
+                {
+                    _windowRect = Window.ClientBounds;
+                    return false;
+                }
+
+                if (_windowRect == Window.ClientBounds)
+                    return false;
+                else
+                {
+                    _windowRect = Window.ClientBounds;
+                    return true;
+                }
+            }
+        }
+
         public ClientCore()
             : base()
         {
@@ -100,6 +121,12 @@ namespace MPTanks.Client
         {
             IsMouseVisible = true;
 
+            QueuePositionAndSizeSet(
+                    ClientSettings.Instance.WindowRectangle.Value.X,
+                    ClientSettings.Instance.WindowRectangle.Value.Y,
+                    ClientSettings.Instance.WindowRectangle.Value.Width,
+                    ClientSettings.Instance.WindowRectangle.Value.Height);
+
             ui = new UserInterface(Content, this);
             ui.SetPage("mainmenu");
             ui.ActiveBinder.ExitAction = (Action)Exit;
@@ -150,6 +177,11 @@ namespace MPTanks.Client
                 _hasQueuedSizeChange = false;
                 graphics.ApplyChanges();
             }
+
+            if (WindowRectangleChanged)
+                ClientSettings.Instance.WindowRectangle.Value = new Rectangle(
+                    Window.Position,
+                    Window.ClientBounds.Size);
 
             ui.Update(gameTime);
 
