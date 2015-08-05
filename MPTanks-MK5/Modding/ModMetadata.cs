@@ -22,9 +22,9 @@ namespace MPTanks.Modding
             if (AppDomain.CurrentDomain.GetData("__metadata__creation__domain") != null) return;
 
             //Load
-            if (File.Exists(Path.Combine(Settings.ConfigDir, "modmetadatacache.json")))
+            if (File.Exists(Path.Combine(ModSettings.ConfigDir, "modmetadatacache.json")))
                 _cache = JsonConvert.DeserializeObject<Dictionary<string, ModMetadata>>(
-                    File.ReadAllText(Path.Combine(Settings.ConfigDir, "modmetadatacache.json")),
+                    File.ReadAllText(Path.Combine(ModSettings.ConfigDir, "modmetadatacache.json")),
                     new JsonSerializerSettings
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.All,
@@ -34,7 +34,7 @@ namespace MPTanks.Modding
 
         private static void Save()
         {
-            File.WriteAllText(Path.Combine(Settings.ConfigDir, "modmetadatacache.json"),
+            File.WriteAllText(Path.Combine(ModSettings.ConfigDir, "modmetadatacache.json"),
                 JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.All,
@@ -100,8 +100,8 @@ namespace MPTanks.Modding
             if (fi.Extension.ToLower().EndsWith("dll"))
                 modData = ModLoader.Load(modFile, verifySafe, out errors);
             else
-                modData = ModLoader.LoadMod(modFile, Settings.MetadataModUnpackDir, Settings.MetadataModUnpackDir,
-               Settings.MetadataModUnpackDir, out errors, verifySafe);
+                modData = ModLoader.LoadMod(modFile, ModSettings.MetadataModUnpackDir, ModSettings.MetadataModUnpackDir,
+               ModSettings.MetadataModUnpackDir, out errors, verifySafe);
 
             result.ModPackedFile = modFile;
 

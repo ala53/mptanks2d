@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common
 {
-    public class Settings : SettingsBase
+    public class NetworkCommonSettings : SettingsBase
     {
-        public static Settings Instance { get; private set; } = new Settings("networkingcommon.json");
+        public static NetworkCommonSettings Instance { get; private set; } = new NetworkCommonSettings("networkingcommon.json");
 
         public Setting<string> MasterServer { get; private set; }
 
@@ -25,7 +25,7 @@ namespace MPTanks.Networking.Common
 
         public Setting<float> MaxNetworkDelayMs { get; private set; }
 
-        private Settings(string file) : base(file)
+        private NetworkCommonSettings(string file) : base(file)
         {
         }
 

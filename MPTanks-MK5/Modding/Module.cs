@@ -90,7 +90,7 @@ namespace MPTanks.Modding
         }
         internal static bool IsGamemodeType(Type t)
         {
-            var gamemode = GetTypeHelper.GetType(Settings.GamemodeTypeName);
+            var gamemode = GetTypeHelper.GetType(ModSettings.GamemodeTypeName);
 
             return t.IsSubclassOf(gamemode);
         }
@@ -115,7 +115,7 @@ namespace MPTanks.Modding
         }
         internal static bool IsTankType(Type t)
         {
-            var tank = GetTypeHelper.GetType(Settings.TankTypeName);
+            var tank = GetTypeHelper.GetType(ModSettings.TankTypeName);
 
             return t.IsSubclassOf(tank);
         }
@@ -149,7 +149,7 @@ namespace MPTanks.Modding
 
         internal static bool IsProjectileType(Type t)
         {
-            var prj = GetTypeHelper.GetType(Settings.ProjectileTypeName);
+            var prj = GetTypeHelper.GetType(ModSettings.ProjectileTypeName);
 
             return t.IsSubclassOf(prj);
         }
@@ -177,7 +177,7 @@ namespace MPTanks.Modding
 
         internal static bool IsMapObjectType(Type t)
         {
-            var prj = GetTypeHelper.GetType(Settings.MapObjectTypeName);
+            var prj = GetTypeHelper.GetType(ModSettings.MapObjectTypeName);
 
             return t.IsSubclassOf(prj);
         }
@@ -202,7 +202,7 @@ namespace MPTanks.Modding
 
         internal static bool IsGameObjectType(Type t)
         {
-            var prj = GetTypeHelper.GetType(Settings.GameObjectTypeName);
+            var prj = GetTypeHelper.GetType(ModSettings.GameObjectTypeName);
 
             return t.IsSubclassOf(prj);
         }

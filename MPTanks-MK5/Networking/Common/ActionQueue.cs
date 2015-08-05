@@ -17,7 +17,7 @@ namespace MPTanks.Networking.Common
         public void NextFrame()
         {
             _items.Add(QueueFrame.Get());
-            if (_items.Count > Settings.Instance.MaxActionFrameCount)
+            if (_items.Count > NetworkCommonSettings.Instance.MaxActionFrameCount)
                 _items.RemoveAt(_items.Count - 1);
         }
 

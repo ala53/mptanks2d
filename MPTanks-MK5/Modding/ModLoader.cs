@@ -401,31 +401,31 @@ namespace MPTanks.Modding
         #region Type Injection
         private static void Inject(TankType type)
         {
-            var typ = GetTypeHelper.GetType(Settings.TankTypeName);
+            var typ = GetTypeHelper.GetType(ModSettings.TankTypeName);
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
         private static void Inject(ProjectileType type)
         {
-            var typ = GetTypeHelper.GetType(Settings.ProjectileTypeName);
+            var typ = GetTypeHelper.GetType(ModSettings.ProjectileTypeName);
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
         private static void Inject(MapObjectType type)
         {
-            var typ = GetTypeHelper.GetType(Settings.MapObjectTypeName);
+            var typ = GetTypeHelper.GetType(ModSettings.MapObjectTypeName);
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
         private static void Inject(GamemodeType type)
         {
-            var typ = GetTypeHelper.GetType(Settings.GamemodeTypeName);
+            var typ = GetTypeHelper.GetType(ModSettings.GamemodeTypeName);
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }
         private static void Inject(GameObjectType type)
         {
-            var typ = GetTypeHelper.GetType(Settings.GameObjectTypeName);
+            var typ = GetTypeHelper.GetType(ModSettings.GameObjectTypeName);
             var method = typ.GetMethod("RegisterType", BindingFlags.Static | BindingFlags.NonPublic);
             method.MakeGenericMethod(type.Type).Invoke(null, null);
         }

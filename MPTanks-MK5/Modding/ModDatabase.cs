@@ -24,7 +24,7 @@ namespace MPTanks.Modding
 
         static ModDatabase()
         {
-            var fName = Path.Combine(Settings.ConfigDir, "moddatabase.json");
+            var fName = Path.Combine(ModSettings.ConfigDir, "moddatabase.json");
             if (File.Exists(fName))
                 _items = JsonConvert.DeserializeObject<List<ModDatabaseItem>>(
                     File.ReadAllText(fName));
@@ -118,7 +118,7 @@ namespace MPTanks.Modding
 
         private static void Save()
         {
-            File.WriteAllText(Path.Combine(Settings.ConfigDir, "Mod Database.json"),
+            File.WriteAllText(Path.Combine(ModSettings.ConfigDir, "Mod Database.json"),
                 JsonConvert.SerializeObject(_items, Formatting.Indented));
         }
     }

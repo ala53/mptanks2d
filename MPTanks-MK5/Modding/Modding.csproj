@@ -75,7 +75,7 @@
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compiliation\Verification\WhitelistVerify.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="ModSettings.cs" />
     <Compile Include="Unpacker\DependencyResolver.cs" />
     <Compile Include="Unpacker\ModHeader.cs" />
     <Compile Include="Unpacker\ModUnpacker.cs" />
