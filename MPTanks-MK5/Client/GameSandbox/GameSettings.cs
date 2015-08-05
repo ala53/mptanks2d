@@ -21,11 +21,6 @@ namespace MPTanks.Client.GameSandbox
         public Setting<string> GameLogLocation { get; private set; }
 
         /// <summary>
-        /// The maximum number of on screen particles to allow
-        /// </summary>
-        public Setting<int> MaxParticlesToRender { get; private set; }
-
-        /// <summary>
         /// Whether to force a gen 0 GC every frame. This gets rid of
         /// most temporary objects, helping to trace actual memory leaks.
         /// Unfortunately, it does so to the possible detriment of 
@@ -34,17 +29,8 @@ namespace MPTanks.Client.GameSandbox
         public Setting<bool> ForceFullGCEveryFrame { get; private set; }
         public Setting<bool> ForceGen0GCEveryFrame { get; private set; }
 
-        /// <summary>
-        /// The number of instances of a sound that can be playing at the same time.
-        /// </summary>
-        public Setting<int> MaxInstancesOfOneSoundAllowed { get; private set; }
-
         //Where to look for assets
         public Setting<string[]> AssetSearchPaths { get; private set; }
-
-        public Setting<string[]> ImageAllowedFileExtensions { get; private set; }
-
-        public Setting<string[]> SoundAllowedFileExtensions { get; private set; }
 
         //Stores mods in a runtime directory. That way, when we download mods from servers, we 
         //just leave them in the temp directory where they are removed next time the program opens
@@ -66,12 +52,6 @@ namespace MPTanks.Client.GameSandbox
                 };
 
         /// <summary>
-        /// The scale the rendering runs at relative to the blocks.
-        /// This way, we can pass integers around safely.
-        /// </summary>
-        public Setting<float> RenderScale { get; private set; }
-
-        /// <summary>
         /// The amount of "blocks" to compensate for in rendering because of the 
         /// skin on physics objects
         /// </summary>
@@ -79,7 +59,6 @@ namespace MPTanks.Client.GameSandbox
 
         #region Screen Resolution
         public Setting<bool> Fullscreen { get; private set; }
-        public Setting<bool> DebugShowEmitterLocationBoxes { get; private set; }
         public Setting<bool> VSync { get; private set; }
         #endregion
         private GameSettings(string file)
@@ -92,12 +71,6 @@ namespace MPTanks.Client.GameSandbox
                    " So, ${basedir} is the program's installation directory.",
                    Path.Combine(ConfigDir, "gamelogs", "game.log"));
 
-            MaxParticlesToRender = Setting.Create(this, "Max particles allowed on screen",
-            "The maximum number of particles that can be displayed on screen at any particular time. Higher values" +
-            " can increase visual fidelity (some particles may not be rendered at lower settings) while lower ones" +
-            " substantially increase performance. See the related Particle Limit settings.",
-            5000);
-
             ForceFullGCEveryFrame = Setting.Create(this, "Force Full GC every frame",
             "Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance.", false);
 
@@ -105,23 +78,10 @@ namespace MPTanks.Client.GameSandbox
             "Whether to force a fast GC every frame. This is rarely a significant performance problem so" +
             " it's useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
 
-            MaxInstancesOfOneSoundAllowed = Setting.Create(this, "Max instances of 1 sound",
-            "The maximum number of instaces of a single sound that can be playing simultaneously." +
-            " If more sounds than that try to play simultaneously, the oldest one will be cut off. Increase" +
-            " this if you are hearing audible cutoffs, at the cost of memory usage and performace.", 4);
-
-            ImageAllowedFileExtensions = Setting.Create(this, "Image asset file extensions",
-                "The extensions to search for when trying to load an image, in the correct search order.",
-                new[] { ".dds", ".png", ".jpg", ".jpeg", ".bmp", ".gif" });
-
-            SoundAllowedFileExtensions = Setting.Create(this, "Sound asset file extensions",
-                "The extensions to search for when trying to load a sound, in the correct search order.",
-                new[] { ".ogg", ".wav", ".mp3" });
-
             ModUnpackPath = Setting.Create(this, "Mod temp directory",
-                "The place to store mods that are used at runtime. In other words, this is the directory" +
-                " that *.mod files are unpacked into.",
-                Path.Combine(ConfigDir, "tempmodunpack"));
+            "The place to store mods that are used at runtime. In other words, this is the directory" +
+            " that *.mod files are unpacked into.",
+            Path.Combine(ConfigDir, "tempmodunpack"));
 
             ModAssetPath = Setting.Create(this, "Mod temp directory for assets",
                 "The place to store mods assets that are used at runtime. In other words, this is the directory" +
@@ -153,19 +113,13 @@ namespace MPTanks.Client.GameSandbox
                     ConfigDir
                 });
 
-            RenderScale = Setting.Create(this, "Render Scale",
-            "The scale of rendering relative to game space so integer conversions work", 100f);
-
             PhysicsCompensationForRendering = Setting.Create(this, "Physics Skin Compensation",
                 "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
 
             Fullscreen = Setting.Create(this, "Fullscreen mode",
                 "Whether to render the game in fullscreen mode", false);
 
-            DebugShowEmitterLocationBoxes = Setting.Create(this, "Show emitter locations",
-                "Whether to show the locations of emitters as large blue boxes", false);
-
-            VSync = Setting.Create(this, "Enable vertical blank sync", 
+            VSync = Setting.Create(this, "Enable vertical blank sync",
                 "Whether v-blank-sync should be enabled.", true);
         }
     }
