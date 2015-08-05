@@ -111,6 +111,21 @@
       "key": "primary_fire_sound"
     }
   ],
+  "sounds": [
+    {
+      "name": "explosion_sound",
+      "activatesOn": "destroy",
+      "asset": "explosion_sound.flac",
+      "tracksObject": true,
+      "positional": true,
+      "position": { "x": 1.5, "y": 2.5 },
+      "volume": 2,
+      "pitch": 1,
+      "offsetMs": 0,
+      "loopCount": 0,
+      "timescale": 1
+    }
+  ],
   "otherSprites": [
     {
       "key": "explosion1",

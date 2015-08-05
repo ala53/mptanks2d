@@ -30,6 +30,7 @@ namespace MPTanks.Engine.Serialization
         public GameObjectSpriteSpecifierJSON[] OtherSprites { get; set; }
         public GameObjectLightJSON[] Lights { get; set; }
         public GameObjectAnimationJSON[] Animations { get; set; }
+        public GameObjectSoundJSON[] Sounds { get; set; }
         public GameObjectBodySpecifierJSON Body { get; set; }
         public string __image__body { get; set; } //Disregard: just for compiler
         public string[] Flags { get; set; }
@@ -44,8 +45,7 @@ namespace MPTanks.Engine.Serialization
             if (me.Sheet == null)
                 me.Sheet = new GameObjectSheetSpecifierJSON
                 {
-                    ModName = "engine_base",
-                    File = "assets/empty.png",
+                    File = "error_no_root_sheet_specified",
                     FromOtherMod = true
                 };
             if (me.Health <= 0) me.Health = int.MaxValue;
@@ -57,12 +57,14 @@ namespace MPTanks.Engine.Serialization
             if (me.Animations == null) me.Animations = new GameObjectAnimationJSON[0];
             if (me.Lights == null) me.Lights = new GameObjectLightJSON[0];
             if (me.Flags == null) me.Flags = new string[0];
+            if (me.Sounds == null) me.Sounds = new GameObjectSoundJSON[0];
 
             me.ProcessSprites();
             me.ProcessComponents();
             me.ProcessEmitters();
             me.ProcessAnimations();
             me.ProcessLights();
+            me.ProcessSounds();
             me.BuildGroups();
 
             return me;
@@ -88,7 +90,7 @@ namespace MPTanks.Engine.Serialization
             //Go through the components
             foreach (var cmp in Components)
             {
-                Validate(cmp);
+                ValidateName(cmp);
                 //Handle unset colors
                 if (cmp.Mask == null)
                     cmp.Mask = Color.White;
@@ -127,7 +129,7 @@ namespace MPTanks.Engine.Serialization
             foreach (var emitter in Emitters)
             {
                 //Handle namelessness
-                Validate(emitter);
+                ValidateName(emitter);
                 //Deal with null refs in the sub-sprites
                 for (var i = 0; i < emitter.Sprites.Length; i++)
                 {
@@ -147,7 +149,7 @@ namespace MPTanks.Engine.Serialization
         {
             foreach (var anim in Animations)
             {
-                Validate(anim);
+                ValidateName(anim);
                 HandleTriggers(anim);
 
                 for (var i = 0; i < anim.SpriteOptions.Length; i++)
@@ -167,7 +169,7 @@ namespace MPTanks.Engine.Serialization
         {
             foreach (var light in Lights)
             {
-                Validate(light);
+                ValidateName(light);
                 var img = ResolveSpriteObjectReference(light.Image.Frame);
                 if (img != null)
                     light.Image = img;
@@ -205,6 +207,15 @@ namespace MPTanks.Engine.Serialization
             }
         }
 
+        private void ProcessSounds()
+        {
+            foreach (var sound in Sounds)
+            {
+                HandleTriggers(sound);
+                ValidateName(sound);
+            }
+        }
+
         private void BuildGroups()
         {
 
@@ -224,7 +235,7 @@ namespace MPTanks.Engine.Serialization
             }
         }
 
-        private void Validate(INameValidatable validatable)
+        private void ValidateName(INameValidatable validatable)
         {
             if (validatable.Name != null && validatable.Name.Length > 0)
                 return;
@@ -515,19 +526,6 @@ namespace MPTanks.Engine.Serialization
         public float StartPositionMs { get; set; }
     }
 
-    public interface ITriggerable
-    {
-        string ActivatesOn { get; set; }
-        [JsonIgnore]
-        bool ActivatesAtTime { get; set; }
-        [JsonIgnore]
-        bool ActivationIsTriggered { get; set; }
-        [JsonIgnore]
-        TimeSpan TimeToSpawnAt { get; set; }
-        [JsonIgnore]
-        string TriggerName { get; set; }
-    }
-
     public class GameObjectBodySpecifierJSON
     {
         public JSONVector Size { get; set; }
@@ -579,6 +577,35 @@ namespace MPTanks.Engine.Serialization
         }
     }
 
+    public class GameObjectSoundJSON : INameValidatable, ITriggerable
+    {
+        public bool ActivatesAtTime { get; set; }
+
+        public string ActivatesOn { get; set; }
+
+        public bool ActivationIsTriggered { get; set; }
+
+        public string Name { get; set; }
+
+        public TimeSpan TimeToSpawnAt { get; set; }
+
+        public string TriggerName { get; set; }
+
+        public string Asset { get; set; }
+        public bool FromOtherMod { get; set; }
+        public string AssetModName { get; set; }
+        public bool TracksObject { get; set; }
+        [DefaultValue(true)]
+        public bool Positional { get; set; }
+        public JSONVector Position { get; set; }
+        public JSONVector Velocity { get; set; }
+        public  float Volume { get; set; }
+        public float Pitch { get; set; }
+        public double OffsetMs { get; set; }
+        public int LoopCount { get; set; }
+        public float Timescale { get; set; }
+    }
+
     public interface INameValidatable
     {
         string Name { get; set; }
@@ -587,6 +614,19 @@ namespace MPTanks.Engine.Serialization
     public interface IHasSheet
     {
         GameObjectSheetSpecifierJSON Sheet { get; set; }
+    }
+
+    public interface ITriggerable
+    {
+        string ActivatesOn { get; set; }
+        [JsonIgnore]
+        bool ActivatesAtTime { get; set; }
+        [JsonIgnore]
+        bool ActivationIsTriggered { get; set; }
+        [JsonIgnore]
+        TimeSpan TimeToSpawnAt { get; set; }
+        [JsonIgnore]
+        string TriggerName { get; set; }
     }
 
     public interface IRequiresKey

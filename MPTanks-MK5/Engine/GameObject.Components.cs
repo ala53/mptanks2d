@@ -60,15 +60,25 @@ namespace MPTanks.Engine
 
         private List<AnimationData> _animationsWithData = new List<AnimationData>();
 
-        protected HashSet<string> _flags = new HashSet<string>();
-        [JsonIgnore]
-        public ISet<string> Flags { get { return _flags; } }
-
         private struct AnimationData
         {
             public Animation Animation { get; set; }
             public GameObjectAnimationJSON Information { get; set; }
         }
+
+        protected Dictionary<string, Sound.Sound> _sounds;
+        public IReadOnlyDictionary<string, Sound.Sound> Sounds { get { return _sounds; } }
+
+        private List<SoundData> _soundsWithData = new List<SoundData>();
+        private struct SoundData
+        {
+            public Sound.Sound Sound { get; set; }
+            public GameObjectSoundJSON Information { get; set; }
+            public bool HasBeenTriggered { get; set; }
+        }
+        protected HashSet<string> _flags = new HashSet<string>();
+        [JsonIgnore]
+        public ISet<string> Flags { get { return _flags; } }
 
         protected Dictionary<string, Light> _lights;
         [JsonIgnore]
@@ -152,11 +162,12 @@ namespace MPTanks.Engine
             LoadAnimations(deserialized.Animations);
             LoadOtherSprites(deserialized.OtherSprites);
             LoadEmitters(deserialized.Emitters);
+            LoadSounds(deserialized.Sounds);
 
 
             return deserialized;
         }
-
+        #region Components
         private void LoadComponents(GameObjectComponentJSON[] components)
         {
             foreach (var cmp in components)
@@ -208,7 +219,6 @@ namespace MPTanks.Engine
                 _components.Add(cmp.Name, component);
             }
         }
-
         private void LoadComponentGroups(GameObjectComponentGroupJSON[] groups)
         {
             foreach (var group in groups)
@@ -220,6 +230,81 @@ namespace MPTanks.Engine
                 _groups.Add(group.Key, rGroup);
             }
         }
+        #endregion
+        #region Sounds
+        private void LoadSounds(GameObjectSoundJSON[] sounds)
+        {
+            foreach (var sound in sounds)
+            {
+                string asset;
+                if (sound.FromOtherMod)
+                    asset = ResolveAsset(sound.AssetModName, sound.Asset);
+                else asset = ResolveAsset(sound.Asset);
+                var snd = new Sound.Sound(Game.SoundEngine, asset);
+                snd.LoopCount = sound.LoopCount;
+                snd.Pitch = sound.Pitch;
+                snd.Positional = sound.Positional;
+                snd.Position = TransformPoint(sound.Position);
+                snd.Time = TimeSpan.FromMilliseconds(sound.OffsetMs);
+                snd.Timescale = sound.Timescale;
+                snd.Velocity = TransformPoint(sound.Velocity);
+                snd.Volume = sound.Volume;
+                _sounds.Add(sound.Name, snd);
+                _soundsWithData.Add(new SoundData()
+                {
+                    Information = sound,
+                    Sound = snd
+                });
+            }
+        }
+        private void TriggerSounds(string triggerName)
+        {
+            for (var i = 0; i < _soundsWithData.Count; i++)
+            {
+                var snd = _soundsWithData[i];
+                if (snd.HasBeenTriggered) continue;
+                if (snd.Information.TriggerName.Equals(triggerName, StringComparison.OrdinalIgnoreCase))
+                {
+                    snd.HasBeenTriggered = true;
+                    Game.SoundEngine.AddSound(snd.Sound);
+                    snd.Sound.Position = TransformPoint(snd.Information.Position);
+                    if (snd.Information.TracksObject)
+                        snd.Sound.Velocity = TransformPoint(snd.Information.Velocity);
+                }
+                _soundsWithData[i] = snd;
+            }
+        }
+
+        private void TriggerAtTimeSounds()
+        {
+            for (var i = 0; i < _soundsWithData.Count; i++)
+            {
+                var snd = _soundsWithData[i];
+                if (snd.HasBeenTriggered) continue;
+                if (snd.Information.TimeToSpawnAt < TimeAlive)
+                {
+                    snd.HasBeenTriggered = true;
+                    Game.SoundEngine.AddSound(snd.Sound);
+                    snd.Sound.Position = TransformPoint(snd.Information.Position);
+                    if (snd.Information.TracksObject)
+                        snd.Sound.Velocity = TransformPoint(snd.Information.Velocity);
+                }
+                _soundsWithData[i] = snd;
+            }
+        }
+
+        private void UpdateSounds(GameTime gameTime)
+        {
+            foreach (var snd in _soundsWithData)
+            {
+                if (snd.Information.TracksObject)
+                {
+                    snd.Sound.Position = TransformPoint(snd.Information.Position);
+                    snd.Sound.Velocity = TransformPoint(snd.Information.Velocity);
+                }
+            }
+        }
+        #endregion
 
         private void LoadKeyedAssets(GameObjectSheetSpecifierJSON[] assets, GameObjectComponentJSON[] components,
             GameObjectEmitterJSON[] emitters, GameObjectAnimationJSON[] anims, GameObjectLightJSON[] lights)
@@ -261,6 +346,40 @@ namespace MPTanks.Engine
             }
         }
 
+        private string ResolveJSONSheet(GameObjectSheetSpecifierJSON sheet)
+        {
+            if (sheet.FromOtherMod)
+                return ResolveAsset(sheet.ModName, sheet.File);
+            else return ResolveAsset(sheet.File);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Loads the components specified in the file specified in the attribute for this object's type,
+        /// as well as requesting that the user provide theirs
+        /// </summary>
+        private void LoadBaseComponents()
+        {
+            var attrib = ((GameObjectAttribute[])(GetType()
+                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0];
+            var componentFile = attrib.ComponentFile;
+
+            _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
+            _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
+            _groups = new Dictionary<string, RenderableComponentGroup>(StringComparer.InvariantCultureIgnoreCase);
+            _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
+            _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
+            _lights = new Dictionary<string, Light>();
+            _sounds = new Dictionary<string, Sound.Sound>();
+
+            BaseComponents = LoadComponentsFromFile(ResolveAsset(componentFile));
+
+            AddComponents(_components);
+        }
+
+        #region Emitters
         private void LoadEmitters(GameObjectEmitterJSON[] emitters)
         {
             foreach (var emitter in emitters)
@@ -314,96 +433,6 @@ namespace MPTanks.Engine
                 _emittersWithData.Add(new EmitterData { AttachedEmitter = em, Information = emitter });
             }
         }
-
-        private void LoadAnimations(GameObjectAnimationJSON[] animations)
-        {
-            foreach (var anim in animations)
-            {
-                var sprite = anim.SpriteOptions[Game.SharedRandom.Next(0, anim.SpriteOptions.Length)];
-                var animation = new Animation(
-                   new SpriteInfo(sprite.Frame,
-                    ResolveJSONSheet(sprite.Sheet),
-                    true, anim.LoopCount),
-                    TransformPoint(anim.Position),
-                    anim.Size,
-                    anim.Mask ?? Color.White,
-                    anim.RotationOrigin ?? ((Vector2)anim.Size) / 2,
-                    null,
-                    anim.DrawLayer
-                    );
-
-                _animations.Add(anim.Name, animation);
-                _animationsWithData.Add(new AnimationData
-                {
-                    Animation = animation,
-                    Information = anim
-                });
-            }
-        }
-
-        private void LoadLights(GameObjectLightJSON[] lights)
-        {
-            foreach (var light in lights)
-            {
-                var l = new Light()
-                {
-                    SpriteInfo = new SpriteInfo(light?.Image?.Frame, ResolveJSONSheet(light?.Image?.Sheet)),
-                    Color = light.Color,
-                    //Intensity is nothing when not activated yet
-                    Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
-                    PositionCenter = light.Position,
-                    Size = light.Size
-                };
-
-                if (light.ShowForAllTeams)
-                    l.ShowForAllTeams = true;
-                else if (light.ShowForTankTeamOnly && GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                    l.TeamIds = new[] { ((Tanks.Tank)this).Team.TeamId };
-                else if (light.TeamIds != null)
-                    l.TeamIds = light.TeamIds;
-
-                _lights.Add(light.Name, l);
-                _lightsWithData.Add(new LightData
-                {
-                    Light = l,
-                    Information = light
-                });
-            }
-        }
-
-        private string ResolveJSONSheet(GameObjectSheetSpecifierJSON sheet)
-        {
-            if (sheet.FromOtherMod)
-                return ResolveAsset(sheet.ModName, sheet.File);
-            else return ResolveAsset(sheet.File);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Loads the components specified in the file specified in the attribute for this object's type,
-        /// as well as requesting that the user provide theirs
-        /// </summary>
-        private void LoadBaseComponents()
-        {
-            var attrib = ((GameObjectAttribute[])(GetType()
-                  .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0];
-            var componentFile = attrib.ComponentFile;
-
-            _emitters = new Dictionary<string, ParticleEngine.Emitter>(StringComparer.InvariantCultureIgnoreCase);
-            _assets = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            _components = new Dictionary<string, RenderableComponent>(StringComparer.InvariantCultureIgnoreCase);
-            _groups = new Dictionary<string, RenderableComponentGroup>(StringComparer.InvariantCultureIgnoreCase);
-            _sprites = new Dictionary<string, SpriteInfo>(StringComparer.InvariantCultureIgnoreCase);
-            _animations = new Dictionary<string, Animation>(StringComparer.InvariantCultureIgnoreCase);
-            _lights = new Dictionary<string, Light>();
-
-            BaseComponents = LoadComponentsFromFile(ResolveAsset(componentFile));
-
-            AddComponents(_components);
-        }
-
-        #region Emitters
 
         private void UpdateEmitters(GameTime gameTime)
         {
@@ -467,6 +496,31 @@ namespace MPTanks.Engine
         #endregion
 
         #region Animations
+        private void LoadAnimations(GameObjectAnimationJSON[] animations)
+        {
+            foreach (var anim in animations)
+            {
+                var sprite = anim.SpriteOptions[Game.SharedRandom.Next(0, anim.SpriteOptions.Length)];
+                var animation = new Animation(
+                   new SpriteInfo(sprite.Frame,
+                    ResolveJSONSheet(sprite.Sheet),
+                    true, anim.LoopCount),
+                    TransformPoint(anim.Position),
+                    anim.Size,
+                    anim.Mask ?? Color.White,
+                    anim.RotationOrigin ?? ((Vector2)anim.Size) / 2,
+                    null,
+                    anim.DrawLayer
+                    );
+
+                _animations.Add(anim.Name, animation);
+                _animationsWithData.Add(new AnimationData
+                {
+                    Animation = animation,
+                    Information = anim
+                });
+            }
+        }
         private void UpdateAnimations(GameTime gameTime)
         {
             foreach (var anim in _animationsWithData)
@@ -501,6 +555,36 @@ namespace MPTanks.Engine
         #endregion
 
         #region Lights
+        private void LoadLights(GameObjectLightJSON[] lights)
+        {
+            foreach (var light in lights)
+            {
+                var l = new Light()
+                {
+                    SpriteInfo = new SpriteInfo(light?.Image?.Frame, ResolveJSONSheet(light?.Image?.Sheet)),
+                    Color = light.Color,
+                    //Intensity is nothing when not activated yet
+                    Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
+                    PositionCenter = light.Position,
+                    Size = light.Size
+                };
+
+                if (light.ShowForAllTeams)
+                    l.ShowForAllTeams = true;
+                else if (light.ShowForTankTeamOnly && GetType().IsSubclassOf(typeof(Tanks.Tank)))
+                    l.TeamIds = new[] { ((Tanks.Tank)this).Team.TeamId };
+                else if (light.TeamIds != null)
+                    l.TeamIds = light.TeamIds;
+
+                _lights.Add(light.Name, l);
+                _lightsWithData.Add(new LightData
+                {
+                    Light = l,
+                    Information = light
+                });
+            }
+        }
+
         private void UpdateLights(GameTime gameTime)
         {
             foreach (var light in _lightsWithData)
@@ -525,6 +609,16 @@ namespace MPTanks.Engine
             TriggerEmitters(triggerName);
             TriggerAnimations(triggerName);
             TriggerLights(triggerName);
+            TriggerSounds(triggerName);
+        }
+
+        private void UpdateComponents(GameTime gameTime)
+        {
+            UpdateLights(gameTime);
+            UpdateAnimations(gameTime);
+            UpdateEmitters(gameTime);
+            UpdateRenderableComponentRotations(gameTime);
+            UpdateSounds(gameTime);
         }
         #endregion
     }

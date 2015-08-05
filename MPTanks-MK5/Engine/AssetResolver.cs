@@ -8,7 +8,7 @@ namespace MPTanks.Engine.Rendering
     {
         private static Func<Module, GamePlayer, string, string> _tankResolver = (m, p, a) =>
         {
-            if (m == null)
+            if (m == null || a == null || p == null)
                 return a;
             //Simple passthrough search
             if (m.AssetMappings.ContainsKey(a))
@@ -45,7 +45,7 @@ namespace MPTanks.Engine.Rendering
         {
             if (_tankResolver == null && _assetResolver == null)
                 return asset;
-            
+
             if (player != null)
                 return _tankResolver(FindModuleByName(moduleName), player, asset);
             else

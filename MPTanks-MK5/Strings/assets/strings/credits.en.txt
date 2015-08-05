@@ -21,3 +21,4 @@ Servers Microsoft Azure
 ----------------------- -----------------------
 Music Summer Shade by Per Kiilstofte (CC-BY 4.0)\nhttps://machinimasound.com/music/summer-shade/
 Music Alien Technology by Jens Kiilstofte (CC-BY 4.0)\nhttps://machinimasound.com/music/alien-technology/
+Sounds Many sound effects by qubodup (public domain)\nhttp://www.freesound.org/people/qubodup

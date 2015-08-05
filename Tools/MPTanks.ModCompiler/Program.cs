@@ -130,7 +130,7 @@ namespace MPTanks.ModCompiler
                     }
 
                     var fi = new FileInfo(p);
-                    if (fi.Extension == ".wav" || fi.Extension == ".mp3" || fi.Extension == ".ogg")
+                    if (fi.Extension == ".wav" || fi.Extension == ".mp3" || fi.Extension == ".ogg" || fi.Extension == ".flac")
                         soundAssets.Add(p);
                     else
                     {
@@ -366,7 +366,7 @@ namespace MPTanks.ModCompiler
                         Console.WriteLine($"Warning! {file} is missing matching .json descriptor. Ignoring for now.");
                     }
                 }
-                else if (ext == ".wav" || ext == ".mp3" || ext == ".ogg")
+                else if (ext == ".wav" || ext == ".mp3" || ext == ".ogg" || ext == ".flac")
                 {
                     mappings.Add(file, "sound");
                     soundAssets.Add(file);

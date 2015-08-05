@@ -62,6 +62,12 @@ namespace MPTanks.Engine.Sound
             return PlaySound(soundName, 0, positional, position, loopCount);
         }
 
+        public void AddSound(Sound sound)
+        {
+            if (!_sounds.Contains(sound))
+                _sounds.AddLast(sound);
+        }
+
         /// <summary>
         /// Allows the client to mark a sound as completed and have it removed from existence
         /// </summary>

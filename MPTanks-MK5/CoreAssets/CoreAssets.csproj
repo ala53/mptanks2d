@@ -96,6 +96,7 @@
     <Content Include="assets\music\summer_shade.mp3" />
     <Content Include="assets\other\lowresfont.png" />
     <Content Include="assets\other\smokepuff.png" />
+    <Content Include="assets\sounds\explosion_sound.flac" />
     <Content Include="assets\tanks\basictank2d.png" />
     <Content Include="core-assets.mod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
