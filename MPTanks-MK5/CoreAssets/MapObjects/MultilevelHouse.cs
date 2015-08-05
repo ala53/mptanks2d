@@ -17,7 +17,11 @@ namespace MPTanks.CoreAssets.MapObjects
         public MultilevelHouse(GameCore game, bool authorized = false, Vector2 position = default(Vector2), float rotation = 0)
             : base(game, authorized, position, rotation)
         {
-            Size = new Vector2(8);
+        }
+
+        protected override void UpdateInternal(GameTime gameTime)
+        {
+            if (Health < 50) Emitters["chimney_smoke"].Paused = true;
         }
     }
 }

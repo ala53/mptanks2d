@@ -69,6 +69,12 @@ namespace MPTanks.Engine
             public double Fractional { get; private set; }
             public string DisplayString { get; private set; }
             public int Index { get; private set; }
+            public TimescaleValue(double fractional, string displayName)
+            {
+                Fractional = fractional;
+                DisplayString = displayName;
+                Index = -1;
+            }
             private TimescaleValue(double value, string display, int index)
             {
                 Fractional = value;

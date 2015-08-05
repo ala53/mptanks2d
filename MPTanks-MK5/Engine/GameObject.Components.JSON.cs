@@ -34,6 +34,7 @@ namespace MPTanks.Engine.Serialization
         public string __image__body { get; set; } //Disregard: just for compiler
         public string[] Flags { get; set; }
         public int DrawLayer { get; set; }
+        public bool Invincible { get; set; }
 
         internal static GameObjectComponentsJSON Create(string data)
         {

@@ -141,6 +141,7 @@ namespace MPTanks.Engine
             DefaultSize = deserialized.DefaultSize;
             DrawLayer = deserialized.DrawLayer;
             Health = deserialized.Health;
+            CanBeDestroyed = !deserialized.Invincible;
             foreach (var flag in deserialized.Flags)
                 _flags.Add(flag);
 

@@ -247,6 +247,7 @@ namespace MPTanks.Client.GameSandbox
                 if (timescaleIndex < 0) timescaleIndex = 0;
                 if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
                     timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
+                game.Timescale = GameCore.TimescaleValue.Values[timescaleIndex];
             }
             if (e.Key == Keys.U)
             {
@@ -254,6 +255,7 @@ namespace MPTanks.Client.GameSandbox
                 if (timescaleIndex < 0) timescaleIndex = 0;
                 if (timescaleIndex >= GameCore.TimescaleValue.Values.Count)
                     timescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
+                game.Timescale = GameCore.TimescaleValue.Values[timescaleIndex];
             }
         }
 
@@ -296,7 +298,7 @@ namespace MPTanks.Client.GameSandbox
                 _graphicsDeviceIsDirty = false;
             }
 
-            game.Timescale = GameCore.TimescaleValue.Values[timescaleIndex];
+            // 
             timer.Restart();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -374,7 +376,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (Keyboard.GetState().IsKeyDown(Keys.B))
             {
-                Logger.Info(game.Diagnostics.ToString());
+                game.Timescale = new GameCore.TimescaleValue(MathHelper.Lerp((float)game.Timescale.Fractional, 0, 0.01f), "Custom");
             }
             if (shouldTick)
             {

@@ -14,8 +14,13 @@
           },
           {
             "maxHealth": 150,
-            "minHealth": 0,
+            "minHealth": 50,
             "sprite": { "frame": "house_damaged" }
+          },
+          {
+            "maxHealth": 50,
+            "minHealth": 0,
+            "sprite": { "frame": "house_destroyed" }
           }
         ]
       },
@@ -74,6 +79,7 @@
   "health": 300,
   "name": "Large House #1",
   "reflectionName": "LargeHouseMultiLevel",
+  "invincible": true,
   "size": { "x": 8, "y": 8 },
   "sheet": {
     "file": "housetexturebasic.png"

@@ -14,6 +14,13 @@
       "y": 0,
       "width": 360,
       "height": 360
+    },
+    {
+      "name": "house_destroyed",
+      "x": 720,
+      "y": 0,
+      "width": 360,
+      "height": 360
     }
 	]
 }
