@@ -43,7 +43,6 @@ namespace MPTanks.Client.GameSandbox
         private SpriteFont font;
         private Stopwatch timer = new Stopwatch();
         private RectangleF drawRect;
-        private Screens.Screen currentScreen;
         private UIRoot root;
         private MonoGameEngine eng;
         private Texture2D _helperTexture;
@@ -127,7 +126,6 @@ namespace MPTanks.Client.GameSandbox
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            currentScreen = new Screens.InGameScreen(this);
             SetupGame();
             font = Content.Load<SpriteFont>("font");
 
