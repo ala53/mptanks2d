@@ -17,11 +17,10 @@ namespace MPTanks.Engine.Tanks
                 if (targetRotation > maxRotation) targetRotation = maxRotation.Value;
             }
 
-            var a = targetRotation - currentRotation;
-            if (a > MathHelper.Pi)
-                a -= MathHelper.TwoPi;
-            if (a < -MathHelper.Pi)
-                a += MathHelper.TwoPi;
+            currentRotation = NormalizeAngle(currentRotation);
+            targetRotation = NormalizeAngle(targetRotation);
+
+            var a = NormalizeAngle(targetRotation - currentRotation + MathHelper.Pi) - MathHelper.Pi;
 
             var shortestDistance = a;
             if (shortestDistance < 0)
@@ -29,9 +28,14 @@ namespace MPTanks.Engine.Tanks
 
             return currentRotation + Math.Min(shortestDistance, maxSpeed);
         }
-        private static float SignedMod(float a, float b)
+
+        private static float NormalizeAngle(float angle)
         {
-            return a + MathHelper.Pi - (float)Math.Floor(a / b) * b;
+            while (angle < 0) angle += MathHelper.TwoPi;
+
+            while (angle > MathHelper.TwoPi) angle -= MathHelper.TwoPi;
+
+            return angle;
         }
     }
 }
