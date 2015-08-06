@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine.Settings;
+﻿using MPTanks.Client.GameSandbox.Input;
+using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,6 +61,12 @@ namespace MPTanks.Client.GameSandbox
         #region Screen Resolution
         public Setting<bool> Fullscreen { get; private set; }
         public Setting<bool> VSync { get; private set; }
+        public Setting<float> Zoom { get; private set; }
+        #endregion
+
+        #region Input settings
+        public Setting<string> InputDriverName { get; private set; }
+        public Setting<string> InputKeyBindings { get; private set; }
         #endregion
         private GameSettings(string file)
             : base(file)
@@ -122,9 +129,19 @@ namespace MPTanks.Client.GameSandbox
             VSync = Setting.Create(this, "Enable vertical blank sync",
                 "Whether v-blank-sync should be enabled.", true);
 
+            Zoom = Setting.Create(this, "Game world zoom",
+                "The zoom level of the game world, relative to default.",
+                1f);
+
             UserTankImageDownloadCache = Setting.Create(this, "Custom Tank Image Download Path",
                 "The path in which to download custom images that users make for their tanks",
                 Path.Combine(ConfigDir, "tankimages"));
+
+            InputDriverName = Setting.Create(this, "Input driver name",
+                "The name of the driver to use for in game input.", GamePadInputDriver.Name);
+
+            InputKeyBindings = Setting.Create<string>(this, "Input Key Bindings",
+                "The stored key bindings for the current input driver", null);
         }
     }
 }

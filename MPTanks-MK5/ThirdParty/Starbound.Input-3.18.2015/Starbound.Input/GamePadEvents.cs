@@ -219,7 +219,7 @@ namespace Starbound.Input
         private GamePadTriggerEventArgs GetGamePadTriggerEventArgs(TimeSpan time, PlayerIndex logicalIndex, Triggers trigger, float amount, GamePadState state)
         {
             GamePadTriggerEventArgs _arg;
-            if (_freeGPTEventArgs.Count == 0)
+            if (_freeGPTrEventArgs.Count == 0)
             { //If it doesn't exist
                 _arg = new GamePadTriggerEventArgs(time, logicalIndex, trigger, amount, state);
                 _allGPTrEventArgs.Add(_arg);

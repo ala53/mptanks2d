@@ -45,18 +45,15 @@
     <Compile Include="GameSettings.cs" />
     <Compile Include="CrossDomainObject.cs" />
     <Compile Include="GameClient.cs" />
+    <Compile Include="Input\GamePadInputDriver.cs" />
+    <Compile Include="Input\InputDriverBase.cs" />
+    <Compile Include="Input\KeyBindingCollection.cs" />
+    <Compile Include="Input\KeyboardMouseInputDriver.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Mods\CoreModLoader.cs" />
     <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Screens\Component\DebugRenderer.cs" />
-    <Compile Include="Screens\Component\Dialog.cs" />
-    <Compile Include="Screens\Component\ScreenComponent.cs" />
-    <Compile Include="Screens\GameEndedScreen.cs" />
-    <Compile Include="Screens\InGameScreen.cs" />
-    <Compile Include="Screens\MainMenuScreen.cs" />
-    <Compile Include="Screens\Screen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EmptyKeys.UserInterface">
@@ -142,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Input\" />
     <Folder Include="UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

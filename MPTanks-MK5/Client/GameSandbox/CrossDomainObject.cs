@@ -34,6 +34,7 @@ namespace MPTanks.Client.GameSandbox
         public int WindowPositionY { get; set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
+        public bool SandboxingEnabled { get; set; }
 
         public bool IsGameHost { get; set; }
         public bool HostIsLanGame { get; set; }
