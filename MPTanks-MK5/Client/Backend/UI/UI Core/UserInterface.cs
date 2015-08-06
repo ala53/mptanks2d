@@ -62,6 +62,16 @@ namespace MPTanks.Client.Backend.UI
             }
         }
 
+        public string PageName
+        {
+            get
+            {
+                if (_page != null)
+                    return _page.Name;
+                else return null;
+            }
+        }
+
         public UserInterface(ContentManager contentManager, Game game)
         {
             _graphics = game.GraphicsDevice;

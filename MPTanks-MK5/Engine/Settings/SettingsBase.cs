@@ -67,7 +67,8 @@ namespace MPTanks.Engine.Settings
         }
         public void Load(string settingsData)
         {
-            JsonConvert.PopulateObject(settingsData, this, _settings);
+            try { JsonConvert.PopulateObject(settingsData, this, _settings); }
+            catch { }
         }
 
         protected abstract void SetDefaults();

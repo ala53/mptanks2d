@@ -103,7 +103,7 @@ namespace MPTanks.Engine
         [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
         #region Game Status
-        public float RemainingCountdownSeconds { get; private set; }
+        public TimeSpan RemainingCountdownTime { get; private set; }
         #endregion
         private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
         public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
@@ -249,7 +249,7 @@ namespace MPTanks.Engine
             {
                 GameStatus = CurrentGameStatus.GameRunning;
                 _gameCountDownHasBegun = true;
-                RemainingCountdownSeconds = 0;
+                RemainingCountdownTime = TimeSpan.Zero;
             }
 
             Map = Maps.Map.LoadMap(mapData, this);
@@ -388,8 +388,8 @@ namespace MPTanks.Engine
                 Logger.Info(Strings.Engine.GameStarted);
             }
 
-            RemainingCountdownSeconds = (Settings.TimeToWaitBeforeStartingGame / 1000)
-                - (float)(_timeSinceGameBeganStarting / 1000);
+            RemainingCountdownTime = TimeSpan.FromMilliseconds(
+                Settings.TimeToWaitBeforeStartingGame - _timeSinceGameBeganStarting);
         }
 
         private bool _hasGameStarted = false;

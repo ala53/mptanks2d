@@ -46,6 +46,8 @@ namespace MPTanks.Client.GameSandbox
         private GameCoreRenderer _gcRenderer;
         private UserInterface _ui;
 
+        const string _settingUpPageName = "SettingUpPrompt";
+
         public Diagnostics Diagnostics => _game?.Diagnostics;
 
         public GameClient()
@@ -87,7 +89,6 @@ namespace MPTanks.Client.GameSandbox
         /// </summary>
         protected override void Initialize()
         {
-            base.Initialize();
             //Set up resize handler
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
@@ -98,10 +99,13 @@ namespace MPTanks.Client.GameSandbox
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
 
+            _ui = new UserInterface(Content, this);
+
             //initialize the game input driver
             _inputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
             if (GameSettings.Instance.InputKeyBindings.Value != null)
                 _inputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
+            base.Initialize();
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -135,6 +139,8 @@ namespace MPTanks.Client.GameSandbox
                 );
             _game.Authoritative = true;
             _game.FriendlyFireEnabled = true;
+
+            _ui.SetPage(_settingUpPageName);
 
             _player = (NetworkPlayer)_game.AddPlayer(new NetworkPlayer()
             {
@@ -253,6 +259,17 @@ namespace MPTanks.Client.GameSandbox
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update()");
 
+            if (_game.CountingDown && _ui.PageName != _settingUpPageName)
+                _ui.SetPage(_settingUpPageName);
+
+            if (_game.CountingDown)
+                _ui.ActiveBinder.TimeRemaining = _game.RemainingCountdownTime;
+
+            if (!_game.CountingDown && _ui.PageName == _settingUpPageName)
+                _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
+
+            _ui.Update(gameTime);
+
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
             if (GameSettings.Instance.ForceGen0GCEveryFrame)
@@ -322,6 +339,8 @@ namespace MPTanks.Client.GameSandbox
             Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
             DrawDebugInfo(gameTime);
             Diagnostics.EndMeasurement("Draw debug text", "Rendering");
+
+            _ui.Draw(gameTime);
 
             base.Draw(gameTime);
             Diagnostics.EndMeasurement("Rendering");

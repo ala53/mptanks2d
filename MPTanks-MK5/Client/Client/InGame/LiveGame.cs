@@ -38,6 +38,7 @@ namespace MPTanks.Client
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
+                CrossDomainObject.Instance.SandboxingEnabled = false;
             }
             else
             {
@@ -50,6 +51,7 @@ namespace MPTanks.Client
                         DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
                             typeof(CrossDomainObject).Assembly.FullName,
                             typeof(CrossDomainObject).FullName);
+                        CrossDomainObject.Instance.SandboxingEnabled = true;
                         while (!_clearedToRun) Thread.Sleep(50);
                         SetStartWindowParams();
                         _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Client.Backend.UI.Binders
 {
-    class EmptyBinder : BinderBase
+    class EmptyPage : BinderBase
     {
     }
 }

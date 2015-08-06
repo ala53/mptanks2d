@@ -32,7 +32,7 @@ namespace MPTanks.Engine.Settings
             LogLevel = Setting.Create(this, "Log Level", "The NLog Log level to run the game at (Fatal, Error, Warn, Info, Debug, Trace).",
                 DebugMode ? "Trace" : "Info");
 
-            CurrentGameVersion = Setting.Create(this, "Game version string", "The version number of MP Tanks. DO NOT CHANGE THIS.", 
+            CurrentGameVersion = Setting.Create(this, "Game version string", "The version number of MP Tanks. DO NOT CHANGE THIS.",
                 "MPTanks " + AssemblyProductVersion);
         }
 
@@ -49,4 +49,4 @@ namespace MPTanks.Engine.Settings
         }
 
     }
-}   
+}

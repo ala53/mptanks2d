@@ -17,7 +17,7 @@ namespace MPTanks.Client.Backend.UI.Binders
             }
             set
             {
-                SetProperty(ref _secondsRemaining, value, nameof(SecondsRemainingText));
+                SetProperty(ref _secondsRemaining, value);
             }
         }
 
