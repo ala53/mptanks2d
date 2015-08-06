@@ -20,14 +20,16 @@ namespace MPTanks.CoreAssets.Tanks
     {
         private string[] _explosions = { "explosion1", "explosion2", "explosion3" };
 
+        public override float FireDirection => Components["turret"].Rotation + Rotation;
+
         protected override float RotationSpeed
         {
-            get { return 0.05f; }
+            get { return 0.03f; }
         }
 
         protected override float MovementSpeed
         {
-            get { return 50; }
+            get { return 30; }
         }
         public BasicTank(GamePlayer player, GameCore game, bool authorized = false)
             : base(player, game, authorized)
@@ -95,18 +97,31 @@ namespace MPTanks.CoreAssets.Tanks
             Animations["death_explosion"].Mask = ColorMask;
         }
 
+        private float _lastStateChangeRotation;
         protected override void UpdateInternal(GameTime time)
         {
-            //handle turret rotation
-            ComponentGroups["turret"].Rotation = InputState.LookDirection - Rotation;
+            var rotation = TankHelper.ConstrainTurretRotation(
+                null, null,
+                Components["turret"].Rotation + Rotation,
+                InputState.LookDirection,
+                1.5f * (float)time.ElapsedGameTime.TotalSeconds
+                ) - Rotation;
 
-            if (Alive && Authoritative)
+            ComponentGroups["turret"].Rotation = rotation;
+
+            if (MathHelper.Distance(_lastStateChangeRotation, rotation) > 0.05)
             {
+                RaiseStateChangeEvent(BitConverter.GetBytes(rotation));
+                _lastStateChangeRotation = rotation;
             }
+
             base.UpdateInternal(time);
         }
-        protected override void ReceiveStateDataInternal(string state)
+
+        protected override void ReceiveStateDataInternal(byte[] state)
         {
+            //state is the rotation
+            ComponentGroups["turret"].Rotation = state.GetFloat(0);
         }
 
     }

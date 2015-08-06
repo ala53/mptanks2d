@@ -29,6 +29,8 @@ namespace MPTanks.Engine.Tanks
         public virtual Weapon TertiaryWeapon { get; protected set; } = Weapon.Null;
         public virtual Weapon ActiveWeapon { get; protected set; } = Weapon.Null;
 
+        public virtual float FireDirection => InputState.LookDirection;
+
         private void SetActiveWeapon()
         {
             ActiveWeapon = Weapon.Null;

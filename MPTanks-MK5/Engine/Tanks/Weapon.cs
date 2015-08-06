@@ -245,7 +245,7 @@ namespace MPTanks.Engine.Tanks
         private void FireInternal(Vector2? spawnPosition = null, Vector2? velocity = null)
         {
             var exactRotation = AddedRotation
-                + (FireRotationIsRelativeToTankLookDirection ? Owner.InputState.LookDirection : 0)
+                + (FireRotationIsRelativeToTankLookDirection ? Owner.FireDirection : 0)
                 + (FireRotationIsRelativeToTankRotation ? Owner.Rotation : 0);
 
             float cos = 0, sin = 0;

@@ -15,8 +15,8 @@ namespace MPTanks.Client.GameSandbox.Input
 
         public GamePadInputDriver(GameClient client)
             : base(client, new KeyBindingCollection(
-                new KeyBindingCollection.KeyBinding("Fire", Buttons.RightShoulder),
-                new KeyBindingCollection.KeyBinding("Open Targeting", Buttons.LeftShoulder),
+                new KeyBindingCollection.KeyBinding("Fire", Buttons.RightTrigger),
+                new KeyBindingCollection.KeyBinding("Open Targeting", Buttons.LeftTrigger),
                 new KeyBindingCollection.KeyBinding("Pause", Buttons.Start),
                 new KeyBindingCollection.KeyBinding("Look Left", Buttons.RightThumbstickLeft),
                 new KeyBindingCollection.KeyBinding("Look Right", Buttons.RightThumbstickRight),
@@ -24,8 +24,8 @@ namespace MPTanks.Client.GameSandbox.Input
                 new KeyBindingCollection.KeyBinding("Look Backward", Buttons.RightThumbstickDown),
                 new KeyBindingCollection.KeyBinding("Rotate Left", Buttons.LeftThumbstickLeft),
                 new KeyBindingCollection.KeyBinding("Rotate Right", Buttons.LeftThumbstickRight),
-                new KeyBindingCollection.KeyBinding("Move Forward", Buttons.RightTrigger),
-                new KeyBindingCollection.KeyBinding("Move Backward", Buttons.LeftTrigger),
+                new KeyBindingCollection.KeyBinding("Move Forward", Buttons.LeftThumbstickUp),
+                new KeyBindingCollection.KeyBinding("Move Backward", Buttons.LeftThumbstickDown),
                 new KeyBindingCollection.KeyBinding("Previous Weapon", Buttons.X),
                 new KeyBindingCollection.KeyBinding("Next Weapon", Buttons.Y)
                 ))
@@ -53,20 +53,20 @@ namespace MPTanks.Client.GameSandbox.Input
             float lookY = 0;
 
             if (IsPressed((Buttons)KeyBindings["Look Left"]))
-                lookX = PressedLevel((Buttons)KeyBindings["Look Left"]);
+                lookX = -PressedLevel((Buttons)KeyBindings["Look Left"]);
             else if (IsPressed((Buttons)KeyBindings["Look Right"]))
-                lookX = -PressedLevel((Buttons)KeyBindings["Look Right"]);
+                lookX = PressedLevel((Buttons)KeyBindings["Look Right"]);
 
             if (IsPressed((Buttons)KeyBindings["Look Forward"]))
-                lookY = PressedLevel((Buttons)KeyBindings["Look Forward"]);
+                lookY = -PressedLevel((Buttons)KeyBindings["Look Forward"]);
             else if (IsPressed((Buttons)KeyBindings["Look Backward"]))
-                lookY = -PressedLevel((Buttons)KeyBindings["Look Backward"]);
+                lookY = PressedLevel((Buttons)KeyBindings["Look Backward"]);
 
             if (lookX == 0 && lookY == 0)
                 state.LookDirection = _lastRotation;
             else
             {
-                state.LookDirection = -(float)Math.Atan2(lookX, lookY);
+                state.LookDirection = (float)-Math.Atan2(lookX, lookY) + MathHelper.Pi;
                 _lastRotation = state.LookDirection;
             }
             return state;
@@ -119,24 +119,38 @@ namespace MPTanks.Client.GameSandbox.Input
                 return GamePad.GetState(PlayerIndex.One).Triggers.Right;
 
             if (state == Buttons.LeftThumbstickUp)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y);
+                return Math.Abs(NormalizedThumbStick(true).Y);
             if (state == Buttons.LeftThumbstickDown)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y);
+                return Math.Abs(NormalizedThumbStick(true).Y);
             if (state == Buttons.LeftThumbstickRight)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X);
+                return Math.Abs(NormalizedThumbStick(true).X);
             if (state == Buttons.LeftThumbstickLeft)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X);
+                return Math.Abs(NormalizedThumbStick(true).X);
 
             if (state == Buttons.RightThumbstickUp)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.Y);
+                return Math.Abs(NormalizedThumbStick(false).Y);
             if (state == Buttons.RightThumbstickDown)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.Y);
+                return Math.Abs(NormalizedThumbStick(false).Y);
             if (state == Buttons.RightThumbstickRight)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X);
+                return Math.Abs(NormalizedThumbStick(false).X);
             if (state == Buttons.RightThumbstickLeft)
-                return Math.Abs(GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X);
+                return Math.Abs(NormalizedThumbStick(false).X);
 
             return 0;
+        }
+
+        private Vector2 NormalizedThumbStick(bool left)
+        {
+            Vector2 vect;
+            if (left)
+                vect = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left;
+            else
+                vect = GamePad.GetState(PlayerIndex.One).ThumbSticks.Right;
+
+            if (vect.X > 0.45 || vect.Y > 0.45)
+                vect.Normalize();
+
+            return vect;
         }
     }
 }

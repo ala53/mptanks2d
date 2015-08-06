@@ -138,7 +138,7 @@ namespace MPTanks.Client.GameSandbox
                 Path.Combine(ConfigDir, "tankimages"));
 
             InputDriverName = Setting.Create(this, "Input driver name",
-                "The name of the driver to use for in game input.", GamePadInputDriver.Name);
+                "The name of the driver to use for in game input.", KeyboardMouseInputDriver.Name);
 
             InputKeyBindings = Setting.Create<string>(this, "Input Key Bindings",
                 "The stored key bindings for the current input driver", null);

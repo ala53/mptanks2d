@@ -64,6 +64,7 @@ namespace MPTanks.Client.GameSandbox
 
             IsFixedTimeStep = false;
 
+            GameSettings.Instance.InputDriverName.Value = KeyboardMouseInputDriver.Name;
             CoreModLoader.LoadTrustedMods(GameSettings.Instance);
         }
 
@@ -466,11 +467,12 @@ namespace MPTanks.Client.GameSandbox
             }
             //Note: The debug screen generates a bit of garbage so don't try to use it to nail down allocations
             //Disable it first and then see if there's still a problem
+
             _bldr.Append("Tanks: ").Append(tanksCount)
-                .Append(", Projectiles: ").Append(projCount)
-                .Append(", Map Objects: ").Append(mapObjectCount)
-                .Append(", Other: ").Append(otherCount)
-                .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount);
+            .Append(", Projectiles: ").Append(projCount)
+            .Append(", Map Objects: ").Append(mapObjectCount)
+            .Append(", Other: ").Append(otherCount)
+            .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount);
 
             if (float.IsInfinity(CalculateAverageFPS()) || float.IsNaN(CalculateAverageFPS()))
                 _bldr.Append(", FPS: ").Append("Calculation Error").Append(" avg, ");

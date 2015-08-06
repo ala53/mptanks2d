@@ -38,12 +38,15 @@ namespace MPTanks.Client.GameSandbox.Input
         public override InputState GetInputState()
         {
             var inputState = new InputState();
+
             var screenCenter = new Vector2(Client.GraphicsDevice.Viewport.Bounds.Width / 2, //vertex
                 Client.GraphicsDevice.Viewport.Bounds.Height / 2);
+
             var mousePos = new Vector2(Mouse.GetState().Position.X,  //point a
                 Mouse.GetState().Position.Y);
+
             var ctr = screenCenter - mousePos;
-            inputState.LookDirection = (float)-Math.Atan2(ctr.X, ctr.Y);
+            inputState.LookDirection = (float)-Math.Atan2(-ctr.X, -ctr.Y) + MathHelper.Pi;
 
             if (IsActive(KeyBindings["Move Forward"]))
                 inputState.MovementSpeed = 1;
@@ -146,7 +149,7 @@ namespace MPTanks.Client.GameSandbox.Input
             LockCursor();
             base.Update(gameTime);
         }
-        
+
         private void LockCursor()
         {
             if (!Client.IsActive) return; //Don't lock cursor when out of the window
