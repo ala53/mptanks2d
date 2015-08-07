@@ -279,6 +279,7 @@ namespace MPTanks.Client.GameSandbox
 
         RenderTarget2D _worldRenderTarget;
         private float _zoom = 1;
+        private float _zoomAmount = 0;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -315,17 +316,27 @@ namespace MPTanks.Client.GameSandbox
                     targetZoom += 3 * (_player.Tank.LinearVelocity.Length() / 100f);
                     targetZoom *= GameSettings.Instance.Zoom;
 
-                    var zoom = MathHelper.Lerp(_zoom, targetZoom, 2 * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    _zoom = zoom;
+                    if (MathHelper.Distance(_zoom, targetZoom) > Math.Abs(_zoomAmount))
+                        _zoomAmount = MathHelper.Lerp(
+                        (float)gameTime.ElapsedGameTime.TotalSeconds, _zoomAmount, 0.1f);
+                    else
+                        _zoomAmount = MathHelper.Lerp(
+                        _zoomAmount, (float)gameTime.ElapsedGameTime.TotalSeconds, 0.1f);
+
+
+                    if (MathHelper.Distance(_zoom, targetZoom) > Math.Abs(_zoomAmount))
+                        if (_zoom > targetZoom)
+                            _zoom -= _zoomAmount;
+                        else _zoom += _zoomAmount;
 
                     var widthHeightRelative =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
 
                     drawRect = new RectangleF(
-                        _player.Tank.Position.X - ((20 * widthHeightRelative) * zoom),
-                        _player.Tank.Position.Y - (20 * zoom),
-                        (40 * widthHeightRelative) * zoom,
-                        40 * zoom);
+                        _player.Tank.Position.X - ((20 * widthHeightRelative) * _zoom),
+                        _player.Tank.Position.Y - (20 * _zoom),
+                        (40 * widthHeightRelative) * _zoom,
+                        40 * _zoom);
                 }
                 Diagnostics.BeginMeasurement("World rendering", "Rendering");
 
