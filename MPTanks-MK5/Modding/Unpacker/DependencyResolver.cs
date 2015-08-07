@@ -28,10 +28,10 @@ namespace MPTanks.Modding.Unpacker
         {
             List<string> _dependencyDlls = new List<string>();
 
-            if (!ModDatabase.Contains(name))
+            if (!ModDatabase.Contains(name, verMajor))
                 return Enumerable.Empty<string>();
 
-            var dbItem = ModDatabase.Get(name);
+            var dbItem = ModDatabase.Get(name, verMajor);
             bool versionOk = true;
             if (verMajor > dbItem.Major)
                 versionOk = false;
@@ -46,7 +46,7 @@ namespace MPTanks.Modding.Unpacker
 
             //Resolve and load the dependency
             string errors;
-            var module = ModLoader.LoadMod(dbItem.File, dllDir, mapDir, assetDir, out errors, 
+            var module = ModLoader.LoadMod(dbItem.File, dllDir, mapDir, assetDir, out errors,
                 dbItem.UsesWhitelist, overwriteExisting);
 
             if (errors != null)

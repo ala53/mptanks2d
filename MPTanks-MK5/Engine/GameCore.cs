@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Settings;
 using Newtonsoft.Json;
+using MPTanks.Modding;
 
 namespace MPTanks.Engine
 {
@@ -226,8 +227,8 @@ namespace MPTanks.Engine
         #endregion
         private bool _skipInit;
 
-        public GameCore(ILogger logger, string gamemodeReflectionName, string mapData, bool skipInit = false, EngineSettings settings = null)
-            : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), mapData, skipInit, settings)
+        public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null)
+            : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), map, skipInit, settings)
         { }
 
         /// <summary>
@@ -236,7 +237,7 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string mapData, bool skipInit = false, EngineSettings settings = null)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null)
         {
             Logger = logger;
             if (settings == null)
@@ -252,7 +253,7 @@ namespace MPTanks.Engine
                 RemainingCountdownTime = TimeSpan.Zero;
             }
 
-            Map = Maps.Map.LoadMap(mapData, this);
+            Map = Maps.Map.LoadMap(map, this);
 
             //Set up the game mode internally
             Gamemode = gamemode;

@@ -134,7 +134,7 @@ namespace MPTanks.Client.GameSandbox
             _game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
-                Modding.ModLoader.LoadedMods["core-assets.mod"].GetPackedFileString("testmap.json"),
+                Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 false,
                 new EngineSettings("enginesettings.json")
                 );
@@ -279,7 +279,7 @@ namespace MPTanks.Client.GameSandbox
 
         RenderTarget2D _worldRenderTarget;
         private float _zoom = 1;
-        private float _zoomAmount = 0;
+        private Vector2 _currentOffset;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -312,29 +312,35 @@ namespace MPTanks.Client.GameSandbox
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
                 if (_player.Tank != null)
                 {
-                    var targetZoom = 1f;
-                    targetZoom += 3 * (_player.Tank.LinearVelocity.Length() / 100f);
+                    _currentOffset =
+                        Vector2.Lerp(_currentOffset, _player.Tank.LinearVelocity / 2,
+                        2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                    if (_currentOffset.X > 10)
+                        _currentOffset.X = 10;
+                    else if (_currentOffset.X < -10)
+                        _currentOffset.X = -10;
+                    else if (_currentOffset.Y > 10)
+                        _currentOffset.Y = 10;
+                    else if (_currentOffset.Y < -10)
+                        _currentOffset.Y = -10;
+
+                    var targetZoom = 0.75f;
+                    targetZoom += 1.25f * (_player.Tank.LinearVelocity.Length() / 100f);
                     targetZoom *= GameSettings.Instance.Zoom;
 
-                    if (MathHelper.Distance(_zoom, targetZoom) > Math.Abs(_zoomAmount))
-                        _zoomAmount = MathHelper.Lerp(
-                        (float)gameTime.ElapsedGameTime.TotalSeconds, _zoomAmount, 0.1f);
-                    else
-                        _zoomAmount = MathHelper.Lerp(
-                        _zoomAmount, (float)gameTime.ElapsedGameTime.TotalSeconds, 0.1f);
+                    _zoom = MathHelper.Lerp(_zoom, targetZoom,
+                        2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-
-                    if (MathHelper.Distance(_zoom, targetZoom) > Math.Abs(_zoomAmount))
-                        if (_zoom > targetZoom)
-                            _zoom -= _zoomAmount;
-                        else _zoom += _zoomAmount;
+                    var offset = _currentOffset * _zoom + _player.Tank.Position;
 
                     var widthHeightRelative =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
 
                     drawRect = new RectangleF(
-                        _player.Tank.Position.X - ((20 * widthHeightRelative) * _zoom),
-                        _player.Tank.Position.Y - (20 * _zoom),
+                        offset.X -
+                        ((20 * widthHeightRelative) * _zoom),
+                        offset.Y - (20 * _zoom),
                         (40 * widthHeightRelative) * _zoom,
                         40 * _zoom);
                 }
@@ -374,8 +380,8 @@ namespace MPTanks.Client.GameSandbox
         private bool debugOverlayGraphsVertical = true;
         private void DrawDebugInfo(GameTime gameTime)
         {
-            if (!debugEnabled) return;
             LogDebugInfo(gameTime);
+            if (!debugEnabled) return;
             if (drawTextDebug) DrawTextDebugInfo(gameTime);
             if (drawGraphDebug) DrawGraphDebugInfo(gameTime);
         }

@@ -69,7 +69,9 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="Compiliation\Compiler.cs" />
+    <Compile Include="ModAssetInfo.cs" />
     <Compile Include="ModDatabase.cs" />
+    <Compile Include="ModInfo.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModMetadata.cs" />
     <Compile Include="Module.cs" />

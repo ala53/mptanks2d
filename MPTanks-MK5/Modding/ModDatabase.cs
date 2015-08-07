@@ -31,48 +31,55 @@ namespace MPTanks.Modding
             else Save();
         }
 
-        public static bool Contains(string name)
+        public static bool Contains(string name, int major)
         {
-            return Get(name) != null;
+            return Get(name, major) != null;
         }
 
-        public static ModDatabaseItem Get(string name)
+        public static ModDatabaseItem Get(string name, int major)
         {
             ModDatabaseItem result = null;
             foreach (var mod in Mods)
             {
-                if (mod.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                if (mod.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && mod.Major == major)
                 {
-                    //We try to find the newest version
+                    //We try to find the newest version under a specified major version
                     if (result == null)
                     {
                         result = mod;
                         continue;
                     }
-                    else
-                    {
-                        if (mod.Major > result.Major)
-                            result = mod;
-                        else if (mod.Major == result.Major)
-                            if (mod.Minor > result.Minor)
-                                result = mod;
-                    }
+                    else if (mod.Minor > result.Minor)
+                        result = mod;
                 }
             }
 
             return result;
         }
 
+        public static Module GetLoaded(string name, int major)
+        {
+            if (!Contains(name, major)) return null;
+            var mod = Get(name, major);
+            foreach (var module in LoadedModules)
+                if (mod.Name.Equals(
+                    module.Name, StringComparison.InvariantCultureIgnoreCase) && module.Version.Major == major)
+                    return module;
+
+            return null;
+        }
+
+        public static bool IsLoaded(string name, int major) => GetLoaded(name, major) != null;
 
         public static void Add(string name, int major, int minor, string tag, string file, bool hasWhitelist)
         {
-            if (Contains(name))
+            if (Contains(name, major))
             {
-                Get(name).File = file;
-                Get(name).Major = major;
-                Get(name).Minor = minor;
-                Get(name).Tag = tag;
-                Get(name).UsesWhitelist = hasWhitelist;
+                Get(name, major).File = file;
+                Get(name, major).Major = major;
+                Get(name, major).Minor = minor;
+                Get(name, major).Tag = tag;
+                Get(name, major).UsesWhitelist = hasWhitelist;
             }
             else
             {
@@ -90,7 +97,7 @@ namespace MPTanks.Modding
 
         public static void AddLoaded(Module module)
         {
-            if (!Contains(module.Name))
+            if (!Contains(module.Name, module.Version.Major))
                 Add(module.Name, module.Version.Major, module.Version.Minor, module.Version.Tag, module.PackedFile, module.UsesWhitelist);
 
             if (!_loadedModules.Contains(module))
@@ -109,10 +116,10 @@ namespace MPTanks.Modding
                 _reverseLookupTable.Add(mode.Type, module);
         }
 
-        public static void Remove(string name)
+        public static void Remove(string name, int major)
         {
-            if (Contains(name))
-                _items.Remove(Get(name));
+            if (Contains(name, major))
+                _items.Remove(Get(name, major));
             Save();
         }
 

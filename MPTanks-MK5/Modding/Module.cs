@@ -16,7 +16,9 @@ namespace MPTanks.Modding
         public string Author { get; internal set; }
         public ModHeader Header { get; internal set; }
         public bool UsesWhitelist { get; internal set; }
-        public Dictionary<string, string> AssetMappings { get; internal set; } =
+        public Dictionary<string, string> AssetMappings
+        { get; internal set; }
+        =
             new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         public string PackedFile { get; internal set; }
         public ModuleDeclarationAttribute.ModuleVersion Version { get; internal set; }
@@ -61,6 +63,13 @@ namespace MPTanks.Modding
         {
             return File.ReadAllText(AssetMappings[filename]);
         }
+
+        public ModAssetInfo GetAsset(string name) =>
+            new ModAssetInfo
+            {
+                AssetName = name,
+                ModInfo = new ModInfo { ModMajor = Version.Major, ModMinor = Version.Minor, ModName = Name }
+            };
     }
 
     public class GamemodeType

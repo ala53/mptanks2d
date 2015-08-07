@@ -10,16 +10,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Tanks;
+using MPTanks.Modding;
 
 namespace MPTanks.Networking.Common.Game
 {
     public class FullGameState
     {
         public List<FullObjectState> ObjectStates { get; set; } = new List<FullObjectState>();
-        /// <summary>
-        /// The raw map data for the current map
-        /// </summary>
-        public string MapData { get; set; }
+        public List<ModInfo> GameLoadedMods { get; set; } = new List<ModInfo>();
+        public ModAssetInfo MapInfo { get; set; }
         public string GamemodeReflectionName { get; set; }
         public double CurrentGameTimeMilliseconds { get; set; }
         public string TimescaleString { get; set; }
@@ -31,7 +30,7 @@ namespace MPTanks.Networking.Common.Game
 
         public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {
-            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapData, true, settings);
+            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapInfo, true, settings);
             game.Gamemode.FullState = GamemodeState;
 
             GameCore.TimescaleValue timescale = new GameCore.TimescaleValue(TimescaleValue, TimescaleString);
@@ -66,7 +65,7 @@ namespace MPTanks.Networking.Common.Game
                 nwPlayer.SelectedTankReflectionName = player.TankReflectionName;
                 nwPlayer.SpawnPoint = player.SpawnPoint;
                 nwPlayer.Team = (player.TeamId != -3 ? FindTeam(game.Gamemode.Teams, player.TeamId) : null);
-                
+
                 player.PlayerObject = nwPlayer;
 
                 game.AddPlayer(nwPlayer);
@@ -119,7 +118,16 @@ namespace MPTanks.Networking.Common.Game
             state.SetPlayers(game.Players.Select(x => (NetworkPlayer)x));
             state.SetObjects(game);
 
-            state.MapData = game.Map.ToString();
+            foreach (var mod in ModDatabase.LoadedModules)
+                state.GameLoadedMods.Add(new ModInfo
+                {
+                    ModName = mod.Name,
+                    ModMajor = mod.Version.Major,
+                    ModMinor = mod.Version.Minor
+                });
+
+            state.MapInfo = game.Map.AssetInfo;
+
             state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
@@ -168,7 +176,7 @@ namespace MPTanks.Networking.Common.Game
         public static FullGameState Read(NetIncomingMessage message)
         {
             var state = new FullGameState();
-            state.MapData = message.ReadString();
+            state.MapInfo = ModAssetInfo.Decode(message.ReadBytes(message.ReadUInt16()));
             state.GamemodeReflectionName = message.ReadString();
             state.CurrentGameTimeMilliseconds = message.ReadDouble();
             state.FriendlyFireEnabled = message.ReadBoolean();
@@ -221,12 +229,20 @@ namespace MPTanks.Networking.Common.Game
                 fsPlayer.Input = input;
             }
 
+            var loadedModCount = message.ReadInt32();
+            for (var i = 0; i < loadedModCount;i++)
+            {
+                state.GameLoadedMods.Add(ModInfo.Decode(message.ReadBytes(message.ReadUInt16())));
+            }
+
             return state;
         }
 
         public void Write(NetOutgoingMessage message)
         {
-            message.Write(MapData);
+            var encodedMapData = MapInfo.Encode();
+            message.Write((ushort)encodedMapData.Length);
+            message.Write(encodedMapData);
             message.Write(GamemodeReflectionName);
             message.Write(CurrentGameTimeMilliseconds);
             message.Write(FriendlyFireEnabled);
@@ -274,6 +290,14 @@ namespace MPTanks.Networking.Common.Game
                 message.Write(player.TeamId);
                 message.Write(player.Username);
                 message.Write(player.UsernameDisplayColor.PackedValue);
+            }
+
+            message.Write(GameLoadedMods.Count);
+            foreach (var mod in GameLoadedMods)
+            {
+                var encoded = mod.Encode();
+                message.Write((ushort)encoded.Length);
+                message.Write(encoded);
             }
         }
     }

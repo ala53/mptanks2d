@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Logging;
+using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -17,26 +19,57 @@ namespace MPTanks.Networking.Common
     public class NetworkedGame
     {
         #region Properties
-        /// <summary>
-        /// The max frame rate to run the internal tick counter at
-        /// </summary>
-        public int MaxFramesPerSecond { get; set; }
-        public FullGameState CurrentGameState { get { return _currentGameState; } }
+
+        private FullGameState _initialState = new FullGameState();
+        public FullGameState InitialGameState
+        {
+            get { return _initialState; }
+            set
+            {
+                _initialState = value;
+                Game = _initialState.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+            }
+        }
+
+        private PseudoFullGameWorldState _pseudoState = new PseudoFullGameWorldState();
+        public PseudoFullGameWorldState CurrentState
+        {
+            get
+            {
+                return _pseudoState;
+            }
+            set
+            {
+                _pseudoState = value;
+                _pseudoState.Apply(Game);
+            }
+        }
         public Engine.GameCore Game { get; private set; }
         public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
+        public ILogger Logger { get; set; }
         public bool Authoritative { get { return Game.Authoritative; } }
         #endregion
 
-        public NetworkedGame(bool authoritative, Gamemode gamemode, string mapData, Engine.Settings.EngineSettings settings = null)
+        public NetworkedGame(bool authoritative, Gamemode gamemode, ILogger gameLogger,
+            ModAssetInfo mapData, EngineSettings settings = null)
         {
             Game = new Engine.GameCore(new NullLogger(), gamemode, mapData, !authoritative, settings);
             Game.Authoritative = authoritative;
         }
 
+        public NetworkedGame(FullGameState fullState, ILogger gameLogger = null, EngineSettings settings = null)
+        {
+            Game = fullState.CreateGameFromState(gameLogger, settings);
+            Game.Authoritative = false;
+        }
+
+        public PseudoFullGameWorldState GetDeltaState(PseudoFullGameWorldState lastSentState) =>
+            CurrentState.MakeDelta(lastSentState);
+
         #region Timing Management
         private double totalMilliseconds;
         private GameTime _gt = new GameTime();
-        public void Tick(float milliseconds)
+        public void Tick(double milliseconds)
         {
             totalMilliseconds += milliseconds;
             _gt.ElapsedGameTime = TimeSpan.FromMilliseconds(milliseconds);
@@ -50,15 +83,12 @@ namespace MPTanks.Networking.Common
         }
         #endregion
         #region Game state ticking
-        private FullGameState _currentGameState = new FullGameState();
-        private FullGameState _lastGameState = new FullGameState();
-        private FullGameState _nextGameState = new FullGameState();
         private void TickGameState(GameTime gameTime)
         {
             Diagnostics.BeginMeasurement("TickGameState()", "Network Core");
-            //We interpolate the game states for the *lovely* advantage of CPU usage 
-            //and pool the game states for performance and memory allocations
 
+
+            _pseudoState = PseudoFullGameWorldState.Create(Game);
             Diagnostics.EndMeasurement("TickGameState()", "Network Core");
         }
         #endregion

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Maps.MapObjects;
 using MPTanks.Engine.Maps.Serialization;
+using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +29,17 @@ namespace MPTanks.Engine.Maps
         private string _data;
         public string RawData { get { return _data; } }
 
+        public ModAssetInfo AssetInfo { get; private set; }
+
         public Color ShadowColor { get; set; }
         public Vector2 ShadowOffset { get; set; }
 
-        public static Map LoadMap(string mapData, GameCore game)
+        public static Map LoadMap(ModAssetInfo mapFile, GameCore game)
         {
-            var map = new Map(game, MapJSON.Load(mapData), mapData);
+            var data = mapFile.ReadAsString();
+
+            var map = new Map(game, MapJSON.Load(data), data);
+            map.AssetInfo = mapFile;
 
             return map;
         }
