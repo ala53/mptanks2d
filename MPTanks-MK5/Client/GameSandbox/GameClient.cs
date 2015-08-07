@@ -278,6 +278,7 @@ namespace MPTanks.Client.GameSandbox
         }
 
         RenderTarget2D _worldRenderTarget;
+        private float _zoom = 1;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -310,14 +311,21 @@ namespace MPTanks.Client.GameSandbox
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
                 if (_player.Tank != null)
                 {
+                    var targetZoom = 1f;
+                    targetZoom += 3 * (_player.Tank.LinearVelocity.Length() / 100f);
+                    targetZoom *= GameSettings.Instance.Zoom;
+
+                    var zoom = MathHelper.Lerp(_zoom, targetZoom, 2 * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    _zoom = zoom;
+
                     var widthHeightRelative =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
 
                     drawRect = new RectangleF(
-                        _player.Tank.Position.X - ((30 * widthHeightRelative) * GameSettings.Instance.Zoom),
-                        _player.Tank.Position.Y - (30 * GameSettings.Instance.Zoom),
-                        (60 * widthHeightRelative) * GameSettings.Instance.Zoom,
-                        60 * GameSettings.Instance.Zoom);
+                        _player.Tank.Position.X - ((20 * widthHeightRelative) * zoom),
+                        _player.Tank.Position.Y - (20 * zoom),
+                        (40 * widthHeightRelative) * zoom,
+                        40 * zoom);
                 }
                 Diagnostics.BeginMeasurement("World rendering", "Rendering");
 
