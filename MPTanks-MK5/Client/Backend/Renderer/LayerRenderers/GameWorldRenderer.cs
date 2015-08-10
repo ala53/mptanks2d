@@ -139,7 +139,7 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
         private void CallPreProcessors(GameTime gameTime)
         {
             _preProcessorGameTime.TotalGameTime = gameTime.TotalGameTime;
-            _preProcessorGameTime.ElapsedGameTime = 
+            _preProcessorGameTime.ElapsedGameTime =
                 new TimeSpan((long)(gameTime.ElapsedGameTime.Ticks * Renderer.Game.Timescale.Fractional));
             foreach (var preProcessor in _preProcessors)
                 preProcessor.Process(_preProcessorGameTime);
@@ -223,18 +223,14 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
 
         private void CheckTarget(int drawWidth, int drawHeight)
         {
-            if (_shadowBuffer == null)
-                _shadowBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
-            else if (_shadowBuffer.Width != drawWidth || _shadowBuffer.Height != drawHeight)
+            if (_shadowBuffer?.Width != drawWidth || _shadowBuffer?.Height != drawHeight)
             {
-                _shadowBuffer.Dispose();
+                _shadowBuffer?.Dispose();
                 _shadowBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
             }
-            if (_outputBuffer == null)
-                _outputBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
-            else if (_outputBuffer.Width != drawWidth || _outputBuffer.Height != drawHeight)
+            if (_outputBuffer?.Width != drawWidth || _outputBuffer?.Height != drawHeight)
             {
-                _outputBuffer.Dispose();
+                _outputBuffer?.Dispose();
                 _outputBuffer = new RenderTarget2D(GraphicsDevice, drawWidth, drawHeight);
             }
         }

@@ -142,6 +142,13 @@
     <None Include="assets\mgcontent\componentRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\mgcontent\FXAA.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\mgcontent\fxaa3.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\mgcontent\fxaa3_11.fxh" />
     <None Include="assets\mgcontent\shadowRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -220,6 +227,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\mgcontent\componentRenderer.fx" />
+    <Content Include="assets\mgcontent\fxaa.fx" />
+    <Content Include="assets\mgcontent\fxaa3.fx" />
     <Content Include="assets\mgcontent\lightMaskRenderer.fx" />
     <Content Include="assets\mgcontent\shadowRenderer.fx" />
     <Content Include="fmod.dll">
@@ -247,7 +256,7 @@
 
 "$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
 
-"$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" /incremental /build:"$(ProjectDir)assets\mgcontent\shadowRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\componentRenderer.fx"</PreBuildEvent>
+"$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" /incremental /build:"$(ProjectDir)assets\mgcontent\shadowRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\componentRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\fxaa3.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskRenderer.fx"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

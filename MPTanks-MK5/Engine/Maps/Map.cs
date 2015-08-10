@@ -44,6 +44,14 @@ namespace MPTanks.Engine.Maps
             return map;
         }
 
+
+        public static Map LoadMap(string map, GameCore game)
+        {
+
+            var m = new Map(game, MapJSON.Load(map), map);
+            return m;
+        }
+
         private Map(GameCore game, MapJSON deserialized, string mapData)
         {
             _game = game;

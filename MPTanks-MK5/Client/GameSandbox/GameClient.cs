@@ -288,7 +288,8 @@ namespace MPTanks.Client.GameSandbox
         {
             Diagnostics.BeginMeasurement("Rendering");
 
-            GraphicsDevice.Clear(Color.DarkGray);
+            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+            GraphicsDevice.Clear(Color.Red);
             //if we're in game
             //check if we need to remake the rendertarget
             if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0 &&
@@ -305,7 +306,6 @@ namespace MPTanks.Client.GameSandbox
             }
 
             //set the render target
-            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
 
             if (_game != null)
             {
@@ -355,8 +355,9 @@ namespace MPTanks.Client.GameSandbox
                 Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
 
                 GraphicsDevice.SetRenderTarget(null);
-                _spriteBatch.Begin(SpriteSortMode.Immediate);
-                _spriteBatch.Draw(_worldRenderTarget, _worldRenderTarget.Bounds, Color.White);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
+                _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
                 _spriteBatch.End();
 
                 Diagnostics.EndMeasurement("Copy to screen", "Rendering");

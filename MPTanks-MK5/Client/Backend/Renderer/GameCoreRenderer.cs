@@ -22,9 +22,11 @@ namespace MPTanks.Client.Backend.Renderer
         internal AssetFinder Finder { get; private set; }
         public RenderTarget2D Target { get; set; }
         public RectangleF View { get; set; }
+        public bool FXAAEnabled { get { } }
         public int[] TeamsToDisplayLightsFor { get; private set; }
         private List<LayerRenderer> _renderers = new List<LayerRenderer>();
         private GameWorldRenderer _gameRenderer;
+        private FXAARenderer _fxaaRenderer;
 
         public GameCoreRenderer(Game client, GameCore game, string[] assetPaths, int[] teamsToDisplayFor)
         {
@@ -36,17 +38,19 @@ namespace MPTanks.Client.Backend.Renderer
                 new AssetLoader(this, client.GraphicsDevice, new AssetResolver(assetPaths)
                 ), this));
 
-            _renderers.Add(new MapBackgroundRenderer(
-                this, client.GraphicsDevice, client.Content, Finder));
+            _fxaaRenderer = new FXAARenderer(
+                this, client.GraphicsDevice, client.Content, Finder);
             _gameRenderer = new GameWorldRenderer(
                 this, client.GraphicsDevice, client.Content, Finder);
+
+            _renderers.Add(new MapBackgroundRenderer(
+                this, client.GraphicsDevice, client.Content, Finder));
             _renderers.Add(_gameRenderer);
             _renderers.Add(new LightRenderer(
                 this, client.GraphicsDevice, client.Content, Finder));
-            _renderers.Add(new FXAA(
-                this, client.GraphicsDevice, client.Content, Finder));
+            _renderers.Add(_fxaaRenderer);
         }
-        
+
         public void Draw(GameTime gameTime)
         {
             _gameRenderer.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
@@ -66,9 +70,7 @@ namespace MPTanks.Client.Backend.Renderer
             {
                 foreach (var obj in _renderers)
                 {
-                    var asDisposable = obj as IDisposable;
-                    if (asDisposable != null)
-                        asDisposable.Dispose();
+                    (obj as IDisposable)?.Dispose();
                 }
                 Finder.Cache.Dispose();
 
