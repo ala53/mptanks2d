@@ -22,7 +22,11 @@ namespace MPTanks.Client.Backend.Renderer
         internal AssetFinder Finder { get; private set; }
         public RenderTarget2D Target { get; set; }
         public RectangleF View { get; set; }
-        public bool FXAAEnabled { get { } }
+        public bool FXAAEnabled
+        {
+            get { return _fxaaRenderer.Enabled; }
+            set { _fxaaRenderer.Enabled = value; }
+        }
         public int[] TeamsToDisplayLightsFor { get; private set; }
         private List<LayerRenderer> _renderers = new List<LayerRenderer>();
         private GameWorldRenderer _gameRenderer;
@@ -40,6 +44,7 @@ namespace MPTanks.Client.Backend.Renderer
 
             _fxaaRenderer = new FXAARenderer(
                 this, client.GraphicsDevice, client.Content, Finder);
+            FXAAEnabled = true;
             _gameRenderer = new GameWorldRenderer(
                 this, client.GraphicsDevice, client.Content, Finder);
 
