@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace MPTanks.Client.Backend.Renderer.LayerRenderers
 {
-    class FXAARenderer : LayerRenderer
+    class FXAARenderer : LayerRenderer, IDisposable
     {
         #region Parameters
         private const float MainImageDepth = 0.9f;    // Near the back
@@ -113,7 +113,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
         {
             CheckTarget(target);
 
-            if (!Enabled) return;
+            if (!Enabled)
+                return;
 
             //Copy to temp
             GraphicsDevice.SetRenderTarget(_tempTarget);
@@ -179,5 +180,76 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
                 _tempTarget = new RenderTarget2D(GraphicsDevice, target.Width, target.Height);
             }
         }
+
+        public void SetPreset(FXAAPreset preset)
+        {
+            if (preset == FXAAPreset.Sharp)
+            {
+                N = .33f;
+                subPixelAliasingRemoval = 0.5f;
+                edgeTheshold = 0.063f;
+                consoleEdgeSharpness = 8.0f;
+                consoleEdgeThreshold = 0.25f;
+            }
+            else if (preset == FXAAPreset.Soft)
+            {
+                N = .4f;
+                subPixelAliasingRemoval = 0.75f;
+                edgeTheshold = 0.125f;
+                consoleEdgeSharpness = 4.0f;
+                consoleEdgeThreshold = 0.125f;
+            }
+            else if (preset == FXAAPreset.Softest)
+            {
+                N = .5f;
+                subPixelAliasingRemoval = 1f;
+                edgeTheshold = 0.125f;
+                consoleEdgeSharpness = 2.0f;
+                consoleEdgeThreshold = 0.075f;
+            }
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _sb.Dispose();
+                    _tempTarget.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~FXAARenderer() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
+    }
+
+    public enum FXAAPreset
+    {
+        Sharp,
+        Soft,
+        Softest
     }
 }

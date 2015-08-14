@@ -1,46 +1,44 @@
-﻿float4x4 World;
-float4x4 View;
-float4x4 Projection;
+﻿float4x4 projection;
+sampler lightMap;
+sampler world;
+float4 AmbientColor = float4(0.1, 0.1, 0.1, 0.1);
+float AmbientIntensity = 0.15;
 
-float4 AmbientColor = float4(1, 1, 1, 1);
-float AmbientIntensity = 0.1;
-
-struct VertexShaderInput
+struct VShader
 {
-	float4 Position : POSITION0;
+	float4 Position : SV_Position;
+	float2 TexCoord : TEXCOORD0;
 };
 
-struct VertexShaderOutput
+VShader VertexShaderFunction(VShader input)
 {
-	float4 Position : POSITION0;
-};
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
-{
-	VertexShaderOutput output;
-
-	float4 worldPosition = mul(input.Position, World);
-	float4 viewPosition = mul(worldPosition, View);
-	output.Position = mul(viewPosition, Projection);
-
+	VShader output;
+	output.Position = mul(input.Position, projection);
+	output.TexCoord = input.TexCoord;
 	return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction(VShader input) : SV_Target0
 {
-	return AmbientColor * AmbientIntensity;
+	float4 lightData = tex2D(lightMap, input.TexCoord);
+	float lightIntensity = lightData.a;
+	float4 worldColor = tex2D(world, input.TexCoord);
+	
+	float brightness = ((1 - AmbientIntensity) * lightIntensity) + AmbientIntensity;
+
+	return float4(worldColor.rgb * brightness, 1) * lightData;
 }
 
-technique Ambient
-{
-	pass Pass1
+technique Composite
 	{
+		pass Pass1
+		{
 #if SM4
-		VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
-		PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+			VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
+			PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
 #else
-		VertexShader = compile vs_2_0 VertexShaderFunction();
-		PixelShader = compile ps_2_0 PixelShaderFunction();
+			VertexShader = compile vs_2_0 VertexShaderFunction();
+			PixelShader = compile ps_2_0 PixelShaderFunction();
 #endif
+		}
 	}
-}

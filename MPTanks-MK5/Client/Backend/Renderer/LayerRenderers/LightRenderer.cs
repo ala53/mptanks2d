@@ -12,6 +12,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
 {
     class LightRenderer : LayerRenderer
     {
+        private Effect _lightRenderer;
+        private Effect _lightMaskPreCompositor;
         public LightRenderer(GameCoreRenderer renderer, GraphicsDevice gd,
             ContentManager content, AssetFinder finder)
             : base(renderer, gd, content, finder)

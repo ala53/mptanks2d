@@ -133,7 +133,7 @@ namespace MPTanks.Client.GameSandbox
         {
             _game = new GameCore(
                 new NLogLogger(Logger.Instance),
-                Engine.Gamemodes.Gamemode.ReflectiveInitialize("TeamDeathMatchGamemode"),
+                Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 false,
                 new EngineSettings("enginesettings.json")
@@ -289,7 +289,7 @@ namespace MPTanks.Client.GameSandbox
             Diagnostics.BeginMeasurement("Rendering");
 
             GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-            GraphicsDevice.Clear(Color.Red);
+            GraphicsDevice.Clear(Color.Gray);
             //if we're in game
             //check if we need to remake the rendertarget
             if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0 &&
