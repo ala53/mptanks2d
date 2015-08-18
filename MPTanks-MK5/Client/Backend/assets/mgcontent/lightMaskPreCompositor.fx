@@ -1,57 +1,28 @@
-﻿float4x4 projection;
+﻿float intensity;
 sampler txt;
-struct VertexShaderInput
-{
-	float4 Position : SV_Position;
-	float4 Offset : TEXCOORD0;
-	float4 Size : TEXCOORD1;
-	float4 RotationOrigin : TEXCOORD2;
-	float4 Scale : TEXCOORD3;
-	float Rotation : TEXCOORD4;
-	float Intensity : TEXCOORD5;
-	float4 Color : COLOR;
-	float4 TexCoord : TEXCOORD6;
-};
+float4x4 transform;
+float4 color;
 
-struct VertexShaderOutput
+struct VShader
 {
 	float4 Position : SV_Position;
 	float2 TexCoord : TEXCOORD0;
-	float Intensity : TEXCOORD1;
-	float4 Color : COLOR;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VShader VertexShaderFunction(VShader input)
 {
-	VertexShaderOutput output;
-	float4 pos = input.Position;
-
-	float4 rotTemp = pos;
-	pos.xy -= input.RotationOrigin.xy;
-	//Rotation
-	rotTemp = pos;
-	rotTemp.x = pos.x * cos(input.Rotation) - pos.y * sin(input.Rotation);
-	rotTemp.y = pos.x * sin(input.Rotation) + pos.y * cos(input.Rotation);
-	pos = rotTemp;
-	pos.xy += input.RotationOrigin.xy;
-	//Scaling and offset
-	pos.xy -= input.Size.xy / float2(2, 2);
-	pos.xy *= input.Scale.xy;
-	pos.xy += input.Offset.xy;
-
-	output.Position = mul(pos, projection);
-	output.Color = input.Color;
-	output.TexCoord = input.TexCoord.xy;
-	output.Intensity = input.Intensity;
-
+	VShader output;
+	output.Position = mul(input.Position, transform);
+	output.TexCoord = input.TexCoord;
 	return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target0
+float4 PixelShaderFunction(VShader input) : SV_Target0
 {
+	return color;
 	float4 mask = tex2D(txt, input.TexCoord);
-	float4 colorized = input.Color;
-	colorized.a = mask.r * input.Intensity;
+	float4 colorized = color;
+	colorized.a = mask.r * intensity;
 
 	//r,g,b = color
 	//a = intensity

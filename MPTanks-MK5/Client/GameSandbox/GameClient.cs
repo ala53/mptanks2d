@@ -141,6 +141,20 @@ namespace MPTanks.Client.GameSandbox
             _game.Authoritative = true;
             _game.FriendlyFireEnabled = true;
 
+            _game.LightEngine.AddLight(new Engine.Rendering.Lighting.Light()
+            {
+                Color = Color.Green,
+                Intensity = 0.75f,
+                Position = new Vector2(0, 0),
+                RotationOrigin = new Vector2(15, 15),
+                Rotation = 0.53f,
+                ShowForAllTeams = true,
+                Size = new Vector2(30, 30),
+                SpriteInfo = new Engine.Assets.SpriteInfo("simple_light",
+                Modding.ModLoader.LoadedMods["core-assets.mod"]
+                .GetAsset("simple_front_facing_light.png").AssetSystemPath)
+            });
+
             _ui.SetPage(_settingUpPageName);
 
             _player = (NetworkPlayer)_game.AddPlayer(new NetworkPlayer()

@@ -1,0 +1,12 @@
+{
+  "name": "Simple front facing light mask",
+  "sprites": [
+    {
+      "name": "simple_light",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 600
+    }
+	]
+}

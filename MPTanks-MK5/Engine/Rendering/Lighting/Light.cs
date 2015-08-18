@@ -13,7 +13,9 @@ namespace MPTanks.Engine.Rendering.Lighting
     {
         public float Intensity { get; set; }
         public Color Color { get; set; }
-        public Vector2 PositionCenter { get; set; }
+        public Vector2 Position { get; set; }
+        public float Rotation { get; set; }
+        public Vector2 RotationOrigin { get; set; }
         public Vector2 Size { get; set; }
         public SpriteInfo SpriteInfo { get; set; }
 

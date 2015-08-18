@@ -26,7 +26,7 @@ float4 PixelShaderFunction(VShader input) : SV_Target0
 	
 	float brightness = ((1 - AmbientIntensity) * lightIntensity) + AmbientIntensity;
 
-	return float4(worldColor.rgb * brightness, 1) * lightData;
+	return float4(worldColor.rgb * brightness, 1) * ((lightData * brightness) + (AmbientColor * (1 - brightness)));
 }
 
 technique Composite

@@ -9,6 +9,15 @@ namespace MPTanks.Modding
     public struct ModAssetInfo
     {
         public string AssetName { get; set; }
+        public string AssetSystemPath
+        {
+            get
+            {
+                if (ModInfo.IsLoaded && ModInfo.LoadedModule.AssetMappings.ContainsKey(AssetName))
+                    return ModInfo.LoadedModule.AssetMappings[AssetName];
+                return null;
+            }
+        }
         public ModInfo ModInfo { get; set; }
 
         public byte[] Encode()

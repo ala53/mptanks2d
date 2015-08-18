@@ -565,7 +565,7 @@ namespace MPTanks.Engine
                     Color = light.Color,
                     //Intensity is nothing when not activated yet
                     Intensity = (light.ActivatesAtTime || light.ActivationIsTriggered) ? 0 : light.Intensity,
-                    PositionCenter = light.Position,
+                    Position = light.Position,
                     Size = light.Size
                 };
 
