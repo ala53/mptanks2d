@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Server
 {
-    partial public class Server
+    public partial class Server
     {
     }
 }
