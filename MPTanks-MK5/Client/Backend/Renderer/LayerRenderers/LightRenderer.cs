@@ -86,8 +86,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
                 _lightMaskPrimitiveArray[3].TextureCoordinate = sprite.Rectangle.BottomRight;
 
                 var view = Matrix.CreateOrthographic(
-                           /* Renderer.View.X, Renderer.View.X + */ Renderer.View.Width,
-                           /* Renderer.View.Y, Renderer.View.Y + */ Renderer.View.Height, 1, -1);
+                           /* Renderer.View.X, Renderer.View.X + Renderer.View.Width,*/ 50,50
+                           /* Renderer.View.Y, Renderer.View.Y + Renderer.View.Height*/, 1, -1);
 
                 var transformView = view;// * transform;
 

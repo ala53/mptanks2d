@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using MPTanks.Client.GameSandbox.Mods;
 using MPTanks.Client.Backend.Renderer;
 using MPTanks.Client.GameSandbox.Input;
+using MPTanks.Client.GameSandbox.UI;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -39,16 +40,17 @@ namespace MPTanks.Client.GameSandbox
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
         private NetworkPlayer _player;
-        private MPTanks.Engine.GameCore _game;
-        private SpriteFont _debugFont;
-        private Backend.Sound.SoundPlayer _soundPlayer;
-        private InputDriverBase _inputDriver;
-        private GameCoreRenderer _gcRenderer;
+        public MPTanks.Networking.Client.Client Client { get; private set; }
+        public MPTanks.Networking.Server.Server Server { get; private set; }
+        public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
+        public InputDriverBase InputDriver { get; private set; }
+        public GameCoreRenderer GameRenderer { get; private set; }
         private UserInterface _ui;
+        internal DebugDrawer DebugDrawer { get; private set; }
 
         const string _settingUpPageName = "SettingUpPrompt";
 
-        public Diagnostics Diagnostics => _game?.Diagnostics;
+        public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics;
 
         public GameClient()
             : base()
@@ -66,6 +68,7 @@ namespace MPTanks.Client.GameSandbox
 
             GameSettings.Instance.InputDriverName.Value = KeyboardMouseInputDriver.Name;
             CoreModLoader.LoadTrustedMods(GameSettings.Instance);
+
         }
 
         void graphics_DeviceCreated(object sender, EventArgs e)
@@ -103,9 +106,9 @@ namespace MPTanks.Client.GameSandbox
             _ui = new UserInterface(Content, this);
 
             //initialize the game input driver
-            _inputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
+            InputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
             if (GameSettings.Instance.InputKeyBindings.Value != null)
-                _inputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
+                InputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
             base.Initialize();
         }
 
@@ -124,52 +127,47 @@ namespace MPTanks.Client.GameSandbox
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            SetupGame();
-            _debugFont = Content.Load<SpriteFont>("font");
-
+            CreateGame();
         }
 
-        private void SetupGame()
+        private void CreateGame()
         {
-            _game = new GameCore(
+            var game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 false,
                 new EngineSettings("enginesettings.json")
                 );
-            _game.Authoritative = true;
-            _game.FriendlyFireEnabled = true;
-
-            _game.LightEngine.AddLight(new Engine.Rendering.Lighting.Light()
-            {
-                Color = Color.Green,
-                Intensity = 0.75f,
-                Position = new Vector2(0, 0),
-                RotationOrigin = new Vector2(15, 15),
-                Rotation = 0.53f,
-                ShowForAllTeams = true,
-                Size = new Vector2(30, 30),
-                SpriteInfo = new Engine.Assets.SpriteInfo("simple_light",
-                Modding.ModLoader.LoadedMods["core-assets.mod"]
-                .GetAsset("simple_front_facing_light.png").AssetSystemPath)
-            });
-
+            game.Authoritative = true;
+            game.FriendlyFireEnabled = true;
+            
             _ui.SetPage(_settingUpPageName);
 
-            _player = (NetworkPlayer)_game.AddPlayer(new NetworkPlayer()
+            _player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
             {
                 Id = Guid.NewGuid()
             });
 
             for (var i = 0; i < 5; i++)
             {
-                _game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
+                game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
             }
-            if (_gcRenderer != null) _gcRenderer.Dispose();
-            _gcRenderer = new GameCoreRenderer(this, _game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
-            if (_soundPlayer != null) _soundPlayer.Dispose();
-            _soundPlayer = new Backend.Sound.SoundPlayer(_game);
+            //TEMP
+            Client = new Networking.Client.Client("", 0);
+            Server = new Networking.Server.Server(33132, "password", game);
+            Client.GameInstance.GameChanged += delegate
+            {
+                GameRenderer?.Dispose();
+                GameRenderer = new GameCoreRenderer(
+                    this, Client.GameInstance.Game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+                SoundPlayer?.Dispose();
+                SoundPlayer = new Backend.Sound.SoundPlayer(Client.GameInstance.Game);
+                DebugDrawer?.Dispose();
+                DebugDrawer = new DebugDrawer(this, Client.GameInstance.Game, Client.Player);
+
+            };
+            Client.WaitForConnection();
         }
 
         /// <summary>
@@ -193,7 +191,6 @@ namespace MPTanks.Client.GameSandbox
             else Environment.Exit(0); //Force a graceful failure
         }
 
-        private int _gameTimescaleIndex;
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
             if (e.Key == Keys.F11)
@@ -202,31 +199,13 @@ namespace MPTanks.Client.GameSandbox
                 GameSettings.Instance.Fullscreen.Value = _graphics.IsFullScreen;
             }
             if (e.Key == Keys.F12)
-                debugEnabled = !debugEnabled;
+                DebugDrawer.DebugEnabled = !DebugDrawer.DebugEnabled;
             if (e.Key == Keys.F10)
-                drawGraphDebug = !drawGraphDebug;
+                DebugDrawer.DrawGraphDebug = !DebugDrawer.DrawGraphDebug;
             if (e.Key == Keys.F9)
-                drawTextDebug = !drawTextDebug;
+                DebugDrawer.DrawTextDebug = !DebugDrawer.DrawTextDebug;
             if (e.Key == Keys.F8)
-                debugOverlayGraphsVertical = !debugOverlayGraphsVertical;
-
-            if (e.Key == Keys.F7)
-            {
-                _gameTimescaleIndex++;
-
-                if (_gameTimescaleIndex < 0) _gameTimescaleIndex = 0;
-                if (_gameTimescaleIndex >= GameCore.TimescaleValue.Values.Count)
-                    _gameTimescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
-                _game.Timescale = GameCore.TimescaleValue.Values[_gameTimescaleIndex];
-            }
-            if (e.Key == Keys.F6)
-            {
-                _gameTimescaleIndex--;
-                if (_gameTimescaleIndex < 0) _gameTimescaleIndex = 0;
-                if (_gameTimescaleIndex >= GameCore.TimescaleValue.Values.Count)
-                    _gameTimescaleIndex = GameCore.TimescaleValue.Values.Count - 1;
-                _game.Timescale = GameCore.TimescaleValue.Values[_gameTimescaleIndex];
-            }
+                DebugDrawer.DebugOverlayGraphsVertical = !DebugDrawer.DebugOverlayGraphsVertical;
         }
 
         /// <summary>
@@ -249,38 +228,38 @@ namespace MPTanks.Client.GameSandbox
                 Exit();
 
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
-                SetupGame(); //Start anew
+                CreateGame(); //Start anew
 
-            if (_game != null && _game.Running)
+            if (Client.GameInstance.Game != null && Client.GameInstance.Game.Running)
             {
                 Diagnostics.BeginMeasurement("Input processing");
                 if (IsActive)
-                    _player?.Tank?.Input(_inputDriver.GetInputState());
+                    _player?.Tank?.Input(InputDriver.GetInputState());
                 Diagnostics.EndMeasurement("Input processing");
             }
 
 
-            if (_player.Tank != null && _soundPlayer != null)
+            if (_player.Tank != null && SoundPlayer != null)
             {
-                _soundPlayer.PlayerPosition = _player.Tank.Position;
-                _soundPlayer.PlayerVelocity = _player.Tank.LinearVelocity;
+                SoundPlayer.PlayerPosition = _player.Tank.Position;
+                SoundPlayer.PlayerVelocity = _player.Tank.LinearVelocity;
             }
-            _soundPlayer?.Update(gameTime);
-            _game?.Update(gameTime);
+            SoundPlayer?.Update(gameTime);
+            Client.GameInstance.Game?.Update(gameTime);
 
-            _inputDriver.Update(gameTime);
+            InputDriver.Update(gameTime);
 
             Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update()");
 
-            if (_game.CountingDown && _ui.PageName != _settingUpPageName)
+            if (Client.GameInstance.Game.CountingDown && _ui.PageName != _settingUpPageName)
                 _ui.SetPage(_settingUpPageName);
 
-            if (_game.CountingDown)
-                _ui.ActiveBinder.TimeRemaining = _game.RemainingCountdownTime;
+            if (Client.GameInstance.Game.CountingDown)
+                _ui.ActiveBinder.TimeRemaining = Client.GameInstance.Game.RemainingCountdownTime;
 
-            if (!_game.CountingDown && _ui.PageName == _settingUpPageName)
+            if (!Client.GameInstance.Game.CountingDown && _ui.PageName == _settingUpPageName)
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
@@ -321,7 +300,7 @@ namespace MPTanks.Client.GameSandbox
 
             //set the render target
 
-            if (_game != null)
+            if (Client.GameInstance.Game != null)
             {
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
                 if (_player.Tank != null)
@@ -360,9 +339,9 @@ namespace MPTanks.Client.GameSandbox
                 }
                 Diagnostics.BeginMeasurement("World rendering", "Rendering");
 
-                _gcRenderer.View = drawRect;
-                _gcRenderer.Target = _worldRenderTarget;
-                _gcRenderer.Draw(gameTime);
+                GameRenderer.View = drawRect;
+                GameRenderer.Target = _worldRenderTarget;
+                GameRenderer.Draw(gameTime);
 
                 Diagnostics.EndMeasurement("World rendering", "Rendering");
                 //And draw to screen
@@ -378,7 +357,7 @@ namespace MPTanks.Client.GameSandbox
             }
 
             Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
-            DrawDebugInfo(gameTime);
+            DebugDrawer.DrawDebugInfo(gameTime);
             Diagnostics.EndMeasurement("Draw debug text", "Rendering");
 
             _ui.Draw(gameTime);
@@ -386,360 +365,5 @@ namespace MPTanks.Client.GameSandbox
             base.Draw(gameTime);
             Diagnostics.EndMeasurement("Rendering");
         }
-
-        #region Debug info
-
-        private bool debugEnabled = false;
-        private bool drawTextDebug = true;
-        private bool drawGraphDebug = true;
-        private bool debugOverlayGraphsVertical = true;
-        private void DrawDebugInfo(GameTime gameTime)
-        {
-            LogDebugInfo(gameTime);
-            if (!debugEnabled) return;
-            if (drawTextDebug) DrawTextDebugInfo(gameTime);
-            if (drawGraphDebug) DrawGraphDebugInfo(gameTime);
-        }
-
-        #region Data Logging
-        private float[] _debugFrameTimes;
-        private DebugMemoryUsageTick[] _debugMemoryUsages;
-        private Stopwatch _frameTimesTimer = Stopwatch.StartNew();
-        private void LogDebugInfo(GameTime gameTime)
-        {
-            if (_debugFrameTimes == null)
-            {
-                _debugFrameTimes = new float[graphWidth];
-                for (var i = 0; i < _debugFrameTimes.Length; i++)
-                    _debugFrameTimes[i] = 16.666666666666f;
-            }
-
-            if (_debugMemoryUsages == null)
-                _debugMemoryUsages = new DebugMemoryUsageTick[graphWidth];
-
-            if ((DateTime.Now - _debugMemoryUsages[_debugMemoryUsages.Length - 1].Measured).TotalMilliseconds > 0)
-            {
-                //Shift back
-                for (var i = 1; i < _debugMemoryUsages.Length; i++)
-                    _debugMemoryUsages[i - 1] = _debugMemoryUsages[i];
-                //Measure
-                var gcData = DebugDetectGC();
-                _debugMemoryUsages[_debugMemoryUsages.Length - 1] = new DebugMemoryUsageTick
-                {
-                    Measured = DateTime.Now,
-                    BytesUsed = GC.GetTotalMemory(false),
-                    HasGen0GC = gcData.Gen0,
-                    HasGen1GC = gcData.Gen1,
-                    HasGen2GC = gcData.Gen2
-                };
-            }
-
-            for (var i = 1; i < _debugFrameTimes.Length; i++)
-                _debugFrameTimes[i - 1] = _debugFrameTimes[i];
-
-            _debugFrameTimes[_debugFrameTimes.Length - 1] = (float)_frameTimesTimer.Elapsed.TotalMilliseconds;
-            _frameTimesTimer.Restart();
-        }
-        private struct DebugMemoryUsageTick
-        {
-            public DateTime Measured;
-            public long BytesUsed;
-            public bool HasGen0GC;
-            public bool HasGen1GC;
-            public bool HasGen2GC;
-        }
-
-
-        private int _g0Gc = 0;
-        private int _g1Gc = 0;
-        private int _g2Gc = 0;
-        private DebugGCTuple DebugDetectGC()
-        {
-            var returnValue = new DebugGCTuple();
-
-            if (GC.MaxGeneration >= 0 && GC.CollectionCount(0) != _g0Gc)
-                returnValue.Gen0 = true;
-            if (GC.MaxGeneration >= 1 && GC.CollectionCount(1) != _g1Gc)
-                returnValue.Gen1 = true;
-            if (GC.MaxGeneration >= 2 && GC.CollectionCount(2) != _g2Gc)
-                returnValue.Gen2 = true;
-
-            if (GC.MaxGeneration >= 0)
-                _g0Gc = GC.CollectionCount(0);
-            if (GC.MaxGeneration >= 1)
-                _g1Gc = GC.CollectionCount(1);
-            if (GC.MaxGeneration >= 2)
-                _g2Gc = GC.CollectionCount(2);
-
-            return returnValue;
-        }
-        struct DebugGCTuple
-        {
-            public bool Gen0;
-            public bool Gen1;
-            public bool Gen2;
-        }
-        #endregion
-
-        #region Text Debug
-        private Process _prc;
-        private StringBuilder _bldr = new StringBuilder(2000);
-        private void DrawTextDebugInfo(GameTime gameTime)
-        {
-            _bldr.Clear();
-            if (_prc == null)
-                _prc = Process.GetCurrentProcess();
-
-            _spriteBatch.Begin();
-            var tanksCount = 0;
-            var projCount = 0;
-            var mapObjectCount = 0;
-            var otherCount = 0;
-            foreach (var obj in _game.GameObjects)
-            {
-                if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Tanks.Tank)))
-                    tanksCount++;
-                else if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Projectiles.Projectile)))
-                    projCount++;
-                else if (obj.GetType().IsSubclassOf(typeof(MPTanks.Engine.Maps.MapObjects.MapObject)))
-                    mapObjectCount++;
-                else otherCount++;
-            }
-            //Note: The debug screen generates a bit of garbage so don't try to use it to nail down allocations
-            //Disable it first and then see if there's still a problem
-
-            _bldr.Append("Tanks: ").Append(tanksCount)
-            .Append(", Projectiles: ").Append(projCount)
-            .Append(", Map Objects: ").Append(mapObjectCount)
-            .Append(", Other: ").Append(otherCount)
-            .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount);
-
-            if (float.IsInfinity(CalculateAverageFPS()) || float.IsNaN(CalculateAverageFPS()))
-                _bldr.Append(", FPS: ").Append("Calculation Error").Append(" avg, ");
-            else
-                _bldr.Append(", FPS: ").Append((CalculateAverageFPS().ToString("N1"))).Append(" avg, ");
-
-            _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
-            .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
-
-            long maxMem = 0;
-            foreach (var pt in _debugMemoryUsages)
-                if (pt.BytesUsed > maxMem)
-                    maxMem = pt.BytesUsed;
-
-            _bldr.Append(", Timers: ").Append(_game.TimerFactory.ActiveTimersCount)
-                .Append(", Animations: ").Append(_game.AnimationEngine.Animations.Count)
-                .Append(", Particles: ").Append(_game.ParticleEngine.LivingParticlesCount)
-                .Append("\nSounds (Engine, Backend): ").Append(_game.SoundEngine.SoundCount)
-                .Append(", ").Append(_soundPlayer.ActiveSoundCount)
-                .Append(", Volumes (Background, Effects, Voice): ")
-                .Append((_soundPlayer.BackgroundVolume * 100).ToString("N0")).Append("%")
-                .Append(", ").Append((_soundPlayer.EffectVolume * 100).ToString("N0")).Append("%")
-                .Append(", ").Append((_soundPlayer.VoiceVolume * 100).ToString("N0")).Append("%");
-
-            var info = _soundPlayer.Diagnostics;
-            _bldr.Append("\nSound CPU (DSP, Streaming, Update, Total): ")
-            .Append(info.DSPCPU.ToString("N2")).Append("%, ")
-            .Append(info.StreamCPU.ToString("N2")).Append("%, ")
-            .Append(info.UpdateCPU.ToString("N2")).Append("%, ")
-            .Append(info.TotalCPU.ToString("N2")).Append("%");
-
-            _bldr.Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
-                .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
-                .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
-                .Append(", ").Append((maxMem / (1024d * 1024)).ToString("N1")).Append("MB max");
-
-            if (_game.Running)
-            {
-                _bldr.Append("\nTimescale: " + GameCore.TimescaleValue.Values[_gameTimescaleIndex].DisplayString);
-            }
-
-            _bldr.Append(", Status: ");
-
-            if (_game.CountingDown)
-                _bldr.Append("starting game");
-            if (_game.WaitingForPlayers)
-                _bldr.Append(" waiting for players");
-            if (_game.Running)
-                _bldr.Append(" running");
-            if (_game.GameEnded)
-                _bldr.Append(" ended");
-
-            if (_game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
-                _bldr.Append(", Winner: ").Append(_game.Gamemode.WinningTeam.TeamName);
-
-            _bldr.Append("\nF12: hide\n")
-                .Append("F10: Enable/Disable graphs\n")
-                .Append("F9: Enable/Disable debug text\n")
-                .Append("F8: Switch between vertical and horizontal graphs\n")
-                .Append("ESC: Exit\n");
-
-            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.MediumPurple);
-            _spriteBatch.End();
-        }
-        #endregion
-        #region FPS Calculations
-        private float CalculateAverageFPS()
-        {
-            return _debugFrameTimes.Select(a => 1000 / a).Average();
-        }
-
-        #endregion
-
-        const int graphHeight = 150;
-        const int graphWidth = 400;
-        const int graphOffset = 20;
-
-        private Texture2D _graphTexture;
-        private void DrawGraphDebugInfo(GameTime gameTime)
-        {
-            //3 graphs:
-            //1) memory usage: capped to max, colored blue. Spikes are colored red
-            //2) frame times: capped to 50ms, items above 20ms and below 6ms are highlighted red and yellow respectively
-            //above 50 is black
-            //3) frame rate: capped to 60fps, 60 is green, 20 is red - inbetween is lerped
-            //above 60 is black
-
-            //drawn at bottom left of screen, 150px high
-            //1st graph is 0-200 pixels
-            //2nd graph is 220-420 pixels
-            //3rd graph is 440-660 pixels
-
-            if (_graphTexture == null)
-            {
-                _graphTexture = new Texture2D(GraphicsDevice, 1, 1);
-                _graphTexture.SetData(new[] { Color.White });
-            }
-
-            DrawMemoryUsageGraph();
-            DrawFrameRateGraph();
-        }
-
-        private void DrawMemoryUsageGraph()
-        {
-            //Memory Usage graph
-            var max = 0L;
-            var average = 0L;
-
-            var graphPosX = 0;
-            var graphBottomY = GraphicsDevice.Viewport.Height;
-
-            for (var i = 0; i < _debugMemoryUsages.Length; i++)
-            {
-                average += _debugMemoryUsages[i].BytesUsed;
-                if (_debugMemoryUsages[i].BytesUsed > max)
-                    max = _debugMemoryUsages[i].BytesUsed;
-            }
-
-            average /= _debugMemoryUsages.Length;
-            var spikeMinimum = average * 1.5d;
-
-            double pixelsPerByteH = (double)graphHeight / max;
-            double pixelsPerDataPointWidth = (double)graphWidth / _debugMemoryUsages.Length;
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied,
-                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
-            int pixelsUsed = 0;
-            for (var i = 0; i < _debugMemoryUsages.Length; i++)
-            {
-                var value = _debugMemoryUsages[i];
-                var maxPixels = pixelsPerDataPointWidth * i;
-                var width = (int)maxPixels - pixelsUsed;
-                if (pixelsUsed < (int)maxPixels)
-                {
-                    var color = (value.BytesUsed > spikeMinimum) ? Color.Red : Color.Blue;
-                    var height = (int)(pixelsPerByteH * value.BytesUsed);
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed,
-                        graphBottomY - height, width, height),
-                        color);
-                }
-
-                //Draw the GC marker
-                if (value.HasGen2GC)
-                {
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
-                        graphBottomY - 13, 8, 6), Color.Black);
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
-                        graphBottomY - 12, 4, 4), Color.Red);
-                }
-                else if (value.HasGen1GC)
-                {
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
-                        GraphicsDevice.Viewport.Height - 13, 8, 6), Color.Black);
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
-                        graphBottomY - 12, 4, 4), Color.Yellow);
-                }
-                else if (value.HasGen0GC)
-                {
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 3,
-                        graphBottomY - 13, 8, 6), Color.Black);
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(graphPosX + pixelsUsed - 2,
-                        graphBottomY - 12, 4, 4), Color.Green);
-                }
-
-                if (pixelsUsed < (int)maxPixels)
-                    pixelsUsed += width;
-            }
-            //Draw the label 10, 10 px from the bottom left
-            //Draw the label 10, 10 px from the bottom left
-            var size = _debugFont.MeasureString("Memory Usage (managed only)");
-            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
-            _spriteBatch.DrawString(_debugFont, "Memory Usage (managed only)", pos,
-                new Color(Color.Black, 150));
-            _spriteBatch.End();
-        }
-        private void DrawFrameRateGraph()
-        {
-            double pixelsPerFpsH = (double)graphHeight / 70;
-            double pixelsPerDataPointWidth = (double)graphWidth / _debugFrameTimes.Length;
-
-            var graphPosX = graphOffset + graphWidth;
-            var graphBottomY = GraphicsDevice.Viewport.Height;
-            if (debugOverlayGraphsVertical)
-            {
-                graphPosX = 0;
-                graphBottomY -= graphOffset + graphHeight;
-            }
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
-            int pixelsUsed = 0;
-            for (var i = 0; i < _debugFrameTimes.Length; i++)
-            {
-                var value = 1000 / _debugFrameTimes[i];
-                var maxPixels = pixelsPerDataPointWidth * i;
-                var width = (int)maxPixels - pixelsUsed;
-                if (pixelsUsed < (int)maxPixels)
-                {
-                    Color color = Color.Green;
-
-                    if (value < 55 && value >= 30)
-                        color = Color.Yellow;
-                    else if (value < 30 && value >= 20)
-                        color = Color.Orange;
-                    else if (value < 20)
-                        color = Color.Red;
-                    var height = (int)(pixelsPerFpsH * value);
-                    if (value > 70)
-                    {
-                        color = Color.LimeGreen;
-                        height = graphHeight;
-                    }
-                    _spriteBatch.Draw(_graphTexture, new Rectangle(pixelsUsed + graphPosX,
-                        graphBottomY - height, width, height),
-                        color);
-                }
-
-                if (pixelsUsed < (int)maxPixels)
-                    pixelsUsed += width;
-            }
-            //Draw the label 10, 10 px from the bottom left
-            var size = _debugFont.MeasureString("FPS: (max 70)");
-            var pos = new Vector2(graphPosX, graphBottomY - size.Y);
-            _spriteBatch.DrawString(_debugFont, "FPS: (max 70)", pos,
-                new Color(Color.Black, 150));
-            _spriteBatch.End();
-        }
-        #endregion
     }
 }

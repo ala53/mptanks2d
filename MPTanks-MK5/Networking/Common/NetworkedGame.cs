@@ -28,6 +28,7 @@ namespace MPTanks.Networking.Common
             {
                 _initialState = value;
                 Game = _initialState.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                GameChanged(this, new EventArgs());
             }
         }
 
@@ -48,6 +49,10 @@ namespace MPTanks.Networking.Common
         public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
         public ILogger Logger { get; set; }
         public bool Authoritative { get { return Game.Authoritative; } }
+        #endregion
+
+        #region Events
+        public event EventHandler GameChanged = delegate { };
         #endregion
 
         public NetworkedGame(bool authoritative, Gamemode gamemode, ILogger gameLogger,

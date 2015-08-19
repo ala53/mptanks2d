@@ -51,8 +51,9 @@ namespace MPTanks.Client.Backend.Renderer
             _renderers.Add(new MapBackgroundRenderer(
                 this, client.GraphicsDevice, client.Content, Finder));
             _renderers.Add(_gameRenderer);
-            _renderers.Add(new LightRenderer(
-                this, client.GraphicsDevice, client.Content, Finder));
+            //For another time...
+            //_renderers.Add(new LightRenderer(
+            //    this, client.GraphicsDevice, client.Content, Finder));
             _renderers.Add(_fxaaRenderer);
         }
 

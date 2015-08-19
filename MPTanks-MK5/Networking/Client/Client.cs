@@ -9,8 +9,10 @@ namespace MPTanks.Networking.Client
 {
     public class Client
     {
+        public Lidgren.Network.NetClient NetworkClient { get; private set; }
         public bool Connected { get; private set; }
         public NetworkedGame GameInstance { get; private set; }
+        public NetworkPlayer Player { get; private set; }
         public bool GameRunning { get { return Connected && GameInstance != null; } }
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {
@@ -22,6 +24,15 @@ namespace MPTanks.Networking.Client
         public void Connect()
         {
 
+        }
+        /// <summary>
+        /// Waits until it connects to the server and downloads the game state or returns false if the connection
+        /// timed out;
+        /// </summary>
+        /// <returns></returns>
+        public bool WaitForConnection()
+        {
+            return false;
         }
 
         public void Disconnect()

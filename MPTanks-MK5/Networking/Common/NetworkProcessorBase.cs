@@ -23,27 +23,32 @@ namespace MPTanks.Networking.Common
         private static Dictionary<byte, Type> _toServerActionTypes = new Dictionary<byte, Type>();
         private static Dictionary<byte, Type> _toClientActionTypes = new Dictionary<byte, Type>();
         private static Dictionary<byte, Type> _allTypes = new Dictionary<byte, Type>();
+        private static Dictionary<Type, byte> _allTypesReverse = new Dictionary<Type, byte>();
 
         public static void RegisterToClientMessageType(Type messageType)
         {
             _toClientMessageTypes.Add(++_currentMessageTypeId, messageType);
             _allTypes.Add(_currentMessageTypeId, messageType);
+            _allTypesReverse.Add(messageType, _currentMessageTypeId);
         }
         public static void RegisterToServerMessageType(Type messageType)
         {
             _toServerMessageTypes.Add(++_currentMessageTypeId, messageType);
             _allTypes.Add(_currentMessageTypeId, messageType);
+            _allTypesReverse.Add(messageType, _currentMessageTypeId);
         }
         public static void RegisterToClientActionType(Type actionType)
         {
             _toClientActionTypes.Add(++_currentMessageTypeId, actionType);
             _allTypes.Add(_currentMessageTypeId, actionType);
+            _allTypesReverse.Add(actionType, _currentMessageTypeId);
         }
 
         public static void RegisterToServerActionType(Type actionType)
         {
             _toServerActionTypes.Add(++_currentMessageTypeId, actionType);
             _allTypes.Add(_currentMessageTypeId, actionType);
+            _allTypesReverse.Add(actionType, _currentMessageTypeId);
         }
 
         public void ProcessMessages(NetIncomingMessage messageBlock)
@@ -158,5 +163,23 @@ namespace MPTanks.Networking.Common
         }
 
         #endregion  
+
+        private List<MessageBase> _messages = new List<MessageBase>();
+        public IReadOnlyList<MessageBase> MessageQueue  => _messages;
+        public void SendMessage(MessageBase message)
+        {
+            _messages.Add(message);
+        }
+
+        public void WriteMessages(NetOutgoingMessage message)
+        {
+            message.Write((ushort)_messages.Count);
+            foreach (var msg in _messages)
+                message.Write(_allTypesReverse[msg.GetType()]);
+            foreach (var msg in _messages)
+                msg.Serialize(message);
+
+            _messages.Clear();
+        }
     }
 }

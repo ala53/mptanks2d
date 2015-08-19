@@ -1,4 +1,5 @@
-﻿using MPTanks.Networking.Common;
+﻿using Lidgren.Network;
+using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace MPTanks.Networking.Server
 {
     public class ServerPlayer : NetworkPlayer
     {
+        public NetConnection Connection { get; internal set; }
     }
 }
