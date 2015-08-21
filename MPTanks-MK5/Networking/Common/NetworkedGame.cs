@@ -21,14 +21,12 @@ namespace MPTanks.Networking.Common
     {
         #region Properties
 
-        private FullGameState _initialState = new FullGameState();
-        public FullGameState InitialGameState
+        public FullGameState FullGameState
         {
-            get { return _initialState; }
+            get { return FullGameState.Create(Game); }
             set
             {
-                _initialState = value;
-                Game = _initialState.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                Game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
                 GameChanged(this, new EventArgs());
             }
         }

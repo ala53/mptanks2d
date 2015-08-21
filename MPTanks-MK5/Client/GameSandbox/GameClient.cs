@@ -171,7 +171,7 @@ namespace MPTanks.Client.GameSandbox
                 DebugDrawer = new DebugDrawer(this, Client.GameInstance.Game, Client.Player);
 
             };
-            Client.GameInstance.InitialGameState = FullGameState.Create(Server.GameInstance.Game);
+            Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
             Client.Player = _player;
             //Client.WaitForConnection();
         }
@@ -266,7 +266,7 @@ namespace MPTanks.Client.GameSandbox
 
             _ui.Update(gameTime);
             Server.Update(gameTime);
-            Client.GameInstance.InitialGameState = Server.GameInstance.InitialGameState;
+            Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.GameInstance.Game?.Update(gameTime);
 
 

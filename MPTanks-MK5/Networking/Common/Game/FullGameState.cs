@@ -30,7 +30,21 @@ namespace MPTanks.Networking.Common.Game
 
         public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {
-            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapInfo, true, settings);
+            bool skipInit = false;
+            if (Status == GameCore.CurrentGameStatus.GameRunning || Status == GameCore.CurrentGameStatus.GameEndedStillRunning
+                || Status == GameCore.CurrentGameStatus.GameEnded)
+                skipInit = true;
+            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapInfo, skipInit, settings);
+
+            Apply(game);
+
+            game.UnsafeTickGameWorld(latency);
+
+            return game;
+        }
+
+        public void Apply(GameCore game)
+        {
             game.Gamemode.FullState = GamemodeState;
 
             GameCore.TimescaleValue timescale = new GameCore.TimescaleValue(TimescaleValue, TimescaleString);
@@ -43,7 +57,6 @@ namespace MPTanks.Networking.Common.Game
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
             statusProp.SetValue(game, Status);
-
             //Do this with reflection because we want to keep the api private (set game time)
             var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.Time));
             timeProp.SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
@@ -98,9 +111,6 @@ namespace MPTanks.Networking.Common.Game
             foreach (var obj in game.GameObjects)
                 obj.SetPostInitStateData();
 
-            game.UnsafeTickGameWorld(latency);
-
-            return game;
         }
 
         private Team FindTeam(Team[] teams, int id)
@@ -230,7 +240,7 @@ namespace MPTanks.Networking.Common.Game
             }
 
             var loadedModCount = message.ReadInt32();
-            for (var i = 0; i < loadedModCount;i++)
+            for (var i = 0; i < loadedModCount; i++)
             {
                 state.GameLoadedMods.Add(ModInfo.Decode(message.ReadBytes(message.ReadUInt16())));
             }

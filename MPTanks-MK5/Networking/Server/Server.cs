@@ -120,7 +120,7 @@ namespace MPTanks.Networking.Server
 
         public void SetGame(GameCore game)
         {
-            GameInstance.InitialGameState = FullGameState.Create(game);
+            GameInstance.FullGameState = FullGameState.Create(game);
         }
     }
 }
