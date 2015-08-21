@@ -240,6 +240,7 @@ namespace MPTanks.Engine
         public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null)
         {
             Logger = logger;
+            if (Logger == null) Logger = new NullLogger();
             if (settings == null)
                 Settings = new EngineSettings();
             else

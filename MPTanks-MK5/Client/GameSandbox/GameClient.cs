@@ -141,7 +141,7 @@ namespace MPTanks.Client.GameSandbox
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
-            
+
             _ui.SetPage(_settingUpPageName);
 
             _player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
@@ -155,7 +155,11 @@ namespace MPTanks.Client.GameSandbox
             }
             //TEMP
             Client = new Networking.Client.Client("", 0);
-            Server = new Networking.Server.Server(33132, "password", game);
+            Server = new Networking.Server.Server(new Networking.Server.Configuration()
+            {
+                MaxPlayers = 32,
+                Password = "password"
+            }, game);
             Client.GameInstance.GameChanged += delegate
             {
                 GameRenderer?.Dispose();
@@ -167,7 +171,9 @@ namespace MPTanks.Client.GameSandbox
                 DebugDrawer = new DebugDrawer(this, Client.GameInstance.Game, Client.Player);
 
             };
-            Client.WaitForConnection();
+            Client.GameInstance.InitialGameState = FullGameState.Create(Server.GameInstance.Game);
+            Client.Player = _player;
+            //Client.WaitForConnection();
         }
 
         /// <summary>
@@ -242,7 +248,6 @@ namespace MPTanks.Client.GameSandbox
                 SoundPlayer.PlayerVelocity = _player.Tank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
-            Client.GameInstance.Game?.Update(gameTime);
 
             InputDriver.Update(gameTime);
 
@@ -260,6 +265,10 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
+            Server.Update(gameTime);
+            Client.GameInstance.InitialGameState = Server.GameInstance.InitialGameState;
+            Client.GameInstance.Game?.Update(gameTime);
+
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);

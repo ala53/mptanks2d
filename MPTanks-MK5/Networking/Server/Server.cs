@@ -21,7 +21,7 @@ namespace MPTanks.Networking.Server
         public ServerNetworkProcessor MessageProcessor { get; private set; }
         public InitializedConfiguration Configuration { get; private set; }
         public Engine.Core.Timing.Timer.Factory Timers { get; private set; }
-        internal List<ServerPlayer> _players;
+        internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
         public enum ServerStatus
         {
@@ -41,6 +41,7 @@ namespace MPTanks.Networking.Server
             Configuration = new InitializedConfiguration(configuration);
             MessageProcessor = new ServerNetworkProcessor();
             Timers = new Engine.Core.Timing.Timer.Factory();
+            if (openOnInit) Open();
         }
         public void Open()
         {

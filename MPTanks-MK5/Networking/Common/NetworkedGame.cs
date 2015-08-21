@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Logging;
 using MPTanks.Engine.Settings;
@@ -64,7 +65,9 @@ namespace MPTanks.Networking.Common
 
         public NetworkedGame(FullGameState fullState, ILogger gameLogger = null, EngineSettings settings = null)
         {
-            Game = fullState.CreateGameFromState(gameLogger, settings);
+            if (fullState != null)
+                Game = fullState.CreateGameFromState(gameLogger, settings);
+            else Game = new GameCore(gameLogger, new NullGamemode(), new ModAssetInfo());
             Game.Authoritative = false;
         }
 

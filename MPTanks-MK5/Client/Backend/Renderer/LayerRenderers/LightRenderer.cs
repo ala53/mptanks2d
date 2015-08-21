@@ -51,7 +51,7 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             Draw(gameTime, _preCompositorTarget, _worldTempTarget);
         }
 
-        int sv;
+        //int sv;
         private VertexPositionTexture[] _lightMaskPrimitiveArray = new[]
                     {
                         new VertexPositionTexture(Vector3.Zero, Vector2.Zero),

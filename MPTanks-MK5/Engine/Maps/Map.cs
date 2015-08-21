@@ -36,6 +36,8 @@ namespace MPTanks.Engine.Maps
 
         public static Map LoadMap(ModAssetInfo mapFile, GameCore game)
         {
+            if (mapFile.AssetName == null)
+                return new Map(game);// it's null
             var data = mapFile.ReadAsString();
 
             var map = new Map(game, MapJSON.Load(data), data);
@@ -50,6 +52,11 @@ namespace MPTanks.Engine.Maps
 
             var m = new Map(game, MapJSON.Load(map), map);
             return m;
+        }
+
+        private Map(GameCore game)
+        {
+            _data = "";
         }
 
         private Map(GameCore game, MapJSON deserialized, string mapData)
