@@ -40,14 +40,18 @@ namespace MPTanks.Client.GameSandbox.Input
             state.FirePressed = IsPressed((Buttons)KeyBindings["Fire"]);
 
             if (IsPressed((Buttons)KeyBindings["Move Forward"]))
-                state.MovementSpeed = PressedLevel((Buttons)KeyBindings["Move Forward"]);
+                state.MovementSpeed = 
+                    MathHelper.Clamp(PressedLevel((Buttons)KeyBindings["Move Forward"]) * 2, 0, 1);
             else if (IsPressed((Buttons)KeyBindings["Move Backward"]))
-                state.MovementSpeed = -PressedLevel((Buttons)KeyBindings["Move Backward"]);
+                state.MovementSpeed = 
+                    -MathHelper.Clamp(PressedLevel((Buttons)KeyBindings["Move Backward"]) * 2, 0, 1);
 
             if (IsPressed((Buttons)KeyBindings["Rotate Left"]))
-                state.RotationSpeed = -PressedLevel((Buttons)KeyBindings["Rotate Left"]);
+                state.RotationSpeed = 
+                    -MathHelper.Clamp(PressedLevel((Buttons)KeyBindings["Rotate Left"]) * 2, 0, 1);
             else if (IsPressed((Buttons)KeyBindings["Rotate Right"]))
-                state.RotationSpeed = PressedLevel((Buttons)KeyBindings["Rotate Right"]);
+                state.RotationSpeed = 
+                    MathHelper.Clamp(PressedLevel((Buttons)KeyBindings["Rotate Right"]) * 2, 0, 1);
 
             float lookX = 0;
             float lookY = 0;
