@@ -53,7 +53,7 @@ namespace MPTanks.Engine
         /// The lifespan in milliseconds of the object
         /// </summary>
         public TimeSpan Lifespan { get; protected set; }
-        public float PostDeathExistenceTime { get; protected set; }
+        public TimeSpan PostDeathExistenceTime { get; protected set; }
         public bool IsDestructionCompleted { get; protected set; }
         #endregion
 
@@ -460,11 +460,11 @@ namespace MPTanks.Engine
 
             DestroyEmitters();
 
-            var mustWaitToDelete = DestroyInternal(destructor) || PostDeathExistenceTime > 0;
+            var mustWaitToDelete = DestroyInternal(destructor) || PostDeathExistenceTime.TotalMilliseconds > 0;
             if (!Body.IsDisposed && !mustWaitToDelete)
                 Body.Dispose(); //Kill the physics body if allowed to delete
 
-            if (PostDeathExistenceTime > 0)
+            if (PostDeathExistenceTime.TotalMilliseconds > 0)
                 Game.TimerFactory.CreateTimer(timer => IsDestructionCompleted = true, PostDeathExistenceTime);
 
             return mustWaitToDelete;

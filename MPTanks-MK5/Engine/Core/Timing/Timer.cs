@@ -12,10 +12,10 @@ namespace MPTanks.Engine.Core.Timing
     {
 
         public static Timer Default { get { return new Timer { Completed = true }; } }
-        public float ElapsedMilliseconds { get; set; }
+        public TimeSpan Elapsed { get; set; }
         public Action<Timer> Callback { get; private set; }
         public object UserData { get; private set; }
-        public float Interval { get; set; }
+        public TimeSpan Interval { get; set; }
         public bool Repeat { get; private set; }
 
         public bool Completed { get; private set; }
@@ -35,7 +35,7 @@ namespace MPTanks.Engine.Core.Timing
 
         public Timer Complete()
         {
-            ElapsedMilliseconds += Interval;
+            Elapsed += Interval;
             Callback(this);
             return this;
         }
@@ -50,22 +50,22 @@ namespace MPTanks.Engine.Core.Timing
             private List<Timer> timersToRemove = new List<Timer>();
             private List<Timer> timersToAdd = new List<Timer>();
 
-            public Timer CreateTimer(Action<Timer> callback, float timeout, object userdata = null)
+            public Timer CreateTimer(Action<Timer> callback, TimeSpan timeout, object userdata = null)
             {
-                if (timeout < 0)
-                    timeout = 0;
+                if (timeout.TotalMilliseconds < 0)
+                    timeout = TimeSpan.FromMilliseconds(0);
 
                 var timer = new Timer()
                 {
                     Callback = callback,
-                    Completed = (timeout == 0),
+                    Completed = (timeout.TotalMilliseconds == 0),
                     Interval = timeout,
                     Repeat = false,
                     UserData = userdata,
                     Creator = this
                 };
 
-                if (timeout == 0)
+                if (timeout.TotalMilliseconds == 0)
                 {
                     callback(timer);
                     timer.Completed = true;
@@ -78,14 +78,14 @@ namespace MPTanks.Engine.Core.Timing
                 return timer;
             }
 
-            public Timer CreateTimer(float timeout, object userdata = null)
+            public Timer CreateTimer(TimeSpan timeout, object userdata = null)
             {
                 return CreateTimer((t) => { }, timeout, userdata);
             }
 
-            public Timer CreateReccuringTimer(Action<Timer> callback, float interval, object userdata = null)
+            public Timer CreateReccuringTimer(Action<Timer> callback, TimeSpan interval, object userdata = null)
             {
-                if (interval == 0 || interval < 0)
+                if (interval.TotalMilliseconds == 0 || interval.TotalMilliseconds < 0)
                     throw new ArgumentException("Cannot have infinitely fast tickrate");
 
                 var timer = CreateTimer(callback, interval, userdata);
@@ -117,7 +117,7 @@ namespace MPTanks.Engine.Core.Timing
             {
                 bool found = timers.Contains(timer);
 
-                timer.ElapsedMilliseconds = 0;
+                timer.Elapsed = TimeSpan.FromMilliseconds(0);
                 timer.Completed = false;
 
                 if (!found)
@@ -131,8 +131,8 @@ namespace MPTanks.Engine.Core.Timing
                 inUpdateLoop = true;
                 foreach (var timer in timers)
                 {
-                    timer.ElapsedMilliseconds += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (timer.ElapsedMilliseconds > timer.Interval)
+                    timer.Elapsed += gameTime.ElapsedGameTime;
+                    if (timer.Elapsed > timer.Interval)
                     {
                         timer.Callback(timer); //Invoke the callback
 

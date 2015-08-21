@@ -49,11 +49,15 @@
   <ItemGroup>
     <Compile Include="Chat\ChatMessage.cs" />
     <Compile Include="Chat\ChatServer.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.Login.cs" />
+    <Compile Include="Server.Messaging.cs" />
     <Compile Include="ServerNetworkProcessor.cs" />
     <Compile Include="ServerPlayer.cs" />
+    <Compile Include="WebInterface\WebPlayerInfoResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Action\" />
@@ -66,6 +70,10 @@
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>
       <Name>Common</Name>
@@ -77,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="Server.Connections.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

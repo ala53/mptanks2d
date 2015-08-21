@@ -25,6 +25,8 @@ namespace MPTanks.Networking.Common
         private static Dictionary<byte, Type> _allTypes = new Dictionary<byte, Type>();
         private static Dictionary<Type, byte> _allTypesReverse = new Dictionary<Type, byte>();
 
+        public IReadOnlyDictionary<Type, byte> TypeIndexTable =>_allTypesReverse;
+
         public static void RegisterToClientMessageType(Type messageType)
         {
             _toClientMessageTypes.Add(++_currentMessageTypeId, messageType);

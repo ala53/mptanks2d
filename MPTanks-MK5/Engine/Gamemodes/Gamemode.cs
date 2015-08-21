@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Helpers;
 using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,21 +24,58 @@ namespace MPTanks.Engine.Gamemodes
 
         public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
 
-        //We cache the info for performance. Multiple requests only do one call
-        private string _cachedReflectionInfo;
+        #region Reflection helper
+        //We cache the info for performance. Multiple calls only create one instance
+        private string _cachedReflectionName;
         public string ReflectionName
         {
             get
             {
-                //Because it's a requirement to have ReflectionTypeName, we do a reflection query on ourselves
-                //to get the static property and then we cache the delegate before returning the data for the 
-                //reflectiontypename property
-                if (_cachedReflectionInfo == null)
-                    _cachedReflectionInfo = ((Modding.GameObjectAttribute)(GetType().
-                         GetCustomAttributes(typeof(Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+                if (_cachedReflectionName == null)
+                    _cachedReflectionName = ((GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
+                          .ReflectionTypeName;
 
-                //call the delegate
-                return _cachedReflectionInfo;
+                return _cachedReflectionName;
+            }
+        }
+        private string _cachedDisplayName;
+        public string DisplayName
+        {
+            get
+            {
+                if (_cachedDisplayName == null)
+                    _cachedDisplayName = ((GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
+                          .DisplayName;
+
+                return _cachedDisplayName;
+            }
+        }
+        private string _cachedDescription;
+        public string Description
+        {
+            get
+            {
+                if (_cachedDescription == null)
+                    _cachedDescription = ((GameObjectAttribute[])(GetType()
+                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
+                          .Description;
+
+                return _cachedDescription;
+            }
+        }
+
+        private Module _cachedModule;
+        /// <summary>
+        /// The module that contains this object
+        /// </summary>
+        [JsonIgnore]
+        public Module ContainingModule
+        {
+            get
+            {
+                return ModDatabase.ReverseTypeTable[GetType()];
             }
         }
 
@@ -66,6 +104,7 @@ namespace MPTanks.Engine.Gamemodes
                 return _defaultTankReflectionName;
             }
         }
+        #endregion
 
 
         private bool? _hotJoinEnabled;
@@ -339,6 +378,7 @@ namespace MPTanks.Engine.Gamemodes
 
         #region Hot Join
         public virtual bool HotJoinCanPlayerJoin(GamePlayer player) => HotJoinEnabled;
+        public virtual Team HotJoinGetPlayerTeam(GamePlayer player) => null;
         public virtual string[] HotJoinGetAllowedTankTypes(GamePlayer player) =>
             GetPlayerAllowedTankTypes(player);
         public virtual bool HotJoinSetPlayerTankType(GamePlayer player, string tankType)

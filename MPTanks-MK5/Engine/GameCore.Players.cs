@@ -25,8 +25,25 @@ namespace MPTanks.Engine
             if (!_playerIds.Contains(player.Id))
             {
                 _playerIds.Add(player.Id);
+                player.Game = this;
                 _playersById.Add(player.Id, player);
             }
+
+            if (Running && !Gamemode.HotJoinEnabled)
+                player.IsSpectator = true; //Force spectator
+            else if (Running && Gamemode.HotJoinCanPlayerJoin(player))
+            {
+                //Let them join - first find the team and size the player list correctly
+                player.Team = Gamemode.HotJoinGetPlayerTeam(player);
+                var newPlayerArray = new GamePlayer[player.Team.Players.Length + 1];
+                Array.Copy(player.Team.Players, newPlayerArray, player.Team.Players.Length);
+                newPlayerArray[newPlayerArray.Length - 1] = player;
+                player.Team.Players = newPlayerArray;
+
+                //Then tanks
+                player.AllowedTankTypes = Gamemode.HotJoinGetAllowedTankTypes(player);
+            }
+
             return player;
         }
         /// <summary>

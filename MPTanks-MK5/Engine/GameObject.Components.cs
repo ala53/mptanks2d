@@ -147,7 +147,7 @@ namespace MPTanks.Engine
                     $"{deserialized.ReflectionName} does not match {ReflectionName}");
 
             Lifespan = TimeSpan.FromMilliseconds(deserialized.Lifespan);
-            PostDeathExistenceTime = deserialized.RemoveAfter;
+            PostDeathExistenceTime = TimeSpan.FromMilliseconds(deserialized.RemoveAfter);
             DefaultSize = deserialized.DefaultSize;
             DrawLayer = deserialized.DrawLayer;
             Health = deserialized.Health;

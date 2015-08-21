@@ -78,6 +78,7 @@
     <Compile Include="Actions\ToServer\PlayerTankTypeSelectedAction.cs" />
     <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />
     <Compile Include="Actions\ToServer\SentChatMessageAction.cs" />
+    <Compile Include="Channels.cs" />
     <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\PseudoFullGameWorldState.cs" />
