@@ -160,19 +160,20 @@ namespace MPTanks.Client.GameSandbox
                 MaxPlayers = 32,
                 Password = "password"
             }, game);
+
+            GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            SoundPlayer = new Backend.Sound.SoundPlayer(game);
             Client.GameInstance.GameChanged += delegate
             {
-                GameRenderer?.Dispose();
-                GameRenderer = new GameCoreRenderer(
-                    this, Client.GameInstance.Game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
-                SoundPlayer?.Dispose();
-                SoundPlayer = new Backend.Sound.SoundPlayer(Client.GameInstance.Game);
+                GameRenderer.Game = Client.GameInstance.Game;
+                SoundPlayer.Game = Client.GameInstance.Game;
                 DebugDrawer?.Dispose();
                 DebugDrawer = new DebugDrawer(this, Client.GameInstance.Game, Client.Player);
 
             };
+
+            Client.PlayerId = _player.Id;
             Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
-            Client.Player = _player;
             //Client.WaitForConnection();
         }
 

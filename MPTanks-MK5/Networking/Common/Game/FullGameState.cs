@@ -64,6 +64,11 @@ namespace MPTanks.Networking.Common.Game
             foreach (var player in Players)
             {
                 var nwPlayer = new NetworkPlayer();
+                if (game.PlayersById.ContainsKey(player.Id) && game.PlayersById[player.Id] is NetworkPlayer)
+                    nwPlayer = (NetworkPlayer)game.PlayersById[player.Id];
+                else if (game.PlayersById.ContainsKey(player.Id))
+                    game.RemovePlayer(player.Id);
+
                 nwPlayer.AllowedTankTypes = player.AllowedTankTypes;
                 nwPlayer.ClanName = player.ClanName;
                 nwPlayer.DisplayName = player.Username;
@@ -81,12 +86,17 @@ namespace MPTanks.Networking.Common.Game
 
                 player.PlayerObject = nwPlayer;
 
-                game.AddPlayer(nwPlayer);
+                if (!game.PlayersById.ContainsKey(player.Id))
+                    game.AddPlayer(nwPlayer);
             }
 
             //Add all of the game objects
             foreach (var fullState in ObjectStates)
-                GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+            {
+                if (!game.GameObjectsById.ContainsKey(fullState.ObjectId))
+                    GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+                else game.GameObjectsById[fullState.ObjectId].FullState = fullState.Data;
+            }
 
             var playersByTeam = new Dictionary<short, List<NetworkPlayer>>();
             foreach (var player in Players)

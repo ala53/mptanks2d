@@ -1,4 +1,5 @@
-﻿using MPTanks.Networking.Common;
+﻿using MPTanks.Engine;
+using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace MPTanks.Networking.Client
         public Lidgren.Network.NetClient NetworkClient { get; private set; }
         public bool Connected { get; private set; }
         public NetworkedGame GameInstance { get; private set; }
-        public NetworkPlayer Player { get; set; }
+        public Guid PlayerId { get; set; }
+        public GamePlayer Player { get { return GameInstance.Game.PlayersById[PlayerId]; } }
         public bool GameRunning { get { return Connected && GameInstance != null; } }
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {

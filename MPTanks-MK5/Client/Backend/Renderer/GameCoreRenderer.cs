@@ -16,7 +16,12 @@ namespace MPTanks.Client.Backend.Renderer
     public class GameCoreRenderer : IDisposable
     {
         public Game Client { get; private set; }
-        public GameCore Game { get; private set; }
+        private GameCore _game;
+        public GameCore Game
+        {
+            get { return _game; }
+            set { _game = value; }
+        }
         public float PhysicsCompensation { get; set; } = 0.085f;
         public ILogger Logger => Game.Logger;
         internal AssetFinder Finder { get; private set; }

@@ -69,7 +69,7 @@ namespace MPTanks.Client.Backend.Sound
 
         internal MusicHelper MusicPlayer { get; set; }
 
-        public GameCore Game { get; private set; }
+        public GameCore Game { get; set; }
 
         internal List<SoundInstance> ActiveSoundInstanceQueue
         { get; private set; }

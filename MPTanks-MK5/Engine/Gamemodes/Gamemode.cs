@@ -331,10 +331,16 @@ namespace MPTanks.Engine.Gamemodes
             var teamCount = header.GetUShort(offset); offset += 2;
 
             var teams = new List<Team>();
-
+            if (Teams != null) teams.AddRange(Teams);
             for (var i = 0; i < teamCount; i++)
-                teams.Add(MakeFullStateTeam(header, ref offset));
-
+            {
+                var t = MakeFullStateTeam(header, ref offset);
+                bool teamIdExists = false;
+                foreach (var team in Teams)
+                    if (team.TeamId == t.TeamId)
+                        teamIdExists = true;
+                if (!teamIdExists) teams.Add(t);
+            }
             GameEnded = ended;
             AllowRespawn = allowRespawn;
             RespawnTimeMs = respawnTime;

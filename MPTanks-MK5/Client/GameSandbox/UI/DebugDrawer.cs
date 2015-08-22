@@ -16,11 +16,11 @@ namespace MPTanks.Client.GameSandbox.UI
     {
         private GameClient _client;
         private GameCore _game;
-        private NetworkPlayer _player;
+        private GamePlayer _player;
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
         private Texture2D _graphTexture;
-        public DebugDrawer(GameClient client, GameCore game, NetworkPlayer player)
+        public DebugDrawer(GameClient client, GameCore game, GamePlayer player)
         {
             _client = client;
             _game = game;
