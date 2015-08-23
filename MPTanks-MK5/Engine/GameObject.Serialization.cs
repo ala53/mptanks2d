@@ -29,13 +29,13 @@ namespace MPTanks.Engine
 
             GameObject obj;
             if (type == __SerializationGameObjectType.Tank)
-                obj = game.AddTank(name, game.PlayersById[guid], authorized);
+                obj = game.AddTank(name, game.PlayersById[guid], authorized, id);
             else if (type == __SerializationGameObjectType.Projectile)
-                obj = game.AddProjectile(name, game.PlayersById[guid].Tank, authorized);
+                obj = game.AddProjectile(name, game.PlayersById[guid].Tank, authorized, id);
             else if (type == __SerializationGameObjectType.MapObject)
-                obj = game.AddMapObject(name, authorized);
+                obj = game.AddMapObject(name, authorized, id);
             else
-                obj = game.AddGameObject(name, authorized);
+                obj = game.AddGameObject(name, authorized, id);
 
             obj.UnsafeDisableEvents();
             obj.SetFullState(serializationData);

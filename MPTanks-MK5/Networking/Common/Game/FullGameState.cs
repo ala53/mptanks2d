@@ -28,6 +28,7 @@ namespace MPTanks.Networking.Common.Game
         public byte[] GamemodeState { get; set; }
         public List<FullStatePlayer> Players { get; set; } = new List<FullStatePlayer>();
         public ushort NextObjectId { get; set; }
+        public double GameEndedTime { get; set; }
 
         public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {
@@ -56,13 +57,20 @@ namespace MPTanks.Networking.Common.Game
             game.FriendlyFireEnabled = FriendlyFireEnabled;
 
             //Do it via reflection to keep api private
-            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
+            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
             statusProp.SetValue(game, Status);
             //Do this with reflection because we want to keep the api private (set game time)
             var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.Time));
             timeProp.SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
             //Once again, keep the API private
-            typeof(GameCore).GetField("_nextObjectId").SetValue(game, NextObjectId);
+            typeof(GameCore).GetField("_nextObjectId",
+                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.SetField |
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(game, NextObjectId);
+            typeof(GameCore).GetField("_gameEndedTime",
+                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.SetField |
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(game, TimeSpan.FromMilliseconds(GameEndedTime));
 
             foreach (var player in Players)
             {
@@ -166,10 +174,17 @@ namespace MPTanks.Networking.Common.Game
             state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
             state.GamemodeState = game.Gamemode.FullState;
-            state.Status = game.GameStatus;
+            state.Status = game.Status;
             state.TimescaleString = game.Timescale.DisplayString;
             state.TimescaleValue = game.Timescale.Fractional;
             state.FriendlyFireEnabled = game.FriendlyFireEnabled;
+            state.NextObjectId = (ushort)typeof(GameCore).GetField("_nextObjectId",
+                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.GetField | 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(game);
+            state.GameEndedTime = ((TimeSpan)(typeof(GameCore).GetField("_gameEndedTime",
+                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.GetField |
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(game)))
+                .TotalMilliseconds;
 
             return state;
         }
@@ -221,6 +236,7 @@ namespace MPTanks.Networking.Common.Game
             state.TimescaleValue = message.ReadDouble();
             state.CurrentGameTimeMilliseconds = message.ReadDouble();
             state.NextObjectId = message.ReadUInt16();
+            state.GameEndedTime = message.ReadDouble();
 
             var objCount = message.ReadInt32();
             for (var i = 0; i < objCount; i++)
@@ -289,6 +305,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(TimescaleValue);
             message.Write(CurrentGameTimeMilliseconds);
             message.Write(NextObjectId);
+            message.Write(GameEndedTime);
 
             message.Write(ObjectStates.Count);
             foreach (var obj in ObjectStates)

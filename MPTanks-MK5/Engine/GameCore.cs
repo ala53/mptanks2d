@@ -21,21 +21,21 @@ namespace MPTanks.Engine
         {
             get
             {
-                return GameStatus == CurrentGameStatus.GameRunning ||
-                    GameStatus == CurrentGameStatus.GameEndedStillRunning;
+                return Status == CurrentGameStatus.GameRunning ||
+                    Status == CurrentGameStatus.GameEndedStillRunning;
             }
         }
-        public bool CountingDown { get { return GameStatus == CurrentGameStatus.CountingDownToStart; } }
-        public bool GameEnded
+        public bool CountingDown { get { return Status == CurrentGameStatus.CountingDownToStart; } }
+        public bool Ended
         {
             get
             {
-                return GameStatus == CurrentGameStatus.GameEndedStillRunning ||
-                    GameStatus == CurrentGameStatus.GameEnded;
+                return Status == CurrentGameStatus.GameEndedStillRunning ||
+                    Status == CurrentGameStatus.GameEnded;
             }
         }
-        public bool WaitingForPlayers { get { return GameStatus == CurrentGameStatus.WaitingForPlayers; } }
-        public CurrentGameStatus GameStatus { get; private set; }
+        public bool WaitingForPlayers { get { return Status == CurrentGameStatus.WaitingForPlayers; } }
+        public CurrentGameStatus Status { get; private set; }
         public enum CurrentGameStatus : byte
         {
             WaitingForPlayers,
@@ -104,7 +104,7 @@ namespace MPTanks.Engine
         [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
         #region Game Status
-        public TimeSpan RemainingCountdownTime { get; private set; }
+        public TimeSpan RemainingCountdownTime => TimeSpan.FromMilliseconds(Settings.TimeToWaitBeforeStartingGame) - Time;
         #endregion
         private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
         public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
@@ -249,9 +249,9 @@ namespace MPTanks.Engine
             _skipInit = skipInit;
             if (skipInit)
             {
-                GameStatus = CurrentGameStatus.GameRunning;
+                Status = CurrentGameStatus.GameRunning;
                 _gameCountDownHasBegun = true;
-                RemainingCountdownTime = TimeSpan.Zero;
+                Time = TimeSpan.FromMilliseconds(Settings.TimeToWaitBeforeStartingGame);
             }
 
             Map = Maps.Map.LoadMap(map, this);
@@ -321,26 +321,32 @@ namespace MPTanks.Engine
         private void DoUpdate(GameTime gameTime)
         {
             if (!_hasGameStarted && !HasEnoughPlayersToStart())
-                GameStatus = CurrentGameStatus.WaitingForPlayers;
-            else if (!_gameCountDownHasBegun)
+            {
+                Status = CurrentGameStatus.WaitingForPlayers;
+                return;
+            }
+
+            Time += gameTime.ElapsedGameTime;
+
+            if (!_gameCountDownHasBegun)
             {
                 _gameCountDownHasBegun = true;
-                GameStatus = CurrentGameStatus.CountingDownToStart;
+                Status = CurrentGameStatus.CountingDownToStart;
                 Gamemode.Create();
             }
 
             if (Gamemode.GameEnded)
             {
-                TickGameEnd(gameTime);
+                if (_gameEndedTime == default(TimeSpan)) _gameEndedTime = Time;
                 //Check if whe should still be updating
                 if (IsStillInPostGamePhysicsPhase())
                 {
-                    GameStatus = CurrentGameStatus.GameEndedStillRunning;
+                    Status = CurrentGameStatus.GameEndedStillRunning;
                     UpdateInGame(gameTime);
                 }
                 else
                 {
-                    GameStatus = CurrentGameStatus.GameEnded;
+                    Status = CurrentGameStatus.GameEnded;
                     //Do nothing, cleanup time
                     if (!_hasDoneCleanup)
                     {
@@ -349,14 +355,19 @@ namespace MPTanks.Engine
                     }
                 }
             }
-            else if (GameStatus == CurrentGameStatus.GameRunning)
+            else if (Status == CurrentGameStatus.GameRunning)
             {
                 //Run the game *cough* like you're supposed to *cough*
                 UpdateInGame(gameTime);
             }
-            else if (GameStatus == CurrentGameStatus.CountingDownToStart)
+            else if (Status == CurrentGameStatus.CountingDownToStart)
             {
-                TickGameStart(gameTime);
+                if (RemainingCountdownTime < TimeSpan.Zero)
+                {
+                    BeginGame();
+                    Logger.Info(Strings.Engine.GameStarted);
+                }
+
             }
         }
 
@@ -364,41 +375,19 @@ namespace MPTanks.Engine
         {
         }
 
-        private double _timeSinceGameEnded = 0;
+        private TimeSpan _gameEndedTime;
         private bool IsStillInPostGamePhysicsPhase()
         {
-            return _timeSinceGameEnded
-                < Settings.TimePostGameToContinueRunning;
+            return (Time - _gameEndedTime)
+                < TimeSpan.FromMilliseconds(Settings.TimePostGameToContinueRunning);
         }
-
-        private void TickGameEnd(GameTime gameTime)
-        {
-            _timeSinceGameEnded += gameTime.ElapsedGameTime.TotalMilliseconds;
-        }
-
-        private double _timeSinceGameBeganStarting = 0;
-        /// <summary>
-        /// Does a loop to wait before starting the game
-        /// </summary>
-        private void TickGameStart(GameTime gameTime)
-        {
-            GameStatus = CurrentGameStatus.CountingDownToStart;
-            _timeSinceGameBeganStarting += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (_timeSinceGameBeganStarting > Settings.TimeToWaitBeforeStartingGame)
-            {
-                BeginGame();
-                Logger.Info(Strings.Engine.GameStarted);
-            }
-
-            RemainingCountdownTime = TimeSpan.FromMilliseconds(
-                Settings.TimeToWaitBeforeStartingGame - _timeSinceGameBeganStarting);
-        }
-
+        
         private bool _hasGameStarted = false;
         private void BeginGame()
         {
+            if (_hasGameStarted) return;
             _hasGameStarted = true;
-            GameStatus = CurrentGameStatus.GameRunning;
+            Status = CurrentGameStatus.GameRunning;
             //Create the player objects (server only)
             SetUpGamePlayers();
             //And load the map / create the map objects

@@ -15,7 +15,7 @@ namespace MPTanks.Engine
     {
         #region Basic Properties
         public Color ColorMask { get; set; }
-        public ushort ObjectId { get; private set; }
+        public ushort ObjectId { get; internal set; }
         public int DrawLayer { get; set; }
         [JsonIgnore]
         public Body Body { get; protected set; }
@@ -273,10 +273,7 @@ namespace MPTanks.Engine
         #endregion
         public GameObject(GameCore game, bool authorized, float density = 1, float restitution = 0.1f, Vector2 position = default(Vector2), float rotation = 0, ushort id = ushort.MaxValue)
         {
-            if (id == ushort.MaxValue)
-                ObjectId = game.NextObjectId;
-            else
-                ObjectId = id;
+            ObjectId = id;
             Game = game;
 
             ColorMask = Color.White;

@@ -32,7 +32,7 @@ namespace MPTanks.Networking.Common.Game
                 state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj));
             }
 
-            state.CurrentGameStatus = game.GameStatus;
+            state.CurrentGameStatus = game.Status;
             state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.FriendlyFireEnabled = game.FriendlyFireEnabled;
 
@@ -73,7 +73,7 @@ namespace MPTanks.Networking.Common.Game
         public void Apply(GameCore game)
         {
             //Do it via reflection to keep api private
-            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.GameStatus));
+            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
             statusProp.SetValue(game, CurrentGameStatus);
 
             //Do this with reflection because we want to keep the api private (set game time)

@@ -206,7 +206,7 @@ namespace MPTanks.Client.GameSandbox.UI
                 _bldr.Append(" waiting for players");
             if (_game.Running)
                 _bldr.Append(" running");
-            if (_game.GameEnded)
+            if (_game.Ended)
                 _bldr.Append(" ended");
 
             if (_game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
