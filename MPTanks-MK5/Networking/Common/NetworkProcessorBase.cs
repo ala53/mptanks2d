@@ -179,8 +179,9 @@ namespace MPTanks.Networking.Common
             foreach (var msg in _messages)
                 message.Write(_allTypesReverse[msg.GetType()]);
             foreach (var msg in _messages)
+            {
                 msg.Serialize(message);
-
+            }
             _messages.Clear();
         }
 

@@ -9,14 +9,20 @@ namespace MPTanks.Networking.Common.Actions.ToServer
 {
     public class PlayerTankTypeSelectedAction : ActionBase
     {
-        public PlayerTankTypeSelectedAction(NetIncomingMessage message):base(message)
+        public string SelectedTypeReflectionName { get; private set; }
+        public PlayerTankTypeSelectedAction(NetIncomingMessage message) : base(message)
         {
+            SelectedTypeReflectionName = message.ReadString();
+        }
 
+        public PlayerTankTypeSelectedAction(string selectedTypeReflectionName)
+        {
+            SelectedTypeReflectionName = selectedTypeReflectionName;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            throw new NotImplementedException();
+            message.Write(SelectedTypeReflectionName);
         }
     }
 }

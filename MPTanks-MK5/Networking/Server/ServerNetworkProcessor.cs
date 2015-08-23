@@ -71,7 +71,9 @@ namespace MPTanks.Networking.Server
             foreach (var msg in queue)
                 message.Write(TypeIndexTable[msg.GetType()]);
             foreach (var msg in queue)
+            {
                 msg.Serialize(message);
+            }
 
             queue.Clear();
         }

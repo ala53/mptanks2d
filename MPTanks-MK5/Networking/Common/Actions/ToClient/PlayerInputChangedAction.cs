@@ -7,17 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPTanks.Networking.Common.Actions.ToServer
+namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    /// <summary>
-    /// Notifies that the input state for a tank was changed by the client.
-    /// 5 bytes including message header
-    /// </summary>
-    public class InputChangedAction : ActionBase
+    public class PlayerInputChangedAction : ActionBase
     {
-        public InputState InputState { get; private set; }
-        public InputChangedAction(NetIncomingMessage message):base(message)
+        public Guid PlayerId { get; set; }
+        public InputState InputState { get; set; }
+        public PlayerInputChangedAction(NetIncomingMessage message) : base(message)
         {
+
             var iState = new InputState();
             iState.FirePressed = message.ReadBoolean();
             iState.LookDirection = message.ReadRangedSingle(-MathHelper.TwoPi, MathHelper.TwoPi, 13);
@@ -26,14 +24,15 @@ namespace MPTanks.Networking.Common.Actions.ToServer
             iState.RotationSpeed = ((float)message.ReadByte() / 128) - 1;
             InputState = iState;
         }
-
-        public InputChangedAction(InputState state)
+        public PlayerInputChangedAction(NetworkPlayer player, InputState state)
         {
+            PlayerId = player.Id;
             InputState = state;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
+            message.Write(PlayerId.ToByteArray());
             message.Write(InputState.FirePressed);
             message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 13);
             message.Write((byte)InputState.WeaponNumber, 2);

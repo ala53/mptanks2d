@@ -17,7 +17,7 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.GamemodeStateChangedAction));
             RegisterToClientActionType(typeof(ToClient.GameObjectCreatedAction));
             RegisterToClientActionType(typeof(ToClient.GameObjectDestroyedAction));
-            RegisterToClientActionType(typeof(ToClient.GameStartedAction));
+            RegisterToClientActionType(typeof(ToClient.PartialGameStateUpdateAction));
             RegisterToClientActionType(typeof(ToClient.GameStatusChangedAction));
             RegisterToClientActionType(typeof(ToClient.ObjectStateChangedAction));
             RegisterToClientActionType(typeof(ToClient.OtherPlayerReadyToStartChangedAction));

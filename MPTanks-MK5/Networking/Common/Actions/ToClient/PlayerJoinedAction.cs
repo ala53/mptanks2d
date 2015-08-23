@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class PlayerJoinedAction : ActionBase
     {
+        public FullStatePlayer Player { get; private set; }
         public PlayerJoinedAction(NetIncomingMessage message) : base(message)
         {
 

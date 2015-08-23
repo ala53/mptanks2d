@@ -74,7 +74,7 @@ namespace MPTanks.Networking.Server
                     MessageProcessor.WriteMessages(msg);
                     NetworkServer.SendMessage(msg, Connections.ActiveConnections,
                         Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                        Channels.GamePlayData);
+                        Channels.GameplayData);
                 }
 
                 //As well as narrowband ones
@@ -86,7 +86,7 @@ namespace MPTanks.Networking.Server
                         MessageProcessor.WritePrivateMessages(plr, msg);
                         plr.Connection.SendMessage(msg,
                             Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                            Channels.GamePlayData);
+                            Channels.GameplayData);
                     }
                 }
             }
@@ -104,7 +104,7 @@ namespace MPTanks.Networking.Server
         }
         public void AddPlayer(ServerPlayer player)
         {
-            GameInstance.Game.AddPlayer(player);
+            GameInstance.Game.AddPlayer(player.Player);
             _players.Add(player);
 
             //Create a state sync loop

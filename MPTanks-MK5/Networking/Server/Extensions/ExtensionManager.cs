@@ -14,6 +14,17 @@ namespace MPTanks.Networking.Server.Extensions
         public ExtensionManager(Server server)
         {
             _server = server;
+            var baseExtensions = new ServerExtensionBase[]
+            {
+                new Included.BanHammer(server),
+                new Included.ExtensionLoader(server)
+            };
+
+            foreach (var ext in baseExtensions)
+            {
+                _extensions.Add(ext);
+                ext.Initialize();
+            }
         }
         public void LoadExtensions(string searchDir)
         {

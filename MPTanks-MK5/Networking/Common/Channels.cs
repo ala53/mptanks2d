@@ -8,8 +8,8 @@ namespace MPTanks.Networking.Common
 {
     public static class Channels
     {
-        public static int GamePlayData = 0;
-        public static int Login = 1;
-        public static int Polling = 2;
+        public static readonly int GameplayData = 0;
+        public static readonly int Login = 1;
+        public static readonly int Polling = 2;
     }
 }

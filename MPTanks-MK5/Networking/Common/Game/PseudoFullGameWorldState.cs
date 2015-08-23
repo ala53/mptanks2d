@@ -115,7 +115,7 @@ namespace MPTanks.Networking.Common.Game
             var state = new PseudoFullGameWorldState();
 
             state.CurrentGameStatus = (GameCore.CurrentGameStatus)message.ReadByte();
-            state.CurrentGameTimeMilliseconds = message.ReadFloat();
+            state.CurrentGameTimeMilliseconds = message.ReadDouble();
             state.FriendlyFireEnabled = message.ReadBoolean();
 
             message.ReadPadBits();
