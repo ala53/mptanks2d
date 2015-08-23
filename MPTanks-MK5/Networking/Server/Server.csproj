@@ -49,6 +49,10 @@
   <ItemGroup>
     <Compile Include="Chat\ChatMessage.cs" />
     <Compile Include="Chat\ChatServer.cs" />
+    <Compile Include="Extensions\ExtensionManager.cs" />
+    <Compile Include="Extensions\Included\BanHammer.cs" />
+    <Compile Include="Extensions\Included\ExtensionLoader.cs" />
+    <Compile Include="Extensions\ServerExtensionBase.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Server.cs" />

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-    public class SentChatMessageAction : ActionBase
+    public class ReceivedChatMessageAction : ActionBase
     {
-        public SentChatMessageAction(NetIncomingMessage message) : base(message)
+        public ReceivedChatMessageAction(NetIncomingMessage message) : base(message)
         {
 
         }

@@ -16,7 +16,7 @@ namespace MPTanks.Networking.Server.Extensions.Included
 
         public override void Initialize()
         {
-            ChatHandler.RegisterCommand((Delegate)LoadExtensionCommand, "loadextension", Chat.ChatServer.ChatCommandParameter.String);
+            ChatHandler.RegisterCommand((Action<string>)LoadExtensionCommand, "loadextension", Chat.ChatServer.ChatCommandParameter.String);
         }
 
         private void LoadExtensionCommand(string filename)

@@ -65,9 +65,8 @@
     <Compile Include="Actions\ToClient\PlayerKilledAction.cs" />
     <Compile Include="Actions\ToClient\PlayerPropertyChangedAction.cs" />
     <Compile Include="Actions\ToClient\PlayersListSentAction.cs" />
-    <Compile Include="Actions\ToClient\SentChatMessageAction.cs" />
+    <Compile Include="Actions\ToClient\ReceivedChatMessageAction.cs" />
     <Compile Include="Actions\ToClient\TimescaleChangedAction.cs" />
-    <Compile Include="Actions\ToServer\FireProjectileAction.cs" />
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />
     <Compile Include="Actions\ToClient\GamemodeStateChangedAction.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />
     <Compile Include="Actions\ToServer\SentChatMessageAction.cs" />
     <Compile Include="Channels.cs" />
-    <Compile Include="Chat\ChatQueue.cs" />
     <Compile Include="Connection\ConnectionInfo.cs" />
     <Compile Include="Game\PseudoFullGameWorldState.cs" />
     <Compile Include="Game\FullObjectState.cs" />
