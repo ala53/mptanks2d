@@ -438,7 +438,7 @@ namespace MPTanks.Engine
         private bool _killedAlready;
         public void Kill(GameObject destroyer = null, bool authorized = false)
         {
-            if (!_killedAlready)
+            if (!_killedAlready && (Authoritative || authorized))
                 Game.RemoveGameObject(this, destroyer, authorized);
 
             _killedAlready = true;

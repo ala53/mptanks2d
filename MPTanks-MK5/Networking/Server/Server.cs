@@ -116,7 +116,7 @@ namespace MPTanks.Networking.Server
         public void RemovePlayer(ServerPlayer player)
         {
             _players.Remove(player);
-            GameInstance.Game.RemovePlayer(player);
+            GameInstance.Game.RemovePlayer(player.Id);
         }
 
         public void SetGame(GameCore game)
