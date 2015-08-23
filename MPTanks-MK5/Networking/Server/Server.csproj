@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chat\ChatMessage.cs" />
+    <Compile Include="Chat\ChatServer.ChatCommands.cs" />
     <Compile Include="Chat\ChatServer.cs" />
     <Compile Include="Extensions\ExtensionManager.cs" />
     <Compile Include="Extensions\Included\BanHammer.cs" />

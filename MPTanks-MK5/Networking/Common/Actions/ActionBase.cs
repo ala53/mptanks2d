@@ -8,7 +8,6 @@ namespace MPTanks.Networking.Common.Actions
 {
     public abstract class ActionBase : MessageBase
     {
-        public float GameTimeMilliseconds { get; set; }
         static ActionBase()
         {
             RegisterToClientActionType(typeof(ToClient.FullGameStateSentAction));
@@ -38,8 +37,8 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));
             RegisterToServerActionType(typeof(ToServer.SentChatMessageAction));
         }
-        
-        public ActionBase(Lidgren.Network.NetIncomingMessage message) { }
+
+        public ActionBase(Lidgren.Network.NetIncomingMessage message) : base(message) { }
 
         public ActionBase() { }
 

@@ -42,9 +42,9 @@ namespace MPTanks.Networking.Server
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
             Configuration = new InitializedConfiguration(configuration);
-            MessageProcessor = new ServerNetworkProcessor();
+            MessageProcessor = new ServerNetworkProcessor(this);
             Timers = new Engine.Core.Timing.Timer.Factory();
-            ChatHandler = new Chat.ChatServer();
+            ChatHandler = new Chat.ChatServer(this);
             if (openOnInit) Open();
         }
         public void Open()
@@ -130,6 +130,8 @@ namespace MPTanks.Networking.Server
             _players.Remove(player);
             GameInstance.Game.RemovePlayer(player.Id);
         }
+
+        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Id == id);
 
         public void SetGame(GameCore game)
         {

@@ -16,22 +16,22 @@ namespace MPTanks.Networking.Server.Extensions.Included
 
         public override void Initialize()
         {
-            ChatHandler.RegisterCommand((Action<ServerPlayer>)BanCommand, "ban", Chat.ChatServer.ChatCommandParameter.Player);
-            ChatHandler.RegisterCommand((Action<ServerPlayer[]>)BanCommand, "ban", Chat.ChatServer.ChatCommandParameter.ArrayOfPlayer);
-            ChatHandler.RegisterCommand((Action<ServerPlayer>)KickCommand, "kick", Chat.ChatServer.ChatCommandParameter.Player);
-            ChatHandler.RegisterCommand((Action<ServerPlayer[]>)KickCommand, "kick", Chat.ChatServer.ChatCommandParameter.ArrayOfPlayer);
+            ChatHandler.RegisterCommand((Action<ServerPlayer, string>)BanCommand, "ban", "Ban a player from the server");
+            ChatHandler.RegisterCommand((Action<ServerPlayer[], string>)BanCommand, "ban", "Ban multiple players from the server");
+            ChatHandler.RegisterCommand((Action<ServerPlayer, string>)KickCommand, "kick", "Kick a player from the server");
+            ChatHandler.RegisterCommand((Action<ServerPlayer[], string>)KickCommand, "kick", "Kick multiple players from the server");
         }
 
-        private void BanCommand(ServerPlayer player)
+        private void BanCommand(ServerPlayer player, string reason = null)
         {
         }
-        private void BanCommand(ServerPlayer[] players)
+        private void BanCommand(ServerPlayer[] players, string reason = null)
         {
         }
-        private void KickCommand(ServerPlayer player)
+        private void KickCommand(ServerPlayer player, string reason = null)
         {
         }
-        private void KickCommand(ServerPlayer[] players)
+        private void KickCommand(ServerPlayer[] players, string reason = null)
         {
         }
 
