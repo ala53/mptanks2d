@@ -35,6 +35,7 @@ namespace MPTanks.Networking.Server
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
             GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
+            GameInstance.Game.Authoritative = true;
             Logger = logger ?? new NullLogger();
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
@@ -121,6 +122,7 @@ namespace MPTanks.Networking.Server
         public void SetGame(GameCore game)
         {
             GameInstance.FullGameState = FullGameState.Create(game);
+            GameInstance.Game.Authoritative = true;
         }
     }
 }

@@ -39,7 +39,6 @@ namespace MPTanks.Client.GameSandbox
         GraphicsDeviceManager _graphics;
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
-        private NetworkPlayer _player;
         public MPTanks.Networking.Client.Client Client { get; private set; }
         public MPTanks.Networking.Server.Server Server { get; private set; }
         public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
@@ -144,7 +143,7 @@ namespace MPTanks.Client.GameSandbox
 
             _ui.SetPage(_settingUpPageName);
 
-            _player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
+            var player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
             {
                 Id = Guid.NewGuid()
             });
@@ -172,7 +171,7 @@ namespace MPTanks.Client.GameSandbox
 
             };
 
-            Client.PlayerId = _player.Id;
+            Client.PlayerId = player.Id;
             Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
             //Client.WaitForConnection();
         }
@@ -238,19 +237,24 @@ namespace MPTanks.Client.GameSandbox
             {
                 Diagnostics.BeginMeasurement("Input processing");
                 if (IsActive)
-                    _player?.Tank?.Input(InputDriver.GetInputState());
+                    Client.Player?.Tank?.Input(InputDriver.GetInputState());
                 Diagnostics.EndMeasurement("Input processing");
             }
 
 
-            if (_player.Tank != null && SoundPlayer != null)
+            if (Client.Player?.Tank != null && SoundPlayer != null)
             {
-                SoundPlayer.PlayerPosition = _player.Tank.Position;
-                SoundPlayer.PlayerVelocity = _player.Tank.LinearVelocity;
+                SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
+                SoundPlayer.PlayerVelocity = Client.Player.Tank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
 
             InputDriver.Update(gameTime);
+
+            if (Server.GameInstance.Game.PlayersById.ContainsKey(Client.PlayerId))
+            {
+                Server.GameInstance.Game.PlayersById[Client.PlayerId]?.Tank?.Input(InputDriver.GetInputState());
+            }
 
             Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);
@@ -310,10 +314,10 @@ namespace MPTanks.Client.GameSandbox
             if (Client.GameInstance.Game != null)
             {
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
-                if (_player.Tank != null)
+                if (Client.Player?.Tank != null)
                 {
                     _currentOffset =
-                        Vector2.Lerp(_currentOffset, _player.Tank.LinearVelocity / 2,
+                        Vector2.Lerp(_currentOffset, Client.Player.Tank.LinearVelocity / 2,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
                     if (_currentOffset.X > 10)
@@ -326,13 +330,13 @@ namespace MPTanks.Client.GameSandbox
                         _currentOffset.Y = -10;
 
                     var targetZoom = 0.75f;
-                    targetZoom += 1.25f * (_player.Tank.LinearVelocity.Length() / 100f);
+                    targetZoom += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
                     targetZoom *= GameSettings.Instance.Zoom;
 
                     _zoom = MathHelper.Lerp(_zoom, targetZoom,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                    var offset = _currentOffset * _zoom + _player.Tank.Position;
+                    var offset = _currentOffset * _zoom + Client.Player.Tank.Position;
 
                     var widthHeightRelative =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
