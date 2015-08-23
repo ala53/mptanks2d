@@ -19,7 +19,7 @@ namespace MPTanks.Engine.Tanks
         public GamePlayer Player { get; private set; }
         [JsonIgnore]
         public Team Team { get { return Player.Team; } }
-        public InputState InputState { get; private set; }
+        public InputState InputState { get; set; }
 
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
@@ -87,12 +87,7 @@ namespace MPTanks.Engine.Tanks
                 return true;
             return false;
         }
-
-        public void Input(InputState state)
-        {
-            InputState = state;
-        }
-
+        
         protected override void UpdateInternal(GameTime time)
         {
             UnsafeDisableEvents();

@@ -115,7 +115,7 @@ namespace MPTanks.Networking.Common.Game
 
             foreach (var player in Players)
                 if (player.PlayerObject.Tank != null)
-                    player.PlayerObject.Tank.Input(player.Input);
+                    player.PlayerObject.Tank.InputState = player.Input;
 
             game.Gamemode.DeferredSetFullState();
             foreach (var obj in game.GameObjects)

@@ -232,16 +232,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
                 CreateGame(); //Start anew
-
-            if (Client.GameInstance.Game != null && Client.GameInstance.Game.Running)
-            {
-                Diagnostics.BeginMeasurement("Input processing");
-                if (IsActive)
-                    Client.Player?.Tank?.Input(InputDriver.GetInputState());
-                Diagnostics.EndMeasurement("Input processing");
-            }
-
-
+            
             if (Client.Player?.Tank != null && SoundPlayer != null)
             {
                 SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
@@ -251,9 +242,12 @@ namespace MPTanks.Client.GameSandbox
 
             InputDriver.Update(gameTime);
 
-            if (Server.GameInstance.Game.PlayersById.ContainsKey(Client.PlayerId))
+            if (Server.GameInstance.Game.PlayersById.ContainsKey(Client.PlayerId) &&
+                Server.GameInstance.Game.PlayersById[Client.PlayerId].Tank != null)
             {
-                Server.GameInstance.Game.PlayersById[Client.PlayerId]?.Tank?.Input(InputDriver.GetInputState());
+                Server.GameInstance.Game
+                    .PlayersById[Client.PlayerId].Tank.InputState = 
+                    InputDriver.GetInputState();
             }
 
             Diagnostics.BeginMeasurement("Base.Update()");
