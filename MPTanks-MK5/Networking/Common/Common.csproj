@@ -63,8 +63,7 @@
     <Compile Include="Actions\ToClient\OtherPlayerSelectedTankAction.cs" />
     <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
     <Compile Include="Actions\ToClient\PlayerInputChangedAction.cs" />
-    <Compile Include="Actions\ToClient\PlayerKilledAction.cs" />
-    <Compile Include="Actions\ToClient\PlayerPropertyChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerTankSelectionAcknowledgedAction.cs" />
     <Compile Include="Actions\ToClient\ReceivedChatMessageAction.cs" />
     <Compile Include="Actions\ToClient\TimescaleChangedAction.cs" />
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
