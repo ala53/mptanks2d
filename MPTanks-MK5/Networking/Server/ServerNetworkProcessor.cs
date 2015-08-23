@@ -80,5 +80,10 @@ namespace MPTanks.Networking.Server
 
             return _privateQueue[player].Count > 0;
         }
+
+        public void ClearPrivateQueues()
+        {
+            _privateQueue.Clear();
+        }
     }
 }

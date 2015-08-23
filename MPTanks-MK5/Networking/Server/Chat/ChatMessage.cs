@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Server.Chat
 {
-    public class ChatMessage
+    public struct ChatMessage
     {
-        public Guid From { get; set; }
-        public Guid To { get; set; }
+        public ServerPlayer From { get; set; }
+        public ServerPlayer To { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using MPTanks.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +10,21 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class TimescaleChangedAction : ActionBase
     {
-        public float Timescale { get; set; }
+        public GameCore.TimescaleValue Timescale { get; set; }
         public TimescaleChangedAction(NetIncomingMessage message)
             :base(message)
         {
-            Timescale = message.ReadFloat();
+            Timescale = new GameCore.TimescaleValue(message.ReadDouble(), message.ReadString());
         }
-
-        public TimescaleChangedAction(float newTimescale)
+        public TimescaleChangedAction(GameCore game)
         {
-            Timescale = newTimescale;
+            Timescale = game.Timescale;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            message.Write(Timescale);
+            message.Write(Timescale.Fractional);
+            message.Write(Timescale.DisplayString);
         }
     }
 }

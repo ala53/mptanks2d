@@ -30,10 +30,9 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.PlayerPropertyChangedAction));
             RegisterToClientActionType(typeof(ToClient.PlayersListSentAction));
             RegisterToClientActionType(typeof(ToClient.PlayerTankAssignedAction));
-            RegisterToClientActionType(typeof(ToClient.SentChatMessageAction));
+            RegisterToClientActionType(typeof(ToClient.ReceivedChatMessageAction));
             RegisterToClientActionType(typeof(ToClient.TeamsCreatedAction));
-
-            RegisterToServerActionType(typeof(ToServer.FireProjectileAction));
+            
             RegisterToServerActionType(typeof(ToServer.InputChangedAction));
             RegisterToServerActionType(typeof(ToServer.PlayerTankTypeSelectedAction));
             RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));

@@ -20,7 +20,9 @@ namespace MPTanks.Networking.Server
         public ConnectionManager Connections { get; set; }
         public ServerNetworkProcessor MessageProcessor { get; private set; }
         public InitializedConfiguration Configuration { get; private set; }
+        public Chat.ChatServer ChatHandler { get; private set; }
         public Engine.Core.Timing.Timer.Factory Timers { get; private set; }
+        public Extensions.ExtensionManager ExtensionManager { get; private set; }
         internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
         public enum ServerStatus
@@ -42,6 +44,7 @@ namespace MPTanks.Networking.Server
             Configuration = new InitializedConfiguration(configuration);
             MessageProcessor = new ServerNetworkProcessor();
             Timers = new Engine.Core.Timing.Timer.Factory();
+            ChatHandler = new Chat.ChatServer();
             if (openOnInit) Open();
         }
         public void Open()
@@ -61,27 +64,36 @@ namespace MPTanks.Networking.Server
 
             Timers.Update(gameTime);
 
-            //Send all the wideband messages
-            if (MessageProcessor.MessageQueue.Count > 0)
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+            //Send all the wideband messages (if someone is listening)
+            if (Connections.ActiveConnections.Count > 0)
             {
-                var msg = NetworkServer.CreateMessage();
-                MessageProcessor.WriteMessages(msg);
-                NetworkServer.SendMessage(msg, Connections.ActiveConnections,
-                    Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                    Channels.GamePlayData);
-            }
-
-            //As well as narrowband ones
-            foreach (var plr in Players)
-            {
-                if (MessageProcessor.HasPrivateMessages(plr))
+                if (MessageProcessor.MessageQueue.Count > 0)
                 {
                     var msg = NetworkServer.CreateMessage();
-                    MessageProcessor.WritePrivateMessages(plr, msg);
-                    plr.Connection.SendMessage(msg,
+                    MessageProcessor.WriteMessages(msg);
+                    NetworkServer.SendMessage(msg, Connections.ActiveConnections,
                         Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
                         Channels.GamePlayData);
                 }
+
+                //As well as narrowband ones
+                foreach (var plr in Players)
+                {
+                    if (MessageProcessor.HasPrivateMessages(plr))
+                    {
+                        var msg = NetworkServer.CreateMessage();
+                        MessageProcessor.WritePrivateMessages(plr, msg);
+                        plr.Connection.SendMessage(msg,
+                            Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                            Channels.GamePlayData);
+                    }
+                }
+            }
+            else
+            {
+                //Just clear the queue since no one is listening
+                MessageProcessor.ClearQueue();
             }
 
             FlushMessages();
@@ -100,7 +112,7 @@ namespace MPTanks.Networking.Server
             {
                 if (Players.Contains(player))
                 {
-                //do state sync
+                    //do state sync
                     MessageProcessor.SendPrivateMessage(
                         player, new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
                 }

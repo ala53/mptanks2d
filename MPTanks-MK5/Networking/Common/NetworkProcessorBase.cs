@@ -183,5 +183,7 @@ namespace MPTanks.Networking.Common
 
             _messages.Clear();
         }
+
+        public void ClearQueue() => _messages.Clear();
     }
 }
