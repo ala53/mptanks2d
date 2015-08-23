@@ -16,11 +16,6 @@ namespace MPTanks.Networking.Server
 
         public override void ProcessToServerAction(dynamic action)
         {
-            if (action is FireProjectileAction)
-            {
-
-            }
-
             if (action is InputChangedAction)
             {
 
