@@ -161,7 +161,7 @@ namespace MPTanks.Client.GameSandbox
             }, game);
 
             GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
-            SoundPlayer = new Backend.Sound.SoundPlayer(game);
+            SoundPlayer = new Backend.Sound.SoundPlayer();
             Client.GameInstance.GameChanged += delegate
             {
                 GameRenderer.Game = Client.GameInstance.Game;

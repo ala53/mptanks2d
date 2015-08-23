@@ -70,7 +70,7 @@ namespace MPTanks.Engine.Tanks
 
                 if (Health <= 0 && !_killed)
                 {
-                    Game.RemoveGameObject(this, o);
+                    if (Authoritative) Game.RemoveGameObject(this, o);
                     _killed = true;
                 }
                 return true;
@@ -87,7 +87,7 @@ namespace MPTanks.Engine.Tanks
                 return true;
             return false;
         }
-        
+
         protected override void UpdateInternal(GameTime time)
         {
             UnsafeDisableEvents();
