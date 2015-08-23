@@ -218,7 +218,8 @@ namespace MPTanks.Client.GameSandbox.UI
                 .Append("F8: Switch between vertical and horizontal graphs\n")
                 .Append("ESC: Exit\n");
 
-            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.MediumPurple);
+            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(8, 8), Color.Black);
+            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.White);
             _spriteBatch.End();
         }
         #endregion

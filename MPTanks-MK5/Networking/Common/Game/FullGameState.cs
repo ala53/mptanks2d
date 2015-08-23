@@ -109,17 +109,7 @@ namespace MPTanks.Networking.Common.Game
                 else game.GameObjectsById[fullState.ObjectId].FullState = fullState.Data;
             }
 
-            var objectsToRemove = new List<GameObject>();
-            foreach (var obj in game.GameObjects)
-            {
-                bool found = false;
-                foreach (var state in ObjectStates)
-                    if (state.ObjectId == obj.ObjectId) found = true;
-                if (!found) objectsToRemove.Add(obj);
-            }
-
-            foreach (var obj in objectsToRemove)
-                game.RemoveGameObject(obj, null, true);
+            ApplyDestruction(game);
 
             var playersByTeam = new Dictionary<short, List<NetworkPlayer>>();
             foreach (var player in Players)
@@ -144,6 +134,21 @@ namespace MPTanks.Networking.Common.Game
             foreach (var obj in game.GameObjects)
                 obj.SetPostInitStateData();
 
+        }
+
+        public void ApplyDestruction(GameCore game)
+        {
+            var objectsToRemove = new List<GameObject>();
+            foreach (var obj in game.GameObjects)
+            {
+                bool found = false;
+                foreach (var state in ObjectStates)
+                    if (state.ObjectId == obj.ObjectId) found = true;
+                if (!found) objectsToRemove.Add(obj);
+            }
+
+            foreach (var obj in objectsToRemove)
+                game.RemoveGameObject(obj, null, true);
         }
 
         private Team FindTeam(Team[] teams, int id)

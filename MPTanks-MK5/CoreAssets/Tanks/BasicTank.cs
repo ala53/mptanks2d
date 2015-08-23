@@ -94,7 +94,6 @@ namespace MPTanks.CoreAssets.Tanks
                 WeaponRechargeTimeMs = 3000,
                 FireCallback = (w, p) => InvokeTrigger("tertiary_fired")
             };
-            Animations["death_explosion"].Mask = ColorMask;
         }
 
         private float _lastStateChangeRotation;
@@ -114,6 +113,7 @@ namespace MPTanks.CoreAssets.Tanks
                 RaiseStateChangeEvent(BitConverter.GetBytes(rotation));
                 _lastStateChangeRotation = rotation;
             }
+            Animations["death_explosion"].Mask = ColorMask;
 
             base.UpdateInternal(time);
         }

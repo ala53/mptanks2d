@@ -85,7 +85,7 @@ namespace MPTanks.Engine
                 Logger.Warning("Body already disposed, Trace:\n" + Environment.StackTrace);
             if (!found)
                 return; //It doesn't exist - probably was already deleted by a previous object
-
+            
             BeginDeletion(obj, destructor);
         }
 

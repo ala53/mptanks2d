@@ -264,9 +264,11 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
-            Server.Update(gameTime);
             Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
+            Server.Update(gameTime);
+            Server.GameInstance.FullGameState.ApplyDestruction(Client.GameInstance.Game);
             Client.GameInstance.Game?.Update(gameTime);
+            Client.GameInstance.Game.Authoritative = true;
 
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
