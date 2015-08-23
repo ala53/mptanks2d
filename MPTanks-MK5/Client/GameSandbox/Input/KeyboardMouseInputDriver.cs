@@ -64,7 +64,8 @@ namespace MPTanks.Client.GameSandbox.Input
             if (IsActive(KeyBindings["Previous Weapon"]))
             {
                 if (!_lastTickPreviousWeaponKeyWasActive)
-                    _weaponNumber = (_weaponNumber - 1) % 4;
+                    _weaponNumber--;
+                NormalizeWeaponNumber();
                 _lastTickPreviousWeaponKeyWasActive = true;
             }
             else
@@ -75,7 +76,8 @@ namespace MPTanks.Client.GameSandbox.Input
             if (IsActive(KeyBindings["Next Weapon"]))
             {
                 if (!_lastTickNextWeaponKeyWasActive)
-                    _weaponNumber = (_weaponNumber + 1) % 4;
+                    _weaponNumber++;
+                NormalizeWeaponNumber();
                 _lastTickNextWeaponKeyWasActive = true;
             }
             else
@@ -86,6 +88,12 @@ namespace MPTanks.Client.GameSandbox.Input
             inputState.WeaponNumber = _weaponNumber;
 
             return inputState;
+        }
+
+        private void NormalizeWeaponNumber()
+        {
+            if (_weaponNumber < 0) _weaponNumber = 3;
+            if (_weaponNumber > 3) _weaponNumber = 0;
         }
 
         public override KeyBindingConfigurationGetPressedKey GetKeyForKeyConfigurationChange()

@@ -12,15 +12,15 @@ namespace MPTanks.Networking.Server
 {
     public class ServerNetworkProcessor : NetworkProcessorBase
     {
-        public Server Server { get; set; }
+        public Server Server { get; private set; }
 
-        public override void ProcessToServerAction(dynamic action)
+        public ServerNetworkProcessor(Server server)
         {
-            if (action is FireProjectileAction)
-            {
+            Server = server;
+        }
 
-            }
-
+        public override void ProcessToServerAction(ActionBase action)
+        {
             if (action is InputChangedAction)
             {
 
@@ -37,12 +37,15 @@ namespace MPTanks.Networking.Server
             }
             if (action is SentChatMessageAction)
             {
-
+                var act = action as SentChatMessageAction;
+                Server.ChatHandler.ForwardMessage(act.Message,
+                    Server.Connections.PlayerTable[action.MessageFrom.SenderConnection],
+                    act.Targets.Select(a=>Server.GetPlayer(a)).ToArray());
             }
         }
 
 
-        public override void ProcessToServerMessage(dynamic message)
+        public override void ProcessToServerMessage(MessageBase message)
         {
         }
 
@@ -68,7 +71,9 @@ namespace MPTanks.Networking.Server
             foreach (var msg in queue)
                 message.Write(TypeIndexTable[msg.GetType()]);
             foreach (var msg in queue)
+            {
                 msg.Serialize(message);
+            }
 
             queue.Clear();
         }
@@ -79,6 +84,11 @@ namespace MPTanks.Networking.Server
                 _privateQueue.Add(player, new List<MessageBase>());
 
             return _privateQueue[player].Count > 0;
+        }
+
+        public void ClearPrivateQueues()
+        {
+            _privateQueue.Clear();
         }
     }
 }

@@ -16,11 +16,11 @@ namespace MPTanks.Client.GameSandbox.UI
     {
         private GameClient _client;
         private GameCore _game;
-        private NetworkPlayer _player;
+        private GamePlayer _player;
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
         private Texture2D _graphTexture;
-        public DebugDrawer(GameClient client, GameCore game, NetworkPlayer player)
+        public DebugDrawer(GameClient client, GameCore game, GamePlayer player)
         {
             _client = client;
             _game = game;
@@ -206,7 +206,7 @@ namespace MPTanks.Client.GameSandbox.UI
                 _bldr.Append(" waiting for players");
             if (_game.Running)
                 _bldr.Append(" running");
-            if (_game.GameEnded)
+            if (_game.Ended)
                 _bldr.Append(" ended");
 
             if (_game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
@@ -218,7 +218,8 @@ namespace MPTanks.Client.GameSandbox.UI
                 .Append("F8: Switch between vertical and horizontal graphs\n")
                 .Append("ESC: Exit\n");
 
-            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.MediumPurple);
+            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(8, 8), Color.Black);
+            _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.White);
             _spriteBatch.End();
         }
         #endregion

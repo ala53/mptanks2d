@@ -104,6 +104,7 @@ namespace MPTanks.Engine
         public event EventHandler<BasicPropertyChangeArgs> OnBasicPropertyChanged = delegate { };
         public struct BasicPropertyChangeArgs
         {
+            public GameObject Owner { get; set; }
             public BasicPropertyChangeEventType Type { get; set; }
             public bool BoolValue { get; set; }
             public Vector2 VectorValue { get; set; }
@@ -133,7 +134,8 @@ namespace MPTanks.Engine
                 {
                     Type = type,
                     VectorValue = newValue,
-                    OldVectorValue = oldValue
+                    OldVectorValue = oldValue,
+                    Owner = this
                 });
             }
         }
@@ -145,7 +147,8 @@ namespace MPTanks.Engine
                 {
                     Type = type,
                     BoolValue = newValue,
-                    OldBoolValue = oldValue
+                    OldBoolValue = oldValue,
+                    Owner = this
                 });
             }
         }
@@ -157,7 +160,8 @@ namespace MPTanks.Engine
                 {
                     Type = type,
                     FloatValue = newValue,
-                    OldFloatValue = oldValue
+                    OldFloatValue = oldValue,
+                    Owner = this
                 });
             }
         }

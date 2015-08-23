@@ -58,7 +58,7 @@ namespace MPTanks.Networking.Server
         internal void Accept(NetConnection connection, WebInterface.WebPlayerInfoResponse info)
         {
             if (_activeConnections.Contains(connection)) return; //Stupid shield
-            var player = new ServerPlayer()
+            var player = new ServerPlayer(Server)
             {
                 Id = info.Id,
                 IsPremium = info.Premium,

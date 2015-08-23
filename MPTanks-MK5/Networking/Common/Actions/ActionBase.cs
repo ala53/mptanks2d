@@ -8,7 +8,6 @@ namespace MPTanks.Networking.Common.Actions
 {
     public abstract class ActionBase : MessageBase
     {
-        public float GameTimeMilliseconds { get; set; }
         static ActionBase()
         {
             RegisterToClientActionType(typeof(ToClient.FullGameStateSentAction));
@@ -18,7 +17,7 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.GamemodeStateChangedAction));
             RegisterToClientActionType(typeof(ToClient.GameObjectCreatedAction));
             RegisterToClientActionType(typeof(ToClient.GameObjectDestroyedAction));
-            RegisterToClientActionType(typeof(ToClient.GameStartedAction));
+            RegisterToClientActionType(typeof(ToClient.PartialGameStateUpdateAction));
             RegisterToClientActionType(typeof(ToClient.GameStatusChangedAction));
             RegisterToClientActionType(typeof(ToClient.ObjectStateChangedAction));
             RegisterToClientActionType(typeof(ToClient.OtherPlayerReadyToStartChangedAction));
@@ -30,17 +29,16 @@ namespace MPTanks.Networking.Common.Actions
             RegisterToClientActionType(typeof(ToClient.PlayerPropertyChangedAction));
             RegisterToClientActionType(typeof(ToClient.PlayersListSentAction));
             RegisterToClientActionType(typeof(ToClient.PlayerTankAssignedAction));
-            RegisterToClientActionType(typeof(ToClient.SentChatMessageAction));
+            RegisterToClientActionType(typeof(ToClient.ReceivedChatMessageAction));
             RegisterToClientActionType(typeof(ToClient.TeamsCreatedAction));
-
-            RegisterToServerActionType(typeof(ToServer.FireProjectileAction));
+            
             RegisterToServerActionType(typeof(ToServer.InputChangedAction));
             RegisterToServerActionType(typeof(ToServer.PlayerTankTypeSelectedAction));
             RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));
             RegisterToServerActionType(typeof(ToServer.SentChatMessageAction));
         }
-        
-        public ActionBase(Lidgren.Network.NetIncomingMessage message) { }
+
+        public ActionBase(Lidgren.Network.NetIncomingMessage message) : base(message) { }
 
         public ActionBase() { }
 

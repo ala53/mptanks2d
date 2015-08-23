@@ -9,14 +9,21 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class GamemodeStateChangedAction : ActionBase
     {
+        public byte[] NewState { get; private set; }
         public GamemodeStateChangedAction(NetIncomingMessage message) : base(message)
         {
+            NewState = message.ReadBytes(message.ReadUInt16());
+        }
 
+        public GamemodeStateChangedAction(byte[] newState)
+        {
+            NewState = newState;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            throw new NotImplementedException();
+            message.Write((ushort)NewState.Length);
+            message.Write(NewState);
         }
     }
 }

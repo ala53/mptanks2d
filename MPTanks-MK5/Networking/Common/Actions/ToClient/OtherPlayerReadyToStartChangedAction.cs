@@ -9,14 +9,24 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class OtherPlayerReadyToStartChangedAction : ActionBase
     {
-        public OtherPlayerReadyToStartChangedAction(NetIncomingMessage message):base(message)
+        public Guid PlayerId { get; private set; }
+        public bool IsReadyToStart { get; private set; }
+        public OtherPlayerReadyToStartChangedAction(NetIncomingMessage message) : base(message)
         {
+            PlayerId = new Guid(message.ReadBytes(16));
+            IsReadyToStart = message.ReadBoolean();
+        }
 
+        public OtherPlayerReadyToStartChangedAction(NetworkPlayer player, bool ready)
+        {
+            PlayerId = player.Id;
+            IsReadyToStart = ready;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            throw new NotImplementedException();
+            message.Write(PlayerId.ToByteArray());
+            message.Write(IsReadyToStart);
         }
     }
 }

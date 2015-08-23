@@ -29,7 +29,7 @@ namespace MPTanks.Networking.Server
                         Connections.UpdateConnectionStatus(msg.SenderConnection);
                         break;
                     case NetIncomingMessageType.Data:
-                        if (msg.SequenceChannel == Channels.GamePlayData)
+                        if (msg.SequenceChannel == Channels.GameplayData)
                             MessageProcessor.ProcessMessages(msg);
                         else if (msg.SequenceChannel == Channels.Login)
                             Login.ProcessMessage(msg);

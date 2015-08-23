@@ -19,7 +19,7 @@ namespace MPTanks.Engine.Tanks
         public GamePlayer Player { get; private set; }
         [JsonIgnore]
         public Team Team { get { return Player.Team; } }
-        public InputState InputState { get; private set; }
+        public InputState InputState { get; set; }
 
         protected abstract float RotationSpeed { get; }
         protected abstract float MovementSpeed { get; }
@@ -70,7 +70,7 @@ namespace MPTanks.Engine.Tanks
 
                 if (Health <= 0 && !_killed)
                 {
-                    Game.RemoveGameObject(this, o);
+                    if (Authoritative) Game.RemoveGameObject(this, o);
                     _killed = true;
                 }
                 return true;
@@ -86,11 +86,6 @@ namespace MPTanks.Engine.Tanks
             if (tank.Team != Team)
                 return true;
             return false;
-        }
-
-        public void Input(InputState state)
-        {
-            InputState = state;
         }
 
         protected override void UpdateInternal(GameTime time)

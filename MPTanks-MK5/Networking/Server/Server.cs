@@ -20,8 +20,10 @@ namespace MPTanks.Networking.Server
         public ConnectionManager Connections { get; set; }
         public ServerNetworkProcessor MessageProcessor { get; private set; }
         public InitializedConfiguration Configuration { get; private set; }
+        public Chat.ChatServer ChatHandler { get; private set; }
         public Engine.Core.Timing.Timer.Factory Timers { get; private set; }
-        internal List<ServerPlayer> _players;
+        public Extensions.ExtensionManager ExtensionManager { get; private set; }
+        internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
         public enum ServerStatus
         {
@@ -35,12 +37,15 @@ namespace MPTanks.Networking.Server
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
             GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
+            GameInstance.Game.Authoritative = true;
             Logger = logger ?? new NullLogger();
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
             Configuration = new InitializedConfiguration(configuration);
-            MessageProcessor = new ServerNetworkProcessor();
+            MessageProcessor = new ServerNetworkProcessor(this);
             Timers = new Engine.Core.Timing.Timer.Factory();
+            ChatHandler = new Chat.ChatServer(this);
+            if (openOnInit) Open();
         }
         public void Open()
         {
@@ -59,27 +64,36 @@ namespace MPTanks.Networking.Server
 
             Timers.Update(gameTime);
 
-            //Send all the wideband messages
-            if (MessageProcessor.MessageQueue.Count > 0)
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+            //Send all the wideband messages (if someone is listening)
+            if (Connections.ActiveConnections.Count > 0)
             {
-                var msg = NetworkServer.CreateMessage();
-                MessageProcessor.WriteMessages(msg);
-                NetworkServer.SendMessage(msg, Connections.ActiveConnections,
-                    Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                    Channels.GamePlayData);
-            }
-
-            //As well as narrowband ones
-            foreach (var plr in Players)
-            {
-                if (MessageProcessor.HasPrivateMessages(plr))
+                if (MessageProcessor.MessageQueue.Count > 0)
                 {
                     var msg = NetworkServer.CreateMessage();
-                    MessageProcessor.WritePrivateMessages(plr, msg);
-                    plr.Connection.SendMessage(msg,
+                    MessageProcessor.WriteMessages(msg);
+                    NetworkServer.SendMessage(msg, Connections.ActiveConnections,
                         Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                        Channels.GamePlayData);
+                        Channels.GameplayData);
                 }
+
+                //As well as narrowband ones
+                foreach (var plr in Players)
+                {
+                    if (MessageProcessor.HasPrivateMessages(plr))
+                    {
+                        var msg = NetworkServer.CreateMessage();
+                        MessageProcessor.WritePrivateMessages(plr, msg);
+                        plr.Connection.SendMessage(msg,
+                            Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                            Channels.GameplayData);
+                    }
+                }
+            }
+            else
+            {
+                //Just clear the queue since no one is listening
+                MessageProcessor.ClearQueue();
             }
 
             FlushMessages();
@@ -90,7 +104,7 @@ namespace MPTanks.Networking.Server
         }
         public void AddPlayer(ServerPlayer player)
         {
-            GameInstance.Game.AddPlayer(player);
+            GameInstance.Game.AddPlayer(player.Player);
             _players.Add(player);
 
             //Create a state sync loop
@@ -98,7 +112,7 @@ namespace MPTanks.Networking.Server
             {
                 if (Players.Contains(player))
                 {
-                //do state sync
+                    //do state sync
                     MessageProcessor.SendPrivateMessage(
                         player, new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
                 }
@@ -114,12 +128,15 @@ namespace MPTanks.Networking.Server
         public void RemovePlayer(ServerPlayer player)
         {
             _players.Remove(player);
-            GameInstance.Game.RemovePlayer(player);
+            GameInstance.Game.RemovePlayer(player.Id);
         }
+
+        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Id == id);
 
         public void SetGame(GameCore game)
         {
-            GameInstance.InitialGameState = FullGameState.Create(game);
+            GameInstance.FullGameState = FullGameState.Create(game);
+            GameInstance.Game.Authoritative = true;
         }
     }
 }

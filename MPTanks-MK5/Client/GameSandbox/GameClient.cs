@@ -39,7 +39,6 @@ namespace MPTanks.Client.GameSandbox
         GraphicsDeviceManager _graphics;
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
-        private NetworkPlayer _player;
         public MPTanks.Networking.Client.Client Client { get; private set; }
         public MPTanks.Networking.Server.Server Server { get; private set; }
         public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
@@ -141,10 +140,10 @@ namespace MPTanks.Client.GameSandbox
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
-            
+
             _ui.SetPage(_settingUpPageName);
 
-            _player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
+            var player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
             {
                 Id = Guid.NewGuid()
             });
@@ -155,19 +154,26 @@ namespace MPTanks.Client.GameSandbox
             }
             //TEMP
             Client = new Networking.Client.Client("", 0);
-            Server = new Networking.Server.Server(33132, "password", game);
+            Server = new Networking.Server.Server(new Networking.Server.Configuration()
+            {
+                MaxPlayers = 32,
+                Password = "password"
+            }, game);
+
+            GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            SoundPlayer = new Backend.Sound.SoundPlayer();
             Client.GameInstance.GameChanged += delegate
             {
-                GameRenderer?.Dispose();
-                GameRenderer = new GameCoreRenderer(
-                    this, Client.GameInstance.Game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
-                SoundPlayer?.Dispose();
-                SoundPlayer = new Backend.Sound.SoundPlayer(Client.GameInstance.Game);
+                GameRenderer.Game = Client.GameInstance.Game;
+                SoundPlayer.Game = Client.GameInstance.Game;
                 DebugDrawer?.Dispose();
                 DebugDrawer = new DebugDrawer(this, Client.GameInstance.Game, Client.Player);
 
             };
-            Client.WaitForConnection();
+
+            Client.PlayerId = player.Id;
+            Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
+            //Client.WaitForConnection();
         }
 
         /// <summary>
@@ -226,25 +232,23 @@ namespace MPTanks.Client.GameSandbox
 
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
                 CreateGame(); //Start anew
-
-            if (Client.GameInstance.Game != null && Client.GameInstance.Game.Running)
+            
+            if (Client.Player?.Tank != null && SoundPlayer != null)
             {
-                Diagnostics.BeginMeasurement("Input processing");
-                if (IsActive)
-                    _player?.Tank?.Input(InputDriver.GetInputState());
-                Diagnostics.EndMeasurement("Input processing");
-            }
-
-
-            if (_player.Tank != null && SoundPlayer != null)
-            {
-                SoundPlayer.PlayerPosition = _player.Tank.Position;
-                SoundPlayer.PlayerVelocity = _player.Tank.LinearVelocity;
+                SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
+                SoundPlayer.PlayerVelocity = Client.Player.Tank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
-            Client.GameInstance.Game?.Update(gameTime);
 
             InputDriver.Update(gameTime);
+
+            if (Server.GameInstance.Game.PlayersById.ContainsKey(Client.PlayerId) &&
+                Server.GameInstance.Game.PlayersById[Client.PlayerId].Tank != null)
+            {
+                Server.GameInstance.Game
+                    .PlayersById[Client.PlayerId].Tank.InputState = 
+                    InputDriver.GetInputState();
+            }
 
             Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);
@@ -260,6 +264,12 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
+            Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
+            Server.Update(gameTime);
+            Server.GameInstance.FullGameState.ApplyDestruction(Client.GameInstance.Game);
+            Client.GameInstance.Game?.Update(gameTime);
+            Client.GameInstance.Game.Authoritative = true;
+
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
@@ -300,10 +310,10 @@ namespace MPTanks.Client.GameSandbox
             if (Client.GameInstance.Game != null)
             {
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
-                if (_player.Tank != null)
+                if (Client.Player?.Tank != null)
                 {
                     _currentOffset =
-                        Vector2.Lerp(_currentOffset, _player.Tank.LinearVelocity / 2,
+                        Vector2.Lerp(_currentOffset, Client.Player.Tank.LinearVelocity / 2,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
                     if (_currentOffset.X > 10)
@@ -316,13 +326,13 @@ namespace MPTanks.Client.GameSandbox
                         _currentOffset.Y = -10;
 
                     var targetZoom = 0.75f;
-                    targetZoom += 1.25f * (_player.Tank.LinearVelocity.Length() / 100f);
+                    targetZoom += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
                     targetZoom *= GameSettings.Instance.Zoom;
 
                     _zoom = MathHelper.Lerp(_zoom, targetZoom,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                    var offset = _currentOffset * _zoom + _player.Tank.Position;
+                    var offset = _currentOffset * _zoom + Client.Player.Tank.Position;
 
                     var widthHeightRelative =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;

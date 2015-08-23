@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lidgren.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,11 @@ namespace MPTanks.Networking.Common
 {
     public abstract class MessageBase
     {
-        public MessageBase(Lidgren.Network.NetIncomingMessage message)
-        {
 
+        public NetIncomingMessage MessageFrom { get; private set; }
+        public MessageBase(NetIncomingMessage message)
+        {
+            MessageFrom = message;
         }
 
         public MessageBase()
@@ -18,7 +21,7 @@ namespace MPTanks.Networking.Common
 
         }
 
-        public abstract void Serialize(Lidgren.Network.NetOutgoingMessage message);
+        public abstract void Serialize(NetOutgoingMessage message);
         
     }
 }

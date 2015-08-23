@@ -82,13 +82,13 @@ namespace MPTanks.Engine
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
             if (Running)
-                PlayersById[playerId].Tank.Input(state);
+                PlayersById[playerId].Tank.InputState =state;
         }
 
         public void InjectPlayerInput(GamePlayer player, InputState state)
         {
             if (Running)
-                player.Tank.Input(state);
+                player.Tank.InputState = state;
         }
 
         public bool CheckPlayerIsAlive(GamePlayer player)

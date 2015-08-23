@@ -218,8 +218,8 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             {
                 if (disposing)
                 {
-                    _sb.Dispose();
-                    _tempTarget.Dispose();
+                    _sb?.Dispose();
+                    _tempTarget?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

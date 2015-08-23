@@ -14,11 +14,18 @@ namespace MPTanks.Client.Backend.Sound
         private Engine.Sound.Sound _activeSound;
         private GameCore _game;
         private SoundPlayer _player;
-        public MusicHelper(GameCore game, SoundPlayer player)
+        public MusicHelper(SoundPlayer player)
         {
             _player = player;
+        }
+
+        public void SetGame(GameCore game)
+        {
+            if (_game != null) _game.SoundEngine.OnBackgroundSongChanged -= SoundEngine_OnBackgroundSongChanged;
             _game = game;
-            game.SoundEngine.OnBackgroundSongChanged += SoundEngine_OnBackgroundSongChanged;
+            _game.SoundEngine.OnBackgroundSongChanged += SoundEngine_OnBackgroundSongChanged;
+            if (_game.SoundEngine.BackgroundSong != null)
+                SoundEngine_OnBackgroundSongChanged(_game, _game.SoundEngine.BackgroundSong);
         }
 
         private void SoundEngine_OnBackgroundSongChanged(object sender, Engine.Sound.Sound e)

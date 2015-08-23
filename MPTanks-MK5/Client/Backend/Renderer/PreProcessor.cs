@@ -15,13 +15,12 @@ namespace MPTanks.Client.Backend.Renderer
         public GameCoreRenderer Renderer { get; private set; }
         public GameWorldRenderer Compositor { get; private set; }
         public AssetFinder Finder { get; private set; }
-        public GameCore Game { get; private set; }
+        public GameCore Game => Renderer.Game;
         public PreProcessor(GameCoreRenderer renderer, AssetFinder finder, GameWorldRenderer compositor)
         {
             Renderer = renderer;
             Finder = finder;
             Compositor = compositor;
-            Game = renderer.Game;
         }
 
         public abstract void Process(GameTime gameTime);

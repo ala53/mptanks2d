@@ -69,7 +69,16 @@ namespace MPTanks.Client.Backend.Sound
 
         internal MusicHelper MusicPlayer { get; set; }
 
-        public GameCore Game { get; private set; }
+        private GameCore _game;
+        public GameCore Game
+        {
+            get { return _game; }
+            set
+            {
+                _game = value;
+                MusicPlayer.SetGame(_game);
+            }
+        }
 
         internal List<SoundInstance> ActiveSoundInstanceQueue
         { get; private set; }
@@ -177,7 +186,7 @@ namespace MPTanks.Client.Backend.Sound
 
         internal ActiveGameEffectContainer ActiveSounds { get; set; }
         internal SoundCache Cache { get; private set; }
-        public SoundPlayer(GameCore game, int maxChannels = 256)
+        public SoundPlayer(int maxChannels = 256)
         {
             MaxChannels = maxChannels;
 
@@ -190,10 +199,9 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
             FMOD.Error.Check(_system.createChannelGroup("Sound Effects", out _effectsGroup));
             SoundDistanceScale = 20;
-            Game = game;
             Cache = new SoundCache(this);
             ActiveSounds = new ActiveGameEffectContainer(this);
-            MusicPlayer = new MusicHelper(game, this);
+            MusicPlayer = new MusicHelper(this);
         }
 
 
