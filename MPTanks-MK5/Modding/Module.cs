@@ -14,6 +14,20 @@ namespace MPTanks.Modding
         public string Name { get; internal set; }
         public string Description { get; internal set; }
         public string Author { get; internal set; }
+
+        public ModInfo ModInfo
+        {
+            get
+            {
+                return new ModInfo()
+                {
+                    ModName = Name,
+                    ModMajor = Version.Major,
+                    ModMinor = Version.Minor
+                };
+            }
+        }
+
         public ModHeader Header { get; internal set; }
         public bool UsesWhitelist { get; internal set; }
         public Dictionary<string, string> AssetMappings

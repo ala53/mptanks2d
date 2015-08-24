@@ -26,8 +26,9 @@ namespace MPTanks.Networking.Common
             get { return FullGameState.Create(Game); }
             set
             {
-                Game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
-                GameChanged(this, new EventArgs());
+                var game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                GameChanged(this, new GameChangedArgs() { OldGame = Game, Game = game });
+                Game = game;
             }
         }
 
@@ -51,7 +52,12 @@ namespace MPTanks.Networking.Common
         #endregion
 
         #region Events
-        public event EventHandler GameChanged = delegate { };
+        public event EventHandler<GameChangedArgs> GameChanged = delegate { };
+        public struct GameChangedArgs
+        {
+            public GameCore OldGame { get; set; }
+            public GameCore Game { get; set; }
+        }
         #endregion
 
         public NetworkedGame(bool authoritative, Gamemode gamemode, ILogger gameLogger,

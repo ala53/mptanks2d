@@ -60,6 +60,10 @@ namespace MPTanks.Engine.Core.Events
             _gameEnded(Game, _gameEndedArgs);
         }
 
+        public event EventHandler<GameCore.TimescaleValue> OnGameTimescaleChanged = delegate { };
+
+        internal void RaiseTimescaleChanged(GameCore.TimescaleValue scale) =>
+            OnGameTimescaleChanged(Game, scale);
         #endregion
 
         #region 'GameObject' Events
@@ -90,6 +94,20 @@ namespace MPTanks.Engine.Core.Events
         public void RaiseGameObjectStateChanged(StateChangedEventArgs args)
         {
             _gameObjectStateChanged(args.Object, args);
+        }
+
+        public event EventHandler<GameObject.BasicPropertyChangeArgs> OnGameObjectBasicPropertyChanged = delegate { };
+
+        public void RaiseGameObjectBasicPropertyChanged(GameObject.BasicPropertyChangeArgs args)
+        {
+            OnGameObjectBasicPropertyChanged(args.Owner, args);
+        }
+
+        public event EventHandler<GameObject> OnGameObjectCreated = delegate { };
+
+        public void RaiseGameObjectCreated(GameObject obj)
+        {
+            OnGameObjectCreated(obj, obj);
         }
         #endregion
     }

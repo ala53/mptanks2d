@@ -19,9 +19,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 
         }
 
+        public GameEndedAction() { }
+
         public override void Serialize(NetOutgoingMessage message)
         {
-            throw new NotImplementedException();
         }
     }
 }

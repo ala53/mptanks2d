@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Maps.Serialization
 {
-    class MapJSON
+    public class MapJSON
     {
         public string Name { get; set; }
         public string Author { get; set; }
@@ -31,14 +31,14 @@ namespace MPTanks.Engine.Maps.Serialization
         }
     }
 
-    class MapModJSON
+    public class MapModJSON
     {
         public string Name { get; set; }
         public string Author { get; set; }
         public string MinVersion { get; set; }
     }
 
-    class BackgroundTileJSON
+    public class BackgroundTileJSON
     {
         public string SpriteName { get; set; }
         public string AssetFileName { get; set; }
@@ -47,13 +47,13 @@ namespace MPTanks.Engine.Maps.Serialization
         public JSONVector Repeat { get; set; }
     }
 
-    class MapTeamsJSON
+    public class MapTeamsJSON
     {
         public int TeamIndex { get; set; }
         public JSONVector[] SpawnPositions { get; set; }
     }
 
-    class MapObjectJSON
+    public class MapObjectJSON
     {
         public string TypeName { get; set; }
         public float Rotation { get; set; }

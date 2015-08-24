@@ -248,6 +248,40 @@ namespace MPTanks.Engine
             else
                 Settings = settings;
 
+            //Set up the game mode internally
+            Gamemode = gamemode;
+            Gamemode.SetGame(this);
+
+            Map = Maps.Map.LoadMap(map, this);
+
+            InitializeGame(skipInit);
+        }
+        /// <summary>
+        /// Creates a new GameCore instance.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="gamemode"></param>
+        /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string map, bool skipInit = false, EngineSettings settings = null)
+        {
+            Logger = logger;
+            if (Logger == null) Logger = new NullLogger();
+            if (settings == null)
+                Settings = new EngineSettings();
+            else
+                Settings = settings;
+
+            //Set up the game mode internally
+            Gamemode = gamemode;
+            Gamemode.SetGame(this);
+
+            Map = Maps.Map.LoadMap(map, this);
+
+            InitializeGame(skipInit);
+        }
+
+        private void InitializeGame(bool skipInit)
+        {
             _skipInit = skipInit;
             if (skipInit)
             {
@@ -255,12 +289,6 @@ namespace MPTanks.Engine
                 _gameCountDownHasBegun = true;
                 Time = TimeSpan.FromMilliseconds(Settings.TimeToWaitBeforeStartingGame);
             }
-
-            Map = Maps.Map.LoadMap(map, this);
-
-            //Set up the game mode internally
-            Gamemode = gamemode;
-            Gamemode.SetGame(this);
 
             //Initialize game
             Timescale = TimescaleValue.One;
@@ -276,6 +304,7 @@ namespace MPTanks.Engine
             SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
             Logger.Info(Strings.Engine.GameCreated);
+
         }
 
         public void UnsafeTickGameWorld(float deltaMs)

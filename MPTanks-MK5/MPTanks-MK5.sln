@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameSandbox", "Client\GameSandbox\GameSandbox.csproj", "{1AA033D4-C1B0-4653-BA2F-672A79B207CE}"
 EndProject
@@ -36,6 +36,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MPTanks", "MPTanks", "{3B688834-9A51-4C86-B1B5-40F5B9F9CC74}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{C22E2827-1085-47A2-AC30-512CCED6ED54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaker", "MapMaker\MapMaker.csproj", "{C5343A23-8B29-49BA-B377-F0FAF83CFB99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -186,6 +188,18 @@ Global
 		{DA9AA2D5-19C7-4F1C-82FA-7396A6F84668}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DA9AA2D5-19C7-4F1C-82FA-7396A6F84668}.Release|x86.ActiveCfg = Release|x86
 		{DA9AA2D5-19C7-4F1C-82FA-7396A6F84668}.Release|x86.Build.0 = Release|x86
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Debug|x86.Build.0 = Debug|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|x86.ActiveCfg = Release|Any CPU
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,5 +220,6 @@ Global
 		{9845AA6F-4B25-4685-9554-148376A73561} = {C22E2827-1085-47A2-AC30-512CCED6ED54}
 		{DA9AA2D5-19C7-4F1C-82FA-7396A6F84668} = {C22E2827-1085-47A2-AC30-512CCED6ED54}
 		{C22E2827-1085-47A2-AC30-512CCED6ED54} = {3B688834-9A51-4C86-B1B5-40F5B9F9CC74}
+		{C5343A23-8B29-49BA-B377-F0FAF83CFB99} = {C22E2827-1085-47A2-AC30-512CCED6ED54}
 	EndGlobalSection
 EndGlobal
