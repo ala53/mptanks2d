@@ -25,7 +25,7 @@ namespace MPTanks.Engine
         public virtual Vector2 SpawnPoint { get; set; }
 
         private string _name;
-        public virtual string DisplayName
+        public virtual string Username
         {
             get
             {

@@ -16,8 +16,11 @@ namespace MPTanks
 
         public static readonly StringTable _Engine = new StringTable(
             Path.Combine("assets", "strings", "engine.{0}.txt"));
-
         public static readonly dynamic Engine = _Engine;
+
+        public static readonly StringTable _Server = new StringTable(
+            Path.Combine("assets", "strings", "server.{0}.txt"));
+        public static readonly dynamic Server = _Server;
 
         const string notFoundError = "ERROR_TABLE_DOES_NOT_EXIST";
         public static string Format(string tableName, string name, params string[] arguments)

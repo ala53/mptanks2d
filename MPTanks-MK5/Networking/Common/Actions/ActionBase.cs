@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace MPTanks.Networking.Common.Actions
 {
@@ -10,32 +11,14 @@ namespace MPTanks.Networking.Common.Actions
     {
         static ActionBase()
         {
-            RegisterToClientActionType(typeof(ToClient.FullGameStateSentAction));
-            RegisterToClientActionType(typeof(ToClient.GameCreatedAction));
-            RegisterToClientActionType(typeof(ToClient.GameEndedAction));
-            RegisterToClientActionType(typeof(ToClient.GamemodeFullStateSentAction));
-            RegisterToClientActionType(typeof(ToClient.GamemodeStateChangedAction));
-            RegisterToClientActionType(typeof(ToClient.GameObjectCreatedAction));
-            RegisterToClientActionType(typeof(ToClient.GameObjectDestroyedAction));
-            RegisterToClientActionType(typeof(ToClient.PartialGameStateUpdateAction));
-            RegisterToClientActionType(typeof(ToClient.GameStatusChangedAction));
-            RegisterToClientActionType(typeof(ToClient.ObjectStateChangedAction));
-            RegisterToClientActionType(typeof(ToClient.OtherPlayerReadyToStartChangedAction));
-            RegisterToClientActionType(typeof(ToClient.OtherPlayerSelectedTankAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerAllowedTankTypesSentAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerJoinedAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerKilledAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerLeftAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerPropertyChangedAction));
-            RegisterToClientActionType(typeof(ToClient.PlayersListSentAction));
-            RegisterToClientActionType(typeof(ToClient.PlayerTankAssignedAction));
-            RegisterToClientActionType(typeof(ToClient.ReceivedChatMessageAction));
-            RegisterToClientActionType(typeof(ToClient.TeamsCreatedAction));
-            
-            RegisterToServerActionType(typeof(ToServer.InputChangedAction));
-            RegisterToServerActionType(typeof(ToServer.PlayerTankTypeSelectedAction));
-            RegisterToServerActionType(typeof(ToServer.RequestFullGameStateAction));
-            RegisterToServerActionType(typeof(ToServer.SentChatMessageAction));
+            foreach (var type in GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToClient"))
+                RegisterToClientActionType(type);
+            foreach (var type in GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToServer"))
+                RegisterToServerActionType(type);
+        }
+        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        {
+            return assembly.GetTypes().Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray();
         }
 
         public ActionBase(Lidgren.Network.NetIncomingMessage message) : base(message) { }

@@ -11,7 +11,7 @@ namespace MPTanks.Networking.Server.Chat
         public Server Server { get; private set; }
         public ChatServer(Server server)
         {
-
+            Server = server;
         }
         /// <summary>
         /// The characters that a command must start with to be treated as a command
@@ -23,7 +23,7 @@ namespace MPTanks.Networking.Server.Chat
             foreach (var target in targets)
                 SendMessage(message, target);
 
-            string playerList = string.Join(", ", targets.Select(a => a.DisplayName));
+            string playerList = string.Join(", ", targets.Select(a => a.Player.Username));
             Server.Logger.Info($"[CHAT] Server to {playerList}: {message}");
 
         }
@@ -46,19 +46,19 @@ namespace MPTanks.Networking.Server.Chat
 
             if (isWideband)
             {
-                Server.Logger.Info($"[CHAT] {sender.DisplayName} to all: {message}");
+                Server.Logger.Info($"[CHAT] {sender.Player.Username} to all: {message}");
                 foreach (var target in Server.Players)
                     Server.MessageProcessor.SendPrivateMessage(target,
-                        new Common.Actions.ToClient.ReceivedChatMessageAction(message, sender.Id));
+                        new Common.Actions.ToClient.ReceivedChatMessageAction(message, sender.Player.Id));
 
             }
             else
             {
-                string playerList = string.Join(", ", targets.Select(a => a.DisplayName));
-                Server.Logger.Info($"[CHAT] {sender.DisplayName} to {playerList}: {message}");
+                string playerList = string.Join(", ", targets.Select(a => a.Player.Username));
+                Server.Logger.Info($"[CHAT] {sender.Player.Username} to {playerList}: {message}");
                 foreach (var target in targets)
                     Server.MessageProcessor.SendPrivateMessage(target,
-                        new Common.Actions.ToClient.ReceivedChatMessageAction(message, sender.Id));
+                        new Common.Actions.ToClient.ReceivedChatMessageAction(message, sender.Player.Id));
             }
         }
     }

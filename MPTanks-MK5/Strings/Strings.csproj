@@ -54,6 +54,7 @@
     <Content Include="assets\strings\engine.en.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\strings\server.en.txt" />
     <Content Include="assets\strings\settings.en.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

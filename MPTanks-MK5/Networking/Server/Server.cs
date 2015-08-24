@@ -107,14 +107,28 @@ namespace MPTanks.Networking.Server
             GameInstance.Game.AddPlayer(player.Player);
             _players.Add(player);
 
+            //Queue the game state for them
+            MessageProcessor.SendPrivateMessage(player,
+                new Common.Actions.ToClient.GameCreatedAction());
+            MessageProcessor.SendPrivateMessage(player,
+                new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+
+            //Announce that they joined
+            ChatHandler.SendMessage(Strings.Server.PlayerJoined(player.Player.Username));
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerJoinedAction(player.Player));
+
+            player.LastSentState = PseudoFullGameWorldState.Create(GameInstance.Game);
+
             //Create a state sync loop
             Timers.CreateReccuringTimer(t =>
             {
                 if (Players.Contains(player))
                 {
+                    var message = new Common.Actions.ToClient.PartialGameStateUpdateAction(GameInstance.Game, player.LastSentState);
+                    player.LastSentState = message.StatePartial;
                     //do state sync
                     MessageProcessor.SendPrivateMessage(
-                        player, new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+                        player, message);
                 }
                 else
                 {
@@ -128,10 +142,10 @@ namespace MPTanks.Networking.Server
         public void RemovePlayer(ServerPlayer player)
         {
             _players.Remove(player);
-            GameInstance.Game.RemovePlayer(player.Id);
+            GameInstance.Game.RemovePlayer(player.Player.Id);
         }
 
-        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Id == id);
+        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Player.Id == id);
 
         public void SetGame(GameCore game)
         {

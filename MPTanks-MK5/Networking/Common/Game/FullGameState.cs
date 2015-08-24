@@ -82,7 +82,7 @@ namespace MPTanks.Networking.Common.Game
 
                 nwPlayer.AllowedTankTypes = player.AllowedTankTypes;
                 nwPlayer.ClanName = player.ClanName;
-                nwPlayer.DisplayName = player.Username;
+                nwPlayer.Username = player.Username;
                 nwPlayer.DisplayNameDrawColor = player.UsernameDisplayColor;
                 nwPlayer.Game = game;
                 nwPlayer.HasCustomTankStyle = player.TankHasCustomStyle;
@@ -213,7 +213,7 @@ namespace MPTanks.Networking.Common.Game
                 serialized.TankReflectionName = (plr.Tank != null) ? plr.Tank.ReflectionName : "";
                 serialized.TeamId = (plr.Team != null) ? plr.Team.TeamId : (short)-3;
                 serialized.Input = (plr.Tank != null ? plr.Tank.InputState : default(InputState));
-                serialized.Username = plr.DisplayName;
+                serialized.Username = plr.Username;
                 serialized.UsernameDisplayColor = plr.DisplayNameDrawColor;
                 serialized.PlayerObject = plr;
 

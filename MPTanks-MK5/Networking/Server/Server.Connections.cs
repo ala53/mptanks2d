@@ -15,7 +15,7 @@ namespace MPTanks.Networking.Server
         private List<NetConnection> _activeConnections = new List<NetConnection>();
         public List<NetConnection> ActiveConnections => _activeConnections;
         private Dictionary<NetConnection, ServerPlayer> _playersReverseTable = new Dictionary<NetConnection, ServerPlayer>();
-		public IReadOnlyDictionary<NetConnection, ServerPlayer> PlayerTable => _playersReverseTable;
+        public IReadOnlyDictionary<NetConnection, ServerPlayer> PlayerTable => _playersReverseTable;
         public ConnectionManager(Server server)
         {
             Server = server;
@@ -58,18 +58,18 @@ namespace MPTanks.Networking.Server
         internal void Accept(NetConnection connection, WebInterface.WebPlayerInfoResponse info)
         {
             if (_activeConnections.Contains(connection)) return; //Stupid shield
-            var player = new ServerPlayer(Server)
+            var player = new ServerPlayer(Server, new NetworkPlayer
             {
                 Id = info.Id,
                 IsPremium = info.Premium,
                 DisplayNameDrawColor = info.NameColor,
-                DisplayName = info.Username,
-                ClanName = info.ClanName,
-                Connection = connection
-            };
+                Username = info.Username,
+                ClanName = info.ClanName
+            })
+            { Connection = connection };
 
             Server.AddPlayer(player);
-			
+
             _activeConnections.Add(connection);
             _playersReverseTable.Add(connection, player);
         }

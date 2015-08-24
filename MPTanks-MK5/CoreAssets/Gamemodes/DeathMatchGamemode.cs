@@ -40,7 +40,7 @@ namespace MPTanks.CoreAssets.Gamemodes
                     Players = new[] { p },
                     TeamColor = new Color(rnd.Next(50, 255), rnd.Next(50, 255), rnd.Next(50, 255)),
                     TeamId = teamId++,
-                    TeamName = p.DisplayName
+                    TeamName = p.Username
                 };
 
                 teams.Add(team);

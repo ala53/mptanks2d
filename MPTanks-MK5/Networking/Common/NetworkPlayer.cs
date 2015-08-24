@@ -96,16 +96,16 @@ namespace MPTanks.Networking.Common
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.Id);
             }
         }
-        public override string DisplayName
+        public override string Username
         {
             get
             {
-                return base.DisplayName;
+                return base.Username;
             }
 
             set
             {
-                base.DisplayName = value;
+                base.Username = value;
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.DisplayName);
             }
         }

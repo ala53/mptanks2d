@@ -16,6 +16,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 
         }
 
+        public PlayerJoinedAction(NetworkPlayer player)
+        {
+            Player = new FullStatePlayer();
+        }
+
         public override void Serialize(NetOutgoingMessage message)
         {
             throw new NotImplementedException();
