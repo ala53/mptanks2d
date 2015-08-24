@@ -77,25 +77,10 @@ namespace MPTanks.Networking.Common.Game
                 var nwPlayer = new NetworkPlayer();
                 if (game.PlayersById.ContainsKey(player.Id) && game.PlayersById[player.Id] is NetworkPlayer)
                     nwPlayer = (NetworkPlayer)game.PlayersById[player.Id];
-                else if (game.PlayersById.ContainsKey(player.Id))
+                else if (game.PlayersById.ContainsKey(player.Id)) //remove because it isn't a networkplayer
                     game.RemovePlayer(player.Id);
 
-                nwPlayer.AllowedTankTypes = player.AllowedTankTypes;
-                nwPlayer.ClanName = player.ClanName;
-                nwPlayer.Username = player.Username;
-                nwPlayer.DisplayNameDrawColor = player.UsernameDisplayColor;
-                nwPlayer.Game = game;
-                nwPlayer.HasCustomTankStyle = player.TankHasCustomStyle;
-                nwPlayer.HasSelectedTankYet = player.HasSelectedTank;
-                nwPlayer.Id = player.Id;
-                nwPlayer.IsAdmin = player.IsAdmin;
-                nwPlayer.IsPremium = player.IsPremium;
-                nwPlayer.IsSpectator = player.IsSpectator;
-                nwPlayer.SelectedTankReflectionName = player.TankReflectionName;
-                nwPlayer.SpawnPoint = player.SpawnPoint;
-                nwPlayer.Team = (player.TeamId != -3 ? FindTeam(game.Gamemode.Teams, player.TeamId) : null);
-
-                player.PlayerObject = nwPlayer;
+                player.Apply(nwPlayer);
 
                 if (!game.PlayersById.ContainsKey(player.Id))
                     game.AddPlayer(nwPlayer);
@@ -127,13 +112,20 @@ namespace MPTanks.Networking.Common.Game
             }
 
             foreach (var player in Players)
-                if (player.PlayerObject.Tank != null)
-                    player.PlayerObject.Tank.InputState = player.Input;
+                player.ApplySecondPass(player.PlayerObject, game);
 
             game.Gamemode.DeferredSetFullState();
             foreach (var obj in game.GameObjects)
                 obj.SetPostInitStateData();
 
+        }
+
+        private Team FindTeam(Team[] teams, int id)
+        {
+            foreach (var t in teams)
+                if (t.TeamId == id) return t;
+
+            return Team.Null;
         }
 
         public void ApplyDestruction(GameCore game)
@@ -151,19 +143,11 @@ namespace MPTanks.Networking.Common.Game
                 game.RemoveGameObject(obj, null, true);
         }
 
-        private Team FindTeam(Team[] teams, int id)
-        {
-            foreach (var t in teams)
-                if (t.TeamId == id) return t;
-
-            return Team.Null;
-        }
-
         public static FullGameState Create(GameCore game)
         {
             var state = new FullGameState();
 
-            state.SetPlayers(game.Players.Select(x => (NetworkPlayer)x));
+            state.SetPlayers(game.Players.Select(x => x as NetworkPlayer).Where(a => a != null));
             state.SetObjects(game);
 
             foreach (var mod in ModDatabase.LoadedModules)
@@ -184,7 +168,7 @@ namespace MPTanks.Networking.Common.Game
             state.TimescaleValue = game.Timescale.Fractional;
             state.FriendlyFireEnabled = game.FriendlyFireEnabled;
             state.NextObjectId = (ushort)typeof(GameCore).GetField("_nextObjectId",
-                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.GetField | 
+                System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(game);
             state.GameEndedTime = ((TimeSpan)(typeof(GameCore).GetField("_gameEndedTime",
                 System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.GetField |
@@ -197,28 +181,7 @@ namespace MPTanks.Networking.Common.Game
         private void SetPlayers(IEnumerable<NetworkPlayer> players)
         {
             foreach (var plr in players)
-            {
-                var serialized = new FullStatePlayer();
-                serialized.AllowedTankTypes = plr.AllowedTankTypes;
-                serialized.ClanName = plr.ClanName;
-                serialized.HasSelectedTank = plr.HasSelectedTankYet;
-                serialized.HasTank = plr.Tank != null;
-                serialized.Id = plr.Id;
-                serialized.IsAdmin = plr.IsAdmin;
-                serialized.IsPremium = plr.IsPremium;
-                serialized.IsSpectator = plr.IsSpectator;
-                serialized.SpawnPoint = plr.SpawnPoint;
-                serialized.TankHasCustomStyle = plr.HasCustomTankStyle;
-                serialized.TankObjectId = (plr.Tank != null) ? plr.Tank.ObjectId : (ushort)0;
-                serialized.TankReflectionName = (plr.Tank != null) ? plr.Tank.ReflectionName : "";
-                serialized.TeamId = (plr.Team != null) ? plr.Team.TeamId : (short)-3;
-                serialized.Input = (plr.Tank != null ? plr.Tank.InputState : default(InputState));
-                serialized.Username = plr.Username;
-                serialized.UsernameDisplayColor = plr.DisplayNameDrawColor;
-                serialized.PlayerObject = plr;
-
-                Players.Add(serialized);
-            }
+                Players.Add(new FullStatePlayer(plr));
         }
 
         private void SetObjects(GameCore game)
@@ -253,37 +216,7 @@ namespace MPTanks.Networking.Common.Game
 
             for (var i = 0; i < playersCount; i++)
             {
-                var input = new InputState();
-                var fsPlayer = new FullStatePlayer();
-                fsPlayer.ClanName = message.ReadString();
-                fsPlayer.Id = new Guid(message.ReadBytes(16));
-
-                fsPlayer.HasSelectedTank = message.ReadBoolean();
-                fsPlayer.HasTank = message.ReadBoolean();
-                fsPlayer.IsAdmin = message.ReadBoolean();
-                fsPlayer.IsPremium = message.ReadBoolean();
-                fsPlayer.IsSpectator = message.ReadBoolean();
-                fsPlayer.TankHasCustomStyle = message.ReadBoolean();
-                input.FirePressed = message.ReadBoolean();
-                message.ReadPadBits();
-
-                input.LookDirection = message.ReadFloat();
-                input.MovementSpeed = message.ReadFloat();
-                input.RotationSpeed = message.ReadFloat();
-                input.WeaponNumber = message.ReadByte();
-
-                fsPlayer.SpawnPoint = new Microsoft.Xna.Framework.Vector2(
-                    message.ReadFloat(), message.ReadFloat());
-
-                fsPlayer.TankObjectId = message.ReadUInt16();
-                fsPlayer.TankReflectionName = message.ReadString();
-
-                fsPlayer.TeamId = message.ReadInt16();
-                fsPlayer.Username = message.ReadString();
-                fsPlayer.UsernameDisplayColor = new Microsoft.Xna.Framework.Color
-                { PackedValue = message.ReadUInt32() };
-
-                fsPlayer.Input = input;
+                state.Players.Add(FullStatePlayer.Read(message));
             }
 
             var loadedModCount = message.ReadInt32();
@@ -321,35 +254,7 @@ namespace MPTanks.Networking.Common.Game
 
             message.Write(Players.Count);
             foreach (var player in Players)
-            {
-                message.Write(player.ClanName);
-                message.Write(player.Id.ToByteArray());
-
-                message.Write(player.HasSelectedTank);
-                message.Write(player.HasTank);
-                message.Write(player.IsAdmin);
-                message.Write(player.IsPremium);
-                message.Write(player.IsSpectator);
-                message.Write(player.TankHasCustomStyle);
-                message.Write(player.Input.FirePressed); //input
-                message.WritePadBits();
-
-                //input
-                message.Write(player.Input.LookDirection);
-                message.Write(player.Input.MovementSpeed);
-                message.Write(player.Input.RotationSpeed);
-
-                message.Write((byte)player.Input.WeaponNumber);
-
-                message.Write(player.SpawnPoint.X);
-                message.Write(player.SpawnPoint.Y);
-
-                message.Write(player.TankObjectId);
-                message.Write(player.TankReflectionName);
-                message.Write(player.TeamId);
-                message.Write(player.Username);
-                message.Write(player.UsernameDisplayColor.PackedValue);
-            }
+                player.Write(message);
 
             message.Write(GameLoadedMods.Count);
             foreach (var mod in GameLoadedMods)

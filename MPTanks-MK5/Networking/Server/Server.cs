@@ -143,6 +143,8 @@ namespace MPTanks.Networking.Server
         {
             _players.Remove(player);
             GameInstance.Game.RemovePlayer(player.Player.Id);
+
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player));
         }
 
         public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Player.Id == id);

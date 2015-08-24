@@ -13,14 +13,14 @@ namespace MPTanks.Engine
         public GamePlayer AddPlayer(Guid playerId)
         {
             return AddPlayer(new GamePlayer()
-              {
-                  Id = playerId,
-                  HasSelectedTankYet = false,
-                  Game = this
-              });
+            {
+                Id = playerId,
+                HasSelectedTankYet = false,
+                Game = this
+            });
         }
 
-        public GamePlayer AddPlayer(GamePlayer player)
+        public GamePlayer AddPlayer<GamePlayer>(GamePlayer player) where GamePlayer : Engine.GamePlayer
         {
             if (!_playerIds.Contains(player.Id))
             {
@@ -29,21 +29,25 @@ namespace MPTanks.Engine
                 _playersById.Add(player.Id, player);
             }
 
-            if (Running && !Gamemode.HotJoinEnabled)
-                player.IsSpectator = true; //Force spectator
-            else if (Running && Gamemode.HotJoinCanPlayerJoin(player))
+            if (Authoritative)
             {
-                //Let them join - first find the team and size the player list correctly
-                player.Team = Gamemode.HotJoinGetPlayerTeam(player);
-                var newPlayerArray = new GamePlayer[player.Team.Players.Length + 1];
-                Array.Copy(player.Team.Players, newPlayerArray, player.Team.Players.Length);
-                newPlayerArray[newPlayerArray.Length - 1] = player;
-                player.Team.Players = newPlayerArray;
+                if (Running && !Gamemode.HotJoinEnabled)
+                    player.IsSpectator = true; //Force spectator
+                else if (Running && Gamemode.HotJoinCanPlayerJoin(player))
+                {
+                    player.IsSpectator = false;
+                    //Let them join - first find the team and size the player list correctly
+                    player.Team = Gamemode.HotJoinGetPlayerTeam(player);
+                    var newPlayerArray = new GamePlayer[player.Team.Players.Length + 1];
+                    Array.Copy(player.Team.Players, newPlayerArray, player.Team.Players.Length);
+                    newPlayerArray[newPlayerArray.Length - 1] = player;
+                    player.Team.Players = newPlayerArray;
 
-                //Then tanks
-                player.AllowedTankTypes = Gamemode.HotJoinGetAllowedTankTypes(player);
+                    //Then tanks
+                    player.AllowedTankTypes = Gamemode.HotJoinGetAllowedTankTypes(player);
+                }
+                player.HasSelectedTankYet = false;
             }
-
             return player;
         }
         /// <summary>
@@ -82,7 +86,7 @@ namespace MPTanks.Engine
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
             if (Running)
-                PlayersById[playerId].Tank.InputState =state;
+                PlayersById[playerId].Tank.InputState = state;
         }
 
         public void InjectPlayerInput(GamePlayer player, InputState state)

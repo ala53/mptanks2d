@@ -21,16 +21,27 @@ namespace MPTanks.Networking.Common
             Tank,
             Team,
             Game,
-            DisplayName,
-            DisplayNameColor,
+            Username,
             SpawnPoint,
             HasCustomTankStyle,
             ClanName,
             IsAdmin,
             IsPremium,
             IsSpectator,
+            IsReady
         }
         public event EventHandler<NetworkPlayerPropertyChanged> OnPropertyChanged = delegate { };
+
+        private bool _isReady;
+        public bool IsReady
+        {
+            get { return _isReady; }
+            set
+            {
+                _isReady = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.IsReady);
+            }
+        }
 
         private bool _hasCustomTankStyle;
 
@@ -106,7 +117,7 @@ namespace MPTanks.Networking.Common
             set
             {
                 base.Username = value;
-                OnPropertyChanged(this, NetworkPlayerPropertyChanged.DisplayName);
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.Username);
             }
         }
         public override string SelectedTankReflectionName
@@ -202,17 +213,6 @@ namespace MPTanks.Networking.Common
             {
                 base.IsSpectator = value;
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.IsSpectator);
-            }
-        }
-
-        private Color _dispNameColor;
-        public Color DisplayNameDrawColor
-        {
-            get { return _dispNameColor; }
-            set
-            {
-                _dispNameColor = value;
-                OnPropertyChanged(this, NetworkPlayerPropertyChanged.DisplayNameColor);
             }
         }
         public void ApplyTankStyles()

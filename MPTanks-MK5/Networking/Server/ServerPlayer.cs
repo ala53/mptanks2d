@@ -24,6 +24,7 @@ namespace MPTanks.Networking.Server
         public TimeSpan LatencyTwoWay => TimeSpan.FromSeconds(Connection.AverageRoundtripTime);
         public TimeSpan LatencyOneWay => TimeSpan.FromSeconds(Connection.AverageRoundtripTime / 2);
         public Server Server { get; private set; }
+        public bool IsReady { get; private set; }
         private NetworkPlayer _player;
         public NetworkPlayer Player
         {
