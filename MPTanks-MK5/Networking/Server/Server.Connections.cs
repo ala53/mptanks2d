@@ -62,7 +62,6 @@ namespace MPTanks.Networking.Server
             {
                 Id = info.Id,
                 IsPremium = info.Premium,
-                DisplayNameDrawColor = info.NameColor,
                 Username = info.Username,
                 ClanName = info.ClanName
             })

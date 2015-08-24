@@ -29,7 +29,6 @@ namespace MPTanks.Networking.Server
             {
                 ClanName = "T3ST",
                 Id = Guid.NewGuid(),
-                NameColor = Color.Red,
                 Premium = true,
                 Username = "T3ST_SUBJ3CT"
             });
