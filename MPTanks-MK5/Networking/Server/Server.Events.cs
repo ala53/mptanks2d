@@ -15,7 +15,14 @@ namespace MPTanks.Networking.Server
              {
                  if (e.OldGame != null)
                  {
+                     e.OldGame.EventEngine.OnGameEnded -= Game_Ended;
+                     e.OldGame.EventEngine.OnGameStarted -= Game_Started;
+                     e.OldGame.EventEngine.OnGameTimescaleChanged -= Game_TimescaleChanged;
 
+                     e.OldGame.EventEngine.OnGameObjectDestroyed -= GameObject_Destroyed;
+                     e.OldGame.EventEngine.OnGameObjectStateChanged -= GameObject_StateChanged;
+                     e.OldGame.EventEngine.OnGameObjectBasicPropertyChanged -= GameObject_BasicPropertyChanged;
+                     e.OldGame.EventEngine.OnGameObjectCreated -= GameObject_Created;
                  }
                  e.Game.EventEngine.OnGameEnded += Game_Ended;
                  e.Game.EventEngine.OnGameStarted += Game_Started;
