@@ -54,7 +54,7 @@ namespace MPTanks.Engine
             set
             {
                 _canRun = value;
-                EventEngine.RaiseOnGameCanRunChanged();
+                EventEngine.RaiseGameCanRunChanged();
             }
         }
         /// <summary>
@@ -417,6 +417,7 @@ namespace MPTanks.Engine
 
         private void EndGame()
         {
+            EventEngine.RaiseGameEnded(Gamemode.WinningTeam);
         }
 
         private TimeSpan _gameEndedTime;
@@ -438,6 +439,9 @@ namespace MPTanks.Engine
             CreateMapObjects();
 
             Gamemode.StartGame();
+
+            //And raise events
+            EventEngine.RaiseGameStarted();
         }
 
         /// <summary>
@@ -477,6 +481,9 @@ namespace MPTanks.Engine
             _inUpdateLoop = false;
 
             Diagnostics.MonitorCall(ProcessGameObjectQueues, "Process add/remove queue", DiagnosticsParent);
+
+            //And Events
+            Diagnostics.MonitorCall(EventEngine.RaiseGameUpdate, gameTime, "OnGameUpdate event", DiagnosticsParent);
 
             Diagnostics.EndMeasurement("Begin UpdateInGame()", DiagnosticsParent);
             if (hasControlOfParent) Diagnostics.EndMeasurement(DiagnosticsParent);

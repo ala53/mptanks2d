@@ -21,6 +21,7 @@ namespace MPTanks.Networking.Server
                      e.OldGame.EventEngine.OnGameCanRunChanged -= Game_CanRunChanged;
 
                      e.OldGame.EventEngine.OnGameObjectDestroyed -= GameObject_Destroyed;
+                     e.OldGame.EventEngine.OnGameObjectDestructionEnded -= GameObject_DestructionEnded;
                      e.OldGame.EventEngine.OnGameObjectStateChanged -= GameObject_StateChanged;
                      e.OldGame.EventEngine.OnGameObjectBasicPropertyChanged -= GameObject_BasicPropertyChanged;
                      e.OldGame.EventEngine.OnGameObjectCreated -= GameObject_Created;
@@ -33,6 +34,7 @@ namespace MPTanks.Networking.Server
                  e.Game.EventEngine.OnGameCanRunChanged += Game_CanRunChanged;
 
                  e.Game.EventEngine.OnGameObjectDestroyed += GameObject_Destroyed;
+                 e.Game.EventEngine.OnGameObjectDestructionEnded += GameObject_DestructionEnded;
                  e.Game.EventEngine.OnGameObjectStateChanged += GameObject_StateChanged;
                  e.Game.EventEngine.OnGameObjectBasicPropertyChanged += GameObject_BasicPropertyChanged;
                  e.Game.EventEngine.OnGameObjectCreated += GameObject_Created;
@@ -43,6 +45,11 @@ namespace MPTanks.Networking.Server
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCreatedAction());
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
              };
+        }
+
+        private void GameObject_DestructionEnded(object sender, GameObject e)
+        {
+            throw new NotImplementedException();
         }
 
         private void Game_CanRunChanged(object sender, bool e)

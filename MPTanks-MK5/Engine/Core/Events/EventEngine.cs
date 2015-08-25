@@ -26,7 +26,7 @@ namespace MPTanks.Engine.Core.Events
         private TickEventArgs _tickEventArgs = new TickEventArgs();
         private event EventHandler<TickEventArgs> OnGameTick = delegate { };
 
-        internal void RaiseOnUpdate(GameTime gameTime)
+        internal void RaiseGameUpdate(GameTime gameTime)
         {
             _tickEventArgs.TickTime = gameTime;
             if (_eventsEnabled)
@@ -44,7 +44,7 @@ namespace MPTanks.Engine.Core.Events
 
         private EndedEventArgs _gameEndedArgs = new EndedEventArgs();
         public event EventHandler<EndedEventArgs> OnGameEnded = delegate { };
-        internal void RaiseGameStarted(Gamemodes.Team winningTeam)
+        internal void RaiseGameEnded(Gamemodes.Team winningTeam)
         {
             _gameEndedArgs.WinningTeam = winningTeam;
             if (_eventsEnabled)
@@ -53,13 +53,13 @@ namespace MPTanks.Engine.Core.Events
 
         public event EventHandler<GameCore.TimescaleValue> OnGameTimescaleChanged = delegate { };
 
-        internal void RaiseTimescaleChanged(GameCore.TimescaleValue scale)
+        internal void RaiseGameTimescaleChanged(GameCore.TimescaleValue scale)
         {
             if (_eventsEnabled) OnGameTimescaleChanged(Game, scale);
         }
 
         public event EventHandler<bool> OnGameCanRunChanged = delegate { };
-        internal void RaiseOnGameCanRunChanged()
+        internal void RaiseGameCanRunChanged()
         {
             if (_eventsEnabled)
                 OnGameCanRunChanged(Game, Game.CanRun);
@@ -77,7 +77,7 @@ namespace MPTanks.Engine.Core.Events
             _gameObjectDestroyedArgs.Time = DateTime.UtcNow;
 
             if (_eventsEnabled)
-                OnGameObjectDestroyed(destroyed, _gameObjectDestroyedArgs);
+                OnGameObjectDestroyed(Game, _gameObjectDestroyedArgs);
         }
 
         public event EventHandler<StateChangedEventArgs> OnGameObjectStateChanged = delegate { };
@@ -85,7 +85,7 @@ namespace MPTanks.Engine.Core.Events
         internal void RaiseGameObjectStateChanged(StateChangedEventArgs args)
         {
             if (_eventsEnabled)
-                OnGameObjectStateChanged(args.Object, args);
+                OnGameObjectStateChanged(Game, args);
         }
 
         public event EventHandler<GameObject.BasicPropertyChangeArgs> OnGameObjectBasicPropertyChanged = delegate { };
@@ -93,7 +93,7 @@ namespace MPTanks.Engine.Core.Events
         internal void RaiseGameObjectBasicPropertyChanged(GameObject.BasicPropertyChangeArgs args)
         {
             if (_eventsEnabled)
-                OnGameObjectBasicPropertyChanged(args.Owner, args);
+                OnGameObjectBasicPropertyChanged(Game, args);
         }
 
         public event EventHandler<GameObject> OnGameObjectCreated = delegate { };
@@ -101,7 +101,13 @@ namespace MPTanks.Engine.Core.Events
         internal void RaiseGameObjectCreated(GameObject obj)
         {
             if (_eventsEnabled)
-                OnGameObjectCreated(obj, obj);
+                OnGameObjectCreated(Game, obj);
+        }
+
+        public event EventHandler<GameObject> OnGameObjectDestructionEnded = delegate { };
+        internal void RaiseGameObjectDestructionEnded(GameObject obj)
+        {
+            if (_eventsEnabled) OnGameObjectDestructionEnded(Game, obj);
         }
         #endregion
 
@@ -110,7 +116,7 @@ namespace MPTanks.Engine.Core.Events
         internal void RaiseGamemodeStateChanged(byte[] state)
         {
             if (_eventsEnabled)
-                OnGamemodeStateChanged(Game.Gamemode, state);
+                OnGamemodeStateChanged(Game, state);
         }
         #endregion
     }

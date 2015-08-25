@@ -74,7 +74,8 @@ namespace MPTanks.Networking.Common.Game
             fs.Id = new Guid(msg.ReadBytes(16));
             fs.TeamId = msg.ReadInt16();
             fs.SpawnPoint = new Vector2(msg.ReadFloat(), msg.ReadFloat());
-            fs.TankReflectionName = msg.ReadString();
+            if (fs.HasSelectedTank)
+                fs.TankReflectionName = msg.ReadString();
             var allowedTankTypes = new string[msg.ReadInt32()];
             for (var i = 0; i < allowedTankTypes.Length; i++)
                 allowedTankTypes[i] = msg.ReadString();
@@ -96,7 +97,6 @@ namespace MPTanks.Networking.Common.Game
             player.IsPremium = IsPremium;
             player.IsReady = IsReady;
             player.HasCustomTankStyle = TankHasCustomStyle;
-            player.HasSelectedTankYet = HasSelectedTank;
             player.ClanName = ClanName;
             player.Username = Username;
             player.Id = Id;
@@ -145,7 +145,8 @@ namespace MPTanks.Networking.Common.Game
             msg.Write(TeamId);
             msg.Write(SpawnPoint.X);
             msg.Write(SpawnPoint.Y);
-            msg.Write(TankReflectionName);
+            if (HasSelectedTank)
+                msg.Write(TankReflectionName);
             msg.Write(AllowedTankTypes.Length);
             foreach (var type in AllowedTankTypes) msg.Write(type);
             msg.Write(Input.FirePressed);

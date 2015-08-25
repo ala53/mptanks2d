@@ -62,6 +62,7 @@
     <Compile Include="Server.Messaging.cs" />
     <Compile Include="ServerNetworkProcessor.cs" />
     <Compile Include="ServerPlayer.cs" />
+    <Compile Include="ServerSettings.cs" />
     <Compile Include="WebInterface\WebPlayerInfoResponse.cs" />
   </ItemGroup>
   <ItemGroup>

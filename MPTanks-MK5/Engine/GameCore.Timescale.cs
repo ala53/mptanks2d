@@ -8,7 +8,16 @@ namespace MPTanks.Engine
 {
     public partial class GameCore
     {
-        public TimescaleValue Timescale { get; set; } = TimescaleValue.One;
+        private TimescaleValue _timescale = TimescaleValue.One;
+        public TimescaleValue Timescale
+        {
+            get { return _timescale; }
+            set
+            {
+                _timescale = value;
+                EventEngine.RaiseGameTimescaleChanged(value);
+            }
+        }
 
         public struct TimescaleValue
         {
