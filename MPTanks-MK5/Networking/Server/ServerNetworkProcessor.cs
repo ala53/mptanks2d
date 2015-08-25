@@ -44,7 +44,7 @@ namespace MPTanks.Networking.Server
             {
                 Server.MessageProcessor.SendPrivateMessage(
                     Server.Connections.PlayerTable[action.MessageFrom.SenderConnection],
-                    new FullGameStateSentAction(Server.GameInstance.Game));
+                    new FullGameStateSentAction(Server.Game));
             }
 
             if (action is SentChatMessageAction)

@@ -18,103 +18,100 @@ namespace MPTanks.Engine.Core.Events
             Game = game;
         }
 
+        private bool _eventsEnabled = true;
+        public bool UnsafeDisableEvents() => _eventsEnabled = false;
+        public bool UnsafeEnableEvents() => _eventsEnabled = true;
+
         #region 'Game' Events
         private TickEventArgs _tickEventArgs = new TickEventArgs();
-        private event EventHandler<TickEventArgs> _gameTick = delegate { };
-        public event EventHandler<TickEventArgs> OnGameTick
-        {
-            add { _gameTick += value; }
-            remove { _gameTick -= value; }
-        }
+        private event EventHandler<TickEventArgs> OnGameTick = delegate { };
 
         internal void RaiseOnUpdate(GameTime gameTime)
         {
             _tickEventArgs.TickTime = gameTime;
-            _gameTick(Game, _tickEventArgs);
+            if (_eventsEnabled)
+                OnGameTick(Game, _tickEventArgs);
         }
 
 
-        private event EventHandler _gameStarted;
-        public event EventHandler OnGameStarted
-        {
-            add { _gameStarted += value; }
-            remove { _gameStarted -= value; }
-        }
+        public event EventHandler OnGameStarted = delegate { };
 
         internal void RaiseGameStarted()
         {
-            _gameStarted(Game, null);
+            if (_eventsEnabled)
+                OnGameStarted(Game, null);
         }
 
         private EndedEventArgs _gameEndedArgs = new EndedEventArgs();
-        private event EventHandler<EndedEventArgs> _gameEnded = delegate { };
-        public event EventHandler<EndedEventArgs> OnGameEnded
-        {
-            add { _gameEnded += value; }
-            remove { _gameEnded -= value; }
-        }
-
+        public event EventHandler<EndedEventArgs> OnGameEnded = delegate { };
         internal void RaiseGameStarted(Gamemodes.Team winningTeam)
         {
             _gameEndedArgs.WinningTeam = winningTeam;
-            _gameEnded(Game, _gameEndedArgs);
+            if (_eventsEnabled)
+                OnGameEnded(Game, _gameEndedArgs);
         }
 
         public event EventHandler<GameCore.TimescaleValue> OnGameTimescaleChanged = delegate { };
 
-        internal void RaiseTimescaleChanged(GameCore.TimescaleValue scale) =>
-            OnGameTimescaleChanged(Game, scale);
+        internal void RaiseTimescaleChanged(GameCore.TimescaleValue scale)
+        {
+            if (_eventsEnabled) OnGameTimescaleChanged(Game, scale);
+        }
+
+        public event EventHandler<bool> OnGameCanRunChanged = delegate { };
+        internal void RaiseOnGameCanRunChanged()
+        {
+            if (_eventsEnabled)
+                OnGameCanRunChanged(Game, Game.CanRun);
+        }
         #endregion
 
         #region 'GameObject' Events
         private DestroyedEventArgs _gameObjectDestroyedArgs = new DestroyedEventArgs();
-        private event EventHandler<DestroyedEventArgs> _gameObjectDestroyed = delegate { };
-        public event EventHandler<DestroyedEventArgs> OnGameObjectDestroyed
-        {
-            add { _gameObjectDestroyed += value; }
-            remove { _gameObjectDestroyed -= value; }
-        }
+        public event EventHandler<DestroyedEventArgs> OnGameObjectDestroyed = delegate { };
 
-        public void RaiseGameObjectDestroyed(GameObject destroyed, GameObject destroyer = null)
+        internal void RaiseGameObjectDestroyed(GameObject destroyed, GameObject destroyer = null)
         {
             _gameObjectDestroyedArgs.Destroyed = destroyed;
             _gameObjectDestroyedArgs.Destroyer = destroyer;
             _gameObjectDestroyedArgs.Time = DateTime.UtcNow;
 
-            _gameObjectDestroyed(destroyed, _gameObjectDestroyedArgs);
+            if (_eventsEnabled)
+                OnGameObjectDestroyed(destroyed, _gameObjectDestroyedArgs);
         }
 
-        private event EventHandler<StateChangedEventArgs> _gameObjectStateChanged = delegate { };
-        public event EventHandler<StateChangedEventArgs> OnGameObjectStateChanged
-        {
-            add { _gameObjectStateChanged += value; }
-            remove { _gameObjectStateChanged -= value; }
-        }
+        public event EventHandler<StateChangedEventArgs> OnGameObjectStateChanged = delegate { };
 
-        public void RaiseGameObjectStateChanged(StateChangedEventArgs args)
+        internal void RaiseGameObjectStateChanged(StateChangedEventArgs args)
         {
-            _gameObjectStateChanged(args.Object, args);
+            if (_eventsEnabled)
+                OnGameObjectStateChanged(args.Object, args);
         }
 
         public event EventHandler<GameObject.BasicPropertyChangeArgs> OnGameObjectBasicPropertyChanged = delegate { };
 
-        public void RaiseGameObjectBasicPropertyChanged(GameObject.BasicPropertyChangeArgs args)
+        internal void RaiseGameObjectBasicPropertyChanged(GameObject.BasicPropertyChangeArgs args)
         {
-            OnGameObjectBasicPropertyChanged(args.Owner, args);
+            if (_eventsEnabled)
+                OnGameObjectBasicPropertyChanged(args.Owner, args);
         }
 
         public event EventHandler<GameObject> OnGameObjectCreated = delegate { };
 
-        public void RaiseGameObjectCreated(GameObject obj)
+        internal void RaiseGameObjectCreated(GameObject obj)
         {
-            OnGameObjectCreated(obj, obj);
+            if (_eventsEnabled)
+                OnGameObjectCreated(obj, obj);
         }
         #endregion
 
         #region Gamemode
         public event EventHandler<byte[]> OnGamemodeStateChanged = delegate { };
-        public void RaiseGamemodeStateChanged(byte[] state) =>
-            OnGamemodeStateChanged(Game.Gamemode, state);
+        internal void RaiseGamemodeStateChanged(byte[] state)
+        {
+            if (_eventsEnabled)
+                OnGamemodeStateChanged(Game.Gamemode, state);
+        }
         #endregion
     }
 }

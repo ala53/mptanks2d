@@ -15,6 +15,7 @@ namespace MPTanks.Networking.Server
     {
         public ILogger Logger { get; set; }
         public NetworkedGame GameInstance { get; private set; }
+        public GameCore Game => GameInstance?.Game;
         public Lidgren.Network.NetServer NetworkServer { get; private set; }
         public LoginManager Login { get; private set; }
         public ConnectionManager Connections { get; set; }
@@ -37,11 +38,10 @@ namespace MPTanks.Networking.Server
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
             MessageProcessor = new ServerNetworkProcessor(this);
-            var state = FullGameState.Create(game);
-            GameInstance = new NetworkedGame(state, logger, game.Settings);
-            HookEvents();
-            GameInstance.FullGameState = state;
-            GameInstance.Game.Authoritative = true;
+            GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
+                        HookEvents();
+            SetGame(game);
+
             Logger = logger ?? new NullLogger();
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
@@ -65,11 +65,11 @@ namespace MPTanks.Networking.Server
 
         public void Update(GameTime gameTime)
         {
-            GameInstance.Game?.Update(gameTime);
+            Game?.Update(gameTime);
 
             Timers.Update(gameTime);
 
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
             //Send all the wideband messages (if someone is listening)
             if (Connections.ActiveConnections.Count > 0)
             {
@@ -109,27 +109,27 @@ namespace MPTanks.Networking.Server
         }
         public void AddPlayer(ServerPlayer player)
         {
-            GameInstance.Game.AddPlayer(player.Player);
+            Game.AddPlayer(player.Player);
             _players.Add(player);
 
             //Queue the game state for them
             MessageProcessor.SendPrivateMessage(player,
                 new Common.Actions.ToClient.GameCreatedAction());
             MessageProcessor.SendPrivateMessage(player,
-                new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
+                new Common.Actions.ToClient.FullGameStateSentAction(Game));
 
             //Announce that they joined
             ChatHandler.SendMessage(Strings.Server.PlayerJoined(player.Player.Username));
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerJoinedAction(player.Player));
 
-            player.LastSentState = PseudoFullGameWorldState.Create(GameInstance.Game);
+            player.LastSentState = PseudoFullGameWorldState.Create(Game);
 
             //Create a state sync loop
             Timers.CreateReccuringTimer(t =>
             {
                 if (Players.Contains(player))
                 {
-                    var message = new Common.Actions.ToClient.PartialGameStateUpdateAction(GameInstance.Game, player.LastSentState);
+                    var message = new Common.Actions.ToClient.PartialGameStateUpdateAction(Game, player.LastSentState);
                     player.LastSentState = message.StatePartial;
                     //do state sync
                     MessageProcessor.SendPrivateMessage(
@@ -147,7 +147,7 @@ namespace MPTanks.Networking.Server
         public void RemovePlayer(ServerPlayer player)
         {
             _players.Remove(player);
-            GameInstance.Game.RemovePlayer(player.Player.Id);
+            Game.RemovePlayer(player.Player.Id);
 
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player));
         }
@@ -157,7 +157,10 @@ namespace MPTanks.Networking.Server
         public void SetGame(GameCore game)
         {
             GameInstance.FullGameState = FullGameState.Create(game);
-            GameInstance.Game.Authoritative = true;
+            Game.Authoritative = true;
+            Game.EventEngine.UnsafeDisableEvents();
+            Game.CanRun = false;
+            Game.EventEngine.UnsafeEnableEvents();
         }
     }
 }

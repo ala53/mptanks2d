@@ -47,6 +47,16 @@ namespace MPTanks.Engine
         }
         #endregion
         #region Properties
+        private bool _canRun = true;
+        public bool CanRun
+        {
+            get { return _canRun; }
+            set
+            {
+                _canRun = value;
+                EventEngine.RaiseOnGameCanRunChanged();
+            }
+        }
         /// <summary>
         /// Gets or sets whether this instance is just another client or it is the server.
         /// Helps with deciding when to play death sequences, etc.
@@ -229,7 +239,7 @@ namespace MPTanks.Engine
         #endregion
         private bool _skipInit;
 
-        public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null)
+        public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
             : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), map, skipInit, settings)
         { }
 
@@ -239,8 +249,9 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
         {
+            _canRun = canRun;
             Logger = logger;
             if (Logger == null) Logger = new NullLogger();
             if (settings == null)
@@ -262,8 +273,9 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string map, bool skipInit = false, EngineSettings settings = null)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
         {
+            _canRun = canRun;
             Logger = logger;
             if (Logger == null) Logger = new NullLogger();
             if (settings == null)
@@ -356,6 +368,7 @@ namespace MPTanks.Engine
                 Status = CurrentGameStatus.WaitingForPlayers;
                 return;
             }
+            if (!CanRun) return;
 
             Time += gameTime.ElapsedGameTime;
 
@@ -412,7 +425,7 @@ namespace MPTanks.Engine
             return (Time - _gameEndedTime)
                 < TimeSpan.FromMilliseconds(Settings.TimePostGameToContinueRunning);
         }
-        
+
         private bool _hasGameStarted = false;
         private void BeginGame()
         {

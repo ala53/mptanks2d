@@ -30,8 +30,8 @@ namespace MPTanks.Networking.Server
         {
             get
             {
-                if (Server.GameInstance.Game.PlayersById.ContainsKey(_player.Id))
-                    return (NetworkPlayer)Server.GameInstance.Game.PlayersById[_player.Id];
+                if (Server.Game.PlayersById.ContainsKey(_player.Id))
+                    return (NetworkPlayer)Server.Game.PlayersById[_player.Id];
                 return _player;
             }
         }

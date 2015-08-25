@@ -22,17 +22,17 @@ namespace MPTanks.Networking.Server
         }
         public void WriteDiscoveryResponse(NetOutgoingMessage message)
         {
-            message.Write(Server.GameInstance.Game.Gamemode.HotJoinEnabled);
+            message.Write(Server.Game.Gamemode.HotJoinEnabled);
             message.Write(Server.Configuration.Password != null);
 
             message.SkipPadBits();
 
-            message.Write(Server.GameInstance.Game.Gamemode.DisplayName);
-            message.Write(Server.GameInstance.Game.Gamemode.Description);
+            message.Write(Server.Game.Gamemode.DisplayName);
+            message.Write(Server.Game.Gamemode.Description);
             message.Write(Server.Players.Count);
             message.Write(Server.Configuration.MaxPlayers);
 
-            message.Write(Server.GameInstance.Game.Map.Name);
+            message.Write(Server.Game.Map.Name);
 
             message.Write(Modding.ModDatabase.LoadedModules.Count);
             foreach (var mod in Modding.ModDatabase.LoadedModules)

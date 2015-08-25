@@ -20,6 +20,7 @@ namespace MPTanks.Networking.Common.Game
         public List<ModInfo> GameLoadedMods { get; set; } = new List<ModInfo>();
         public ModAssetInfo MapInfo { get; set; }
         public string GamemodeReflectionName { get; set; }
+        public bool CanRun { get; set; }
         public double CurrentGameTimeMilliseconds { get; set; }
         public string TimescaleString { get; set; }
         public double TimescaleValue { get; set; }
@@ -55,6 +56,7 @@ namespace MPTanks.Networking.Common.Game
 
             game.Timescale = timescale;
             game.FriendlyFireEnabled = FriendlyFireEnabled;
+            game.CanRun = CanRun;
 
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
@@ -162,6 +164,7 @@ namespace MPTanks.Networking.Common.Game
 
             state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
+            state.CanRun = game.CanRun;
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.Status;
             state.TimescaleString = game.Timescale.DisplayString;
@@ -197,6 +200,7 @@ namespace MPTanks.Networking.Common.Game
             state.MapInfo = ModAssetInfo.Decode(message.ReadBytes(message.ReadUInt16()));
             state.GamemodeReflectionName = message.ReadString();
             state.FriendlyFireEnabled = message.ReadBoolean();
+            state.CanRun = message.ReadBoolean();
             message.ReadPadBits();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
             state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
@@ -235,6 +239,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(encodedMapData);
             message.Write(GamemodeReflectionName);
             message.Write(FriendlyFireEnabled);
+            message.Write(CanRun);
             message.WritePadBits();
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);
