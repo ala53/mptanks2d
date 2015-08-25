@@ -24,6 +24,8 @@ namespace MPTanks.Engine
         public virtual GameCore Game { get; set; }
         public virtual Vector2 SpawnPoint { get; set; }
 
+        public bool HasTank => Tank != null && Tank.Alive;
+
         public event EventHandler<RespawnEventArgs> OnRespawn = delegate { };
 
             public struct RespawnEventArgs

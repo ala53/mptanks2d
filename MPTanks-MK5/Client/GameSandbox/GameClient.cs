@@ -232,7 +232,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
                 CreateGame(); //Start anew
-            
+
             if (Client.Player?.Tank != null && SoundPlayer != null)
             {
                 SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
@@ -246,7 +246,7 @@ namespace MPTanks.Client.GameSandbox
                 Server.GameInstance.Game.PlayersById[Client.PlayerId].Tank != null)
             {
                 Server.GameInstance.Game
-                    .PlayersById[Client.PlayerId].Tank.InputState = 
+                    .PlayersById[Client.PlayerId].Tank.InputState =
                     InputDriver.GetInputState();
             }
 
@@ -287,23 +287,23 @@ namespace MPTanks.Client.GameSandbox
         protected override void Draw(GameTime gameTime)
         {
             Diagnostics.BeginMeasurement("Rendering");
-
-            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-            GraphicsDevice.Clear(Color.Gray);
+            GraphicsDevice.SetRenderTarget(null);
             //if we're in game
             //check if we need to remake the rendertarget
-            if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0 &&
-                (_worldRenderTarget == null ||
-                    _worldRenderTarget.Width != GraphicsDevice.Viewport.Width ||
-                    _worldRenderTarget.Height != GraphicsDevice.Viewport.Height))
+            if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
             {
-                if (_worldRenderTarget != null)
-                    _worldRenderTarget.Dispose();
-                //recreate with correct size
-                _worldRenderTarget = new RenderTarget2D(
-                    GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-
+                if (_worldRenderTarget == null || _worldRenderTarget.Width !=
+                    GraphicsDevice.Viewport.Width || _worldRenderTarget.Height !=
+                    GraphicsDevice.Viewport.Height)
+                {
+                    _worldRenderTarget?.Dispose();
+                    //recreate with correct size
+                    _worldRenderTarget = new RenderTarget2D(
+                        GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                }
             }
+            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+            GraphicsDevice.Clear(Color.Gray);
 
             //set the render target
 

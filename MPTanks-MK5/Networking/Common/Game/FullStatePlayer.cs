@@ -41,14 +41,14 @@ namespace MPTanks.Networking.Common.Game
             AllowedTankTypes = plr.AllowedTankTypes;
             ClanName = plr.ClanName;
             HasSelectedTank = plr.HasSelectedTankYet;
-            HasTank = plr.Tank != null;
+            HasTank = plr.HasTank;
             Id = plr.Id;
             IsAdmin = plr.IsAdmin;
             IsPremium = plr.IsPremium;
             IsSpectator = plr.IsSpectator;
             SpawnPoint = plr.SpawnPoint;
             TankHasCustomStyle = plr.HasCustomTankStyle;
-            TankObjectId = (plr.Tank != null) ? plr.Tank.ObjectId : (ushort)0;
+            TankObjectId = (HasTank) ? plr.Tank.ObjectId : (ushort)0;
             TankReflectionName = (plr.Tank != null) ? plr.Tank.ReflectionName : "";
             TeamId = (plr.Team != null) ? plr.Team.TeamId : (short)-3;
             Input = (plr.Tank != null ? plr.Tank.InputState : default(InputState));
