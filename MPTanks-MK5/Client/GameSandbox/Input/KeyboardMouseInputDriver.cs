@@ -145,7 +145,22 @@ namespace MPTanks.Client.GameSandbox.Input
             if (binding.GetType() == typeof(Keys))
                 return Enum.GetName(typeof(Keys), binding);
             if (binding.GetType() == typeof(MouseState))
-                return "Mouse " + Enum.GetName(typeof(MouseState), binding);
+            {
+                var ms = (MouseState)binding;
+                switch (ms)
+                {
+                    case MouseState.LeftClick:
+                        return "Left Mouse";
+                    case MouseState.MiddleClick:
+                        return "Middle Mouse";
+                    case MouseState.RightClick:
+                        return "Right Mouse";
+                    case MouseState.WheelDown:
+                        return "Mouse Wheel Down";
+                    case MouseState.WheelUp:
+                        return "Mouse Wheel Up";
+                }
+            }
             return "Unknown";
         }
 
