@@ -78,10 +78,12 @@ namespace MPTanks.Engine
             }
         }
 
-        public GamePlayer FindPlayer(Guid playerId)
+        public T FindPlayer<T>(Guid playerId) where T : GamePlayer
         {
-            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] : null;
+            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as T: null;
         }
+
+        public GamePlayer FindPlayer(Guid playerId) => FindPlayer<GamePlayer>(playerId);
 
         public void InjectPlayerInput(Guid playerId, InputState state)
         {
