@@ -36,10 +36,10 @@ namespace MPTanks.Networking.Server
         public ServerStatus Status { get; private set; } = ServerStatus.NotInitialized;
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
+            MessageProcessor = new ServerNetworkProcessor(this);
             var state = FullGameState.Create(game);
             GameInstance = new NetworkedGame(state, logger, game.Settings);
             HookEvents();
-            MessageProcessor = new ServerNetworkProcessor(this);
             GameInstance.FullGameState = state;
             GameInstance.Game.Authoritative = true;
             Logger = logger ?? new NullLogger();

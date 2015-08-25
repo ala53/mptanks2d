@@ -14,7 +14,15 @@ namespace MPTanks.Networking.Client
         public bool Connected { get; private set; }
         public NetworkedGame GameInstance { get; private set; }
         public Guid PlayerId { get; set; }
-        public GamePlayer Player { get { return GameInstance.Game.PlayersById[PlayerId]; } }
+        public GamePlayer Player
+        {
+            get
+            {
+                return
+                    GameInstance.Game.PlayersById.ContainsKey(PlayerId) ?
+                    GameInstance.Game.PlayersById[PlayerId] : null;
+            }
+        }
         public bool GameRunning { get { return Connected && GameInstance != null; } }
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {

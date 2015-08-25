@@ -150,14 +150,16 @@ namespace MPTanks.Client.GameSandbox.UI
                 else otherCount++;
             }
             //Note: The debug screen generates a bit of garbage so don't try to use it to nail down allocations
-            //Disable it first and then see if there's still a problem
+            //Disable it first and then see if there's still a problem (rely on the graphs which are allocation free)
 
+            //Mapobject counts
             _bldr.Append("Tanks: ").Append(tanksCount)
             .Append(", Projectiles: ").Append(projCount)
             .Append(", Map Objects: ").Append(mapObjectCount)
             .Append(", Other: ").Append(otherCount)
             .Append(", Total: ").Append(tanksCount + projCount + mapObjectCount + otherCount);
 
+            //FPS monitor
             if (float.IsInfinity(CalculateAverageFPS()) || float.IsNaN(CalculateAverageFPS()))
                 _bldr.Append(", FPS: ").Append("Calculation Error").Append(" avg, ");
             else
@@ -166,21 +168,20 @@ namespace MPTanks.Client.GameSandbox.UI
             _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
             .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
 
-            long maxMem = 0;
-            foreach (var pt in _debugMemoryUsages)
-                if (pt.BytesUsed > maxMem)
-                    maxMem = pt.BytesUsed;
-
+            //Timers, animations, and particles
             _bldr.Append(", Timers: ").Append(_game.TimerFactory.ActiveTimersCount)
-                .Append(", Animations: ").Append(_game.AnimationEngine.Animations.Count)
-                .Append(", Particles: ").Append(_game.ParticleEngine.LivingParticlesCount)
-                .Append("\nSounds (Engine, Backend): ").Append(_game.SoundEngine.SoundCount)
-                .Append(", ").Append(_client.SoundPlayer.ActiveSoundCount)
-                .Append(", Volumes (Background, Effects, Voice): ")
-                .Append((_client.SoundPlayer.BackgroundVolume * 100).ToString("N0")).Append("%")
-                .Append(", ").Append((_client.SoundPlayer.EffectVolume * 100).ToString("N0")).Append("%")
-                .Append(", ").Append((_client.SoundPlayer.VoiceVolume * 100).ToString("N0")).Append("%");
+            .Append(", Animations: ").Append(_game.AnimationEngine.Animations.Count)
+            .Append(", Particles: ").Append(_game.ParticleEngine.LivingParticlesCount);
+            
+            //Sound diagnostics
+            _bldr.Append("\nSounds (Engine, Backend): ").Append(_game.SoundEngine.SoundCount)
+            .Append(", ").Append(_client.SoundPlayer.ActiveSoundCount)
+            .Append(", Volumes (Background, Effects, Voice): ")
+            .Append((_client.SoundPlayer.BackgroundVolume * 100).ToString("N0")).Append("%")
+            .Append(", ").Append((_client.SoundPlayer.EffectVolume * 100).ToString("N0")).Append("%")
+            .Append(", ").Append((_client.SoundPlayer.VoiceVolume * 100).ToString("N0")).Append("%");
 
+            //Sound profiling
             var info = _client.SoundPlayer.Diagnostics;
             _bldr.Append("\nSound CPU (DSP, Streaming, Update, Total): ")
             .Append(info.DSPCPU.ToString("N2")).Append("%, ")
@@ -188,30 +189,37 @@ namespace MPTanks.Client.GameSandbox.UI
             .Append(info.UpdateCPU.ToString("N2")).Append("%, ")
             .Append(info.TotalCPU.ToString("N2")).Append("%");
 
+            //Find memory usage max
+            long maxMem = 0;
+            foreach (var pt in _debugMemoryUsages)
+                if (pt.BytesUsed > maxMem)
+                    maxMem = pt.BytesUsed;
+            //GC & memory
             _bldr.Append("\nGC (gen 0, 1, 2): ").Append(GC.CollectionCount(0)).Append(" ")
                 .Append(GC.CollectionCount(1)).Append(" ").Append(GC.CollectionCount(2))
                 .Append(", Memory: ").Append((GC.GetTotalMemory(false) / (1024d * 1024)).ToString("N1")).Append("MB used")
                 .Append(", ").Append((maxMem / (1024d * 1024)).ToString("N1")).Append("MB max");
 
+            //Timescale printout
             if (_game.Running)
-            {
                 _bldr.Append("\nTimescale: " + _game.Timescale.DisplayString);
-            }
 
+            //Game status
             _bldr.Append(", Status: ");
 
             if (_game.CountingDown)
                 _bldr.Append("starting game");
             if (_game.WaitingForPlayers)
-                _bldr.Append(" waiting for players");
+                _bldr.Append("waiting for players");
             if (_game.Running)
-                _bldr.Append(" running");
+                _bldr.Append("running");
             if (_game.Ended)
-                _bldr.Append(" ended");
+                _bldr.Append("ended");
 
-            if (_game.Gamemode.WinningTeam != MPTanks.Engine.Gamemodes.Team.Null)
+            if (_game.Gamemode.WinningTeam != Engine.Gamemodes.Team.Null)
                 _bldr.Append(", Winner: ").Append(_game.Gamemode.WinningTeam.TeamName);
 
+            //And keybind explanation
             _bldr.Append("\nF12: hide\n")
                 .Append("F10: Enable/Disable graphs\n")
                 .Append("F9: Enable/Disable debug text\n")

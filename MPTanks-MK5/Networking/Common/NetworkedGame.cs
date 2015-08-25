@@ -26,9 +26,9 @@ namespace MPTanks.Networking.Common
             get { return FullGameState.Create(Game); }
             set
             {
-                var game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
-                GameChanged(this, new GameChangedArgs() { OldGame = Game, Game = game });
-                Game = game;
+                Game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                var oldGame = Game;
+                GameChanged(this, new GameChangedArgs() { OldGame = oldGame, Game = Game });
             }
         }
 

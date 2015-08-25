@@ -4,11 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using MPTanks.Modding;
 
 namespace MPTanks.Engine.Gamemodes
 {
+    [Gamemode("NullGamemode",
+        DefaultTankTypeReflectionName = "BasicTankMP", 
+        MinPlayersCount = 0, HotJoinEnabled = false)]
     public class NullGamemode : Gamemode
     {
+
+        public NullGamemode()
+        {
+
+        }
         public override void MakeTeams(GamePlayer[] players)
         {
             Teams = new[]
