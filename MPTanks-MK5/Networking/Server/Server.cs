@@ -36,16 +36,20 @@ namespace MPTanks.Networking.Server
         public ServerStatus Status { get; private set; } = ServerStatus.NotInitialized;
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
-            GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
+            var state = FullGameState.Create(game);
+            GameInstance = new NetworkedGame(state, logger, game.Settings);
+            HookEvents();
+            MessageProcessor = new ServerNetworkProcessor(this);
+            GameInstance.FullGameState = state;
             GameInstance.Game.Authoritative = true;
             Logger = logger ?? new NullLogger();
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
             Configuration = new InitializedConfiguration(configuration);
-            MessageProcessor = new ServerNetworkProcessor(this);
             Timers = new Engine.Core.Timing.Timer.Factory();
             ChatHandler = new Chat.ChatServer(this);
             if (openOnInit) Open();
+
         }
         public void Open()
         {
@@ -56,6 +60,7 @@ namespace MPTanks.Networking.Server
                 Port = Configuration.Port
             });
             NetworkServer.Start();
+            Status = ServerStatus.Open;
         }
 
         public void Update(GameTime gameTime)
@@ -80,7 +85,7 @@ namespace MPTanks.Networking.Server
                 //As well as narrowband ones
                 foreach (var plr in Players)
                 {
-                    if (MessageProcessor.HasPrivateMessages(plr))
+                    if (MessageProcessor.HasPrivateMessages(plr) && plr.Connection.Status == Lidgren.Network.NetConnectionStatus.Connected)
                     {
                         var msg = NetworkServer.CreateMessage();
                         MessageProcessor.WritePrivateMessages(plr, msg);

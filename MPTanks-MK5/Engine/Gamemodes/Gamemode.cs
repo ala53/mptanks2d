@@ -159,7 +159,7 @@ namespace MPTanks.Engine.Gamemodes
         /// <param name="playerId"></param>
         /// <param name="tankType"></param>
         /// <returns>Returns true if the tank type was able to be set (still allowed) or false if it is not.</returns>
-        public abstract bool SetPlayerTankType(GamePlayer player, string tankType);
+        public abstract bool IsPlayerTankSelectionValid(GamePlayer player, string tankType);
 
         /// <summary>
         /// Notifies the Gamemode that the game has started. It can do whatever it wants 

@@ -110,5 +110,11 @@ namespace MPTanks.Engine.Core.Events
             OnGameObjectCreated(obj, obj);
         }
         #endregion
+
+        #region Gamemode
+        public event EventHandler<byte[]> OnGamemodeStateChanged = delegate { };
+        public void RaiseGamemodeStateChanged(byte[] state) =>
+            OnGamemodeStateChanged(Game.Gamemode, state);
+        #endregion
     }
 }

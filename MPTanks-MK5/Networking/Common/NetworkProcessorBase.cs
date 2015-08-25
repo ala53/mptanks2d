@@ -93,6 +93,7 @@ namespace MPTanks.Networking.Common
                         {
                             Logger.Error("Message parsing error!", ex);
                             Logger.Error($"Message type: {_allTypes[msgId].FullName}");
+                            OnProcessingError(ex);
                         }
         }
 
@@ -164,6 +165,10 @@ namespace MPTanks.Networking.Common
 
         }
 
+        public virtual void OnProcessingError(Exception error)
+        {
+
+        }
         #endregion  
 
         private List<MessageBase> _messages = new List<MessageBase>();

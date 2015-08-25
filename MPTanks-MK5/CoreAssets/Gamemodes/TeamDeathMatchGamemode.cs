@@ -66,7 +66,7 @@ namespace MPTanks.CoreAssets.Gamemodes
             return Engine.Tanks.Tank.GetAllTankTypes().ToArray();
         }
 
-        public override bool SetPlayerTankType(Engine.GamePlayer player, string tankType)
+        public override bool IsPlayerTankSelectionValid(Engine.GamePlayer player, string tankType)
         {
             if (Engine.Tanks.Tank.GetAllTankTypes().Contains(tankType))
             {

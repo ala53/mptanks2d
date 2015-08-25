@@ -24,6 +24,14 @@ namespace MPTanks.Engine
         public virtual GameCore Game { get; set; }
         public virtual Vector2 SpawnPoint { get; set; }
 
+        public event EventHandler<RespawnEventArgs> OnRespawn = delegate { };
+
+            public struct RespawnEventArgs
+        {
+            public GamePlayer Player { get; set; }
+            public Tanks.Tank NewTank { get; set; }
+        }
+
         private string _name;
         public virtual string Username
         {
@@ -40,6 +48,19 @@ namespace MPTanks.Engine
             }
         }
 
+        public bool SelectTank(string reflectionName)
+        {
+            if (AllowedTankTypes.Contains(reflectionName) && Game.Gamemode.IsPlayerTankSelectionValid(this, reflectionName))
+            {
+                HasSelectedTankYet = true;
+                SelectedTankReflectionName = reflectionName;
+                return true;
+            }
+            HasSelectedTankYet = false;
+            SelectedTankReflectionName = null;
+            return false;
+        }
+
         /// <summary>
         /// Respawns a player in the game
         /// </summary>
@@ -51,6 +72,7 @@ namespace MPTanks.Engine
             Tank = Tanks.Tank.ReflectiveInitialize(SelectedTankReflectionName, this, Game, authorized);
             Tank.Position = SpawnPoint;
             Game.AddGameObject(Tank);
+            OnRespawn(this, new RespawnEventArgs { Player = this, NewTank = Tank });
             return Tank;
         }
     }

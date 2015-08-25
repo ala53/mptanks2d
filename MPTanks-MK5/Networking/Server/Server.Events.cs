@@ -23,6 +23,8 @@ namespace MPTanks.Networking.Server
                      e.OldGame.EventEngine.OnGameObjectStateChanged -= GameObject_StateChanged;
                      e.OldGame.EventEngine.OnGameObjectBasicPropertyChanged -= GameObject_BasicPropertyChanged;
                      e.OldGame.EventEngine.OnGameObjectCreated -= GameObject_Created;
+
+                     e.OldGame.EventEngine.OnGamemodeStateChanged -= Gamemode_StateChanged;
                  }
                  e.Game.EventEngine.OnGameEnded += Game_Ended;
                  e.Game.EventEngine.OnGameStarted += Game_Started;
@@ -33,10 +35,17 @@ namespace MPTanks.Networking.Server
                  e.Game.EventEngine.OnGameObjectBasicPropertyChanged += GameObject_BasicPropertyChanged;
                  e.Game.EventEngine.OnGameObjectCreated += GameObject_Created;
 
+                 e.Game.EventEngine.OnGamemodeStateChanged += Gamemode_StateChanged;
+
                  //And send out the game state
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCreatedAction());
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(GameInstance.Game));
              };
+        }
+
+        private void Gamemode_StateChanged(object sender, byte[] e)
+        {
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.GamemodeStateChangedAction(e));
         }
 
         private void GameObject_Created(object sender, GameObject e)

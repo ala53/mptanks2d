@@ -33,7 +33,7 @@ namespace MPTanks.Networking.Common.Game
 
         public FullStatePlayer()
         {
-            
+
         }
 
         public FullStatePlayer(NetworkPlayer plr)
@@ -109,7 +109,7 @@ namespace MPTanks.Networking.Common.Game
         public void ApplySecondPass(NetworkPlayer player, GameCore game)
         {
             player.Tank = (HasTank ? (Tank)game.GameObjectsById[TankObjectId] : null);
-            player.Tank.InputState = Input;
+            if (HasTank) player.Tank.InputState = Input;
             player.Team = (TeamId != -3 ? FindTeam(game.Gamemode.Teams, TeamId) : null);
         }
 
