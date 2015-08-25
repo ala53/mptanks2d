@@ -22,22 +22,36 @@ namespace MPTanks.Networking.Server
 
         public override void ProcessToServerAction(ActionBase action)
         {
+            var player = Server.Connections.PlayerTable[action.MessageFrom.SenderConnection];
             if (action is InputChangedAction)
             {
                 Server.MessageProcessor.SendMessage(
-                    new PlayerInputChangedAction(Server.Connections.PlayerTable[action.MessageFrom.SenderConnection].Player,
+                    new PlayerInputChangedAction(player.Player,
                     ((InputChangedAction)action).InputState));
             }
 
             if (action is PlayerTankTypeSelectedAction)
             {
-                var player = Server.Connections.PlayerTable[action.MessageFrom.SenderConnection];
+                player.Player.SelectedTankReflectionName =
+                    (((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName);
 
-                player.Player.SelectTank(((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName);
+                //Validate their selection
+                if (player.Player.TankSelectionIsValid)
+                {
+                    //It's ok: let everyone know
+                    Server.MessageProcessor.SendMessage(
+                        new OtherPlayerSelectedTankAction(player.Player,
+                        ((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName));
 
-                Server.MessageProcessor.SendMessage(
-                    new OtherPlayerSelectedTankAction(player.Player,
-                    ((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName));
+                    Server.MessageProcessor.SendPrivateMessage(player,
+                        new PlayerTankSelectionAcknowledgedAction(true));
+                }
+                else
+                {
+                    //It's not ok: make them switch
+                    Server.MessageProcessor.SendPrivateMessage(player,
+                        new PlayerTankSelectionAcknowledgedAction(false));
+                }
             }
 
             if (action is RequestFullGameStateAction)
@@ -52,7 +66,7 @@ namespace MPTanks.Networking.Server
                 var act = action as SentChatMessageAction;
                 Server.ChatHandler.ForwardMessage(act.Message,
                     Server.Connections.PlayerTable[action.MessageFrom.SenderConnection],
-                    act.Targets.Select(a=>Server.GetPlayer(a)).ToArray());
+                    act.Targets.Select(a => Server.GetPlayer(a)).ToArray());
             }
 
             if (action is PlayerReadyChangedAction)

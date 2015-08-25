@@ -13,7 +13,7 @@ namespace MPTanks.Engine
     {
         public virtual bool IsSpectator { get; set; }
         public virtual string SelectedTankReflectionName { get; set; }
-        public virtual bool HasSelectedTankYet { get; set; }
+        public virtual bool HasSelectedTankYet => SelectedTankReflectionName != null;
         public virtual Guid Id { get; set; }
         public virtual string[] AllowedTankTypes { get; set; }
         [JsonIgnore]
@@ -28,7 +28,7 @@ namespace MPTanks.Engine
 
         public event EventHandler<RespawnEventArgs> OnRespawn = delegate { };
 
-            public struct RespawnEventArgs
+        public struct RespawnEventArgs
         {
             public GamePlayer Player { get; set; }
             public Tanks.Tank NewTank { get; set; }
@@ -50,19 +50,21 @@ namespace MPTanks.Engine
             }
         }
 
-        public bool SelectTank(string reflectionName)
+        public virtual bool TankSelectionIsValid
         {
-            if (AllowedTankTypes.Contains(reflectionName) && Game.Gamemode.IsPlayerTankSelectionValid(this, reflectionName))
+            get
             {
-                HasSelectedTankYet = true;
-                SelectedTankReflectionName = reflectionName;
-                return true;
-            }
-            HasSelectedTankYet = false;
-            SelectedTankReflectionName = null;
-            return false;
-        }
+                if (!HasSelectedTankYet) return false;
+                if (AllowedTankTypes == null)
+                    if (Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
+                        Game.Gamemode.VerifyPlayerTankSelection(this, SelectedTankReflectionName))
+                        return true;
 
+                return AllowedTankTypes.Contains(SelectedTankReflectionName) &&
+                    Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
+                    Game.Gamemode.VerifyPlayerTankSelection(this, SelectedTankReflectionName);
+            }
+        }
         /// <summary>
         /// Respawns a player in the game
         /// </summary>

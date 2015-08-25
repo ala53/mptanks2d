@@ -15,7 +15,6 @@ namespace MPTanks.Networking.Common
         public enum NetworkPlayerPropertyChanged
         {
             SelectedTankReflectionName,
-            HasSelectedTankYet,
             Id,
             AllowedTankTypes,
             Tank,
@@ -79,19 +78,6 @@ namespace MPTanks.Networking.Common
             {
                 base.Game = value;
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.Game);
-            }
-        }
-        public override bool HasSelectedTankYet
-        {
-            get
-            {
-                return base.HasSelectedTankYet;
-            }
-
-            set
-            {
-                base.HasSelectedTankYet = value;
-                OnPropertyChanged(this, NetworkPlayerPropertyChanged.HasSelectedTankYet);
             }
         }
         public override Guid Id

@@ -15,11 +15,12 @@ namespace MPTanks.Engine
             return AddPlayer(new GamePlayer()
             {
                 Id = playerId,
-                HasSelectedTankYet = false,
                 Game = this
             });
         }
 
+        private List<GamePlayer> _hotJoinPlayersWaitingForTankSelection =
+            new List<GamePlayer>();
         public GamePlayer AddPlayer<GamePlayer>(GamePlayer player) where GamePlayer : Engine.GamePlayer
         {
             if (!_playerIds.Contains(player.Id))
@@ -45,11 +46,18 @@ namespace MPTanks.Engine
 
                     //Then tanks
                     player.AllowedTankTypes = Gamemode.HotJoinGetAllowedTankTypes(player);
+
+                    _hotJoinPlayersWaitingForTankSelection.Add(player);
                 }
-                player.HasSelectedTankYet = false;
             }
             return player;
         }
+
+        private void UpdateHotJoinPlayers()
+        {
+            if (!Gamemode.HotJoinEnabled) return;
+        }
+
         /// <summary>
         /// Kill and remove the player
         /// </summary>
@@ -78,9 +86,9 @@ namespace MPTanks.Engine
             }
         }
 
-        public T FindPlayer<T>(Guid playerId) where T : GamePlayer
+        public GamePlayer FindPlayer<GamePlayer>(Guid playerId) where GamePlayer : Engine.GamePlayer
         {
-            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as T: null;
+            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as GamePlayer: null;
         }
 
         public GamePlayer FindPlayer(Guid playerId) => FindPlayer<GamePlayer>(playerId);
@@ -117,8 +125,8 @@ namespace MPTanks.Engine
             foreach (var player in Players)
             {
                 if (player.IsSpectator) continue; //Ignore spectators
-
-                if (!player.HasSelectedTankYet)
+                
+                if (!player.TankSelectionIsValid) //Do the selection for them
                     player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
 
                 var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
