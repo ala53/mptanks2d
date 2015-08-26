@@ -299,7 +299,7 @@ namespace MPTanks.Engine
             if (shouldDoWorldSetup)
             {
                 //Create the player objects (server only)
-                SetUpGamePlayers();
+                SetupGamePlayers();
                 //And load the map / create the map objects
                 CreateMapObjects();
             }

@@ -39,7 +39,7 @@ namespace MPTanks.Engine
                     player.IsSpectator = false;
                     //Let them join - first find the team and size the player list correctly
                     player.Team = Gamemode.HotJoinGetPlayerTeam(player);
-                    var newPlayerArray = new GamePlayer[player.Team.Players.Length + 1];
+                    var newPlayerArray = new Engine.GamePlayer[player.Team.Players.Length + 1];
                     Array.Copy(player.Team.Players, newPlayerArray, player.Team.Players.Length);
                     newPlayerArray[newPlayerArray.Length - 1] = player;
                     player.Team.Players = newPlayerArray;
@@ -47,15 +47,36 @@ namespace MPTanks.Engine
                     //Then tanks
                     player.AllowedTankTypes = Gamemode.HotJoinGetAllowedTankTypes(player);
 
+                    //And add a timeout for them
+                    TimerFactory.CreateTimer(a =>
+                    {
+                        if (player.HasTank || player.HasSelectedTankYet) return;
+                        _hotJoinPlayersWaitingForTankSelection.Remove(player);
+                        SetupPlayer(player);
+                    },
+                        TimeSpan.FromMilliseconds(Settings.HotJoinTankSelectionTime));
+
                     _hotJoinPlayersWaitingForTankSelection.Add(player);
                 }
             }
             return player;
         }
 
+        private List<GamePlayer> _hotJoinRemovalTempList = new List<GamePlayer>();
         private void UpdateHotJoinPlayers()
         {
             if (!Gamemode.HotJoinEnabled) return;
+
+            foreach (var plr in _hotJoinPlayersWaitingForTankSelection)
+                if (plr.HasSelectedTankYet && plr.TankSelectionIsValid)
+                {
+                    SetupPlayer(plr);
+                    _hotJoinRemovalTempList.Add(plr);
+                }
+
+            foreach (var gp in _hotJoinRemovalTempList)
+                _hotJoinPlayersWaitingForTankSelection.Remove(gp);
+            _hotJoinRemovalTempList.Clear();
         }
 
         /// <summary>
@@ -110,27 +131,30 @@ namespace MPTanks.Engine
         /// <summary>
         /// Sets up the players for the game. Server only.
         /// </summary>
-        private void SetUpGamePlayers()
+        private void SetupGamePlayers()
         {
             Gamemode.MakeTeams(Players.ToArray());
 
             foreach (var player in Players)
             {
                 if (player.IsSpectator) continue; //Ignore spectators
-
-                if (!player.TankSelectionIsValid) //Do the selection for them
-                    player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
-
-                var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
-                player.SpawnPoint = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
-
-                tank.Position = player.SpawnPoint;
-                tank.ColorMask = player.Team.TeamColor;
-
-                AddGameObject(tank);
-                player.Tank = tank;
+                else SetupPlayer(player);
             }
         }
 
+        private void SetupPlayer(GamePlayer player)
+        {
+            if (!player.TankSelectionIsValid) //Do the selection for them
+                player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
+
+            var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);
+            player.SpawnPoint = Map.GetSpawnPosition(Gamemode.GetTeamIndex(player));
+
+            tank.Position = player.SpawnPoint;
+            tank.ColorMask = player.Team.TeamColor;
+
+            AddGameObject(tank);
+            player.Tank = tank;
+        }
     }
 }

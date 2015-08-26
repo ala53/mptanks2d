@@ -52,6 +52,8 @@ namespace MPTanks.Engine.Settings
 
         public Setting<float> MaxStateChangeFrequency { get; private set; }
 
+        public Setting<float> HotJoinTankSelectionTime { get; private set; }
+
         public EngineSettings(string file) : base(file)
         {
         }
@@ -102,6 +104,9 @@ namespace MPTanks.Engine.Settings
             MaxStateChangeFrequency = Setting.Create(this, "Max state change frequency",
                 "The maximum frequency of state changes in milliseconds, basically rate limiting.", 100f,
                 Setting.SettingDisplayType.TimeMS); //10 of them per second
+
+            HotJoinTankSelectionTime = Setting.Create(this, "Tank selection time for hot join players",
+                "The amount of time players who join while in game are given to select their tanks (before being given a default tank)", 15000f);
 
         }
     }
