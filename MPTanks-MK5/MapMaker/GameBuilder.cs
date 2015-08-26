@@ -48,7 +48,8 @@ namespace MPTanks.Clients.MapMaker
         public void OnMapChanged()
         {
             var map = _map.GenerateMap();
-            _game = new GameCore(null, new NullGamemode(), map, true);
+            _game = new GameCore(null, new NullGamemode(), map);
+            _game.BeginGame(true);
         }
 
         protected override void LoadContent()

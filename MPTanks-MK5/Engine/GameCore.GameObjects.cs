@@ -48,7 +48,6 @@ namespace MPTanks.Engine
                 _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
                 HookGameObjectEvents(obj);
-                _isDirty = true; //Mark dirty flag
             }
         }
 
@@ -105,14 +104,12 @@ namespace MPTanks.Engine
                 _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
                 HookGameObjectEvents(obj);
-                _isDirty = true; //Mark the dirty flag
             }
 
             foreach (var obj in _removeQueue)
             {
                 _gameObjects.Remove(obj.ObjectId);
                 obj.EndDestruction(); //Call final destructor
-                _isDirty = true; //Mark the dirty flag
             }
 
             _addQueue.Clear();
@@ -150,7 +147,6 @@ namespace MPTanks.Engine
             {
                 _gameObjects.Remove(obj.ObjectId);
                 obj.EndDestruction(); //Call final destructor
-                _isDirty = true; //Mark the dirty flag
             }
         }
 

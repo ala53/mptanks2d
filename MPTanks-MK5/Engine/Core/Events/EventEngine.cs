@@ -57,13 +57,6 @@ namespace MPTanks.Engine.Core.Events
         {
             if (_eventsEnabled) OnGameTimescaleChanged(Game, scale);
         }
-
-        public event EventHandler<bool> OnGameCanRunChanged = delegate { };
-        internal void RaiseGameCanRunChanged()
-        {
-            if (_eventsEnabled)
-                OnGameCanRunChanged(Game, Game.CanRun);
-        }
         #endregion
 
         #region 'GameObject' Events

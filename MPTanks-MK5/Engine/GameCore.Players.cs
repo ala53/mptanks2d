@@ -88,7 +88,7 @@ namespace MPTanks.Engine
 
         public GamePlayer FindPlayer<GamePlayer>(Guid playerId) where GamePlayer : Engine.GamePlayer
         {
-            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as GamePlayer: null;
+            return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as GamePlayer : null;
         }
 
         public GamePlayer FindPlayer(Guid playerId) => FindPlayer<GamePlayer>(playerId);
@@ -125,7 +125,7 @@ namespace MPTanks.Engine
             foreach (var player in Players)
             {
                 if (player.IsSpectator) continue; //Ignore spectators
-                
+
                 if (!player.TankSelectionIsValid) //Do the selection for them
                     player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
 
@@ -139,10 +139,6 @@ namespace MPTanks.Engine
                 player.Tank = tank;
             }
         }
-
-        private bool HasEnoughPlayersToStart()
-        {
-            return _playerIds.Count >= Gamemode.MinPlayerCount;
-        }
+        
     }
 }

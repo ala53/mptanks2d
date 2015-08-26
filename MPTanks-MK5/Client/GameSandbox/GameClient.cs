@@ -135,7 +135,6 @@ namespace MPTanks.Client.GameSandbox
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
-                false,
                 new EngineSettings("enginesettings.json")
                 );
             game.Authoritative = true;
@@ -173,6 +172,8 @@ namespace MPTanks.Client.GameSandbox
 
             Client.PlayerId = player.Id;
             Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
+
+            Server.Game.BeginGame();
             //Client.WaitForConnection();
         }
 
@@ -254,13 +255,10 @@ namespace MPTanks.Client.GameSandbox
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update()");
 
-            if (Client.GameInstance.Game.CountingDown && _ui.PageName != _settingUpPageName)
+            if (!Client.GameInstance.Game.HasStarted && _ui.PageName != _settingUpPageName)
                 _ui.SetPage(_settingUpPageName);
 
-            if (Client.GameInstance.Game.CountingDown)
-                _ui.ActiveBinder.TimeRemaining = Client.GameInstance.Game.RemainingCountdownTime;
-
-            if (!Client.GameInstance.Game.CountingDown && _ui.PageName == _settingUpPageName)
+            if (Client.GameInstance.Game.HasStarted && _ui.PageName == _settingUpPageName)
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);

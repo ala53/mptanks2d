@@ -25,7 +25,6 @@ namespace MPTanks.Engine
                     Status == CurrentGameStatus.GameEndedStillRunning;
             }
         }
-        public bool CountingDown { get { return Status == CurrentGameStatus.CountingDownToStart; } }
         public bool Ended
         {
             get
@@ -39,24 +38,20 @@ namespace MPTanks.Engine
         public enum CurrentGameStatus : byte
         {
             WaitingForPlayers,
-            WaitingForPlayersToSelectTanks,
-            CountingDownToStart,
             GameRunning,
             GameEndedStillRunning,
             GameEnded
         }
         #endregion
         #region Properties
-        private bool _canRun = true;
-        public bool CanRun
-        {
-            get { return _canRun; }
-            set
-            {
-                _canRun = value;
-                EventEngine.RaiseGameCanRunChanged();
-            }
-        }
+        /// <summary>
+        /// Displays whether the game has been started by calling HasStarted() or not
+        /// </summary>
+        public bool HasStarted { get; private set; }
+        /// <summary>
+        /// Gets whether the game is able to start (read: has enough players)
+        /// </summary>
+        public bool HasEnoughPlayersToStart => _playerIds.Count >= Gamemode.MinPlayerCount;
         /// <summary>
         /// Gets or sets whether this instance is just another client or it is the server.
         /// Helps with deciding when to play death sequences, etc.
@@ -113,9 +108,6 @@ namespace MPTanks.Engine
         public EngineSettings Settings { get; private set; }
         [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
-        #region Game Status
-        public TimeSpan RemainingCountdownTime => TimeSpan.FromMilliseconds(Settings.TimeToWaitBeforeStartingGame) - Time;
-        #endregion
         private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
         public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
 
@@ -221,26 +213,12 @@ namespace MPTanks.Engine
             }
         }
         #endregion
-
-        private bool _isDirty = false;
-        /// <summary>
-        /// Tells whether the GameObject collection has changed since the last time IsDirty was checked.
-        /// </summary>
-        public bool IsDirty
-        {
-            get
-            {
-                var _dirty = _isDirty;
-                _isDirty = false;
-                return _dirty;
-            }
-        }
         #endregion
         #endregion
         private bool _skipInit;
 
-        public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
-            : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), map, skipInit, settings)
+        public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, EngineSettings settings = null)
+            : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), map, settings)
         { }
 
         /// <summary>
@@ -249,9 +227,8 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, EngineSettings settings = null)
         {
-            _canRun = canRun;
             Logger = logger;
             if (Logger == null) Logger = new NullLogger();
             if (settings == null)
@@ -265,7 +242,7 @@ namespace MPTanks.Engine
 
             Map = Maps.Map.LoadMap(map, this);
 
-            InitializeGame(skipInit);
+            InitializeGame();
         }
         /// <summary>
         /// Creates a new GameCore instance.
@@ -273,9 +250,8 @@ namespace MPTanks.Engine
         /// <param name="logger"></param>
         /// <param name="gamemode"></param>
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
-        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string map, bool skipInit = false, EngineSettings settings = null, bool canRun = true)
+        public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, string map, EngineSettings settings = null)
         {
-            _canRun = canRun;
             Logger = logger;
             if (Logger == null) Logger = new NullLogger();
             if (settings == null)
@@ -289,19 +265,11 @@ namespace MPTanks.Engine
 
             Map = Maps.Map.LoadMap(map, this);
 
-            InitializeGame(skipInit);
+            InitializeGame();
         }
 
-        private void InitializeGame(bool skipInit)
+        private void InitializeGame()
         {
-            _skipInit = skipInit;
-            if (skipInit)
-            {
-                Status = CurrentGameStatus.GameRunning;
-                _gameCountDownHasBegun = true;
-                Time = TimeSpan.FromMilliseconds(Settings.TimeToWaitBeforeStartingGame);
-            }
-
             //Initialize game
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
@@ -316,6 +284,30 @@ namespace MPTanks.Engine
             DiagnosticsParent = "Game Update";
             Logger.Info(Strings.Engine.GameCreated);
 
+        }
+        /// <summary>
+        /// Begins the game, letting it start its update loop
+        /// </summary>
+        /// <param name="shouldDoWorldSetup">Whether to create tanks and map objects</param>
+        public void BeginGame(bool shouldDoWorldSetup = true)
+        {
+            if (HasStarted) return;
+            if (!HasEnoughPlayersToStart) return;
+            HasStarted = true;
+
+
+            Status = CurrentGameStatus.GameRunning;
+
+            if (shouldDoWorldSetup)
+            {
+                //Create the player objects (server only)
+                SetUpGamePlayers();
+                //And load the map / create the map objects
+                CreateMapObjects();
+            }
+            Gamemode.StartGame();
+            //And raise events
+            EventEngine.RaiseGameStarted();
         }
 
         public void UnsafeTickGameWorld(float deltaMs)
@@ -359,24 +351,16 @@ namespace MPTanks.Engine
             }
         }
 
-        private bool _gameCountDownHasBegun;
         private void DoUpdate(GameTime gameTime)
         {
-            if (!_hasGameStarted && !HasEnoughPlayersToStart())
+            if (!HasStarted && !HasEnoughPlayersToStart)
             {
                 Status = CurrentGameStatus.WaitingForPlayers;
                 return;
             }
-            if (!CanRun) return;
+            if (!HasStarted) return;
 
             Time += gameTime.ElapsedGameTime;
-
-            if (!_gameCountDownHasBegun)
-            {
-                _gameCountDownHasBegun = true;
-                Status = CurrentGameStatus.CountingDownToStart;
-                Gamemode.Create();
-            }
 
             if (Gamemode.GameEnded)
             {
@@ -403,15 +387,6 @@ namespace MPTanks.Engine
                 //Run the game *cough* like you're supposed to *cough*
                 UpdateInGame(gameTime);
             }
-            else if (Status == CurrentGameStatus.CountingDownToStart)
-            {
-                if (RemainingCountdownTime < TimeSpan.Zero)
-                {
-                    BeginGame();
-                    Logger.Info(Strings.Engine.GameStarted);
-                }
-
-            }
         }
 
         private void EndGame()
@@ -424,23 +399,6 @@ namespace MPTanks.Engine
         {
             return (Time - _gameEndedTime)
                 < TimeSpan.FromMilliseconds(Settings.TimePostGameToContinueRunning);
-        }
-
-        private bool _hasGameStarted = false;
-        private void BeginGame()
-        {
-            if (_hasGameStarted) return;
-            _hasGameStarted = true;
-            Status = CurrentGameStatus.GameRunning;
-            //Create the player objects (server only)
-            SetUpGamePlayers();
-            //And load the map / create the map objects
-            CreateMapObjects();
-
-            Gamemode.StartGame();
-
-            //And raise events
-            EventEngine.RaiseGameStarted();
         }
 
         /// <summary>

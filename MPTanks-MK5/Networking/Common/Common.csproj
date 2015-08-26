@@ -52,7 +52,7 @@
     <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
-    <Compile Include="Actions\ToClient\GameCanRunChangedAction.cs" />
+    <Compile Include="Actions\ToClient\GameStartedAction.cs" />
     <Compile Include="Actions\ToClient\GameCreatedAction.cs" />
     <Compile Include="Actions\ToClient\GameEndedAction.cs" />
     <Compile Include="Actions\ToClient\GameObjectCreatedAction.cs" />

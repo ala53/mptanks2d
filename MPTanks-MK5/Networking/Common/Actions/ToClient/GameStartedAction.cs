@@ -8,22 +8,18 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
-   public class GameCanRunChangedAction : ActionBase
+    public class GameStartedAction : ActionBase
     {
-        public bool CanRun { get; private set; }
-        public GameCanRunChangedAction(NetIncomingMessage message) : base(message)
+        public GameStartedAction(NetIncomingMessage message) : base(message)
         {
-            CanRun = message.ReadBoolean();
         }
 
-        public GameCanRunChangedAction(GameCore game)
+        public GameStartedAction()
         {
-            CanRun = game.CanRun;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            message.Write(CanRun);
         }
     }
 }

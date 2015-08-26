@@ -59,6 +59,7 @@ namespace MPTanks.Engine
                     if (Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
                         Game.Gamemode.VerifyPlayerTankSelection(this, SelectedTankReflectionName))
                         return true;
+                    else return false;
 
                 return AllowedTankTypes.Contains(SelectedTankReflectionName) &&
                     Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&

@@ -18,7 +18,6 @@ namespace MPTanks.Networking.Server
                      e.OldGame.EventEngine.OnGameEnded -= Game_Ended;
                      e.OldGame.EventEngine.OnGameStarted -= Game_Started;
                      e.OldGame.EventEngine.OnGameTimescaleChanged -= Game_TimescaleChanged;
-                     e.OldGame.EventEngine.OnGameCanRunChanged -= Game_CanRunChanged;
 
                      e.OldGame.EventEngine.OnGameObjectDestroyed -= GameObject_Destroyed;
                      e.OldGame.EventEngine.OnGameObjectDestructionEnded -= GameObject_DestructionEnded;
@@ -31,7 +30,6 @@ namespace MPTanks.Networking.Server
                  e.Game.EventEngine.OnGameEnded += Game_Ended;
                  e.Game.EventEngine.OnGameStarted += Game_Started;
                  e.Game.EventEngine.OnGameTimescaleChanged += Game_TimescaleChanged;
-                 e.Game.EventEngine.OnGameCanRunChanged += Game_CanRunChanged;
 
                  e.Game.EventEngine.OnGameObjectDestroyed += GameObject_Destroyed;
                  e.Game.EventEngine.OnGameObjectDestructionEnded += GameObject_DestructionEnded;
@@ -45,11 +43,6 @@ namespace MPTanks.Networking.Server
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCreatedAction());
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
              };
-        }
-
-        private void Game_CanRunChanged(object sender, bool e)
-        {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCanRunChangedAction(Game));
         }
 
         private void Gamemode_StateChanged(object sender, byte[] e)
@@ -80,6 +73,7 @@ namespace MPTanks.Networking.Server
 
         private void Game_Started(object sender, EventArgs e)
         {
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameStartedAction());
         }
 
         private void GameObject_Destroyed(object sender, Engine.Core.Events.Types.GameObjects.DestroyedEventArgs e)

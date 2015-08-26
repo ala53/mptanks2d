@@ -158,9 +158,6 @@ namespace MPTanks.Networking.Server
         {
             GameInstance.FullGameState = FullGameState.Create(game);
             Game.Authoritative = true;
-            Game.EventEngine.UnsafeDisableEvents();
-            Game.CanRun = false;
-            Game.EventEngine.UnsafeEnableEvents();
         }
     }
 }

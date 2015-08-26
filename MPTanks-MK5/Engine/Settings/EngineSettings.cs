@@ -20,12 +20,6 @@ namespace MPTanks.Engine.Settings
         public Setting<float> TankDensity { get; private set; }
 
         /// <summary>
-        /// Number of milliseconds after GameCore initialization to wait before starting
-        /// the game (because we want all of the people to get to choose their tanks).
-        /// </summary>
-        public Setting<float> TimeToWaitBeforeStartingGame { get; private set; }
-
-        /// <summary>
         /// The number of milliseconds after game to continue updating
         /// </summary>
         public Setting<float> TimePostGameToContinueRunning { get; private set; }
@@ -74,11 +68,6 @@ namespace MPTanks.Engine.Settings
 
             TankDensity = Setting.Create(this, "Tank density",
             "The density of a tank in the physics engine.", 15f);
-
-            TimeToWaitBeforeStartingGame = Setting.Create(this, "Pre game connection wait time",
-            "The amount of time, in seconds, to wait before starting a game." +
-            " This is here primarily to give users time to connect to the server and download map" +
-            " and server data (mods, etc) before the game starts.", 5000f, Setting.SettingDisplayType.TimeMS);
 
             TimePostGameToContinueRunning = Setting.Create(this, "Post game time",
             "The amount of time to keep the game running after the winner has been determined." +

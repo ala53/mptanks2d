@@ -27,6 +27,7 @@ namespace MPTanks.Networking.Common
             set
             {
                 Game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                Game.Authoritative = _authoritative;
                 var oldGame = Game;
                 GameChanged(this, new GameChangedArgs() { OldGame = oldGame, Game = Game });
             }
@@ -48,7 +49,12 @@ namespace MPTanks.Networking.Common
         public Engine.GameCore Game { get; private set; }
         public Engine.Diagnostics Diagnostics { get { return Game.Diagnostics; } }
         public ILogger Logger { get; set; }
-        public bool Authoritative { get { return Game.Authoritative; } }
+        private bool _authoritative;
+        public bool Authoritative
+        {
+            get { return Game.Authoritative; }
+            set { _authoritative = value; Game.Authoritative = value; }
+        }
         #endregion
 
         #region Events
@@ -63,8 +69,9 @@ namespace MPTanks.Networking.Common
         public NetworkedGame(bool authoritative, Gamemode gamemode, ILogger gameLogger,
             ModAssetInfo mapData, EngineSettings settings = null)
         {
-            Game = new Engine.GameCore(new NullLogger(), gamemode, mapData, !authoritative, settings);
-            Game.Authoritative = authoritative;
+            Game = new Engine.GameCore(new NullLogger(), gamemode, mapData, settings);
+            if (!authoritative) Game.BeginGame(false);
+            Authoritative = authoritative;
         }
 
         public NetworkedGame(FullGameState fullState, ILogger gameLogger = null, EngineSettings settings = null)

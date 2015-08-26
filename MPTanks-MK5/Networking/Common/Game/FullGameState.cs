@@ -20,7 +20,7 @@ namespace MPTanks.Networking.Common.Game
         public List<ModInfo> GameLoadedMods { get; set; } = new List<ModInfo>();
         public ModAssetInfo MapInfo { get; set; }
         public string GamemodeReflectionName { get; set; }
-        public bool CanRun { get; set; }
+        public bool HasStarted { get; set; }
         public double CurrentGameTimeMilliseconds { get; set; }
         public string TimescaleString { get; set; }
         public double TimescaleValue { get; set; }
@@ -33,11 +33,7 @@ namespace MPTanks.Networking.Common.Game
 
         public GameCore CreateGameFromState(ILogger logger = null, EngineSettings settings = null, float latency = 0)
         {
-            bool skipInit = false;
-            if (Status == GameCore.CurrentGameStatus.GameRunning || Status == GameCore.CurrentGameStatus.GameEndedStillRunning
-                || Status == GameCore.CurrentGameStatus.GameEnded)
-                skipInit = true;
-            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapInfo, skipInit, settings);
+            var game = new GameCore(logger ?? new NullLogger(), GamemodeReflectionName, MapInfo, settings);
 
             Apply(game);
 
@@ -56,19 +52,22 @@ namespace MPTanks.Networking.Common.Game
 
             game.Timescale = timescale;
             game.FriendlyFireEnabled = FriendlyFireEnabled;
-            game.CanRun = CanRun;
 
             //Do it via reflection to keep api private
-            var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
-            statusProp.SetValue(game, Status);
-            //Do this with reflection because we want to keep the api private (set game time)
-            var timeProp = typeof(GameCore).GetProperty(nameof(GameCore.Time));
-            timeProp.SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
-            //Once again, keep the API private
+            typeof(GameCore).GetProperty(nameof(GameCore.Status))
+                .SetValue(game, Status);
+            //Do this with reflection again because we want to keep the api private (set game time)
+            typeof(GameCore).GetProperty(nameof(GameCore.Time))
+                .SetValue(game, TimeSpan.FromMilliseconds(CurrentGameTimeMilliseconds));
+            //Once again
+            typeof(GameCore).GetProperty(nameof(GameCore.HasStarted))
+                .SetValue(game, HasStarted);
+            //A fourth time, keep the API private
             typeof(GameCore).GetField("_nextObjectId",
                 System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.SetField |
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 .SetValue(game, NextObjectId);
+            //And a fifth
             typeof(GameCore).GetField("_gameEndedTime",
                 System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.SetField |
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
@@ -164,7 +163,7 @@ namespace MPTanks.Networking.Common.Game
 
             state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
             state.GamemodeReflectionName = game.Gamemode.ReflectionName;
-            state.CanRun = game.CanRun;
+            state.HasStarted = game.HasStarted;
             state.GamemodeState = game.Gamemode.FullState;
             state.Status = game.Status;
             state.TimescaleString = game.Timescale.DisplayString;
@@ -200,7 +199,7 @@ namespace MPTanks.Networking.Common.Game
             state.MapInfo = ModAssetInfo.Decode(message.ReadBytes(message.ReadUInt16()));
             state.GamemodeReflectionName = message.ReadString();
             state.FriendlyFireEnabled = message.ReadBoolean();
-            state.CanRun = message.ReadBoolean();
+            state.HasStarted = message.ReadBoolean();
             message.ReadPadBits();
             state.GamemodeState = message.ReadBytes(message.ReadInt32());
             state.Status = (GameCore.CurrentGameStatus)message.ReadByte();
@@ -239,7 +238,7 @@ namespace MPTanks.Networking.Common.Game
             message.Write(encodedMapData);
             message.Write(GamemodeReflectionName);
             message.Write(FriendlyFireEnabled);
-            message.Write(CanRun);
+            message.Write(HasStarted);
             message.WritePadBits();
             message.Write(GamemodeState.Length);
             message.Write(GamemodeState);

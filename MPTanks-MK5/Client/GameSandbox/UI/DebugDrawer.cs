@@ -207,14 +207,16 @@ namespace MPTanks.Client.GameSandbox.UI
             //Game status
             _bldr.Append(", Status: ");
 
-            if (_game.CountingDown)
-                _bldr.Append("starting game");
+            if (!_game.HasStarted)
+                _bldr.Append("waiting to start, ");
             if (_game.WaitingForPlayers)
-                _bldr.Append("waiting for players");
+                _bldr.Append("waiting for players, ");
             if (_game.Running)
-                _bldr.Append("running");
+                _bldr.Append("running, ");
             if (_game.Ended)
-                _bldr.Append("ended");
+                _bldr.Append("ended, ");
+
+            _bldr.Remove(_bldr.Length - 2, 2);
 
             if (_game.Gamemode.WinningTeam != Engine.Gamemodes.Team.Null)
                 _bldr.Append(", Winner: ").Append(_game.Gamemode.WinningTeam.TeamName);
