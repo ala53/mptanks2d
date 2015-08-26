@@ -26,6 +26,8 @@ namespace MPTanks.Networking.Server
                      e.OldGame.EventEngine.OnGameObjectCreated -= GameObject_Created;
 
                      e.OldGame.EventEngine.OnGamemodeStateChanged -= Gamemode_StateChanged;
+
+                     UnhookPlayers(e.OldGame);
                  }
                  e.Game.EventEngine.OnGameEnded += Game_Ended;
                  e.Game.EventEngine.OnGameStarted += Game_Started;
@@ -38,6 +40,8 @@ namespace MPTanks.Networking.Server
                  e.Game.EventEngine.OnGameObjectCreated += GameObject_Created;
 
                  e.Game.EventEngine.OnGamemodeStateChanged += Gamemode_StateChanged;
+
+                 HookPlayers(e.Game);
 
                  //And send out the game state
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCreatedAction());
@@ -74,6 +78,8 @@ namespace MPTanks.Networking.Server
         private void Game_Started(object sender, EventArgs e)
         {
             MessageProcessor.SendMessage(new Common.Actions.ToClient.GameStartedAction());
+            //And send the full state so they can update it
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
         }
 
         private void GameObject_Destroyed(object sender, Engine.Core.Events.Types.GameObjects.DestroyedEventArgs e)

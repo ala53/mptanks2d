@@ -61,8 +61,8 @@
     <Compile Include="Actions\ToClient\ObjectBasicPropertyChangedAction.cs" />
     <Compile Include="Actions\ToClient\PartialGameStateUpdateAction.cs" />
     <Compile Include="Actions\ToClient\GameStatusChangedAction.cs" />
-    <Compile Include="Actions\ToClient\OtherPlayerReadyToStartChangedAction.cs" />
-    <Compile Include="Actions\ToClient\OtherPlayerSelectedTankAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerReadyToStartChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerSelectedTankAction.cs" />
     <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
     <Compile Include="Actions\ToClient\PlayerInputChangedAction.cs" />
     <Compile Include="Actions\ToClient\PlayerTankSelectionAcknowledgedAction.cs" />

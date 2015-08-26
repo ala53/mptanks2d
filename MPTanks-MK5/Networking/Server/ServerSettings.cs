@@ -15,7 +15,7 @@ namespace MPTanks.Networking.Server
         public Setting<float> TimeToWaitForPlayersReady { get; private set; }
 
         private ServerSettings(string file) : base(file) { }
-
+        
         protected override void SetDefaults()
         {
             TimeToWaitForPlayersReady = Setting.Create(this, "Player ready wait time",

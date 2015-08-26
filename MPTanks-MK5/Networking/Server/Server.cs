@@ -39,7 +39,7 @@ namespace MPTanks.Networking.Server
         {
             MessageProcessor = new ServerNetworkProcessor(this);
             GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
-                        HookEvents();
+            HookEvents();
             SetGame(game);
 
             Logger = logger ?? new NullLogger();
@@ -66,10 +66,10 @@ namespace MPTanks.Networking.Server
         public void Update(GameTime gameTime)
         {
             Game?.Update(gameTime);
+            TickGameStartCountdown(gameTime);
 
             Timers.Update(gameTime);
 
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
             //Send all the wideband messages (if someone is listening)
             if (Connections.ActiveConnections.Count > 0)
             {
@@ -107,53 +107,6 @@ namespace MPTanks.Networking.Server
         {
             NetworkServer.Shutdown(reason);
         }
-        public void AddPlayer(ServerPlayer player)
-        {
-            Game.AddPlayer(player.Player);
-            _players.Add(player);
-
-            //Queue the game state for them
-            MessageProcessor.SendPrivateMessage(player,
-                new Common.Actions.ToClient.GameCreatedAction());
-            MessageProcessor.SendPrivateMessage(player,
-                new Common.Actions.ToClient.FullGameStateSentAction(Game));
-
-            //Announce that they joined
-            ChatHandler.SendMessage(Strings.Server.PlayerJoined(player.Player.Username));
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerJoinedAction(player.Player));
-
-            player.LastSentState = PseudoFullGameWorldState.Create(Game);
-
-            //Create a state sync loop
-            Timers.CreateReccuringTimer(t =>
-            {
-                if (Players.Contains(player))
-                {
-                    var message = new Common.Actions.ToClient.PartialGameStateUpdateAction(Game, player.LastSentState);
-                    player.LastSentState = message.StatePartial;
-                    //do state sync
-                    MessageProcessor.SendPrivateMessage(
-                        player, message);
-                }
-                else
-                {
-                    //Disconnect
-                    Timers.RemoveTimer(t);
-                }
-
-            }, Configuration.StateSyncRate);
-        }
-
-        public void RemovePlayer(ServerPlayer player)
-        {
-            _players.Remove(player);
-            Game.RemovePlayer(player.Player.Id);
-
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player));
-        }
-
-        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Player.Id == id);
-
         public void SetGame(GameCore game)
         {
             GameInstance.FullGameState = FullGameState.Create(game);

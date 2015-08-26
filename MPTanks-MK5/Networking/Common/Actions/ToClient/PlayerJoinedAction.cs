@@ -13,17 +13,17 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public FullStatePlayer Player { get; private set; }
         public PlayerJoinedAction(NetIncomingMessage message) : base(message)
         {
-
+            Player = FullStatePlayer.Read(message);
         }
 
         public PlayerJoinedAction(NetworkPlayer player)
         {
-            Player = new FullStatePlayer();
+            Player = new FullStatePlayer(player);
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            throw new NotImplementedException();
+            Player.Write(message);
         }
     }
 }

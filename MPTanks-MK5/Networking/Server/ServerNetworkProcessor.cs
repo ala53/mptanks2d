@@ -40,7 +40,7 @@ namespace MPTanks.Networking.Server
                 {
                     //It's ok: let everyone know
                     Server.MessageProcessor.SendMessage(
-                        new OtherPlayerSelectedTankAction(player.Player,
+                        new PlayerSelectedTankAction(player.Player,
                         ((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName));
 
                     Server.MessageProcessor.SendPrivateMessage(player,
@@ -56,16 +56,13 @@ namespace MPTanks.Networking.Server
 
             if (action is RequestFullGameStateAction)
             {
-                Server.MessageProcessor.SendPrivateMessage(
-                    Server.Connections.PlayerTable[action.MessageFrom.SenderConnection],
-                    new FullGameStateSentAction(Server.Game));
+                Server.MessageProcessor.SendPrivateMessage(player, new FullGameStateSentAction(Server.Game));
             }
 
             if (action is SentChatMessageAction)
             {
                 var act = action as SentChatMessageAction;
-                Server.ChatHandler.ForwardMessage(act.Message,
-                    Server.Connections.PlayerTable[action.MessageFrom.SenderConnection],
+                Server.ChatHandler.ForwardMessage(act.Message, player,
                     act.Targets.Select(a => Server.GetPlayer(a)).ToArray());
             }
 
