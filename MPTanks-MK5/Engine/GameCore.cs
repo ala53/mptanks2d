@@ -303,7 +303,6 @@ namespace MPTanks.Engine
             }
 
             //Initialize game
-            Timescale = TimescaleValue.One;
             World = new FarseerPhysics.Dynamics.World(Vector2.Zero);
             TimerFactory = new Timer.Factory();
             AnimationEngine = new Rendering.Animations.AnimationEngine();
