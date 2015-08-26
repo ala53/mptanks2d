@@ -86,7 +86,7 @@ namespace MPTanks.Networking.Common.Game
             {
                 if (objState.WasDestroyed && game.GameObjectsById.ContainsKey(objState.ObjectId))
                 {
-                    game.RemoveGameObject(game.GameObjectsById[objState.ObjectId], null, true);
+                    game.ImmediatelyForceObjectDestruction(game.GameObjectsById[objState.ObjectId]);
                     continue;
                 }
 

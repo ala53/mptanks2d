@@ -64,12 +64,8 @@ namespace MPTanks.Engine
         /// <param name="playerId"></param>
         public void RemovePlayer(Guid playerId)
         {
-            _playerIds.Remove(playerId);
             if (_playersById.ContainsKey(playerId))
-            {
-                RemoveGameObject(_playersById[playerId].Tank);
-                _playersById.Remove(playerId);
-            }
+                RemovePlayer(_playersById[playerId]);
         }
 
         /// <summary>
@@ -78,11 +74,17 @@ namespace MPTanks.Engine
         /// <param name="playerId"></param>
         public void RemovePlayer(GamePlayer player)
         {
-            _playerIds.Remove(player.Id);
             if (_playersById.ContainsKey(player.Id))
             {
-                RemoveGameObject(_playersById[player.Id].Tank);
+                //kill their tank (fast)
+                if (player.HasTank)
+                    ImmediatelyForceObjectDestruction(player.Tank);
+                //remove them from the team
+                if (player.Team != null && player.Team.Players.Contains(player))
+                    player.Team.Players = player.Team.Players.Where(a => a != player).ToArray();
+                //and remove them from the players list
                 _playersById.Remove(player.Id);
+                _playerIds.Remove(player.Id);
             }
         }
 
@@ -139,6 +141,6 @@ namespace MPTanks.Engine
                 player.Tank = tank;
             }
         }
-        
+
     }
 }

@@ -155,7 +155,7 @@ namespace MPTanks.Engine
             _objectsCurrentlyInDestructors.Add(obj);
         }
 
-        public void ForceDestroyObjectAlreadyInDestructor(GameObject obj)
+        public void ImmediatelyForceObjectDestruction(GameObject obj)
         {
             if (_objectsCurrentlyInDestructors.Contains(obj))
             {
@@ -163,7 +163,11 @@ namespace MPTanks.Engine
                 MarkGameObjectForDeletion(obj);
             }
             else if (GameObjectsById.ContainsKey(obj.ObjectId))
-                RemoveGameObject(obj, null, true);
+            {
+                _gameObjects.Remove(obj.ObjectId);
+                obj.Destroy();
+                obj.EndDestruction();
+            }
         }
 
         private void BeginDeletion(GameObject obj, GameObject destructor = null)
