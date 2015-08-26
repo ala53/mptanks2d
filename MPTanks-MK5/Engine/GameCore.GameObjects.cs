@@ -203,8 +203,6 @@ namespace MPTanks.Engine
         private void GameObject_Destroyed(object sender, Core.Events.Types.GameObjects.DestroyedEventArgs e) =>
             EventEngine.RaiseGameObjectDestroyed(e.Destroyed, e.Destroyer);
 
-
-
         private void GameObject_Created(object sender, GameObject e) =>
             EventEngine.RaiseGameObjectCreated(e);
 
