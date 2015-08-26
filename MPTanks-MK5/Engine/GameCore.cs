@@ -215,8 +215,6 @@ namespace MPTanks.Engine
         #endregion
         #endregion
         #endregion
-        private bool _skipInit;
-
         public GameCore(ILogger logger, string gamemodeReflectionName, ModAssetInfo map, EngineSettings settings = null)
             : this(logger, Gamemodes.Gamemode.ReflectiveInitialize(gamemodeReflectionName), map, settings)
         { }
