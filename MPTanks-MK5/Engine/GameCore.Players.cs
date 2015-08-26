@@ -107,16 +107,6 @@ namespace MPTanks.Engine
                 player.Tank.InputState = state;
         }
 
-        public bool CheckPlayerIsAlive(GamePlayer player)
-        {
-            return player.Tank != null && player.Tank.Alive;
-        }
-
-        public bool CheckPlayerHasTank(GamePlayer player)
-        {
-            return player.Tank != null;
-        }
-
         /// <summary>
         /// Sets up the players for the game. Server only.
         /// </summary>

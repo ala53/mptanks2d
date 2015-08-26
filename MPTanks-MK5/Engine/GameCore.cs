@@ -383,6 +383,7 @@ namespace MPTanks.Engine
             else if (Status == CurrentGameStatus.GameRunning)
             {
                 //Run the game *cough* like you're supposed to *cough*
+                UpdateHotJoinPlayers();
                 UpdateInGame(gameTime);
             }
         }
