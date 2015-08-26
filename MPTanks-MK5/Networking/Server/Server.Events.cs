@@ -47,11 +47,6 @@ namespace MPTanks.Networking.Server
              };
         }
 
-        private void GameObject_DestructionEnded(object sender, GameObject e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void Game_CanRunChanged(object sender, bool e)
         {
             MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCanRunChangedAction(Game));
@@ -90,6 +85,11 @@ namespace MPTanks.Networking.Server
         private void GameObject_Destroyed(object sender, Engine.Core.Events.Types.GameObjects.DestroyedEventArgs e)
         {
             MessageProcessor.SendMessage(new Common.Actions.ToClient.GameObjectDestroyedAction(e.Destroyed));
+        }
+
+        private void GameObject_DestructionEnded(object sender, GameObject e)
+        {
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameObjectDestructionEndedAction(e));
         }
 
         private void Game_Ended(object sender, Engine.Core.Events.Types.GameCore.EndedEventArgs e)
