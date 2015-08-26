@@ -11,9 +11,13 @@ namespace MPTanks.Networking.Common.Actions
     {
         static ActionBase()
         {
-            foreach (var type in GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToClient"))
+            foreach (var type in
+                GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToClient")
+                .OrderBy(a => a.Name))
                 RegisterToClientActionType(type);
-            foreach (var type in GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToServer"))
+            foreach (var type in
+                GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToServer")
+                .OrderBy(a => a.Name))
                 RegisterToServerActionType(type);
         }
         private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
