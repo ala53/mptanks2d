@@ -11,8 +11,23 @@ namespace MPTanks.Networking.Client
 {
     public class Client
     {
+        public enum ClientStatus
+        {
+            NotStarted,
+            Connecting,
+            ConnectionFailed,
+            Errored,
+            Connected,
+            LoggingIn,
+            DownloadingMods,
+        }
+        public ClientStatus Status { get; private set; } = ClientStatus.NotStarted;
+
         public Lidgren.Network.NetClient NetworkClient { get; private set; }
-        public bool Connected { get; private set; }
+        public bool Connected =>
+            Status == ClientStatus.Connected ||
+            Status == ClientStatus.LoggingIn ||
+            Status == ClientStatus.DownloadingMods;
         public NetworkedGame GameInstance { get; private set; }
         public Guid PlayerId { get; set; }
         public ClientNetworkProcessor MessageProcessor { get; private set; }
@@ -31,6 +46,9 @@ namespace MPTanks.Networking.Client
         public bool IsInCountdown { get; internal set; }
         public TimeSpan RemainingCountdownTime { get; internal set; }
 
+        public string Host { get; set; }
+        public ushort Port { get; set; }
+
         public bool GameRunning { get { return Connected && GameInstance != null; } }
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {
@@ -40,7 +58,11 @@ namespace MPTanks.Networking.Client
 
             MessageProcessor = new ClientNetworkProcessor(this);
             GameInstance = new NetworkedGame(null);
-            Chat = new Networking.Client.Chat.ChatClient(this);
+            Chat = new Chat.ChatClient(this);
+            Host = connection;
+            Port = port;
+            NetworkClient = new Lidgren.Network.NetClient(
+                new Lidgren.Network.NetPeerConfiguration("MPTANKS"));
         }
 
         private void TickCountdown(GameTime gameTime)
@@ -51,16 +73,15 @@ namespace MPTanks.Networking.Client
             if (RemainingCountdownTime < TimeSpan.Zero)
                 IsInCountdown = false;
         }
-
+        private bool _hasConnected;
         public void Connect()
         {
-
+            if (_hasConnected == true) return;
+            _hasConnected = true;
+            Status = ClientStatus.Connecting;
+            NetworkClient.Connect(Host, Port);
         }
 
-        private void DeferredConnect()
-        {
-
-        }
         /// <summary>
         /// Waits until it connects to the server and downloads the game state or returns false if the connection
         /// timed out;
@@ -68,12 +89,21 @@ namespace MPTanks.Networking.Client
         /// <returns></returns>
         public bool WaitForConnection()
         {
-            return false;
+            while (NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.InitiatedConnect ||
+                NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.ReceivedInitiation ||
+                NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.RespondedAwaitingApproval ||
+                NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.RespondedConnect)
+                ;
+
+            return NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected;
         }
 
+        private bool _hasDisconnected = false;
         public void Disconnect()
         {
-
+            if (!_hasConnected || _hasDisconnected) return;
+            _hasDisconnected = true;
+            NetworkClient.Disconnect("Leaving");
         }
     }
 }

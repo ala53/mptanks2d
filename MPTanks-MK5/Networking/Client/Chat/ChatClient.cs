@@ -16,6 +16,7 @@ namespace MPTanks.Networking.Client.Chat
 
         public ChatClient(Client client, int numMessagesToStore = 20)
         {
+            NumberOfMessagesToStore = numMessagesToStore;
             Messages = new ChatMessage[numMessagesToStore];
             for (var i = 0; i < numMessagesToStore; i++)
                 Messages[i] = new ChatMessage
