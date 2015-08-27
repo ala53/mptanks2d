@@ -149,10 +149,9 @@ namespace MPTanks.Engine
         {
             get
             {
-                while (GameObjectsById.ContainsKey(++_nextObjectId)) ;
-
-                if (_nextObjectId == ushort.MaxValue) _nextObjectId = NextObjectId;
-
+                if (++_nextObjectId == ushort.MaxValue) _nextObjectId = NextObjectId;
+                while (GameObjectsById.ContainsKey(_nextObjectId)) _nextObjectId++;
+                
                 return _nextObjectId;
             }
         }
