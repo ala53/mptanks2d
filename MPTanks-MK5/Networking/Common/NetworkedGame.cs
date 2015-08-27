@@ -20,13 +20,14 @@ namespace MPTanks.Networking.Common
     public class NetworkedGame
     {
         #region Properties
+        public EngineSettings EngineSettings { get; set; } = new EngineSettings("enginesettings.json");
 
         public FullGameState FullGameState
         {
             get { return FullGameState.Create(Game); }
             set
             {
-                Game = value.CreateGameFromState(Logger, new EngineSettings("enginesettings.json"));
+                Game = value.CreateGameFromState(Logger, EngineSettings);
                 Game.Authoritative = _authoritative;
                 var oldGame = Game;
                 GameChanged(this, new GameChangedArgs() { OldGame = oldGame, Game = Game });

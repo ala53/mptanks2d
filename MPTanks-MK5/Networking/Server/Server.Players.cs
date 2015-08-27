@@ -63,14 +63,35 @@ namespace MPTanks.Networking.Server
 
         private void Player_PropertyChanged(object sender, NetworkPlayer.NetworkPlayerPropertyChanged e)
         {
+            var player = (NetworkPlayer)sender;
             if (e == NetworkPlayer.NetworkPlayerPropertyChanged.Tank)
             {
                 MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerTankAssignedAction(
-                    (NetworkPlayer)sender, ((NetworkPlayer)sender)?.Tank.ObjectId ?? ushort.MaxValue));
+                    player, player?.Tank.ObjectId ?? ushort.MaxValue));
+            }
+            else if (e == NetworkPlayer.NetworkPlayerPropertyChanged.SelectedTankReflectionName)
+            {
+                //Validate their selection
+                if (player.TankSelectionIsValid)
+                {
+                    //It's ok: let everyone know
+                    MessageProcessor.SendMessage(
+                        new Common.Actions.ToClient.PlayerSelectedTankAction(
+                            player, player.SelectedTankReflectionName));
+
+                    MessageProcessor.SendPrivateMessage(GetPlayer(player.Id),
+                        new Common.Actions.ToClient.PlayerTankSelectionAcknowledgedAction(true));
+                }
+                else
+                {
+                    //It's not ok: make them switch
+                    MessageProcessor.SendPrivateMessage(GetPlayer(player.Id),
+                        new Common.Actions.ToClient.PlayerTankSelectionAcknowledgedAction(false));
+                }
             }
         }
 
-        public ServerPlayer GetPlayer(Guid id) => Players.First(a => a.Player.Id == id);
+        public ServerPlayer GetPlayer(Guid id) => Players.FirstOrDefault(a => a.Player.Id == id);
 
         private void UnhookPlayers(GameCore game)
         {
@@ -78,7 +99,7 @@ namespace MPTanks.Networking.Server
                 ((NetworkPlayer)plr).OnPropertyChanged -= Player_PropertyChanged;
         }
 
-        private void HookPlayers (GameCore game)
+        private void HookPlayers(GameCore game)
         {
             foreach (var plr in game.Players)
             {

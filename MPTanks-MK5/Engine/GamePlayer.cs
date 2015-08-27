@@ -54,6 +54,7 @@ namespace MPTanks.Engine
         {
             get
             {
+                if (SelectedTankReflectionName == null) return false;
                 if (!HasSelectedTankYet) return false;
                 if (AllowedTankTypes == null)
                     if (Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&

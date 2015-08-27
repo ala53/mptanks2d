@@ -61,6 +61,7 @@
     <Compile Include="Server.GameManagement.cs" />
     <Compile Include="Server.Login.cs" />
     <Compile Include="Server.Messaging.cs" />
+    <Compile Include="Server.Players.cs" />
     <Compile Include="ServerNetworkProcessor.cs" />
     <Compile Include="ServerPlayer.cs" />
     <Compile Include="ServerSettings.cs" />

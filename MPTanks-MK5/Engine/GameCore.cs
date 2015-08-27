@@ -291,8 +291,10 @@ namespace MPTanks.Engine
         {
             if (HasStarted) return;
             if (!HasEnoughPlayersToStart) return;
-            HasStarted = true;
 
+            EventEngine.UnsafeDisableEvents();
+
+            HasStarted = true;
 
             Status = CurrentGameStatus.GameRunning;
 
@@ -304,6 +306,8 @@ namespace MPTanks.Engine
                 CreateMapObjects();
             }
             Gamemode.StartGame();
+
+            EventEngine.UnsafeEnableEvents();
             //And raise events
             EventEngine.RaiseGameStarted();
         }

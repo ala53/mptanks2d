@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine;
+﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine;
 using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ namespace MPTanks.Networking.Client
         public bool Connected { get; private set; }
         public NetworkedGame GameInstance { get; private set; }
         public Guid PlayerId { get; set; }
+        public ClientNetworkProcessor MessageProcessor { get; private set; }
+        public Chat.ChatClient Chat { get; private set; }
+        public GameCore Game => GameInstance.Game;
         public GamePlayer Player
         {
             get
@@ -23,6 +27,10 @@ namespace MPTanks.Networking.Client
                     GameInstance.Game.PlayersById[PlayerId] : null;
             }
         }
+        public bool NeedsToSelectTank { get; internal set; }
+        public bool IsInCountdown { get; internal set; }
+        public TimeSpan RemainingCountdownTime { get; internal set; }
+
         public bool GameRunning { get { return Connected && GameInstance != null; } }
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {
@@ -30,10 +38,26 @@ namespace MPTanks.Networking.Client
             if (connectOnInit)
                 Connect();
 
+            MessageProcessor = new ClientNetworkProcessor(this);
             GameInstance = new NetworkedGame(null);
+            Chat = new Networking.Client.Chat.ChatClient(this);
+        }
+
+        private void TickCountdown(GameTime gameTime)
+        {
+            if (!IsInCountdown) return;
+
+            RemainingCountdownTime -= gameTime.ElapsedGameTime;
+            if (RemainingCountdownTime < TimeSpan.Zero)
+                IsInCountdown = false;
         }
 
         public void Connect()
+        {
+
+        }
+
+        private void DeferredConnect()
         {
 
         }

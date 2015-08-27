@@ -34,24 +34,6 @@ namespace MPTanks.Networking.Server
             {
                 player.Player.SelectedTankReflectionName =
                     (((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName);
-
-                //Validate their selection
-                if (player.Player.TankSelectionIsValid)
-                {
-                    //It's ok: let everyone know
-                    Server.MessageProcessor.SendMessage(
-                        new PlayerSelectedTankAction(player.Player,
-                        ((PlayerTankTypeSelectedAction)action).SelectedTypeReflectionName));
-
-                    Server.MessageProcessor.SendPrivateMessage(player,
-                        new PlayerTankSelectionAcknowledgedAction(true));
-                }
-                else
-                {
-                    //It's not ok: make them switch
-                    Server.MessageProcessor.SendPrivateMessage(player,
-                        new PlayerTankSelectionAcknowledgedAction(false));
-                }
             }
 
             if (action is RequestFullGameStateAction)

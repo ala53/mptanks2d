@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lidgren.Network;
+using MPTanks.Engine.Gamemodes;
 
 namespace MPTanks.Networking.Common.Actions.ToClient
 {
@@ -13,16 +14,17 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     /// </summary>
     public class GameEndedAction : ActionBase
     {
-
+        public short WinningTeamId { get; private set; }
         public GameEndedAction(NetIncomingMessage message) : base(message)
         {
-
+            WinningTeamId = message.ReadInt16();
         }
 
-        public GameEndedAction() { }
+        public GameEndedAction(Team winning) { WinningTeamId = winning.TeamId; }
 
         public override void Serialize(NetOutgoingMessage message)
         {
+            message.Write(WinningTeamId);
         }
     }
 }

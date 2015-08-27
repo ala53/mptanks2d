@@ -94,7 +94,7 @@ namespace MPTanks.Networking.Server
 
         private void Game_Ended(object sender, Engine.Core.Events.Types.GameCore.EndedEventArgs e)
         {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameEndedAction());
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameEndedAction(Game.Gamemode.WinningTeam));
         }
     }
 }

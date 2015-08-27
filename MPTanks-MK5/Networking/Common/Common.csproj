@@ -51,6 +51,7 @@
     <Compile Include="AccountServer\Models\PublicUserInfoModel.cs" />
     <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
+    <Compile Include="Actions\ToClient\CountdownStartedAction.cs" />
     <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
     <Compile Include="Actions\ToClient\GameStartedAction.cs" />
     <Compile Include="Actions\ToClient\GameCreatedAction.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="Actions\ToClient\GameObjectDestructionEndedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectBasicPropertyChangedAction.cs" />
     <Compile Include="Actions\ToClient\PartialGameStateUpdateAction.cs" />
-    <Compile Include="Actions\ToClient\GameStatusChangedAction.cs" />
     <Compile Include="Actions\ToClient\PlayerReadyToStartChangedAction.cs" />
     <Compile Include="Actions\ToClient\PlayerSelectedTankAction.cs" />
     <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
