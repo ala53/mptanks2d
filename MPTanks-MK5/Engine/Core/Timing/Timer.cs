@@ -142,6 +142,7 @@ namespace MPTanks.Engine.Core.Timing
                             timersToRemove.Add(timer);
                             timer.Completed = true;
                         }
+                        else timer.Elapsed = TimeSpan.Zero;
                     }
                 }
                 inUpdateLoop = false;
