@@ -11,10 +11,11 @@ namespace MPTanks.Networking.Server
 {
     public partial class Server
     {
-        public void AddPlayer(ServerPlayer player)
+        public ServerPlayer AddPlayer(ServerPlayer player)
         {
-            if (Players.Contains(player)) return;
+            if (Players.Contains(player)) return player;
 
+            player.Player.Id = Game.AvailablePlayerId;
             Game.AddPlayer(player.Player);
             _players.Add(player);
 
@@ -49,6 +50,8 @@ namespace MPTanks.Networking.Server
                 }
 
             }, Configuration.StateSyncRate);
+
+            return player;
         }
 
         public void RemovePlayer(ServerPlayer player)
@@ -91,7 +94,7 @@ namespace MPTanks.Networking.Server
             }
         }
 
-        public ServerPlayer GetPlayer(Guid id) => Players.FirstOrDefault(a => a.Player.Id == id);
+        public ServerPlayer GetPlayer(ushort id) => Players.FirstOrDefault(a => a.Player.Id == id);
 
         private void UnhookPlayers(GameCore game)
         {

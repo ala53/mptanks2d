@@ -1,5 +1,6 @@
 ﻿using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using MPTanks.Engine;
 using MPTanks.Engine.Tanks;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class PlayerInputChangedAction : ActionBase
     {
-        public Guid PlayerId { get; set; }
+        public ushort PlayerId { get; set; }
         public InputState InputState { get; set; }
         public PlayerInputChangedAction(NetIncomingMessage message) : base(message)
         {
-
+            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             var iState = new InputState();
             iState.FirePressed = message.ReadBoolean();
             iState.LookDirection = message.ReadRangedSingle(-MathHelper.TwoPi, MathHelper.TwoPi, 13);
@@ -32,7 +33,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            message.Write(PlayerId.ToByteArray());
+            message.Write((uint)PlayerId, GameCore.PlayerIdNumberOfBits);
             message.Write(InputState.FirePressed);
             message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 13);
             message.Write((byte)InputState.WeaponNumber, 2);

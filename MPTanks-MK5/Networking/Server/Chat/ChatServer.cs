@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPTanks.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,7 @@ namespace MPTanks.Networking.Server.Chat
         private void SendMessage(string message, ServerPlayer target)
         {
             Server.MessageProcessor.SendPrivateMessage(target,
-                new Common.Actions.ToClient.ReceivedChatMessageAction(message, Guid.Empty));
+                new Common.Actions.ToClient.ReceivedChatMessageAction(message, GameCore.ReservedEmptyPlayerId));
         }
 
         public void ForwardMessage(string message, ServerPlayer sender, params ServerPlayer[] targets)

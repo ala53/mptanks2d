@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using MPTanks.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 {
     public class PlayerTankAssignedAction : ActionBase
     {
-        public Guid PlayerId { get; private set; }
+        public ushort PlayerId { get; private set; }
         public ushort ObjectId { get; private set; }
 
         public PlayerTankAssignedAction(NetIncomingMessage message) : base(message)
         {
-            PlayerId = new Guid(message.ReadBytes(16));
+            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             ObjectId = message.ReadUInt16();
         }
 
@@ -26,7 +27,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            message.Write(PlayerId.ToByteArray());
+            message.Write(PlayerId, GameCore.PlayerIdNumberOfBits);
             message.Write(ObjectId);
         }
     }

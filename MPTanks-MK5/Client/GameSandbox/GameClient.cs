@@ -27,6 +27,7 @@ using MPTanks.Client.GameSandbox.Mods;
 using MPTanks.Client.Backend.Renderer;
 using MPTanks.Client.GameSandbox.Input;
 using MPTanks.Client.GameSandbox.UI;
+using MPTanks.Networking.Server;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -141,16 +142,6 @@ namespace MPTanks.Client.GameSandbox
             game.FriendlyFireEnabled = true;
 
             _ui.SetPage(_settingUpPageName);
-
-            var player = (NetworkPlayer)game.AddPlayer(new NetworkPlayer()
-            {
-                Id = Guid.NewGuid()
-            });
-
-            for (var i = 0; i < 5; i++)
-            {
-                game.AddPlayer(new NetworkPlayer { Id = Guid.NewGuid() });
-            }
             //TEMP
             Client = new Networking.Client.Client("", 0);
             Server = new Networking.Server.Server(new Networking.Server.Configuration()
@@ -170,6 +161,19 @@ namespace MPTanks.Client.GameSandbox
 
             };
 
+
+           var player = Server.AddPlayer(new ServerPlayer(Server,
+                            new NetworkPlayer()
+                            {
+                            })).Player;
+
+            for (var i = 0; i < 5; i++)
+            {
+                Server.AddPlayer(new ServerPlayer(Server,
+                               new NetworkPlayer()
+                               {
+                               }));
+            }
             Client.PlayerId = player.Id;
             Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
 

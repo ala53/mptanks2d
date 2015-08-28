@@ -148,7 +148,7 @@ namespace MPTanks.Networking.Common.Game
         {
             var state = new FullGameState();
 
-            state.SetPlayers(game.Players.Select(x => x as NetworkPlayer).Where(a => a != null));
+            state.SetPlayers(game.Players.Select(x => x as NetworkPlayer).Where(a => a != null).ToList());
             state.SetObjects(game);
 
             foreach (var mod in ModDatabase.LoadedModules)

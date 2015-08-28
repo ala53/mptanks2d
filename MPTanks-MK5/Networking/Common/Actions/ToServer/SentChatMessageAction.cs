@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using MPTanks.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,24 +11,24 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     public class SentChatMessageAction : ActionBase
     {
         public string Message { get; private set; }
-        public Guid[] Targets { get; private set; }
+        public ushort[] Targets { get; private set; }
         public SentChatMessageAction(NetIncomingMessage message) : base(message)
         {
             Message = message.ReadString();
             var tgtCount = message.ReadInt32();
-            Targets = new Guid[tgtCount];
+            Targets = new ushort[tgtCount];
             for (var i = 0; i < tgtCount; i++)
-                Targets[i] = new Guid(message.ReadBytes(16));
+                Targets[i] = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
         }
 
         public SentChatMessageAction(string msg, params NetworkPlayer[] players)
         {
             Message = msg;
             if (players == null)
-                Targets = new Guid[0];
+                Targets = new ushort[0];
             else
             {
-                Targets = new Guid[players.Length];
+                Targets = new ushort[players.Length];
                 for (var i = 0; i < players.Length; i++) Targets[i] = players[i].Id;
             }
         }
@@ -37,7 +38,7 @@ namespace MPTanks.Networking.Common.Actions.ToServer
             message.Write(Message);
             message.Write(Targets.Length);
             foreach (var tgt in Targets)
-                message.Write(tgt.ToByteArray());
+                message.Write(tgt, GameCore.PlayerIdNumberOfBits);
         }
     }
 }

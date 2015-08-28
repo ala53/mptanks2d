@@ -25,13 +25,13 @@ namespace MPTanks.Engine
             var id = serializationData.GetUShort(offset); offset += 2;
             var name = serializationData.GetString(offset); offset += serializationData.GetUShort(offset); offset += 2;
             var type = (__SerializationGameObjectType)serializationData[offset]; offset++;
-            var guid = serializationData.GetGuid(offset); offset += 16;
+            var uid = serializationData.GetUShort(offset); offset += 2;
 
             GameObject obj;
             if (type == __SerializationGameObjectType.Tank)
-                obj = game.AddTank(name, game.PlayersById[guid], authorized, id);
+                obj = game.AddTank(name, game.PlayersById[uid], authorized, id);
             else if (type == __SerializationGameObjectType.Projectile)
-                obj = game.AddProjectile(name, game.PlayersById[guid].Tank, authorized, id);
+                obj = game.AddProjectile(name, game.PlayersById[uid].Tank, authorized, id);
             else if (type == __SerializationGameObjectType.MapObject)
                 obj = game.AddMapObject(name, authorized, id);
             else
@@ -70,18 +70,18 @@ namespace MPTanks.Engine
             byte[] privateState = SerializationHelpers.Serialize(GetPrivateStateData());
             
             //And figure out which guid to print
-            var guidToWrite = new Guid();
+            ushort uidToWrite = 0;
 
             if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                guidToWrite = ((Tanks.Tank)this).Player.Id;
+                uidToWrite = ((Tanks.Tank)this).Player.Id;
             else if (GetType().IsSubclassOf(typeof(Projectiles.Projectile)))
-                guidToWrite = ((Projectiles.Projectile)this).Owner.Player.Id;
+                uidToWrite = ((Projectiles.Projectile)this).Owner.Player.Id;
 
             return SerializationHelpers.AllocateArray(true,
             ObjectId,
             ReflectionName,
             (byte)GetSerializationType(),
-            guidToWrite,
+            uidToWrite,
             IsSensor,
             IsStatic,
             ColorMask,
@@ -148,7 +148,7 @@ namespace MPTanks.Engine
             var id = header.GetUShort(offset); offset += 2;
             var name = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
             var type = (__SerializationGameObjectType)header[offset++];
-            var guid = header.GetGuid(offset); offset += 16;
+            var uid = header.GetUShort(offset); offset += 2;
             var isSensor = header[offset++] == 1;
             var isStatic = header[offset++] == 1;
             var color = header.GetColor(offset); offset += 4;

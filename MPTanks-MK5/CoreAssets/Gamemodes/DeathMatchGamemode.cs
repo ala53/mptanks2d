@@ -66,7 +66,7 @@ namespace MPTanks.CoreAssets.Gamemodes
 
         public override void Update(GameTime gameTime)
         {
-            int pCountAlive = Teams.Count((t) => (t.Players[0].Tank?.Alive).HasValue);
+            int pCountAlive = Teams.Count((t) => (t.Players[0]?.Tank?.Alive).HasValue);
 
             if (pCountAlive > 1)
                 return; //still running

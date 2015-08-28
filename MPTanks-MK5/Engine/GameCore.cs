@@ -108,10 +108,6 @@ namespace MPTanks.Engine
         public EngineSettings Settings { get; private set; }
         [JsonIgnore]
         public RPC.RemoteProcedureCallHelper RPCHelper { get; private set; }
-        private Dictionary<Guid, GamePlayer> _playersById = new Dictionary<Guid, GamePlayer>();
-        public IReadOnlyDictionary<Guid, GamePlayer> PlayersById { get { return _playersById; } }
-
-        public IList<GamePlayer> Players { get { return _playersById.Values.ToList(); } }
 
         public IEnumerable<GamePlayer> Spectators
         {

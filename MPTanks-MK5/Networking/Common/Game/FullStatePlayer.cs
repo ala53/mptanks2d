@@ -23,7 +23,7 @@ namespace MPTanks.Networking.Common.Game
         public ushort TankObjectId { get; set; }
         public string ClanName { get; set; }
         public string Username { get; set; }
-        public Guid Id { get; set; }
+        public ushort Id { get; set; }
         public short TeamId { get; set; }
         public Vector2 SpawnPoint { get; set; }
         public string TankReflectionName { get; set; }
@@ -71,7 +71,7 @@ namespace MPTanks.Networking.Common.Game
             if (fs.HasTank) fs.TankObjectId = msg.ReadUInt16();
             fs.ClanName = msg.ReadString();
             fs.Username = msg.ReadString();
-            fs.Id = new Guid(msg.ReadBytes(16));
+            fs.Id = (ushort)msg.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             fs.TeamId = msg.ReadInt16();
             fs.SpawnPoint = new Vector2(msg.ReadFloat(), msg.ReadFloat());
             if (fs.HasSelectedTank)
@@ -141,7 +141,7 @@ namespace MPTanks.Networking.Common.Game
                 msg.Write(TankObjectId);
             msg.Write(ClanName);
             msg.Write(Username);
-            msg.Write(Id.ToByteArray());
+            msg.Write(Id, GameCore.PlayerIdNumberOfBits);
             msg.Write(TeamId);
             msg.Write(SpawnPoint.X);
             msg.Write(SpawnPoint.Y);

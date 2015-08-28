@@ -16,6 +16,7 @@ namespace MPTanks.Networking.Common
         {
             SelectedTankReflectionName,
             Id,
+            UniqueId,
             AllowedTankTypes,
             Tank,
             Team,
@@ -80,7 +81,7 @@ namespace MPTanks.Networking.Common
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.Game);
             }
         }
-        public override Guid Id
+        public override ushort Id
         {
             get
             {
@@ -91,6 +92,19 @@ namespace MPTanks.Networking.Common
             {
                 base.Id = value;
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.Id);
+            }
+        }
+        private Guid _uid;
+        public Guid UniqueId
+        {
+            get
+            {
+                return _uid;
+            }
+            set
+            {
+                _uid = value;
+                OnPropertyChanged(this, NetworkPlayerPropertyChanged.UniqueId);
             }
         }
         public override string Username

@@ -95,11 +95,9 @@ namespace MPTanks.Networking.Server
                     }
                 }
             }
-            else
-            {
-                //Just clear the queue since no one is listening
-                MessageProcessor.ClearQueue();
-            }
+            //Just clear the queue since no one is listening
+            MessageProcessor.ClearQueue();
+            MessageProcessor.ClearPrivateQueues();
 
             FlushMessages();
         }

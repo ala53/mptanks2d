@@ -10,7 +10,7 @@ namespace MPTanks.Networking.Client.Chat
     public class ChatMessage
     {
         public string Message { get; set; }
-        public Guid SenderId { get; set; }
+        public ushort SenderId { get; set; }
         public Client Client { get; set; }
         public NetworkPlayer Sender => Client.Game.FindPlayer<NetworkPlayer>(SenderId);
         public string SenderName

@@ -14,7 +14,7 @@ namespace MPTanks.Engine
         public virtual bool IsSpectator { get; set; }
         public virtual string SelectedTankReflectionName { get; set; }
         public virtual bool HasSelectedTankYet => SelectedTankReflectionName != null;
-        public virtual Guid Id { get; set; }
+        public virtual ushort Id { get; set; }
         public virtual string[] AllowedTankTypes { get; set; }
         [JsonIgnore]
         public virtual Tanks.Tank Tank { get; set; }

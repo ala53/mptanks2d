@@ -18,6 +18,7 @@ namespace MPTanks.Networking.Server
         {
             Server = server;
             _player = playerObject;
+            _player.Id = ushort.MaxValue;
         }
         public PseudoFullGameWorldState LastSentState { get; set; }
         public NetConnection Connection { get; internal set; }
@@ -31,7 +32,10 @@ namespace MPTanks.Networking.Server
             get
             {
                 if (Server.Game.PlayersById.ContainsKey(_player.Id))
-                    return (NetworkPlayer)Server.Game.PlayersById[_player.Id];
+                {
+                    var plr = Server.Game.PlayersById[_player.Id] as NetworkPlayer;
+                    _player = plr;
+                }
                 return _player;
             }
         }

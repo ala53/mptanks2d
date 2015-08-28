@@ -9,8 +9,29 @@ namespace MPTanks.Engine
 {
     public partial class GameCore
     {
-        private List<Guid> _playerIds = new List<Guid>();
-        public GamePlayer AddPlayer(Guid playerId)
+        public const int MaxPlayersAllowed = 1024;
+        public const ushort ReservedEmptyPlayerId = 1023;
+        public const int PlayerIdNumberOfBits = 10;
+        private List<ushort> _playerIds = new List<ushort>();
+        private Dictionary<ushort, GamePlayer> _playersById = new Dictionary<ushort, GamePlayer>();
+        public IReadOnlyDictionary<ushort, GamePlayer> PlayersById { get { return _playersById; } }
+
+        public IEnumerable<GamePlayer> Players { get { return _playersById.Values; } }
+
+        public ushort AvailablePlayerId
+        {
+            get
+            {
+                ushort id = 0;
+                while (_playerIds.Contains(id)) id++;
+
+                if (id > MaxPlayersAllowed - 1) return ReservedEmptyPlayerId;
+
+                return id;
+            }
+        }
+
+        public GamePlayer AddPlayer(ushort playerId)
         {
             return AddPlayer(new GamePlayer()
             {
@@ -83,7 +104,7 @@ namespace MPTanks.Engine
         /// Kill and remove the player
         /// </summary>
         /// <param name="playerId"></param>
-        public void RemovePlayer(Guid playerId)
+        public void RemovePlayer(ushort playerId)
         {
             if (_playersById.ContainsKey(playerId))
                 RemovePlayer(_playersById[playerId]);
@@ -109,16 +130,16 @@ namespace MPTanks.Engine
             }
         }
 
-        public GamePlayer FindPlayer<GamePlayer>(Guid playerId) where GamePlayer : Engine.GamePlayer
+        public GamePlayer FindPlayer<GamePlayer>(ushort playerId) where GamePlayer : Engine.GamePlayer
         {
             return PlayersById.ContainsKey(playerId) ? PlayersById[playerId] as GamePlayer : null;
         }
 
-        public GamePlayer FindPlayer(Guid playerId) => FindPlayer<GamePlayer>(playerId);
+        public GamePlayer FindPlayer(ushort playerId) => FindPlayer<GamePlayer>(playerId);
 
-        public void InjectPlayerInput(Guid playerId, InputState state)
+        public void InjectPlayerInput(ushort playerId, InputState state)
         {
-            if (Running)
+            if (Running && PlayersById.ContainsKey(playerId))
                 PlayersById[playerId].Tank.InputState = state;
         }
 

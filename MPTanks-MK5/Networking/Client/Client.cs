@@ -29,7 +29,7 @@ namespace MPTanks.Networking.Client
             Status == ClientStatus.LoggingIn ||
             Status == ClientStatus.DownloadingMods;
         public NetworkedGame GameInstance { get; private set; }
-        public Guid PlayerId { get; set; }
+        public ushort PlayerId { get; set; }
         public ClientNetworkProcessor MessageProcessor { get; private set; }
         public Chat.ChatClient Chat { get; private set; }
         public GameCore Game => GameInstance.Game;
@@ -53,8 +53,6 @@ namespace MPTanks.Networking.Client
         public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
         {
             //connect to server
-            if (connectOnInit)
-                Connect();
 
             MessageProcessor = new ClientNetworkProcessor(this);
             GameInstance = new NetworkedGame(null);
@@ -63,6 +61,8 @@ namespace MPTanks.Networking.Client
             Port = port;
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS"));
+            if (connectOnInit)
+                Connect();
         }
 
         private void TickCountdown(GameTime gameTime)
@@ -79,7 +79,8 @@ namespace MPTanks.Networking.Client
             if (_hasConnected == true) return;
             _hasConnected = true;
             Status = ClientStatus.Connecting;
-            NetworkClient.Connect(Host, Port);
+            if (!string.IsNullOrWhiteSpace(Host) && Port != 0)
+                NetworkClient.Connect(Host, Port);
         }
 
         /// <summary>
