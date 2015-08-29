@@ -15,35 +15,28 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height=".2*"/>
-            <RowDefinition Height=".8*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".3*"/>
-            <ColumnDefinition Width=".65*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0">
-            <TextBlock Text="MP Tanks 2D" Foreground="White" HorizontalAlignment="Stretch" TextAlignment="Center" Margin="20,20,20,0" FontSize="36"></TextBlock>
-            <TextBlock Text="Pre-Alpha (Version -1)" Foreground="White" HorizontalAlignment="Stretch" TextAlignment="Center" FontSize="18"></TextBlock>
+        <StackPanel Orientation="Vertical">
+            <StackPanel>
+                <TextBlock Text="MP Tanks 2D" Foreground="White"
+                       HorizontalAlignment="Stretch" TextAlignment="Center" Margin="20,20,20,0" FontSize="96"
+                        FontFamily="Karmatic Arcade"></TextBlock>
+                <TextBlock Text="Pre-Alpha Version" Foreground="White" HorizontalAlignment="Stretch" 
+                       TextAlignment="Center" FontSize="36"  FontFamily="Karmatic Arcade"></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="20">
+                <Button Content="Host game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Black" Foreground="White"
+                        HorizontalAlignment="Left" Width="500" Command="{Binding HostGameCommand}"/>
+                <Button Content="Join game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Black" Foreground="White"
+                        HorizontalAlignment="Left" Width="500" Command="{Binding JoinGameCommand}"/>
+                <Button Content="Settings" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Black" Foreground="White"
+                        HorizontalAlignment="Left" Width="500" Command="{Binding SettingsCommand}"/>
+                <Button x:Name="ExitButton" Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Black" Foreground="White"
+                        HorizontalAlignment="Left" Width="500" Command="{Binding ExitCommand}"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1">
-            <Button Content="Host game" Margin="20,20,20,0" Command="{Binding HostGameCommand}"/>
-            <Button Content="Join game" Margin="20,5,20,0" Command="{Binding JoinGameCommand}"/>
-            <Button Content="Settings" Margin="20,5,20,0" Command="{Binding SettingsCommand}"/>
-            <Button Content="Exit" Margin="20,5,20,20" Command="{Binding ExitCommand}"/>
-        </StackPanel>
-        <!--Center pane (level one selection)-->
-        <Grid Grid.Column="1" Grid.RowSpan="2">
-            <!--Settings pane-->
-            <Grid Visibility="{Binding SettingsPaneVisibility}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".3*"/>
-                    <ColumnDefinition Width=".7*"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
-            <!--Hosting pane-->
-            <!--Join pane-->
-        </Grid>
     </Grid>
 </ek:UIRoot>

@@ -82,7 +82,10 @@ namespace MPTanks.Networking.Client
             _hasConnected = true;
             Status = ClientStatus.Connecting;
             if (!string.IsNullOrWhiteSpace(Host) && Port != 0)
+            {
+                NetworkClient.Start();
                 NetworkClient.Connect(Host, Port);
+            }
         }
 
         /// <summary>

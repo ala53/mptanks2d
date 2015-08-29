@@ -65,10 +65,13 @@ namespace MPTanks.Engine.Settings
             if (File.Exists(file))
                 Load(File.ReadAllText(file));
         }
+        private bool _loading;
         public void Load(string settingsData)
         {
+            _loading = true;
             try { JsonConvert.PopulateObject(settingsData, this, _settings); }
             catch { }
+            _loading = false;
         }
 
         protected abstract void SetDefaults();
@@ -93,7 +96,7 @@ namespace MPTanks.Engine.Settings
         #region Change helper
         public virtual void OnSettingChanged(Setting setting)
         {
-            if (_file != null)
+            if (_file != null && !_loading)
                 Save(_file);
         }
         #endregion
@@ -153,10 +156,8 @@ namespace MPTanks.Engine.Settings
             public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, params T[] allowedValues)
            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
 
-
             public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType, params T[] allowedValues)
             => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, displayType);
-
 
             public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues)
             => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
@@ -281,12 +282,12 @@ namespace MPTanks.Engine.Settings
             public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
             {
                 var setting = new Setting<T>();
+                setting.SettingsInstance = settings;
                 setting.Name = name;
                 setting.Description = description;
                 setting.Value = defaultValue;
                 setting._allowedValues = allowedValues;
                 setting.DisplayType = displayType;
-                setting.SettingsInstance = settings;
                 return setting;
             }
 
