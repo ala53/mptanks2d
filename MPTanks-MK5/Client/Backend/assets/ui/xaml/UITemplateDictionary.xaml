@@ -23,7 +23,6 @@
     <SolidColorBrush x:Key="SuccessTextColor" Color="#FF4F8A10"></SolidColorBrush>
     <SolidColorBrush x:Key="ErrorTextColor" Color="Red"></SolidColorBrush>
     <SolidColorBrush x:Key="WarningTextColor" Color="#FFC8C828"></SolidColorBrush>
-    <system:String x:Key="Font">Karmatic Arcade</system:String>
     <!--Buttons-->
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="FontSize" Value="24"></Setter>

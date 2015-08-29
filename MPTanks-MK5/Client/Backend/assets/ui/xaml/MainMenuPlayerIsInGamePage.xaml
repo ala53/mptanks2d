@@ -15,15 +15,9 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="A game is currently active..." Foreground="White"
-                        FontFamily="3D Thirteen Pixel Fonts"
-                       TextAlignment="Center" Margin="20,20,20,0" FontSize="32"></TextBlock>
-            <TextBlock  FontFamily="3D Thirteen Pixel Fonts" 
-                       Text="You're in game right now.&#x0a;Close the game to get back to the main menu.&#x0a;Or, if you're absolutely sure" 
-                       Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="18"></TextBlock>
-            <Button  FontFamily="3D Thirteen Pixel Fonts" 
-                    Margin="10" Style="{DynamicResource PrimaryButton}" 
-                    Command="{Binding ForciblyCloseButtonCommand}">Click here to forcibly close the game</Button>
+            <TextBlock Text="A game is currently active..." Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="48"></TextBlock>
+            <TextBlock Text="You're in game right now.&#x0a;Close the game to get back to the main menu.&#x0a;Or, if you're absolutely sure:" Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="24"></TextBlock>
+            <Button Margin="10" Style="{DynamicResource PrimaryButton}" Command="{Binding ForciblyCloseButtonCommand}">Click to forcibly close game</Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

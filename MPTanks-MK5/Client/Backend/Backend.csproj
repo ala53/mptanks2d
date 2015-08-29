@@ -113,7 +113,6 @@
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
-    <Compile Include="UI\MainMenu.Extensions.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
@@ -156,33 +155,6 @@
     <None Include="assets\mgcontent\shadowRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Arcade_Rounded_27_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Arcade_Rounded_72_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_13.5_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_18_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_24_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_36_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_72_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_9_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\ui\imgs\Segoe_UI_12_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -207,7 +179,6 @@
     <None Include="assets\ui\imgs\Segoe_UI_9_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic Arcade.ttf" />
     <None Include="assets\ui\xaml\CreateAccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -18,7 +18,6 @@ namespace AssetCompileHelper
             string output = "";
 
             Console.WriteLine("Started!");
-            Console.Write($"Current Directory: {Directory.GetCurrentDirectory()}");
 
             var mono = args[0] == "mono";
             var mgcbPath = args[1];
@@ -67,21 +66,15 @@ namespace AssetCompileHelper
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
             }
 
-            var prc = new Process();
+            Process prc;
 
-            if (mono) prc.StartInfo = new ProcessStartInfo("mono", $"\"{mgcbPath}\" {cmdArgs}");
-            else prc.StartInfo = new ProcessStartInfo(mgcbPath, cmdArgs);
-
-            prc.StartInfo.UseShellExecute = false;
-            prc.StartInfo.CreateNoWindow = true;
-            prc.StartInfo.RedirectStandardError = true;
-            prc.StartInfo.RedirectStandardInput = true;
-            prc.StartInfo.RedirectStandardOutput = true;
-            prc.EnableRaisingEvents = true;
-            prc.Start();
-            Console.Error.WriteLine(prc.StandardError.ReadToEnd());
-            Console.Out.WriteLine(prc.StandardOutput.ReadToEnd());
+            if (mono)
+                prc = Process.Start("mono", $"\"{mgcbPath}\" {cmdArgs}");
+            else
+                prc = Process.Start(mgcbPath,
+                   cmdArgs);
             prc.WaitForExit();
+
             if (prc.ExitCode != 0) ok = false;
             WriteDictionary();
 

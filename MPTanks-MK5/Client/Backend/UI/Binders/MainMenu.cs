@@ -70,8 +70,6 @@ namespace MPTanks.Client.Backend.UI.Binders
                     });
             });
 
-            SetProperty(ref _exitCommand, _exitCommand, "ExitCommand");
-
             HostAction = delegate { };
             JoinAction = delegate { };
             SettingsAction = delegate { };

@@ -63,9 +63,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_29.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_29.Text = "A game is currently active...";
             this.e_29.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("3D Thirteen Pixel Fonts", 32F, FontStyle.Regular, "3D_Thirteen_Pixel_Fonts_24_Regular");
-            this.e_29.FontFamily = new FontFamily("3D Thirteen Pixel Fonts");
-            this.e_29.FontSize = 32F;
+            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
+            this.e_29.FontSize = 48F;
             // e_30 element
             this.e_30 = new TextBlock();
             this.e_28.Children.Add(this.e_30);
@@ -73,19 +72,17 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_30.Margin = new Thickness(20F, 20F, 20F, 0F);
             this.e_30.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_30.Text = "You\'re in game right now.\nClose the game to get back to the main menu.\nOr, if you" +
-                "\'re absolutely sure";
+                "\'re absolutely sure:";
             this.e_30.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("3D Thirteen Pixel Fonts", 18F, FontStyle.Regular, "3D_Thirteen_Pixel_Fonts_13.5_Regular");
-            this.e_30.FontFamily = new FontFamily("3D Thirteen Pixel Fonts");
-            this.e_30.FontSize = 18F;
+            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.e_30.FontSize = 24F;
             // e_31 element
             this.e_31 = new Button();
             this.e_28.Children.Add(this.e_31);
             this.e_31.Name = "e_31";
             this.e_31.Margin = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("3D Thirteen Pixel Fonts", 24F, FontStyle.Regular, "3D_Thirteen_Pixel_Fonts_18_Regular");
-            this.e_31.FontFamily = new FontFamily("3D Thirteen Pixel Fonts");
-            this.e_31.Content = "Click here to forcibly close the game";
+            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.e_31.Content = "Click to forcibly close game";
             Binding binding_e_31_Command = new Binding("ForciblyCloseButtonCommand");
             this.e_31.SetBinding(Button.CommandProperty, binding_e_31_Command);
             this.e_31.SetResourceReference(Button.StyleProperty, "PrimaryButton");
