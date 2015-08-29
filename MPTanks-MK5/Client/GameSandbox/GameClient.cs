@@ -1,28 +1,16 @@
 ﻿#region Using Statements
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
-using MPTanks.Engine.Tanks;
 using MPTanks.Engine;
-using System.Diagnostics;
 using System.Runtime;
-using System.Text;
-using MPTanks.Engine.Rendering.Particles;
 using MPTanks.Client.Backend.UI;
-using EmptyKeys.UserInterface.Controls;
-using EmptyKeys.UserInterface;
-using EmptyKeys.UserInterface.Media;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Settings;
 using MPTanks.Engine.Logging;
 using MPTanks.Networking.Common.Game;
 using MPTanks.Networking.Common;
-using System.Threading.Tasks;
 using MPTanks.Client.GameSandbox.Mods;
 using MPTanks.Client.Backend.Renderer;
 using MPTanks.Client.GameSandbox.Input;
@@ -81,6 +69,7 @@ namespace MPTanks.Client.GameSandbox
                 CrossDomainObject.Instance.WindowPositionY);
 
             _graphics.SynchronizeWithVerticalRetrace = GameSettings.Instance.VSync;
+            _graphics.IsFullScreen = GameSettings.Instance.Fullscreen;
 
             _graphicsDeviceIsDirty = true;
         }
