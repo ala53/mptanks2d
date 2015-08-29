@@ -48,9 +48,8 @@ namespace MPTanks.Networking.Common.Game
                 //It was destroyed, flag it
                 if (!ObjectStates.ContainsKey(obj.ObjectId))
                     state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj, true));
-
                 //Otherwise, compute state differences
-                state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj, ObjectStates[obj.ObjectId]));
+                else state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj, ObjectStates[obj.ObjectId]));
             }
 
             //Then do a reverse search to find the new ones
