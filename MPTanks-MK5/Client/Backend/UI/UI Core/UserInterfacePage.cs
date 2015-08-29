@@ -21,9 +21,12 @@ namespace MPTanks.Client.Backend.UI
         public dynamic Binder { get; private set; }
         public UserInterface UserInterface { get; internal set; }
         public string Name { get; private set; }
+        public int Id { get; private set; }
+        private static int _id;
 
         public UserInterfacePage(string pageName)
         {
+            Id = _id++;
             Name = pageName;
             //Generate an instance of the page
             Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
@@ -33,7 +36,10 @@ namespace MPTanks.Client.Backend.UI
             else Binder = new Binders.EmptyPage();
 
             if (Binder is BinderBase)
+            {
                 Binder.Owner = this;
+                Binder.Recreated();
+            }
 
             Page.DataContext = Binder;
         }
@@ -45,12 +51,14 @@ namespace MPTanks.Client.Backend.UI
             if (isActiveWindow)
                 Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
             Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
+
+            Binder.Update(gameTime);
         }
         public virtual void Draw(GameTime gameTime, float opacity = 1, EmptyKeys.UserInterface.Renderers.Renderer _renderer = null)
         {
             if (_renderer == null)
                 Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
-            else 
+            else
                 Page.Draw(_renderer,
                     gameTime.ElapsedGameTime.TotalMilliseconds, opacity);
         }

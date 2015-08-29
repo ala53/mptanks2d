@@ -18,16 +18,26 @@
         <Border MaxWidth="600" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2" BorderBrush="{DynamicResource WarningTextColor}">
             <StackPanel Background="#CC000000">
                 <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource WarningTextColor}">
-                    <TextBlock Margin="10" HorizontalAlignment="Center" FontSize="20" Foreground="{DynamicResource WarningTextColor}" Text="{Binding Header}"></TextBlock>
+                    <TextBlock FontFamily="Karmatic Arcade" Background="Transparent" 
+                               Margin="10" HorizontalAlignment="Center" FontSize="36" 
+                               Foreground="{DynamicResource WarningTextColor}" Text="{Binding Header}"></TextBlock>
                 </Border>
                 <TextBlock Margin="10" Style="{DynamicResource MenuContent}" Text="{Binding Content}"></TextBlock>
 
                 <Border BorderThickness="0,2,0,0" BorderBrush="{DynamicResource WarningTextColor}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Visibility="{Binding CancelButtonVisibility}" Command="{Binding CancelCommand}" Padding="10,0,10,0" Margin="5">Cancel</Button>
-                        <Button Visibility="{Binding NoButtonVisibility}" Command="{Binding NoCommand}" Padding="10,0,10,0" Margin="5">No</Button>
-                        <Button Visibility="{Binding YesButtonVisibility}" Command="{Binding YesCommand}" Padding="10,0,10,0" Margin="5">Yes</Button>
-                        <Button Visibility="{Binding OkButtonVisibility}" Command="{Binding OkCommand}" Padding="10,0,10,0" Margin="5">Ok</Button>
+                        <Button FontFamily="Karmatic Arcade" Background="Transparent" Foreground="White" FontSize="20"
+                                Visibility="{Binding CancelButtonVisibility}" 
+                                Command="{Binding CancelCommand}" Padding="10,0,10,0" Margin="5">Cancel</Button>
+                        <Button  FontFamily="Karmatic Arcade" Background="Transparent" Foreground="White" FontSize="20"
+                                 Visibility="{Binding NoButtonVisibility}" 
+                                Command="{Binding NoCommand}" Padding="10,0,10,0" Margin="5">No</Button>
+                        <Button  FontFamily="Karmatic Arcade" Background="Transparent" Foreground="White" FontSize="20"
+                                 Visibility="{Binding YesButtonVisibility}"
+                                Command="{Binding YesCommand}" Padding="10,0,10,0" Margin="5">Yes</Button>
+                        <Button  FontFamily="Karmatic Arcade" Background="Transparent" Foreground="White" FontSize="20"
+                                 Visibility="{Binding OkButtonVisibility}" 
+                                Command="{Binding OkCommand}" Padding="10,0,10,0" Margin="5">Ok</Button>
                     </StackPanel>
                 </Border>
             </StackPanel>

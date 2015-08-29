@@ -267,6 +267,8 @@ namespace MPTanks.Client.Backend.UI
                 }
             }
 
+            if (newBinder is BinderBase)
+                (newBinder as BinderBase).Owner = newPage;
             UIPage = newPage;
         }
 

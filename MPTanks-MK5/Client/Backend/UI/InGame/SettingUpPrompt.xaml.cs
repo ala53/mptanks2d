@@ -23,13 +23,13 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class SettingUpPrompt : UIRoot {
         
-        private Grid e_30;
+        private Grid e_25;
         
-        private StackPanel e_31;
+        private StackPanel e_26;
         
-        private TextBlock e_32;
+        private TextBlock e_27;
         
-        private TextBlock e_33;
+        private TextBlock e_28;
         
         public SettingUpPrompt(int width, int height) : 
                 base(width, height) {
@@ -43,33 +43,33 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             this.SetResourceReference(UIRoot.BackgroundProperty, "MenuPageBGBrush");
             InitializeElementResources(this);
-            // e_30 element
-            this.e_30 = new Grid();
-            this.Content = this.e_30;
-            this.e_30.Name = "e_30";
-            // e_31 element
-            this.e_31 = new StackPanel();
-            this.e_30.Children.Add(this.e_31);
-            this.e_31.Name = "e_31";
-            this.e_31.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_31.VerticalAlignment = VerticalAlignment.Center;
-            // e_32 element
-            this.e_32 = new TextBlock();
-            this.e_31.Children.Add(this.e_32);
-            this.e_32.Name = "e_32";
-            this.e_32.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_32.Text = "Setting Up Game...";
+            // e_25 element
+            this.e_25 = new Grid();
+            this.Content = this.e_25;
+            this.e_25.Name = "e_25";
+            // e_26 element
+            this.e_26 = new StackPanel();
+            this.e_25.Children.Add(this.e_26);
+            this.e_26.Name = "e_26";
+            this.e_26.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_26.VerticalAlignment = VerticalAlignment.Center;
+            // e_27 element
+            this.e_27 = new TextBlock();
+            this.e_26.Children.Add(this.e_27);
+            this.e_27.Name = "e_27";
+            this.e_27.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_27.Text = "Setting Up Game...";
             FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            this.e_32.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
-            // e_33 element
-            this.e_33 = new TextBlock();
-            this.e_31.Children.Add(this.e_33);
-            this.e_33.Name = "e_33";
-            this.e_33.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_27.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
+            // e_28 element
+            this.e_28 = new TextBlock();
+            this.e_26.Children.Add(this.e_28);
+            this.e_28.Name = "e_28";
+            this.e_28.HorizontalAlignment = HorizontalAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
-            Binding binding_e_33_Text = new Binding("SecondsRemainingText");
-            this.e_33.SetBinding(TextBlock.TextProperty, binding_e_33_Text);
-            this.e_33.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
+            Binding binding_e_28_Text = new Binding("SecondsRemainingText");
+            this.e_28.SetBinding(TextBlock.TextProperty, binding_e_28_Text);
+            this.e_28.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
         }
         
         private static void InitializeElementResources(UIElement elem) {

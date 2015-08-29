@@ -17,24 +17,24 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <StackPanel>
-                <TextBlock Text="MP Tanks 2D" Foreground="White"
+                <TextBlock x:Name="_title" Text="MP Tanks 2D" Foreground="White"
                        HorizontalAlignment="Stretch" TextAlignment="Center" Margin="20,20,20,0" FontSize="96"
                         FontFamily="Karmatic Arcade"></TextBlock>
-                <TextBlock Text="Pre-Alpha Version" Foreground="White" HorizontalAlignment="Stretch" 
+                <TextBlock x:Name="_subtitle" Text="Pre-Alpha Version" Foreground="White" HorizontalAlignment="Stretch" 
                        TextAlignment="Center" FontSize="36"  FontFamily="Karmatic Arcade"></TextBlock>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="20">
                 <Button Content="Host game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Black" Foreground="White"
+                        Background="Transparent" Foreground="White" x:Name="_hostBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding HostGameCommand}"/>
                 <Button Content="Join game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Black" Foreground="White"
+                        Background="Transparent" Foreground="White" x:Name="_joinBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding JoinGameCommand}"/>
                 <Button Content="Settings" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Black" Foreground="White"
+                        Background="Transparent" Foreground="White" x:Name="_settingsBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding SettingsCommand}"/>
-                <Button x:Name="ExitButton" Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Black" Foreground="White"
+                <Button Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="_exitBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding ExitCommand}"/>
             </StackPanel>
         </StackPanel>

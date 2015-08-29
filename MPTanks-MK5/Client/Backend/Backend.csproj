@@ -113,6 +113,7 @@
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
+    <Compile Include="UI\MainMenu.extensions.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
@@ -155,10 +156,19 @@
     <None Include="assets\mgcontent\shadowRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_12_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_15_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_72_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_9_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\Segoe_UI_12_Regular.xnb">
