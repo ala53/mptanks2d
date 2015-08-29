@@ -34,7 +34,7 @@ namespace MPTanks.Client.Backend.UI
 
             if (Binder is BinderBase)
                 Binder.Owner = this;
-
+            
             Page.DataContext = Binder;
         }
 

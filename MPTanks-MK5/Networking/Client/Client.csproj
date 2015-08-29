@@ -50,13 +50,19 @@
     <Compile Include="Chat\ChatClient.cs" />
     <Compile Include="Chat\ChatMessage.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Client.Networking.cs" />
     <Compile Include="ClientNetworkProcessor.cs" />
+    <Compile Include="DiscoveryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>

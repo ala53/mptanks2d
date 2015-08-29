@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.UI;
 using System;
+using System.Diagnostics;
 
 namespace MPTanks.Client
 {
@@ -161,6 +162,10 @@ namespace MPTanks.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (((EmptyKeys.UserInterface.Generated.MainMenu)ui.UIPage.Page).ExitButtonRef.IsPressed)
+                return;
+
+            if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.M)) Debugger.Break();
             if (sizeDirty)
             {
                 graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
