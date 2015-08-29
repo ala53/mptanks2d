@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Client
 {
-    public class Client
+    public partial class Client
     {
         public enum ClientStatus
         {
@@ -61,6 +61,8 @@ namespace MPTanks.Networking.Client
             Port = port;
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS"));
+            SetupNetwork();
+
             if (connectOnInit)
                 Connect();
         }
@@ -94,9 +96,14 @@ namespace MPTanks.Networking.Client
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.ReceivedInitiation ||
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.RespondedAwaitingApproval ||
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.RespondedConnect)
-                ;
+                ProcessMessages();
 
             return NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+
         }
 
         private bool _hasDisconnected = false;

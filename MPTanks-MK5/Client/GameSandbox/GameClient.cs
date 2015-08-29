@@ -133,11 +133,13 @@ namespace MPTanks.Client.GameSandbox
 
             _ui.SetPage(_settingUpPageName);
             //TEMP
-            Client = new Networking.Client.Client("", 0);
+            Client = new Networking.Client.Client("localhost", 33132, "password");
             Server = new Networking.Server.Server(new Networking.Server.Configuration()
             {
                 MaxPlayers = 32,
-                Password = "password"
+                Password = "password",
+                Port = 33132,
+                StateSyncRate = TimeSpan.FromMilliseconds(1000)
             }, game);
 
             GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
@@ -256,11 +258,11 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
-            Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
+          //  Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Server.Update(gameTime);
-            Server.GameInstance.FullGameState.ApplyDestruction(Client.GameInstance.Game);
-            Client.GameInstance.Game?.Update(gameTime);
-            Client.GameInstance.Game.Authoritative = true;
+           // Server.GameInstance.FullGameState.ApplyDestruction(Client.GameInstance.Game);
+            Client.Update(gameTime);
+            //Client.GameInstance.Game.Authoritative = true;
 
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)

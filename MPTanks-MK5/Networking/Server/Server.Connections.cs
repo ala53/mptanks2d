@@ -20,12 +20,14 @@ namespace MPTanks.Networking.Server
         {
             Server = server;
         }
-        public void WriteDiscoveryResponse(NetOutgoingMessage message)
+        public void WriteServerInfo(NetOutgoingMessage message)
         {
             message.Write(Server.Game.Gamemode.HotJoinEnabled);
             message.Write(Server.Configuration.Password != null);
 
             message.SkipPadBits();
+
+            message.Write(Server.Name);
 
             message.Write(Server.Game.Gamemode.DisplayName);
             message.Write(Server.Game.Gamemode.Description);
@@ -38,8 +40,8 @@ namespace MPTanks.Networking.Server
             foreach (var mod in Modding.ModDatabase.LoadedModules)
             {
                 message.Write(mod.Name);
-                message.Write(mod.Version);
-                message.Write(mod.UsesWhitelist);
+                message.Write(mod.Version.Major);
+                message.Write(mod.Version.Minor);
             }
         }
         public void UpdateConnectionStatus(NetConnection connection)

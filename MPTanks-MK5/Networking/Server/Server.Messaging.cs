@@ -11,6 +11,23 @@ namespace MPTanks.Networking.Server
 {
     public partial class Server
     {
+        private void SetupNetwork()
+        {
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ConnectionLatencyUpdated);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Data);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DebugMessage);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Error);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.NatIntroductionSuccess);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Receipt);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.StatusChanged);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.UnconnectedData);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
+            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.WarningMessage);
+        }
         private void ProcessMessages()
         {
             NetIncomingMessage msg;
@@ -22,7 +39,7 @@ namespace MPTanks.Networking.Server
                         Login.HandleConnection(msg); break;
                     case NetIncomingMessageType.DiscoveryRequest:
                         var discovery = NetworkServer.CreateMessage();
-                        Connections.WriteDiscoveryResponse(discovery);
+                        Connections.WriteServerInfo(discovery);
                         NetworkServer.SendDiscoveryResponse(discovery, msg.SenderEndPoint);
                         break;
                     case NetIncomingMessageType.StatusChanged:
@@ -44,6 +61,8 @@ namespace MPTanks.Networking.Server
                     case NetIncomingMessageType.VerboseDebugMessage:
                         if (GlobalSettings.Debug) Logger.Trace(msg.ReadString()); break;
                 }
+
+                NetworkServer.Recycle(msg);
             }
         }
 

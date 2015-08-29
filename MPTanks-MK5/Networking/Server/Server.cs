@@ -26,6 +26,10 @@ namespace MPTanks.Networking.Server
         public Extensions.ExtensionManager ExtensionManager { get; private set; }
         internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
+
+        //The name of the server
+        public string Name { get; set; } = "MPTanks Server";
+
         public enum ServerStatus
         {
             NotInitialized,
@@ -59,6 +63,7 @@ namespace MPTanks.Networking.Server
                 AutoFlushSendQueue = false,
                 Port = Configuration.Port
             });
+            SetupNetwork();
             NetworkServer.Start();
             Status = ServerStatus.Open;
         }
