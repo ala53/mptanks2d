@@ -2,7 +2,7 @@
 Artist Alastair Bennett
 Artist Jacob Sortors
 ----------------------- -----------------------
-"Moral Support" Xander Moore
+"Mooral Support" Xander Moore
 ----------------------- -----------------------
 Tools FMOD Studio by Firelight Technologies (© 1994-2015) 
 Tools MonoGame Framework

@@ -70,6 +70,7 @@ namespace MPTanks.Client.GameSandbox
 
             _graphics.SynchronizeWithVerticalRetrace = GameSettings.Instance.VSync;
             _graphics.IsFullScreen = GameSettings.Instance.Fullscreen;
+            _ssaaRate = GameSettings.Instance.SSAARate;
 
             _graphicsDeviceIsDirty = true;
         }
@@ -151,10 +152,10 @@ namespace MPTanks.Client.GameSandbox
             };
 
 
-           var player = Server.AddPlayer(new ServerPlayer(Server,
-                            new NetworkPlayer()
-                            {
-                            })).Player;
+            var player = Server.AddPlayer(new ServerPlayer(Server,
+                             new NetworkPlayer()
+                             {
+                             })).Player;
 
             for (var i = 0; i < 5; i++)
             {
@@ -271,6 +272,7 @@ namespace MPTanks.Client.GameSandbox
         RenderTarget2D _worldRenderTarget;
         private float _zoom = 1;
         private Vector2 _currentOffset;
+        public float _ssaaRate = 1.25f;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -279,18 +281,18 @@ namespace MPTanks.Client.GameSandbox
         {
             Diagnostics.BeginMeasurement("Rendering");
             GraphicsDevice.SetRenderTarget(null);
+            var size = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) * _ssaaRate;
             //if we're in game
             //check if we need to remake the rendertarget
             if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
             {
-                if (_worldRenderTarget == null || _worldRenderTarget.Width !=
-                    GraphicsDevice.Viewport.Width || _worldRenderTarget.Height !=
-                    GraphicsDevice.Viewport.Height)
+                if (_worldRenderTarget == null || _worldRenderTarget.Width != size.X ||
+                    _worldRenderTarget.Height != size.Y)
                 {
                     _worldRenderTarget?.Dispose();
                     //recreate with correct size
                     _worldRenderTarget = new RenderTarget2D(
-                        GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                        GraphicsDevice, (int)size.X, (int)size.Y);
                 }
             }
             GraphicsDevice.SetRenderTarget(_worldRenderTarget);
