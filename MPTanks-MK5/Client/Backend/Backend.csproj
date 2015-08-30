@@ -156,6 +156,7 @@
     <None Include="assets\mgcontent\shadowRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\Karmatic Arcade.ttf" />
     <None Include="assets\ui\imgs\Karmatic_Arcade_12_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

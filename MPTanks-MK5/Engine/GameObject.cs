@@ -435,6 +435,22 @@ namespace MPTanks.Engine
         private bool _killedAlready;
         public void Kill(GameObject destroyer = null, bool authorized = false)
         {
+            //This line is here as a sort of latency compensation
+            //We assume that the client is right but not to the extent
+            //that we will remove the game object from the game completely
+
+            //If we're wrong, we don't have to revive an object (assuming we could)
+            //which would look really strange from the user's perspective,
+            //but instead merely desynchronize the game state a bit. This desync
+            //will be corrected automatically the next time a game state update
+            //occurs in the networking layer
+            
+            //If we're correct, however, it provides a much more pleasant user 
+            //experience as things explode when they should           
+
+            if (PostDeathExistenceTime == TimeSpan.Zero)
+            LinearVelocity = Vector2.Zero;
+
             if (!_killedAlready && (Authoritative || authorized))
                 Game.RemoveGameObject(this, destroyer, authorized);
 

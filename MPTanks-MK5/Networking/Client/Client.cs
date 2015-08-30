@@ -106,7 +106,7 @@ namespace MPTanks.Networking.Client
 
         public void Update(GameTime gameTime)
         {
-
+            Game.Update(gameTime);
         }
 
         private bool _hasDisconnected = false;

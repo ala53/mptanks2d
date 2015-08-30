@@ -258,9 +258,9 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
-          //  Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Server.Update(gameTime);
-           // Server.GameInstance.FullGameState.ApplyDestruction(Client.GameInstance.Game);
+       //     if (Keyboard.GetState().IsKeyDown(Keys.M))
+                Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
             //Client.GameInstance.Game.Authoritative = true;
 
