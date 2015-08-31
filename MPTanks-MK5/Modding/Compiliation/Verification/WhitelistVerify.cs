@@ -320,7 +320,7 @@ namespace MPTanks.Modding.Compiliation.Verification
             mStream.Dispose();
             return def;
         }
-
+        
         private static byte[] DllToByteArray(string asm)
         {
             return File.ReadAllBytes(asm);

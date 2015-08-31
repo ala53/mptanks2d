@@ -41,6 +41,7 @@ namespace MPTanks.Networking.Server
         public ServerStatus Status { get; private set; } = ServerStatus.NotInitialized;
         public Server(Configuration configuration, GameCore game, bool openOnInit = true, ILogger logger = null)
         {
+            if (configuration.Port == 0) configuration.Port = 33132;
             MessageProcessor = new ServerNetworkProcessor(this);
             GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
             HookEvents();
@@ -52,6 +53,8 @@ namespace MPTanks.Networking.Server
             Configuration = new InitializedConfiguration(configuration);
             Timers = new Engine.Core.Timing.Timer.Factory();
             ChatHandler = new Chat.ChatServer(this);
+
+            Logger.Info($"Server Created.");
             if (openOnInit) Open();
 
         }
@@ -66,6 +69,8 @@ namespace MPTanks.Networking.Server
             SetupNetwork();
             NetworkServer.Start();
             Status = ServerStatus.Open;
+            Logger.Info($"Server started on port {Configuration.Port}. Configuration: ");
+            Logger.Info(Configuration);
         }
 
         public void Update(GameTime gameTime)

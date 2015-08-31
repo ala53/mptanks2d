@@ -170,7 +170,7 @@ namespace MPTanks.Client.GameSandbox
             Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
 
             Server.Game.BeginGame();
-            //Client.WaitForConnection();
+            Client.WaitForConnection();
         }
 
         /// <summary>

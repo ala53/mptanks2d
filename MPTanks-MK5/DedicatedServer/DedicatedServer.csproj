@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ServerModBase.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Program.cs" />
@@ -67,9 +68,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Client\GameSandbox\GameSandbox.csproj">
+      <Project>{1aa033d4-c1b0-4653-ba2f-672a79b207ce}</Project>
+      <Name>GameSandbox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CoreAssets\CoreAssets.csproj">
       <Project>{3fa1fb15-e7ef-44a3-a4fa-dffc33f85417}</Project>
       <Name>CoreAssets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networking\Common\Common.csproj">
       <Project>{ef7d12d4-a2b8-47c6-b93d-5264191892c8}</Project>

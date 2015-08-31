@@ -34,6 +34,34 @@ namespace MPTanks.Networking.Client
             {
                 switch (msg.MessageType)
                 {
+                    case NetIncomingMessageType.ConnectionApproval:
+                        break;
+                    case NetIncomingMessageType.ConnectionLatencyUpdated:
+                        break;
+                    case NetIncomingMessageType.Data:
+                        break;
+                    case NetIncomingMessageType.DebugMessage:
+                        break;
+                    case NetIncomingMessageType.DiscoveryRequest:
+                        break;
+                    case NetIncomingMessageType.DiscoveryResponse:
+                        break;
+                    case NetIncomingMessageType.Error:
+                        break;
+                    case NetIncomingMessageType.ErrorMessage:
+                        break;
+                    case NetIncomingMessageType.NatIntroductionSuccess:
+                        break;
+                    case NetIncomingMessageType.Receipt:
+                        break;
+                    case NetIncomingMessageType.StatusChanged:
+                        break;
+                    case NetIncomingMessageType.UnconnectedData:
+                        break;
+                    case NetIncomingMessageType.VerboseDebugMessage:
+                        break;
+                    case NetIncomingMessageType.WarningMessage:
+                        break;
                 }
             }
         }

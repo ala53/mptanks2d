@@ -17,6 +17,22 @@ namespace MPTanks.Networking.Server
         }
         public void HandleConnection(NetIncomingMessage incoming)
         {
+            if (Server.Configuration.Password != null)
+            {
+                try
+                {
+                    if (incoming.ReadString() != Server.Configuration.Password)
+                    {
+                        DenyConnection(incoming, "Password incorrect");
+                        return;
+                    }
+                }
+                catch
+                {
+                    DenyConnection(incoming, "Invalid connection");
+                    return;
+                }
+            }
             if (Server.Players.Count < Server.Configuration.MaxPlayers)
                 ApproveConnection(incoming);
             else DenyConnection(incoming, "Too many players");

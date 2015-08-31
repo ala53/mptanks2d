@@ -277,7 +277,7 @@ namespace MPTanks.Engine
             DiagnosticsParent = "Game Update";
 
             Gamemode.Create();
-            Logger.Info(Strings.Engine.GameCreated);
+            Logger.Info(Strings.Engine.GameCreated + $" ({Gamemode.DisplayName})");
 
         }
         /// <summary>
