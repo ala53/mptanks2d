@@ -275,6 +275,8 @@ namespace MPTanks.Engine
             LightEngine = new Rendering.Lighting.LightEngine();
             SoundEngine = new Sound.SoundEngine(this);
             DiagnosticsParent = "Game Update";
+
+            Gamemode.Create();
             Logger.Info(Strings.Engine.GameCreated);
 
         }
