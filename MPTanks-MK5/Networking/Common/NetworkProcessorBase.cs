@@ -103,25 +103,21 @@ namespace MPTanks.Networking.Common
             {
                 var obj = (MessageBase)Activator.CreateInstance(_toServerMessageTypes[id], message);
                 ProcessToServerMessage(obj);
-                ProcessToServerMessage((dynamic)obj);
             }
             else if (_toClientMessageTypes.ContainsKey(id))
             {
                 var obj = (MessageBase)Activator.CreateInstance(_toClientMessageTypes[id], message);
                 ProcessToClientMessage(message.SenderConnection, obj);
-                ProcessToClientMessage(message.SenderConnection, (dynamic)obj);
             }
             else if (_toServerActionTypes.ContainsKey(id))
             {
                 var obj = (ActionBase)Activator.CreateInstance(_toServerActionTypes[id], message);
                 ProcessToServerAction(obj);
-                ProcessToServerAction((dynamic)obj);
             }
             else if (_toClientActionTypes.ContainsKey(id))
             {
                 var obj = (ActionBase)Activator.CreateInstance(_toClientActionTypes[id], message);
                 ProcessToClientAction(message.SenderConnection, obj);
-                ProcessToClientAction(message.SenderConnection, (dynamic)obj);
             }
         }
 
@@ -142,27 +138,7 @@ namespace MPTanks.Networking.Common
 
         public virtual void ProcessToClientAction(NetConnection client, ActionBase action)
         {
-
-        }
-
-        public virtual void ProcessToServerMessage(dynamic message)
-        {
-
-        }
-
-        public virtual void ProcessToClientMessage(NetConnection client, dynamic message)
-        {
-
-        }
-
-        public virtual void ProcessToServerAction(dynamic action)
-        {
-
-        }
-
-        public virtual void ProcessToClientAction(NetConnection client, dynamic action)
-        {
-
+            
         }
 
         public virtual void OnProcessingError(Exception error)

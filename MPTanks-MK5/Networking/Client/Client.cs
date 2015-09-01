@@ -89,7 +89,10 @@ namespace MPTanks.Networking.Client
             Password = password;
 
             NetworkClient = new Lidgren.Network.NetClient(
-                new Lidgren.Network.NetPeerConfiguration("MPTANKS") { AutoFlushSendQueue = false });
+                new Lidgren.Network.NetPeerConfiguration("MPTANKS")
+                {
+                    AutoFlushSendQueue = false
+                });
             SetupNetwork();
 
             if (connectOnInit)

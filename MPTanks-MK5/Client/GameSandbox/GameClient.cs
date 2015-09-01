@@ -241,8 +241,8 @@ namespace MPTanks.Client.GameSandbox
 
             InputDriver.Update(gameTime);
             var state = InputDriver.GetInputState();
-            Console.WriteLine("-----------Frame-------");
-            Client.Input = state;
+            if (state != Client.Input)
+                Client.Input = state;
 
             Diagnostics.BeginMeasurement("Base.Update()");
             base.Update(gameTime);
