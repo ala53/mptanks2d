@@ -33,11 +33,11 @@ namespace MPTanks.Networking.Server
                 if (player.Player.HasTank)
                 {
                     player.Player.Tank.InputState = ((InputChangedAction)action).InputState;
-                    if (Vector2.Distance(((InputChangedAction)action).PlayerPosition +
-                            player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2),
-                        player.Player.Tank.Position) < 2f)
-                        player.Player.Tank.Position = ((InputChangedAction)action).PlayerPosition +
-                            player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2);
+                    //if (Vector2.Distance(((InputChangedAction)action).PlayerPosition +
+                    //        player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2),
+                    //    player.Player.Tank.Position) < 2f)
+                    //    player.Player.Tank.Position = ((InputChangedAction)action).PlayerPosition +
+                    //        player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2);
                 }
             }
 

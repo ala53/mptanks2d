@@ -104,7 +104,13 @@ namespace MPTanks.Networking.Common.Game
                         obj.LinearVelocity = objState.Velocity.ToVector2();
                     if (objState.PositionChanged)
                     {
-                        obj.Position = objState.Position + (obj.LinearVelocity * latency);
+                        //if (tankId != null && objState.ObjectId == tankId)
+                        //{
+                        //    if (Vector2.Distance(objState.Position, obj.Position) > 3f)
+                        //        obj.Position = objState.Position + (obj.LinearVelocity * latency);
+                        //}
+                        //else
+                            obj.Position = objState.Position + (obj.LinearVelocity * latency);
                     }
                     if (objState.RestitutionChanged)
                         obj.Restitution = objState.Restitution;

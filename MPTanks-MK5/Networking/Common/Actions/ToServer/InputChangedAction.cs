@@ -16,7 +16,7 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     public class InputChangedAction : ActionBase
     {
         public InputState InputState { get; private set; }
-        public Vector2 PlayerPosition { get; private set; }
+        //public Vector2 PlayerPosition { get; private set; }
         public InputChangedAction(NetIncomingMessage message) : base(message)
         {
             var iState = new InputState();
@@ -25,14 +25,14 @@ namespace MPTanks.Networking.Common.Actions.ToServer
             iState.LookDirection = message.ReadRangedSingle(-MathHelper.TwoPi, MathHelper.TwoPi, 13);
             iState.MovementSpeed = (message.ReadUnitSingle(12) - 0.5f) * 2;
             iState.RotationSpeed = (message.ReadUnitSingle(12) - 0.5f) * 2;
-            PlayerPosition = new Vector2(message.ReadFloat(), message.ReadFloat());
+            //PlayerPosition = new Vector2(message.ReadFloat(), message.ReadFloat());
             InputState = iState;
         }
 
         public InputChangedAction(Vector2 myPos, InputState state)
         {
             InputState = state;
-            PlayerPosition = myPos;
+            //PlayerPosition = myPos;
         }
 
         public override void Serialize(NetOutgoingMessage message)
@@ -42,8 +42,8 @@ namespace MPTanks.Networking.Common.Actions.ToServer
             message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 13);
             message.WriteUnitSingle((InputState.MovementSpeed + 1f) / 2f, 12);
             message.WriteUnitSingle((InputState.RotationSpeed + 1f) / 2f, 12);
-            message.Write(PlayerPosition.X);
-            message.Write(PlayerPosition.Y);
+            //message.Write(PlayerPosition.X);
+            //message.Write(PlayerPosition.Y);
         }
     }
 }
