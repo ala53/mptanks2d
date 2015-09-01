@@ -194,7 +194,6 @@ namespace MPTanks.Client.Backend.Sound
             FMOD.Error.Check(_system.init(maxChannels,
                 FMOD.INITFLAGS.NORMAL, IntPtr.Zero));
             FMOD.Error.Check(_system.set3DNumListeners(1));
-            var settings = new FMOD.ADVANCEDSETTINGS();
             FMOD.Error.Check(_system.createChannelGroup("Background Sounds", out _backgroundGroup));
             FMOD.Error.Check(_system.createChannelGroup("Voice Chat", out _voiceGroup));
             FMOD.Error.Check(_system.createChannelGroup("Sound Effects", out _effectsGroup));
