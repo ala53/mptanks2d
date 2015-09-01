@@ -93,10 +93,6 @@ namespace MPTanks.Networking.Client
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
                     ConnectionTimeout = 25000,
-                    SimulatedMinimumLatency = 0.125f,
-                    SimulatedRandomLatency = 0.025f,
-                    SimulatedLoss = 0.1f,
-                    SimulatedDuplicatesChance = 0.06f,
                     AutoFlushSendQueue = false
                 });
             SetupNetwork();
