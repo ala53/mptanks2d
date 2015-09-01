@@ -10,17 +10,9 @@ namespace MPTanks.Engine
     public partial class GameObject
     {
         private bool _eventsEnabled = true;
-
-        public event EventHandler<GameObject> OnCreated = delegate { };
-
-        public event EventHandler<Core.Events.Types.GameObjects.DestroyedEventArgs> OnDestroyed = delegate { };
-
-        public event EventHandler<GameObject> OnDestructionEnded = delegate { };
-
+        
         private Core.Events.Types.GameObjects.StateChangedEventArgs _stateArgs =
             new Core.Events.Types.GameObjects.StateChangedEventArgs();
-
-        public event EventHandler<Core.Events.Types.GameObjects.StateChangedEventArgs> OnStateChanged = delegate { };
 
         private TimeSpan _lastStateChange = TimeSpan.Zero;
         protected bool RaiseStateChangeEvent(byte[] newStateData)
@@ -33,7 +25,7 @@ namespace MPTanks.Engine
 
             _stateArgs.Object = this;
             _stateArgs.State = newStateData;
-            OnStateChanged(this, _stateArgs);
+            Game.EventEngine.RaiseGameObjectStateChanged(_stateArgs);
 
             return true;
         }
@@ -101,7 +93,6 @@ namespace MPTanks.Engine
         #endregion
 
         #region Base Property Changes 
-        public event EventHandler<BasicPropertyChangeArgs> OnBasicPropertyChanged = delegate { };
         public struct BasicPropertyChangeArgs
         {
             public GameObject Owner { get; set; }
@@ -130,7 +121,7 @@ namespace MPTanks.Engine
         {
             if (_eventsEnabled)
             {
-                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                Game.EventEngine.RaiseGameObjectBasicPropertyChanged(new BasicPropertyChangeArgs
                 {
                     Type = type,
                     VectorValue = newValue,
@@ -143,7 +134,7 @@ namespace MPTanks.Engine
         {
             if (_eventsEnabled)
             {
-                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                Game.EventEngine.RaiseGameObjectBasicPropertyChanged(new BasicPropertyChangeArgs
                 {
                     Type = type,
                     BoolValue = newValue,
@@ -156,7 +147,7 @@ namespace MPTanks.Engine
         {
             if (_eventsEnabled)
             {
-                OnBasicPropertyChanged(this, new BasicPropertyChangeArgs
+                Game.EventEngine.RaiseGameObjectBasicPropertyChanged(new BasicPropertyChangeArgs
                 {
                     Type = type,
                     FloatValue = newValue,
@@ -200,24 +191,19 @@ namespace MPTanks.Engine
         private void RaiseOnDestroyed(GameObject destroyer = null)
         {
             if (_eventsEnabled)
-                OnDestroyed(this, new Core.Events.Types.GameObjects.DestroyedEventArgs
-                {
-                    Destroyed = this,
-                    Destroyer = destroyer,
-                    Time = DateTime.Now
-                });
+                Game.EventEngine.RaiseGameObjectDestroyed(this, destroyer);
         }
 
         private void RaiseOnDestructionEnded()
         {
             if (_eventsEnabled)
-                OnDestructionEnded(this, this);
+                Game.EventEngine.RaiseGameObjectDestructionEnded(this);
         }
 
         private void RaiseOnCreated()
         {
             if (_eventsEnabled)
-                OnCreated(this, this);
+                Game.EventEngine.RaiseGameObjectCreated(this);
         }
     }
 }

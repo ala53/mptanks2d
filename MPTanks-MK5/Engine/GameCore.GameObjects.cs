@@ -47,7 +47,6 @@ namespace MPTanks.Engine
             {
                 _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
-                HookGameObjectEvents(obj);
             }
         }
 
@@ -103,7 +102,6 @@ namespace MPTanks.Engine
             {
                 _gameObjects.Add(obj.ObjectId, obj);
                 obj.Create(); //Call the creator function
-                HookGameObjectEvents(obj);
             }
 
             foreach (var obj in _removeQueue)
@@ -173,8 +171,6 @@ namespace MPTanks.Engine
         private void BeginDeletion(GameObject obj, GameObject destructor = null)
         {
             //Housekeeping
-            UnhookGameObjectEvents(obj);
-
             if (obj.Destroy(destructor))
             {
                 //It wants some time to finish up
@@ -186,42 +182,6 @@ namespace MPTanks.Engine
                 MarkGameObjectForDeletion(obj);
             }
         }
-        #endregion
-
-        #region GameObject Event Helpers
-        //Helper method for the event engine
-        private void HookGameObjectEvents(GameObject obj)
-        {
-            obj.OnBasicPropertyChanged += GameObject_BasicPropertyChanged;
-            obj.OnCreated += GameObject_Created;
-            obj.OnDestroyed += GameObject_Destroyed;
-            obj.OnDestructionEnded += GameObject_DestructionEnded;
-            obj.OnStateChanged += GameObject_StateChanged;
-        }
-
-        private void UnhookGameObjectEvents(GameObject obj)
-        {
-            obj.OnBasicPropertyChanged -= GameObject_BasicPropertyChanged;
-            obj.OnCreated -= GameObject_Created;
-            obj.OnDestroyed -= GameObject_Destroyed;
-            obj.OnDestructionEnded -= GameObject_DestructionEnded;
-            obj.OnStateChanged -= GameObject_StateChanged;
-        }
-
-        private void GameObject_StateChanged(object sender, Core.Events.Types.GameObjects.StateChangedEventArgs e) =>
-            EventEngine.RaiseGameObjectStateChanged(e);
-
-        private void GameObject_DestructionEnded(object sender, GameObject e) =>
-            EventEngine.RaiseGameObjectDestructionEnded(e);
-
-        private void GameObject_Destroyed(object sender, Core.Events.Types.GameObjects.DestroyedEventArgs e) =>
-            EventEngine.RaiseGameObjectDestroyed(e.Destroyed, e.Destroyer);
-
-        private void GameObject_Created(object sender, GameObject e) =>
-            EventEngine.RaiseGameObjectCreated(e);
-
-        private void GameObject_BasicPropertyChanged(object sender, GameObject.BasicPropertyChangeArgs e) =>
-            EventEngine.RaiseGameObjectBasicPropertyChanged(e);
         #endregion
 
         #region Helpers for object creation

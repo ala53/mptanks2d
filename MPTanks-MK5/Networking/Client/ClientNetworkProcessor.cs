@@ -42,7 +42,7 @@ namespace MPTanks.Networking.Client
                 else
                 {
                     act.State.Apply(Client.GameInstance.Game);
-                    Client.Game.UnsafeTickGameWorld(0.016f + Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
+                    Client.Game.UnsafeTickGameWorld(Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
                 }
                 _shouldMakeNewGameOnFullGameState = false;
             }
@@ -145,7 +145,7 @@ namespace MPTanks.Networking.Client
             {
                 var act = action as PartialGameStateUpdateAction;
                 act.StatePartial.Apply(Client.Game, 
-                    0.016f + Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
+                    Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
             }
             else if (action is PlayerAllowedTankTypesSentAction)
             {

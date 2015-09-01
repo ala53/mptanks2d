@@ -16,7 +16,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public Game.FullObjectState State { get; private set; }
         public GameObjectCreatedAction(NetIncomingMessage message) : base(message)
         {
-            message.ReadBytes(message.ReadUInt16());
+            State = new Game.FullObjectState(message.ReadBytes(message.ReadUInt16()));
         }
 
         public GameObjectCreatedAction(GameObject obj)

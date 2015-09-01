@@ -145,7 +145,7 @@ namespace MPTanks.Client.GameSandbox
                 MaxPlayers = 32,
                 Password = "password",
                 Port = 33132,
-                StateSyncRate = TimeSpan.FromMilliseconds(10)
+                StateSyncRate = TimeSpan.FromMilliseconds(1000)
             }, game, true, new NLogLogger(Logger.Instance));
 
             GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
