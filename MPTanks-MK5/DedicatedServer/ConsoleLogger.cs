@@ -61,7 +61,7 @@ namespace MPTanks.DedicatedServer
         public void Info(object data)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] [{DateTime.Now.ToShortTimeString()}] \n" + 
+            Console.WriteLine($"[INFO] [{DateTime.Now.ToShortTimeString()}] \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
         }
 
@@ -79,24 +79,24 @@ namespace MPTanks.DedicatedServer
         }
 
         public void Trace(object data)
-        {
+        {/*
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] \n" +
-                JsonConvert.SerializeObject(data, Formatting.Indented));
+                JsonConvert.SerializeObject(data, Formatting.Indented));*/
         }
 
         public void Trace(string message)
-        {
+        {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {message}");*/
         }
 
         public void Trace(string message, Exception ex)
-        {
+        {/*
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {message}");
             Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            Console.WriteLine(ex.StackTrace);*/
         }
 
         public void Warning(object data)

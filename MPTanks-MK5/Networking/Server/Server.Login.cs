@@ -41,15 +41,17 @@ namespace MPTanks.Networking.Server
                     });
                 else DenyConnection(incoming, "Too many players");
             }
-            catch
+            catch (Exception ex)
             {
                 DenyConnection(incoming, "Invalid connection");
+                Server.Logger.Error("[SERVER] [LOGIN] Connection Approval", ex);
                 return;
             }
         }
         private void ApproveConnection(NetIncomingMessage msg, WebInterface.WebPlayerInfoResponse offline = null)
         {
             msg.SenderConnection.Approve();
+            Server.Logger.Info($"[SERVER] [LOGIN] {offline?.Username ?? ""} joined");
             //To be removed: we should defer until we check the login info
             Server.Connections.Accept(msg.SenderConnection, offline ?? new WebInterface.WebPlayerInfoResponse()
             {

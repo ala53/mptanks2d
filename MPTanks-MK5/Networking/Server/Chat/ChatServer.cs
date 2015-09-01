@@ -31,7 +31,8 @@ namespace MPTanks.Networking.Server.Chat
 
         public void SendMessage(string message)
         {
-            SendMessage(message, Server.Players.ToArray());
+            foreach (var player in Server.Players)
+                SendMessage(message, player);
             Server.Logger.Info($"[CHAT] Server to all: {message}");
         }
 

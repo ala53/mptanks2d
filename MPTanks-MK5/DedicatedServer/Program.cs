@@ -28,7 +28,7 @@ namespace MPTanks.DedicatedServer
                 logger.Info($"\t{mod.Value.Name} version {mod.Value.Version.Major}." +
                     $"{mod.Value.Version.Minor}-{mod.Value.Version.Tag ?? ""}");
 
-            _server = new Server(new Configuration { },
+            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.5), MaxPlayers = 999 },
                 new GameCore(new NullLogger(), "DeathMatchGamemode",
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 new EngineSettings("enginesettings.json")), true, new ConsoleLogger());
@@ -38,16 +38,27 @@ namespace MPTanks.DedicatedServer
                  e.Game.EventEngine.OnGameStarted += (b, f) => logger.Info("Game started");
              };
 
+            for (var i = 0; i < 250; i++)
+                _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
+                {
+                    Username = "ZZZZZ" + _server.Players.Count,
+                    UniqueId = Guid.NewGuid(),
+                    ClanName = ""
+                }));
+
             Stopwatch sw = Stopwatch.StartNew();
             GameTime gt = new GameTime();
-            gt.ElapsedGameTime = TimeSpan.FromMilliseconds(16);
             while (true)
             {
                 _server.Update(gt);
                 var elapsed = sw.Elapsed;
                 gt.TotalGameTime += elapsed;
                 if (16 - sw.ElapsedMilliseconds > 0)
+                {
                     Thread.Sleep(16 - (int)sw.ElapsedMilliseconds);
+                    gt.ElapsedGameTime = TimeSpan.FromMilliseconds(16);
+                }
+                else gt.ElapsedGameTime = TimeSpan.FromMilliseconds(sw.Elapsed.TotalMilliseconds);
                 sw.Restart();
             }
         }

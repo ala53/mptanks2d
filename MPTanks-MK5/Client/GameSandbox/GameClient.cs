@@ -30,7 +30,7 @@ namespace MPTanks.Client.GameSandbox
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
         public MPTanks.Networking.Client.Client Client { get; private set; }
-        public MPTanks.Networking.Server.Server Server { get; private set; }
+        //public MPTanks.Networking.Server.Server Server { get; private set; }
         public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
         public InputDriverBase InputDriver { get; private set; }
         public GameCoreRenderer GameRenderer { get; private set; }
@@ -140,13 +140,13 @@ namespace MPTanks.Client.GameSandbox
                 Clan = "",
                 Name = "TestPlayer"
             }, new NLogLogger(Logger.Instance), "password");
-            Server = new Networking.Server.Server(new Networking.Server.Configuration()
-            {
-                MaxPlayers = 32,
-                Password = "password",
-                Port = 33132,
-                StateSyncRate = TimeSpan.FromMilliseconds(1000)
-            }, game, true, new NLogLogger(Logger.Instance));
+            //Server = new Networking.Server.Server(new Networking.Server.Configuration()
+            //{
+            //    MaxPlayers = 32,
+            //    Password = "password",
+            //    Port = 33132,
+            //    StateSyncRate = TimeSpan.FromMilliseconds(1000)
+            //}, game, true, new NLogLogger(Logger.Instance));
 
             GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
             SoundPlayer = new Backend.Sound.SoundPlayer();
@@ -158,15 +158,19 @@ namespace MPTanks.Client.GameSandbox
                 DebugDrawer = new DebugDrawer(this, Client);
 
             };
+            GameRenderer.Game = Client.GameInstance.Game;
+            SoundPlayer.Game = Client.GameInstance.Game;
+            DebugDrawer?.Dispose();
+            DebugDrawer = new DebugDrawer(this, Client);
 
-            for (var i = 0; i < 5; i++)
-            {
-                Server.AddPlayer(new ServerPlayer(Server,
-                               new NetworkPlayer()
-                               {
-                               }));
-            }
-            Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
+            //for (var i = 0; i < 5; i++)
+            //{
+            //    Server.AddPlayer(new ServerPlayer(Server,
+            //                   new NetworkPlayer()
+            //                   {
+            //                   }));
+            //}
+            //Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
 
             Client.WaitForConnection();
         }
@@ -255,13 +259,13 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
-            Server.Update(gameTime);
+            //Server.Update(gameTime);
             //     if (Keyboard.GetState().IsKeyDown(Keys.M))
             //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
             //Client.GameInstance.Game.Authoritative = true;
-            if (Server.Players.Count == 6)
-                Server.Game.BeginGame();
+            //if (Server.Players.Count == 6)
+            //    Server.Game.BeginGame();
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
@@ -270,7 +274,6 @@ namespace MPTanks.Client.GameSandbox
         }
 
         RenderTarget2D _worldRenderTarget;
-        RenderTarget2D _svrDBG;
         private float _zoom = 1;
         private Vector2 _currentOffset;
         public float _ssaaRate = 1.25f;
@@ -290,17 +293,12 @@ namespace MPTanks.Client.GameSandbox
                 if (_worldRenderTarget == null || _worldRenderTarget.Width != size.X ||
                     _worldRenderTarget.Height != size.Y)
                 {
-                    _svrDBG?.Dispose();
                     _worldRenderTarget?.Dispose();
                     //recreate with correct size
-                    _svrDBG = new RenderTarget2D(
-                        GraphicsDevice, (int)size.X, (int)size.Y);
                     _worldRenderTarget = new RenderTarget2D(
                         GraphicsDevice, (int)size.X, (int)size.Y);
                 }
             }
-            GraphicsDevice.SetRenderTarget(_svrDBG);
-            GraphicsDevice.Clear(Color.Transparent);
             GraphicsDevice.SetRenderTarget(_worldRenderTarget);
             GraphicsDevice.Clear(Color.Gray);
 
@@ -349,10 +347,6 @@ namespace MPTanks.Client.GameSandbox
                 GameRenderer.View = drawRect;
                 GameRenderer.Target = _worldRenderTarget;
                 GameRenderer.Draw(gameTime);
-                GameRenderer.Game = Server.Game;
-                GameRenderer.View = drawRect;
-                GameRenderer.Target = _svrDBG;
-                GameRenderer.Draw(gameTime);
 
                 Diagnostics.EndMeasurement("World rendering", "Rendering");
                 //And draw to screen
@@ -362,7 +356,6 @@ namespace MPTanks.Client.GameSandbox
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
                     SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
                 _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
-                _spriteBatch.Draw(_svrDBG, GraphicsDevice.Viewport.Bounds, new Color(Color.Gray, 0.5f));
                 _spriteBatch.End();
 
                 Diagnostics.EndMeasurement("Copy to screen", "Rendering");

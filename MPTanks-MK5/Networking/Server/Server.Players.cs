@@ -19,12 +19,14 @@ namespace MPTanks.Networking.Server
             Game.AddPlayer(player.Player);
             _players.Add(player);
 
-            //Queue the game state for them
-            MessageProcessor.SendPrivateMessage(player,
-                new Common.Actions.ToClient.GameCreatedAction());
-            MessageProcessor.SendPrivateMessage(player,
-                new Common.Actions.ToClient.FullGameStateSentAction(Game));
-
+            //Queue the game state for them, delaying 1sec
+            Timers.CreateTimer(a =>
+            {
+                MessageProcessor.SendPrivateMessage(player,
+                    new Common.Actions.ToClient.GameCreatedAction());
+                MessageProcessor.SendPrivateMessage(player,
+                    new Common.Actions.ToClient.FullGameStateSentAction(Game));
+            }, TimeSpan.FromSeconds(1));
             //Announce that they joined
             ChatHandler.SendMessage(Strings.Server.PlayerJoined(player.Player.Username));
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerJoinedAction(player.Player));

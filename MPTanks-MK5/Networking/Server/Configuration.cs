@@ -8,10 +8,10 @@ namespace MPTanks.Networking.Server
 {
     public class Configuration
     {
-        public int MaxPlayers { get; set; }
-        public ushort Port { get; set; }
+        public int MaxPlayers { get; set; } = 32;
+        public ushort Port { get; set; } = 33132;
         public string Password { get; set; }
-        public TimeSpan StateSyncRate { get; set; } = TimeSpan.FromSeconds(3);
+        public TimeSpan StateSyncRate { get; set; } = TimeSpan.FromSeconds(0.5);
     }
 
     public class InitializedConfiguration
