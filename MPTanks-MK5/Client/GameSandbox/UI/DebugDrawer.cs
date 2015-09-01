@@ -14,17 +14,17 @@ namespace MPTanks.Client.GameSandbox.UI
 {
     class DebugDrawer : IDisposable
     {
+        private Networking.Client.Client _netClient;
         private GameClient _client;
-        private GameCore _game;
-        private GamePlayer _player;
+        private GameCore _game => _netClient.Game;
+        private GamePlayer _player => _netClient.Player;
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
         private Texture2D _graphTexture;
-        public DebugDrawer(GameClient client, GameCore game, GamePlayer player)
+        public DebugDrawer(GameClient client, Networking.Client.Client netclient)
         {
             _client = client;
-            _game = game;
-            _player = player;
+            _netClient = netclient;
             _spriteBatch = new SpriteBatch(client.GraphicsDevice);
             _debugFont = client.Content.Load<SpriteFont>("font");
             _graphTexture = new Texture2D(client.GraphicsDevice, 1, 1);
@@ -128,6 +128,8 @@ namespace MPTanks.Client.GameSandbox.UI
         #region Text Debug
         private Process _prc;
         private StringBuilder _bldr = new StringBuilder(2000);
+        private int[] _kbsSent = new int[240];
+        private int[] _kbsReceived = new int[240];
         private void DrawTextDebugInfo(GameTime gameTime)
         {
             _bldr.Clear();
@@ -172,7 +174,7 @@ namespace MPTanks.Client.GameSandbox.UI
             _bldr.Append(", Timers: ").Append(_game.TimerFactory.ActiveTimersCount)
             .Append(", Animations: ").Append(_game.AnimationEngine.Animations.Count)
             .Append(", Particles: ").Append(_game.ParticleEngine.LivingParticlesCount);
-            
+
             //Sound diagnostics
             _bldr.Append("\nSounds (Engine, Backend): ").Append(_game.SoundEngine.SoundCount)
             .Append(", ").Append(_client.SoundPlayer.ActiveSoundCount)
@@ -188,6 +190,25 @@ namespace MPTanks.Client.GameSandbox.UI
             .Append(info.StreamCPU.ToString("N2")).Append("%, ")
             .Append(info.UpdateCPU.ToString("N2")).Append("%, ")
             .Append(info.TotalCPU.ToString("N2")).Append("%");
+
+            if (_netClient?.NetworkClient?.ServerConnection != null)
+            {
+                for (var i = 0; i < _kbsSent.Length - 1; i++)
+                {
+                    _kbsSent[i] = _kbsSent[i + 1];
+                    _kbsReceived[i] = _kbsReceived[i + 1];
+                }
+                _kbsSent[_kbsSent.Length - 1] = _netClient.NetworkClient.Statistics.SentBytes;
+                _kbsReceived[_kbsReceived.Length - 1] = _netClient.NetworkClient.Statistics.ReceivedBytes;
+                _bldr.Append("\nPing: ")
+                    .Append((_netClient.NetworkClient.ServerConnection.AverageRoundtripTime * 1000d).ToString("N1"))
+                    .Append("ms, ").Append("Received: ")
+                    .Append((_netClient.NetworkClient.Statistics.ReceivedBytes / 1024d).ToString("N1")).Append("kb total, ")
+                    .Append(((_kbsReceived.Last() - _kbsReceived[_kbsReceived.Length - 60]) / 1024d).ToString("N3")).Append("kb/s")
+                    .Append(", Sent: ")
+                    .Append((_netClient.NetworkClient.Statistics.SentBytes / 1024d).ToString("N1")).Append("kb total, ")
+                    .Append(((_kbsSent.Last() - _kbsSent[_kbsSent.Length - 60]) / 1024d).ToString("N3")).Append("kb/s");
+            }
 
             //Find memory usage max
             long maxMem = 0;

@@ -37,7 +37,7 @@ namespace MPTanks.Client.GameSandbox.Input
         private int _weaponNumber;
         public override InputState GetInputState()
         {
-            if (!Client.IsActive) return default(InputState);
+            //if (!Client.IsActive) return default(InputState);
             var inputState = new InputState();
 
             var screenCenter = new Vector2(Client.GraphicsDevice.Viewport.Bounds.Width / 2, //vertex

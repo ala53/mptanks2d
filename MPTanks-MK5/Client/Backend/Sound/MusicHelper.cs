@@ -45,7 +45,7 @@ namespace MPTanks.Client.Backend.Sound
             _active = _player.Cache.GetSound(e.AssetName).Play(SoundPlayer.ChannelGroup.Background);
             _active.Ended = (o) =>
             {
-                if (_activeSound.CompletionCallback != null)
+                if (_activeSound?.CompletionCallback != null)
                     _activeSound.CompletionCallback(_activeSound);
             };
             _active.LoopCount = e.LoopCount;

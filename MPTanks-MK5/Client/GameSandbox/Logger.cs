@@ -17,19 +17,16 @@ namespace MPTanks.Client.GameSandbox
         static Logger()
         {
             var config = new NLog.Config.LoggingConfiguration();
-            var fileTarget =
-                new NLog.Targets.Wrappers.AsyncTargetWrapper(
-                    new NLog.Targets.FileTarget()
-                    {
-                        FileName = (string)GameSettings.Instance.GameLogLocation,
-                        ArchiveOldFileOnStartup = true,
-                        KeepFileOpen = true,
-                        MaxArchiveFiles = 10,
-                        EnableFileDelete = true,
-                        CreateDirs = true,
-                        Layout = "${longdate}|${level:uppercase=true}|${logger}|${message}|${exception:innerFormat=ToString:maxInnerExceptionLevel=128:innerExceptionSeparator=String:separator = String:format = ToString}"
-                    },
-                    10000, NLog.Targets.Wrappers.AsyncTargetWrapperOverflowAction.Grow);
+            var fileTarget = new NLog.Targets.FileTarget()
+            {
+                FileName = (string)GameSettings.Instance.GameLogLocation,
+                ArchiveOldFileOnStartup = true,
+                KeepFileOpen = true,
+                MaxArchiveFiles = 10,
+                EnableFileDelete = true,
+                CreateDirs = true,
+                Layout = "${longdate}|${level:uppercase=true}|${logger}|${message}|${exception:innerFormat=ToString:maxInnerExceptionLevel=128:innerExceptionSeparator=String:separator = String:format = ToString}"
+            };
 
             config.AddTarget("logfile", fileTarget);
 

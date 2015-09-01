@@ -15,6 +15,7 @@ namespace MPTanks.Networking.Common.Actions.ToServer
 
         }
 
+        public RequestFullGameStateAction() { }
         public override void Serialize(NetOutgoingMessage message)
         {
         }

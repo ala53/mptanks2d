@@ -60,13 +60,15 @@ namespace MPTanks.Networking.Server
         }
         public void Open()
         {
+            SetGame(Game);
             Status = ServerStatus.Starting;
-            NetworkServer = new Lidgren.Network.NetServer(new Lidgren.Network.NetPeerConfiguration("MPTANKS")
+            NetworkServer = new Lidgren.Network.NetServer(
+            SetupNetwork(new Lidgren.Network.NetPeerConfiguration("MPTANKS")
             {
                 AutoFlushSendQueue = false,
-                Port = Configuration.Port
-            });
-            SetupNetwork();
+                Port = Configuration.Port,
+                MaximumConnections = Configuration.MaxPlayers + 4 //so we can gracefully disconnect
+            }));
             NetworkServer.Start();
             Status = ServerStatus.Open;
             Logger.Info($"Server started on port {Configuration.Port}. Configuration: ");
@@ -79,7 +81,7 @@ namespace MPTanks.Networking.Server
             TickGameStartCountdown(gameTime);
 
             Timers.Update(gameTime);
-
+            ProcessMessages();
             //Send all the wideband messages (if someone is listening)
             if (Connections.ActiveConnections.Count > 0)
             {
@@ -95,7 +97,7 @@ namespace MPTanks.Networking.Server
                 //As well as narrowband ones
                 foreach (var plr in Players)
                 {
-                    if (MessageProcessor.HasPrivateMessages(plr) && plr.Connection.Status == Lidgren.Network.NetConnectionStatus.Connected)
+                    if (MessageProcessor.HasPrivateMessages(plr) && plr.Connection != null && plr.Connection.Status == Lidgren.Network.NetConnectionStatus.Connected)
                     {
                         var msg = NetworkServer.CreateMessage();
                         MessageProcessor.WritePrivateMessages(plr, msg);

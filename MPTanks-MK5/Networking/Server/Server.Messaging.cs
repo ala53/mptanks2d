@@ -11,22 +11,30 @@ namespace MPTanks.Networking.Server
 {
     public partial class Server
     {
-        private void SetupNetwork()
+        private NetPeerConfiguration SetupNetwork(NetPeerConfiguration configuration)
         {
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ConnectionLatencyUpdated);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Data);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DebugMessage);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Error);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.NatIntroductionSuccess);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.Receipt);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.StatusChanged);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.UnconnectedData);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
-            NetworkServer.Configuration.EnableMessageType(NetIncomingMessageType.WarningMessage);
+            configuration.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            configuration.EnableMessageType(NetIncomingMessageType.ConnectionLatencyUpdated);
+            configuration.EnableMessageType(NetIncomingMessageType.Data);
+            configuration.EnableMessageType(NetIncomingMessageType.DebugMessage);
+            configuration.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
+            configuration.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
+            configuration.EnableMessageType(NetIncomingMessageType.Error);
+            configuration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
+            configuration.EnableMessageType(NetIncomingMessageType.NatIntroductionSuccess);
+            configuration.EnableMessageType(NetIncomingMessageType.Receipt);
+            configuration.EnableMessageType(NetIncomingMessageType.StatusChanged);
+            configuration.EnableMessageType(NetIncomingMessageType.UnconnectedData);
+            configuration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
+            configuration.EnableMessageType(NetIncomingMessageType.WarningMessage);
+
+            foreach (var msgType in Enum.GetValues(typeof(NetIncomingMessageType)))
+            {
+                if (configuration.IsMessageTypeEnabled((NetIncomingMessageType)msgType))
+                    Logger.Trace($"[SERVER] Message type {Enum.GetName(typeof(NetIncomingMessageType), msgType)} enabled");
+            }
+
+            return configuration;
         }
         private void ProcessMessages()
         {
@@ -72,7 +80,7 @@ namespace MPTanks.Networking.Server
             if (flushedMessagesLastTick)
             {
                 flushedMessagesLastTick = false;
-                return; //only every other frame
+                //   return; //only every other frame
             }
             NetworkServer.FlushSendQueue();
         }

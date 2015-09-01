@@ -147,7 +147,7 @@ namespace MPTanks.Engine
             {
                 if (++_nextObjectId == ushort.MaxValue) _nextObjectId = NextObjectId;
                 while (GameObjectsById.ContainsKey(_nextObjectId)) _nextObjectId++;
-                
+
                 return _nextObjectId;
             }
         }
@@ -432,7 +432,11 @@ namespace MPTanks.Engine
 
             Diagnostics.MonitorCall(ParticleEngine.Update, _currentGameTime, "Particle Updates", DiagnosticsParent);
 
-            Diagnostics.MonitorCall(Gamemode.Update, _currentGameTime, "Gamemode update", DiagnosticsParent);
+            if (GlobalSettings.Debug)
+                Diagnostics.MonitorCall(Gamemode.Update, _currentGameTime, "Gamemode update", DiagnosticsParent);
+            else
+                try { Diagnostics.MonitorCall(Gamemode.Update, _currentGameTime, "Gamemode update", DiagnosticsParent); }
+                catch { }
 
             //And notify that we exited the update loop
             _inUpdateLoop = false;

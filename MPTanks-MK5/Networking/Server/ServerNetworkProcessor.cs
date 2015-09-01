@@ -28,6 +28,9 @@ namespace MPTanks.Networking.Server
                 Server.MessageProcessor.SendMessage(
                     new PlayerInputChangedAction(player.Player,
                     ((InputChangedAction)action).InputState));
+
+                if (player.Player.HasTank)
+                    player.Player.Tank.InputState = ((InputChangedAction)action).InputState;
             }
 
             if (action is PlayerTankTypeSelectedAction)

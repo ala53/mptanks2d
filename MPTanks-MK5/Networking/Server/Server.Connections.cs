@@ -63,6 +63,7 @@ namespace MPTanks.Networking.Server
             var player = new ServerPlayer(Server, new NetworkPlayer
             {
                 IsPremium = info.Premium,
+                UniqueId = info.Id,
                 Username = info.Username,
                 ClanName = info.ClanName
             })

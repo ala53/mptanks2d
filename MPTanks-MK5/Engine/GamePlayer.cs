@@ -50,6 +50,11 @@ namespace MPTanks.Engine
             }
         }
 
+        public GamePlayer()
+        {
+            AllowedTankTypes = new string[0];
+        }
+
         public virtual bool TankSelectionIsValid
         {
             get

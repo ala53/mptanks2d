@@ -19,10 +19,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             var iState = new InputState();
             iState.FirePressed = message.ReadBoolean();
-            iState.LookDirection = message.ReadRangedSingle(-MathHelper.TwoPi, MathHelper.TwoPi, 13);
-            iState.WeaponNumber = message.ReadByte(2);
-            iState.MovementSpeed = ((float)message.ReadByte() / 128) - 1;
-            iState.RotationSpeed = ((float)message.ReadByte() / 128) - 1;
+            iState.WeaponNumber = message.ReadByte(7);
+            iState.LookDirection = message.ReadFloat();
+            iState.MovementSpeed = message.ReadFloat();
+            iState.RotationSpeed = message.ReadFloat();
             InputState = iState;
         }
         public PlayerInputChangedAction(NetworkPlayer player, InputState state)
@@ -35,10 +35,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         {
             message.Write((uint)PlayerId, GameCore.PlayerIdNumberOfBits);
             message.Write(InputState.FirePressed);
-            message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 13);
-            message.Write((byte)InputState.WeaponNumber, 2);
-            message.Write((byte)((InputState.MovementSpeed + 1) * 128)); //compress to byte range
-            message.Write((byte)((InputState.RotationSpeed + 1) * 128)); //compress to byte range
+            message.Write((byte)InputState.WeaponNumber, 7);
+            message.Write(InputState.LookDirection);
+            message.Write(InputState.MovementSpeed);
+            message.Write(InputState.RotationSpeed);
         }
     }
 }

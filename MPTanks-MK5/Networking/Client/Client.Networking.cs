@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +26,15 @@ namespace MPTanks.Networking.Client
             NetworkClient.Configuration.EnableMessageType(NetIncomingMessageType.UnconnectedData);
             NetworkClient.Configuration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             NetworkClient.Configuration.EnableMessageType(NetIncomingMessageType.WarningMessage);
+            foreach (var msgType in Enum.GetValues(typeof(NetIncomingMessageType)))
+            {
+                if (NetworkClient.Configuration.IsMessageTypeEnabled((NetIncomingMessageType)msgType))
+                    Logger.Trace($"[CLIENT] Message type {Enum.GetName(typeof(NetIncomingMessageType), msgType)} enabled");
+            }
         }
         private void ProcessMessages()
         {
             NetIncomingMessage msg;
-
             while ((msg = NetworkClient.ReadMessage()) != null)
             {
                 switch (msg.MessageType)
@@ -39,8 +44,11 @@ namespace MPTanks.Networking.Client
                     case NetIncomingMessageType.ConnectionLatencyUpdated:
                         break;
                     case NetIncomingMessageType.Data:
+                        if (msg.SequenceChannel == Channels.GameplayData)
+                            MessageProcessor.ProcessMessages(msg);
                         break;
                     case NetIncomingMessageType.DebugMessage:
+                        Logger.Debug(msg.ReadString());
                         break;
                     case NetIncomingMessageType.DiscoveryRequest:
                         break;
@@ -49,6 +57,7 @@ namespace MPTanks.Networking.Client
                     case NetIncomingMessageType.Error:
                         break;
                     case NetIncomingMessageType.ErrorMessage:
+                        Logger.Error(msg.ReadString());
                         break;
                     case NetIncomingMessageType.NatIntroductionSuccess:
                         break;
@@ -59,8 +68,10 @@ namespace MPTanks.Networking.Client
                     case NetIncomingMessageType.UnconnectedData:
                         break;
                     case NetIncomingMessageType.VerboseDebugMessage:
+                        Logger.Trace(msg.ReadString());
                         break;
                     case NetIncomingMessageType.WarningMessage:
+                        Logger.Warning(msg.ReadString());
                         break;
                 }
             }

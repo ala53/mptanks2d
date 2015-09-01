@@ -17,9 +17,13 @@ namespace MPTanks.Networking.Server
         }
         public void HandleConnection(NetIncomingMessage incoming)
         {
-            if (Server.Configuration.Password != null)
+            try
             {
-                try
+                //read their proclaimed info
+                Guid id = new Guid(incoming.ReadBytes(16));
+                string clan = incoming.ReadString();
+                string name = incoming.ReadString();
+                if (Server.Configuration.Password != null)
                 {
                     if (incoming.ReadString() != Server.Configuration.Password)
                     {
@@ -27,21 +31,27 @@ namespace MPTanks.Networking.Server
                         return;
                     }
                 }
-                catch
-                {
-                    DenyConnection(incoming, "Invalid connection");
-                    return;
-                }
+                if (Server.Players.Count < Server.Configuration.MaxPlayers)
+                    ApproveConnection(incoming, new WebInterface.WebPlayerInfoResponse
+                    {
+                        Id = id,
+                        ClanName = clan,
+                        Username = name,
+                        Premium = true
+                    });
+                else DenyConnection(incoming, "Too many players");
             }
-            if (Server.Players.Count < Server.Configuration.MaxPlayers)
-                ApproveConnection(incoming);
-            else DenyConnection(incoming, "Too many players");
+            catch
+            {
+                DenyConnection(incoming, "Invalid connection");
+                return;
+            }
         }
-        private void ApproveConnection(NetIncomingMessage msg)
+        private void ApproveConnection(NetIncomingMessage msg, WebInterface.WebPlayerInfoResponse offline = null)
         {
             msg.SenderConnection.Approve();
             //To be removed: we should defer until we check the login info
-            Server.Connections.Accept(msg.SenderConnection, new WebInterface.WebPlayerInfoResponse()
+            Server.Connections.Accept(msg.SenderConnection, offline ?? new WebInterface.WebPlayerInfoResponse()
             {
                 ClanName = "T3ST",
                 Id = Guid.NewGuid(),

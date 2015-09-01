@@ -39,7 +39,11 @@ namespace MPTanks.Networking.Client
                     Client.GameInstance.FullGameState = act.State;
                     Client.NeedsToSelectTank = true;
                 }
-                else act.State.Apply(Client.GameInstance.Game);
+                else
+                {
+                    act.State.Apply(Client.GameInstance.Game);
+                    Client.Game.UnsafeTickGameWorld(0.016f + Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
+                }
                 _shouldMakeNewGameOnFullGameState = false;
             }
             else if (action is GameCreatedAction)
@@ -140,7 +144,8 @@ namespace MPTanks.Networking.Client
             else if (action is PartialGameStateUpdateAction)
             {
                 var act = action as PartialGameStateUpdateAction;
-                act.StatePartial.Apply(Client.Game);
+                act.StatePartial.Apply(Client.Game, 
+                    0.016f + Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
             }
             else if (action is PlayerAllowedTankTypesSentAction)
             {
@@ -151,7 +156,7 @@ namespace MPTanks.Networking.Client
             {
                 var act = action as PlayerInputChangedAction;
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return; //disregard: player not found
-
+                //if (act.PlayerId == Client.PlayerId) return;
                 Client.Game.InjectPlayerInput(act.PlayerId, act.InputState);
             }
             else if (action is PlayerJoinedAction)

@@ -49,7 +49,12 @@ namespace MPTanks.Networking.Common.Game
                 if (!ObjectStates.ContainsKey(obj.ObjectId))
                     state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj, true));
                 //Otherwise, compute state differences
-                else state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj, ObjectStates[obj.ObjectId]));
+                else
+                {
+                    var objState = new PseudoFullObjectState(obj, ObjectStates[obj.ObjectId]);
+                    if (objState.HasChanges(obj))
+                        state._objectStates.Add(obj.ObjectId, objState);
+                }
             }
 
             //Then do a reverse search to find the new ones
@@ -69,7 +74,7 @@ namespace MPTanks.Networking.Common.Game
             return state;
         }
 
-        public void Apply(GameCore game)
+        public void Apply(GameCore game, float latency = 0)
         {
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
@@ -83,29 +88,33 @@ namespace MPTanks.Networking.Common.Game
 
             foreach (var objState in ObjectStates.Values)
             {
-                if (objState.WasDestroyed && game.GameObjectsById.ContainsKey(objState.ObjectId))
+                if (game.GameObjectsById.ContainsKey(objState.ObjectId))
                 {
-                    game.ImmediatelyForceObjectDestruction(game.GameObjectsById[objState.ObjectId]);
-                    continue;
+                    if (objState.WasDestroyed && game.GameObjectsById.ContainsKey(objState.ObjectId))
+                    {
+                        game.ImmediatelyForceObjectDestruction(game.GameObjectsById[objState.ObjectId]);
+                        continue;
+                    }
+                    var obj = game.GameObjectsById[objState.ObjectId];
+
+                    obj.IsSensor = objState.IsSensorObject;
+                    obj.IsStatic = objState.IsStaticObject;
+
+                    if (objState.VelocityChanged)
+                        obj.LinearVelocity = objState.Velocity.ToVector2();
+                    if (objState.PositionChanged)
+                    {
+                        obj.Position = objState.Position + (obj.LinearVelocity * latency);
+                    }
+                    if (objState.RestitutionChanged)
+                        obj.Restitution = objState.Restitution;
+                    if (objState.RotationVelocityChanged)
+                        obj.AngularVelocity = objState.RotationVelocity;
+                    if (objState.RotationChanged)
+                        obj.Rotation = objState.Rotation + (obj.AngularVelocity * latency);
+                    if (objState.SizeChanged)
+                        obj.Size = objState.Size.ToVector2();
                 }
-
-                var obj = game.GameObjectsById[objState.ObjectId];
-
-                obj.IsSensor = objState.IsSensorObject;
-                obj.IsStatic = objState.IsStaticObject;
-
-                if (objState.PositionChanged)
-                    obj.Position = objState.Position;
-                if (objState.RestitutionChanged)
-                    obj.Restitution = objState.Restitution;
-                if (objState.RotationChanged)
-                    obj.Rotation = objState.Rotation;
-                if (objState.RotationVelocityChanged)
-                    obj.AngularVelocity = objState.RotationVelocity;
-                if (objState.SizeChanged)
-                    obj.Size = objState.Size.ToVector2();
-                if (objState.VelocityChanged)
-                    obj.LinearVelocity = objState.Velocity.ToVector2();
             }
         }
 
@@ -154,6 +163,8 @@ namespace MPTanks.Networking.Common.Game
 
                 if (objState.SizeChanged)
                     objState.Size = new HalfVector2() { PackedValue = message.ReadUInt32() };
+
+                state._objectStates.Add(objState.ObjectId, objState);
             }
 
             return state;
@@ -197,10 +208,10 @@ namespace MPTanks.Networking.Common.Game
                 }
 
                 if (obj.RotationChanged)
-                    message.Write(obj.Rotation);
+                    message.Write(obj.Rotation.InternalValue);
 
                 if (obj.RotationVelocityChanged)
-                    message.Write(obj.RotationVelocity);
+                    message.Write(obj.RotationVelocity.InternalValue);
 
                 if (obj.RestitutionChanged)
                     message.Write(obj.Restitution.InternalValue);

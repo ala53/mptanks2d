@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine;
+using MPTanks.Engine.Logging;
+using MPTanks.Engine.Tanks;
 using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,18 @@ namespace MPTanks.Networking.Client
             Status == ClientStatus.LoggingIn ||
             Status == ClientStatus.DownloadingMods;
         public NetworkedGame GameInstance { get; private set; }
-        public ushort PlayerId { get; set; }
+        public ushort? PlayerId => Player?.Id;
+        private InputState _input;
+        public InputState Input
+        {
+            get { return _input; }
+            set
+            {
+                if (_input != value)
+                    MessageProcessor.SendMessage(new Common.Actions.ToServer.InputChangedAction(value));
+                _input = value;
+            }
+        }
         public ClientNetworkProcessor MessageProcessor { get; private set; }
         public Chat.ChatClient Chat { get; private set; }
         public GameCore Game => GameInstance.Game;
@@ -38,29 +51,45 @@ namespace MPTanks.Networking.Client
             get
             {
                 return
-                    GameInstance.Game.PlayersById.ContainsKey(PlayerId) ?
-                    GameInstance.Game.PlayersById[PlayerId] : null;
+                    GameInstance.Game.Players.FirstOrDefault(
+                        a => (a as NetworkPlayer)?.UniqueId == _userPlayerInfo.Id);
             }
         }
         public bool NeedsToSelectTank { get; internal set; }
         public bool IsInCountdown { get; internal set; }
         public TimeSpan RemainingCountdownTime { get; internal set; }
+        public struct UserSuppliedPlayerInfo
+        {
+            public string Name { get; set; }
+            public string Clan { get; set; }
+            public Guid Id { get; set; }
+        }
 
-        public string Host { get; set; }
-        public ushort Port { get; set; }
+        public string Host { get; private set; }
+        public ushort Port { get; private set; }
+        public string Password { get; private set; }
+
+        public ILogger Logger { get; set; }
 
         public bool GameRunning { get { return Connected && GameInstance != null; } }
-        public Client(string connection, ushort port, string password = null, bool connectOnInit = true)
+        private UserSuppliedPlayerInfo _userPlayerInfo;
+        public Client(string connection, ushort port, UserSuppliedPlayerInfo pInfo, ILogger logger = null,
+            string password = null, bool connectOnInit = true)
         {
-            //connect to server
+            _userPlayerInfo = pInfo;
+
+            Logger = logger ?? new NullLogger();
 
             MessageProcessor = new ClientNetworkProcessor(this);
             GameInstance = new NetworkedGame(null);
             Chat = new Chat.ChatClient(this);
+
             Host = connection;
             Port = port;
+            Password = password;
+
             NetworkClient = new Lidgren.Network.NetClient(
-                new Lidgren.Network.NetPeerConfiguration("MPTANKS"));
+                new Lidgren.Network.NetPeerConfiguration("MPTANKS") { AutoFlushSendQueue = false });
             SetupNetwork();
 
             if (connectOnInit)
@@ -83,8 +112,13 @@ namespace MPTanks.Networking.Client
             Status = ClientStatus.Connecting;
             if (!string.IsNullOrWhiteSpace(Host) && Port != 0)
             {
+                var msg = NetworkClient.CreateMessage();
+                msg.Write(_userPlayerInfo.Id.ToByteArray());
+                msg.Write(_userPlayerInfo.Clan);
+                msg.Write(_userPlayerInfo.Name);
+                if (Password != null) msg.Write(Password);
                 NetworkClient.Start();
-                NetworkClient.Connect(Host, Port);
+                NetworkClient.Connect(Host, Port, msg);
             }
         }
 
@@ -106,7 +140,17 @@ namespace MPTanks.Networking.Client
 
         public void Update(GameTime gameTime)
         {
+            ProcessMessages();
             Game.Update(gameTime);
+            if (MessageProcessor.MessageQueue.Count > 0 &&
+                NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected)
+            {
+                var msg = NetworkClient.CreateMessage();
+                MessageProcessor.WriteMessages(msg);
+                NetworkClient.SendMessage(msg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered);
+            }
+            MessageProcessor.ClearQueue();
+            NetworkClient.FlushSendQueue();
         }
 
         private bool _hasDisconnected = false;

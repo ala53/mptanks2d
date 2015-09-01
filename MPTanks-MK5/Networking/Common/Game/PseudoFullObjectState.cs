@@ -35,6 +35,12 @@ namespace MPTanks.Networking.Common.Game
         public Half Restitution { get; set; }
         public HalfVector2 Size { get; set; }
 
+        public bool HasChanges(PseudoFullObjectState last)
+        {
+            return VelocityChanged || PositionChanged || RotationChanged || RotationVelocityChanged ||
+                RestitutionChanged || SizeChanged || IsSensorObject != last.IsSensorObject || 
+                IsStaticObject != last.IsStaticObject || WasDestroyed;
+        }
         public PseudoFullObjectState(PseudoFullObjectState lastState, PseudoFullObjectState newState, bool destroyed = false)
         {
             ObjectId = newState.ObjectId;
