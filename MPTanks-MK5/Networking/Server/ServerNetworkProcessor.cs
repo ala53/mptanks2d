@@ -8,6 +8,7 @@ using Lidgren.Network;
 using MPTanks.Networking.Common.Actions;
 using MPTanks.Networking.Common.Actions.ToServer;
 using MPTanks.Networking.Common.Actions.ToClient;
+using Microsoft.Xna.Framework;
 
 namespace MPTanks.Networking.Server
 {
@@ -30,7 +31,14 @@ namespace MPTanks.Networking.Server
                     ((InputChangedAction)action).InputState));
 
                 if (player.Player.HasTank)
+                {
                     player.Player.Tank.InputState = ((InputChangedAction)action).InputState;
+                    if (Vector2.Distance(((InputChangedAction)action).PlayerPosition +
+                            player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2),
+                        player.Player.Tank.Position) < 2f)
+                        player.Player.Tank.Position = ((InputChangedAction)action).PlayerPosition +
+                            player.Player.Tank.LinearVelocity * (player.Connection.AverageRoundtripTime / 2);
+                }
             }
 
             if (action is PlayerTankTypeSelectedAction)

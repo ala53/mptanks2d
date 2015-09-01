@@ -63,6 +63,7 @@ namespace MPTanks.Networking.Server
 
             player.Player.OnPropertyChanged -= Player_PropertyChanged;
 
+            ChatHandler.SendMessage($"Player {player.Player.Username} left.");
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player));
         }
 

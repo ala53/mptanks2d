@@ -48,7 +48,7 @@ namespace MPTanks.CoreAssets.Gamemodes
 
             Teams = teams.ToArray();
         }
-        
+
         public override string[] GetPlayerAllowedTankTypes(Engine.GamePlayer player)
         {
             return Engine.Tanks.Tank.GetAllTankTypes().ToArray();
@@ -64,9 +64,15 @@ namespace MPTanks.CoreAssets.Gamemodes
             return false;
         }
 
+        private bool IsAlive(Team team)
+        {
+            if (team.Players.Length == 0) return false;
+            if (team.Players[0].Tank == null) return false;
+            return team.Players[0].Tank.Alive;
+        }
         public override void Update(GameTime gameTime)
         {
-            int pCountAlive = Teams.Count((t) => (t.Players[0]?.Tank?.Alive).HasValue);
+            int pCountAlive = Teams.Count((t) => IsAlive(t));
 
             if (pCountAlive > 1)
                 return; //still running
@@ -74,7 +80,7 @@ namespace MPTanks.CoreAssets.Gamemodes
             if (pCountAlive == 1)
             {
                 GameEnded = true;
-                WinningTeam = Teams.First((t) => (t.Players[0].Tank?.Alive).HasValue);
+                WinningTeam = Teams.First((t) => IsAlive(t));
                 return;
             }
 

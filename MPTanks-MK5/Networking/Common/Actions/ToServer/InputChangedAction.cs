@@ -16,29 +16,34 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     public class InputChangedAction : ActionBase
     {
         public InputState InputState { get; private set; }
-        public InputChangedAction(NetIncomingMessage message):base(message)
+        public Vector2 PlayerPosition { get; private set; }
+        public InputChangedAction(NetIncomingMessage message) : base(message)
         {
             var iState = new InputState();
             iState.FirePressed = message.ReadBoolean();
-            iState.WeaponNumber = message.ReadByte(7);
-            iState.LookDirection = message.ReadFloat();
-            iState.MovementSpeed = message.ReadFloat();
-            iState.RotationSpeed = message.ReadFloat();
+            iState.WeaponNumber = message.ReadByte(2);
+            iState.LookDirection = message.ReadRangedSingle(-MathHelper.TwoPi, MathHelper.TwoPi, 13);
+            iState.MovementSpeed = (message.ReadUnitSingle(12) - 0.5f) * 2;
+            iState.RotationSpeed = (message.ReadUnitSingle(12) - 0.5f) * 2;
+            PlayerPosition = new Vector2(message.ReadFloat(), message.ReadFloat());
             InputState = iState;
         }
 
-        public InputChangedAction(InputState state)
+        public InputChangedAction(Vector2 myPos, InputState state)
         {
             InputState = state;
+            PlayerPosition = myPos;
         }
 
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(InputState.FirePressed);
-            message.Write((byte)InputState.WeaponNumber, 7);
-            message.Write(InputState.LookDirection);
-            message.Write(InputState.MovementSpeed);
-            message.Write(InputState.RotationSpeed);
+            message.Write((byte)InputState.WeaponNumber, 2);
+            message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 13);
+            message.WriteUnitSingle((InputState.MovementSpeed + 1f) / 2f, 12);
+            message.WriteUnitSingle((InputState.RotationSpeed + 1f) / 2f, 12);
+            message.Write(PlayerPosition.X);
+            message.Write(PlayerPosition.Y);
         }
     }
 }

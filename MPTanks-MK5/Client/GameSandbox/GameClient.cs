@@ -154,8 +154,6 @@ namespace MPTanks.Client.GameSandbox
             {
                 GameRenderer.Game = Client.GameInstance.Game;
                 SoundPlayer.Game = Client.GameInstance.Game;
-                DebugDrawer?.Dispose();
-                DebugDrawer = new DebugDrawer(this, Client);
 
             };
             GameRenderer.Game = Client.GameInstance.Game;

@@ -38,7 +38,7 @@ namespace MPTanks.DedicatedServer
                  e.Game.EventEngine.OnGameStarted += (b, f) => logger.Info("Game started");
              };
 
-            for (var i = 0; i < 250; i++)
+            for (var i = 0; i < 3; i++)
                 _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
                 {
                     Username = "ZZZZZ" + _server.Players.Count,

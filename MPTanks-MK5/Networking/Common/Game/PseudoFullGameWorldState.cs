@@ -74,7 +74,7 @@ namespace MPTanks.Networking.Common.Game
             return state;
         }
 
-        public void Apply(GameCore game, float latency = 0)
+        public void Apply(GameCore game, float latency = 0, ushort? tankId = null)
         {
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
