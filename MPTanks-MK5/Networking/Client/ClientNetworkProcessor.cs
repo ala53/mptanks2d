@@ -144,7 +144,7 @@ namespace MPTanks.Networking.Client
             else if (action is PartialGameStateUpdateAction)
             {
                 var act = action as PartialGameStateUpdateAction;
-                act.StatePartial.Apply(Client.Game, 0, Client?.Player?.Tank?.ObjectId);
+                act.StatePartial.Apply(Client.Game);
                 //Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
             }
             else if (action is PlayerAllowedTankTypesSentAction)

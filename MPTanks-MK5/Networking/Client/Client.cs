@@ -3,6 +3,7 @@ using MPTanks.Engine;
 using MPTanks.Engine.Logging;
 using MPTanks.Engine.Tanks;
 using MPTanks.Networking.Common;
+using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,7 @@ namespace MPTanks.Networking.Client
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
                     ConnectionTimeout = 25000,
+                    SimulatedMinimumLatency = 0.6f,
                     AutoFlushSendQueue = false
                 });
             SetupNetwork();
@@ -165,5 +167,6 @@ namespace MPTanks.Networking.Client
             _hasDisconnected = true;
             NetworkClient.Disconnect("Leaving");
         }
+
     }
 }

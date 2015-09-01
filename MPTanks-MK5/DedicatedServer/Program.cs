@@ -28,7 +28,7 @@ namespace MPTanks.DedicatedServer
                 logger.Info($"\t{mod.Value.Name} version {mod.Value.Version.Major}." +
                     $"{mod.Value.Version.Minor}-{mod.Value.Version.Tag ?? ""}");
 
-            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.25), MaxPlayers = 999 },
+            _server = new Server(new Configuration { },
                 new GameCore(new NullLogger(), "DeathMatchGamemode",
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 new EngineSettings("enginesettings.json")), true, new ConsoleLogger());

@@ -11,7 +11,7 @@ namespace MPTanks.Networking.Server
         public int MaxPlayers { get; set; } = 32;
         public ushort Port { get; set; } = 33132;
         public string Password { get; set; }
-        public TimeSpan StateSyncRate { get; set; } = TimeSpan.FromSeconds(0.25);
+        public TimeSpan StateSyncRate { get; set; } = TimeSpan.FromSeconds(1);
     }
 
     public class InitializedConfiguration

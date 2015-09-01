@@ -311,6 +311,7 @@ namespace MPTanks.Engine
 
         public void UnsafeTickGameWorld(float deltaMs)
         {
+            deltaMs *= (float)Timescale.Fractional;
             while (deltaMs > 0)
             {
                 var tickTime = Math.Min(deltaMs, Settings.MaxDeltaTimeGameTick);

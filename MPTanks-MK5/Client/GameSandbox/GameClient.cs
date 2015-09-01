@@ -30,7 +30,7 @@ namespace MPTanks.Client.GameSandbox
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
         public MPTanks.Networking.Client.Client Client { get; private set; }
-        //public MPTanks.Networking.Server.Server Server { get; private set; }
+        public MPTanks.Networking.Server.Server Server { get; private set; }
         public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
         public InputDriverBase InputDriver { get; private set; }
         public GameCoreRenderer GameRenderer { get; private set; }
@@ -140,13 +140,14 @@ namespace MPTanks.Client.GameSandbox
                 Clan = "",
                 Name = "TestPlayer"
             }, new NLogLogger(Logger.Instance), "password");
-            //Server = new Networking.Server.Server(new Networking.Server.Configuration()
-            //{
-            //    MaxPlayers = 32,
-            //    Password = "password",
-            //    Port = 33132,
-            //    StateSyncRate = TimeSpan.FromMilliseconds(1000)
-            //}, game, true, new NLogLogger(Logger.Instance));
+            if (CrossDomainObject.Instance.IsGameHost)
+                Server = new Networking.Server.Server(new Networking.Server.Configuration()
+                {
+                    MaxPlayers = 32,
+                    Password = "password",
+                    Port = 33132,
+                    StateSyncRate = TimeSpan.FromMilliseconds(1000)
+                }, game, true, new NLogLogger(Logger.Instance));
 
             GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
             SoundPlayer = new Backend.Sound.SoundPlayer();
@@ -161,13 +162,14 @@ namespace MPTanks.Client.GameSandbox
             DebugDrawer?.Dispose();
             DebugDrawer = new DebugDrawer(this, Client);
 
-            //for (var i = 0; i < 5; i++)
-            //{
-            //    Server.AddPlayer(new ServerPlayer(Server,
-            //                   new NetworkPlayer()
-            //                   {
-            //                   }));
-            //}
+            if (CrossDomainObject.Instance.IsGameHost)
+                for (var i = 0; i < 5; i++)
+                {
+                    Server.AddPlayer(new ServerPlayer(Server,
+                                   new NetworkPlayer()
+                                   {
+                                   }));
+                }
             //Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
 
             Client.WaitForConnection();
@@ -257,13 +259,14 @@ namespace MPTanks.Client.GameSandbox
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
             _ui.Update(gameTime);
-            //Server.Update(gameTime);
+            if (CrossDomainObject.Instance.IsGameHost)
+                Server.Update(gameTime);
             //     if (Keyboard.GetState().IsKeyDown(Keys.M))
             //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
             //Client.GameInstance.Game.Authoritative = true;
-            //if (Server.Players.Count == 6)
-            //    Server.Game.BeginGame();
+            if (Server.Players.Count == 6)
+                Server.Game.BeginGame();
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);

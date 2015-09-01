@@ -179,7 +179,7 @@ namespace MPTanks.Client.Backend.UI
         public void ShowMessageBox(string header, string content, MessageBoxType type,
             MessageBoxButtons buttons, Action<MessageBoxResult> callback)
         {
-
+            content = string.Join("\n", ChunksUpto(content, 30));
             _messageBoxes.Add(new MessageBox()
             {
                 Header = header,
@@ -195,7 +195,11 @@ namespace MPTanks.Client.Backend.UI
                 _messageBoxes.Clear();
             }
         }
-
+        static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
+        {
+            for (int i = 0; i < str.Length; i += maxChunkSize)
+                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
+        }
         private void CreateMessageBox(MessageBox specification)
         {
             var page = new UserInterfacePage(specification.Type.ToString());

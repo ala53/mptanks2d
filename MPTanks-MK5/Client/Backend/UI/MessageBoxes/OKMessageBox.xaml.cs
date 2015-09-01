@@ -101,7 +101,11 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_43.Children.Add(this.e_46);
             this.e_46.Name = "e_46";
             this.e_46.Margin = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("Segoe UI", 16F, FontStyle.Regular, "Segoe_UI_12_Regular");
+            this.e_46.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.e_46.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
+            this.e_46.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_46.FontSize = 20F;
             Binding binding_e_46_Text = new Binding("Content");
             this.e_46.SetBinding(TextBlock.TextProperty, binding_e_46_Text);
             this.e_46.SetResourceReference(TextBlock.StyleProperty, "MenuContent");

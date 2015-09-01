@@ -27,16 +27,21 @@ namespace MPTanks.Networking.Common.Game
         public static PseudoFullGameWorldState Create(GameCore game)
         {
             var state = new PseudoFullGameWorldState();
+            state.Overwrite(game);
+            return state;
+        }
+
+        public void Overwrite(GameCore game)
+        {
+            _objectStates.Clear();
             foreach (var obj in game.GameObjects)
             {
-                state._objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj));
+                _objectStates.Add(obj.ObjectId, new PseudoFullObjectState(obj));
             }
 
-            state.CurrentGameStatus = game.Status;
-            state.CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
-            state.FriendlyFireEnabled = game.FriendlyFireEnabled;
-
-            return state;
+            CurrentGameStatus = game.Status;
+            CurrentGameTimeMilliseconds = game.Time.TotalMilliseconds;
+            FriendlyFireEnabled = game.FriendlyFireEnabled;
         }
 
         public PseudoFullGameWorldState MakeDelta(PseudoFullGameWorldState lastState)
@@ -74,7 +79,7 @@ namespace MPTanks.Networking.Common.Game
             return state;
         }
 
-        public void Apply(GameCore game, float latency = 0, ushort? tankId = null)
+        public void Apply(GameCore game, float latency = 0, float rtt = 0, ushort? tankId = null)
         {
             //Do it via reflection to keep api private
             var statusProp = typeof(GameCore).GetProperty(nameof(GameCore.Status));
@@ -88,6 +93,7 @@ namespace MPTanks.Networking.Common.Game
 
             foreach (var objState in ObjectStates.Values)
             {
+                if (objState.ObjectId == tankId) continue;
                 if (game.GameObjectsById.ContainsKey(objState.ObjectId))
                 {
                     if (objState.WasDestroyed && game.GameObjectsById.ContainsKey(objState.ObjectId))
@@ -100,18 +106,12 @@ namespace MPTanks.Networking.Common.Game
                     obj.IsSensor = objState.IsSensorObject;
                     obj.IsStatic = objState.IsStaticObject;
 
-                    if (objState.VelocityChanged)
-                        obj.LinearVelocity = objState.Velocity.ToVector2();
                     if (objState.PositionChanged)
                     {
-                        //if (tankId != null && objState.ObjectId == tankId)
-                        //{
-                        //    if (Vector2.Distance(objState.Position, obj.Position) > 3f)
-                        //        obj.Position = objState.Position + (obj.LinearVelocity * latency);
-                        //}
-                        //else
-                            obj.Position = objState.Position + (obj.LinearVelocity * latency);
+                        obj.Position = objState.Position + (obj.LinearVelocity * latency);
                     }
+                    if (objState.VelocityChanged)
+                        obj.LinearVelocity = objState.Velocity.ToVector2();
                     if (objState.RestitutionChanged)
                         obj.Restitution = objState.Restitution;
                     if (objState.RotationVelocityChanged)

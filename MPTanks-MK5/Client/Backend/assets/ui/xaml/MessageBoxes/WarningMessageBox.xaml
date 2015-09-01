@@ -22,7 +22,8 @@
                                Margin="10" HorizontalAlignment="Center" FontSize="36" 
                                Foreground="{DynamicResource WarningTextColor}" Text="{Binding Header}"></TextBlock>
                 </Border>
-                <TextBlock Margin="10" Style="{DynamicResource MenuContent}" Text="{Binding Content}"></TextBlock>
+                <TextBlock FontFamily="Karmatic Arcade" Background="Transparent" Foreground="White" FontSize="20"
+                           Margin="10" Style="{DynamicResource MenuContent}" Text="{Binding Content}"></TextBlock>
 
                 <Border BorderThickness="0,2,0,0" BorderBrush="{DynamicResource WarningTextColor}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
