@@ -54,6 +54,7 @@
     <Compile Include="ClientNetworkProcessor.cs" />
     <Compile Include="DiscoveryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PseudoStateInterpolator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Engine.csproj">

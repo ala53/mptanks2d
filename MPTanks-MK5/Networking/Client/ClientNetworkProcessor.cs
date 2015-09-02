@@ -33,6 +33,7 @@ namespace MPTanks.Networking.Client
             else if (action is FullGameStateSentAction)
             {
                 var act = action as FullGameStateSentAction;
+                Client._interpolator.ElapsedTime = TimeSpan.MaxValue;
                 if (_shouldMakeNewGameOnFullGameState)
                 {
                     Client.GameInstance.EngineSettings = act.EngineSettings;
@@ -144,7 +145,7 @@ namespace MPTanks.Networking.Client
             else if (action is PartialGameStateUpdateAction)
             {
                 var act = action as PartialGameStateUpdateAction;
-                act.StatePartial.Apply(Client.Game);
+                Client._interpolator.Compute(Client.Game, act.StatePartial);
                 //Client.NetworkClient.ServerConnection.AverageRoundtripTime / 2);
             }
             else if (action is PlayerAllowedTankTypesSentAction)
@@ -156,7 +157,7 @@ namespace MPTanks.Networking.Client
             {
                 var act = action as PlayerInputChangedAction;
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return; //disregard: player not found
-                if (act.PlayerId == Client.PlayerId) return;
+                //if (act.PlayerId == Client.PlayerId) return;
                 Client.Game.InjectPlayerInput(act.PlayerId, act.InputState);
             }
             else if (action is PlayerUpdateAction)

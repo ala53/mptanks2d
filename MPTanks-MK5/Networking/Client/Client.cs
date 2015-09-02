@@ -96,10 +96,10 @@ namespace MPTanks.Networking.Client
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
-                    SimulatedMinimumLatency = 0.4f,
+                    SimulatedMinimumLatency = 0.1f,
                     SimulatedLoss = 0.1f,
                     SimulatedDuplicatesChance = 0.1f,
-                    SimulatedRandomLatency = 0.1f,
+                    SimulatedRandomLatency = 0.05f,
                     ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
                     AutoFlushSendQueue = false
                 });
@@ -151,11 +151,13 @@ namespace MPTanks.Networking.Client
             return NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected;
         }
 
+        internal PseudoStateInterpolator _interpolator = new PseudoStateInterpolator();
         public void Update(GameTime gameTime)
         {
             if (RemainingCountdownTime > TimeSpan.Zero)
                 RemainingCountdownTime -= gameTime.ElapsedGameTime;
             ProcessMessages();
+            _interpolator.Apply(gameTime);
             Game.Update(gameTime);
             if (MessageProcessor.MessageQueue.Count > 0 &&
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected)
