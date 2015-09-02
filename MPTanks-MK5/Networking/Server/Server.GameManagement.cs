@@ -70,6 +70,16 @@ namespace MPTanks.Networking.Server
                 }
                 return;
             }
+
+            if (GameStartRemainingTimeout ==
+                TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady))
+                OnCountdownStarted(this, GameStartRemainingTimeout);
+
+            bool allPlayersReady = true;
+            foreach (var plr in Players)
+                if (!plr.Player.IsReady) allPlayersReady = false;
+            if (allPlayersReady) GameStartRemainingTimeout = TimeSpan.Zero;
+
             GameStartRemainingTimeout -= gameTime.ElapsedGameTime;
 
             if (GameStartTimeoutHasEnded) StartGame();

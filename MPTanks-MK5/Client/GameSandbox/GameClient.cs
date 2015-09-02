@@ -265,8 +265,6 @@ namespace MPTanks.Client.GameSandbox
             //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
             //Client.GameInstance.Game.Authoritative = true;
-            if (Server.Players.Count == 6)
-                Server.Game.BeginGame();
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);

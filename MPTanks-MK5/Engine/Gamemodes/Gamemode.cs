@@ -159,7 +159,7 @@ namespace MPTanks.Engine.Gamemodes
         /// <param name="playerId"></param>
         /// <param name="tankType"></param>
         /// <returns>Returns true if the tank type was able to be set (still allowed) or false if it is not.</returns>
-        public abstract bool VerifyPlayerTankSelection(GamePlayer player, string tankType);
+        public abstract bool CheckPlayerTankSelectionValid(GamePlayer player, string tankType);
 
         /// <summary>
         /// Notifies the Gamemode that the game has started. It can do whatever it wants 
@@ -387,7 +387,7 @@ namespace MPTanks.Engine.Gamemodes
         public virtual Team HotJoinGetPlayerTeam(GamePlayer player) => null;
         public virtual string[] HotJoinGetAllowedTankTypes(GamePlayer player) =>
             GetPlayerAllowedTankTypes(player);
-        public virtual bool HotJoinSetPlayerTankType(GamePlayer player, string tankType)
+        public virtual bool HotJoinCheckPlayerSelectionValid(GamePlayer player, string tankType)
         {
             if (GetPlayerAllowedTankTypes(player).Contains(tankType))
             {

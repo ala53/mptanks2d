@@ -73,7 +73,7 @@ namespace MPTanks.Networking.Server
             if (e == NetworkPlayer.NetworkPlayerPropertyChanged.Tank)
             {
                 MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerTankAssignedAction(
-                    player, player?.Tank.ObjectId ?? ushort.MaxValue));
+                    player, player?.Tank?.ObjectId ?? ushort.MaxValue));
             }
             else if (e == NetworkPlayer.NetworkPlayerPropertyChanged.SelectedTankReflectionName)
             {

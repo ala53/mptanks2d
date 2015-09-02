@@ -63,13 +63,13 @@ namespace MPTanks.Engine
                 if (!HasSelectedTankYet) return false;
                 if (AllowedTankTypes == null)
                     if (Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
-                        Game.Gamemode.VerifyPlayerTankSelection(this, SelectedTankReflectionName))
+                        Game.Gamemode.CheckPlayerTankSelectionValid(this, SelectedTankReflectionName))
                         return true;
                     else return false;
 
                 return AllowedTankTypes.Contains(SelectedTankReflectionName) &&
                     Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
-                    Game.Gamemode.VerifyPlayerTankSelection(this, SelectedTankReflectionName);
+                    Game.Gamemode.CheckPlayerTankSelectionValid(this, SelectedTankReflectionName);
             }
         }
         /// <summary>

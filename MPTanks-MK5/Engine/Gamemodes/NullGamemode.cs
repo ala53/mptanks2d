@@ -38,7 +38,7 @@ namespace MPTanks.Engine.Gamemodes
             return Tanks.Tank.GetAllTankTypes().ToArray();
         }
 
-        public override bool VerifyPlayerTankSelection(GamePlayer player, string tankType)
+        public override bool CheckPlayerTankSelectionValid(GamePlayer player, string tankType)
         {
             player.SelectedTankReflectionName = tankType;
             return true;

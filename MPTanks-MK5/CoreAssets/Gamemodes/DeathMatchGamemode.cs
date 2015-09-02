@@ -7,11 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Sound;
+using MPTanks.Engine;
+using MPTanks.Engine.Tanks;
 
 namespace MPTanks.CoreAssets.Gamemodes
 {
     [Gamemode("DeathMatchGamemode", DisplayName = "Deathmatch (no teams)",
-        Description = "2 team deathmatch", MinPlayersCount = 2)]
+        Description = "2 team deathmatch", MinPlayersCount = 2, HotJoinEnabled = true)]
     public class DeathMatchGamemode : Gamemode
     {
         public DeathMatchGamemode()
@@ -54,7 +56,7 @@ namespace MPTanks.CoreAssets.Gamemodes
             return Engine.Tanks.Tank.GetAllTankTypes().ToArray();
         }
 
-        public override bool VerifyPlayerTankSelection(Engine.GamePlayer player, string tankType)
+        public override bool CheckPlayerTankSelectionValid(Engine.GamePlayer player, string tankType)
         {
             if (Engine.Tanks.Tank.GetAllTankTypes().Contains(tankType))
             {
@@ -91,5 +93,27 @@ namespace MPTanks.CoreAssets.Gamemodes
                 return;
             }
         }
+        #region Hot join implementation
+        public override bool HotJoinCanPlayerJoin(GamePlayer player)
+        {
+            return true;
+        }
+        public override Team HotJoinGetPlayerTeam(GamePlayer player)
+        {
+            var teams = Teams.ToList();
+            teams.Add(new Team());
+            Teams = teams.ToArray();
+            return Teams.Last();
+        }
+        public override string[] HotJoinGetAllowedTankTypes(GamePlayer player)
+        {
+            return Tank.GetAllTankTypes().ToArray();
+        }
+
+        public override bool HotJoinCheckPlayerSelectionValid(GamePlayer player, string tankType)
+        {
+            return (Tank.GetAllTankTypes().Contains(tankType));
+        }
+        #endregion
     }
 }

@@ -36,5 +36,12 @@ namespace MPTanks.Engine.Gamemodes
         /// The team's goal, for an explanation to the players.
         /// </summary>
         public string Objective { get; set; }
+
+        public Team()
+        {
+            _players = new GamePlayer[0];
+            TeamName = "ERR_TEAM_NOT_CONFIGURED";
+            TeamId = 1102;
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace MPTanks.Client
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
-                DomainProxy.IsGameHost = true;
+                //DomainProxy.IsGameHost = true;
                 DomainProxy.SandboxingEnabled = false;
             }
             else
@@ -53,7 +53,7 @@ namespace MPTanks.Client
                             typeof(CrossDomainObject).Assembly.FullName,
                             typeof(CrossDomainObject).FullName);
                         DomainProxy.SandboxingEnabled = true;
-                        DomainProxy.IsGameHost = true;
+                        //DomainProxy.IsGameHost = true;
                         while (!_clearedToRun) Thread.Sleep(50);
                         SetStartWindowParams();
                         _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);

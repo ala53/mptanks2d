@@ -41,7 +41,7 @@ namespace MPTanks.Modding.Unpacker
             return zf;
         }
 
-        private static Dictionary<string, ModHeader> _headerCache = 
+        private static Dictionary<string, ModHeader> _headerCache =
             new Dictionary<string, ModHeader>(StringComparer.InvariantCultureIgnoreCase);
         public static ModHeader GetHeader(string modFile)
         {
@@ -64,9 +64,13 @@ namespace MPTanks.Modding.Unpacker
             foreach (var dll in header.DLLFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{dll}");
-                if (!File.Exists(path) || overwriteExisting)
-                    File.WriteAllBytes(path,
-                    GetData(dll, zf));
+                try
+                {
+                    if (!File.Exists(path) || overwriteExisting)
+                        File.WriteAllBytes(path,
+                        GetData(dll, zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 dlls.Add(path);
             }
             zf.Close();
@@ -84,9 +88,13 @@ namespace MPTanks.Modding.Unpacker
             foreach (var sound in header.SoundFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{sound}");
-                if (!File.Exists(path) || overwriteExisting)
-                    File.WriteAllBytes(path,
-                        GetData(sound, zf));
+                try
+                {
+                    if (!File.Exists(path) || overwriteExisting)
+                        File.WriteAllBytes(path,
+                            GetData(sound, zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 files.Add(path);
             }
             zf.Close();
@@ -104,15 +112,24 @@ namespace MPTanks.Modding.Unpacker
             foreach (var img in header.ImageFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}");
-                if (!File.Exists(path) || overwriteExisting)
-                    File.WriteAllBytes(path,
-                    GetData(img, zf));
+                try
+                {
+                    if (!File.Exists(path) || overwriteExisting)
+                        File.WriteAllBytes(path,
+                        GetData(img, zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 files.Add(path);
 
                 var jsonPath = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.json");
-                if (!File.Exists(jsonPath) || overwriteExisting)
-                    File.WriteAllBytes(jsonPath,
-                    GetData($"{img}.json", zf));
+
+                try
+                {
+                    if (!File.Exists(jsonPath) || overwriteExisting)
+                        File.WriteAllBytes(jsonPath,
+                        GetData($"{img}.json", zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
             }
             zf.Close();
 
@@ -131,9 +148,13 @@ namespace MPTanks.Modding.Unpacker
             foreach (var map in header.MapFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{map}");
-                if (!File.Exists(path) || overwriteExisting)
-                    File.WriteAllBytes(path,
-                    GetData(map, zf));
+                try
+                {
+                    if (!File.Exists(path) || overwriteExisting)
+                        File.WriteAllBytes(path,
+                        GetData(map, zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 files.Add(path);
             }
             zf.Close();
@@ -153,9 +174,13 @@ namespace MPTanks.Modding.Unpacker
             foreach (var component in header.ComponentFiles)
             {
                 var path = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{component}");
-                if (!File.Exists(path) || overwriteExisting)
-                    File.WriteAllBytes(path,
-                    GetData(component, zf));
+                try
+                {
+                    if (!File.Exists(path) || overwriteExisting)
+                        File.WriteAllBytes(path,
+                        GetData(component, zf));
+                }
+                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 files.Add(path);
             }
             zf.Close();

@@ -46,16 +46,27 @@ namespace MPTanks.DedicatedServer
 
             _server.GameInstance.GameChanged += (a, e) =>
              {
+                 _logger.Info("Game changed (new game created).");
                  e.Game.EventEngine.OnGameStarted += (b, f) => _logger.Info("Game started");
+                 e.Game.EventEngine.OnGameEnded += (b, f) =>
+                 {
+                     _logger.Info("Game ended.");
+                     //Start a new game of the same type
+                     _server.SetGame(new GameCore(new NullLogger(), _gamemode, _map,
+                         new EngineSettings("enginesettings.json")));
+                 };
              };
+            _server.OnCountdownStarted += (a, e) =>
+                _logger.Info($"Game countdown started: {e.TotalSeconds.ToString("N0")} seconds remaining.");
+            _server.SetGame(_server.Game);
 
-            for (var i = 0; i < 3; i++)
-                _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
-                {
-                    Username = "ZZZZZ" + _server.Players.Count,
-                    UniqueId = Guid.NewGuid(),
-                    ClanName = ""
-                }));
+            //for (var i = 0; i < 3; i++)
+            //    _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
+            //    {
+            //        Username = "ZZZZZ" + _server.Players.Count,
+            //        UniqueId = Guid.NewGuid(),
+            //        ClanName = ""
+            //    }));
 
             Logger.Info("For help, type \"help\".");
 
@@ -86,22 +97,47 @@ namespace MPTanks.DedicatedServer
         static void Process()
         {
             var info = WaitLine(0);
-            if (info == null) return;
+            if (info == null) { return; }
+            info = info.ToLower();
             if (info.StartsWith("change-gamemode")) _gamemode = ChooseGamemode();
-            if (info.StartsWith("force-restart"))
+            else if (info.StartsWith("force-restart"))
                 _server.SetGame(new GameCore(new NullLogger(),
                     _gamemode, _map, new EngineSettings("enginesettings.json")));
-            if (info.StartsWith("change-map"))
+            else if (info.StartsWith("change-map"))
                 _map = ChooseMap();
-            if (info.StartsWith("help"))
+            else if (info.StartsWith("help"))
             {
                 _logger.Info("Help menu");
                 _logger.Info("help - Show this menu");
                 _logger.Info("change-gamemode - Change the gamemode for the next game.");
                 _logger.Info("change-map - Change the map for the next game.");
+                _logger.Info("change-timescale {scale} - Change the timescale for the current game.");
                 _logger.Info("force-restart - Force an immediate restart of the game," +
                     " updating to the new gamemode and map");
+                _logger.Info("exit - Exits the game");
             }
+            else if (info.StartsWith("change-timescale"))
+            {
+                if (info.Split(' ').Length < 2)
+                {
+                    _logger.Error("change-timescale requires a timescale parameter.");
+                    return;
+                }
+                double scale;
+                if (!double.TryParse(info.Split(' ')[1], out scale))
+                {
+                    _logger.Error($"{info.Split(' ')[1]} is not a valid timescale.");
+                    return;
+                }
+                _server.Game.Timescale = new GameCore.TimescaleValue(scale, scale.ToString());
+            }
+            else if (info.StartsWith("exit"))
+            {
+                _server.Close();
+                _logger.Info("Server closed.");
+                Environment.Exit(0);
+            }
+            else _logger.Error("Command not recognized.");
         }
         static Stopwatch _lineSw = new Stopwatch();
         static string WaitLine(int timeout = int.MaxValue)
@@ -127,7 +163,7 @@ namespace MPTanks.DedicatedServer
                 while (shouldRead)
                 {
                     _logger.Info("Enter mod filename:");
-                    var file = Console.ReadLine();
+                    var file = WaitLine();
                     if (File.Exists(file))
                     {
                         var mod = Client.GameSandbox.Mods.ModLoader.LoadMod(file, GameSettings.Instance);
@@ -135,6 +171,9 @@ namespace MPTanks.DedicatedServer
                             _logger.Error($"Could not load mod {file}.");
                         else _logger.Info($"Loaded mod {file}.");
                     }
+                    else _logger.Error($"{file} not found.");
+
+                    _logger.Info("Do you wish to load another mod?");
                     shouldLoad = WaitLine();
                     if (shouldLoad.Equals("y", StringComparison.OrdinalIgnoreCase) ||
                         shouldLoad.Equals("yes", StringComparison.OrdinalIgnoreCase))
@@ -229,6 +268,11 @@ namespace MPTanks.DedicatedServer
                 var line = WaitLine();
                 int num;
                 if (!int.TryParse(line, out num))
+                {
+                    _logger.Error($"{line} is not a valid number.");
+                    continue;
+                }
+                if (num < 1 || num > maps.Count)
                 {
                     _logger.Error($"{num} is out of range. It must be between 1 and {maps.Count}.");
                     continue;
