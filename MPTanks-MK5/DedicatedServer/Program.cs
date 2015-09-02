@@ -157,7 +157,7 @@ namespace MPTanks.DedicatedServer
             _logger.Info("Do you want to load any mods (y/n)?");
             bool shouldRead = false;
             string shouldLoad = WaitLine(30000);
-            if (shouldLoad == null) shouldLoad == "n";
+            if (shouldLoad == null) shouldLoad = "n";
             if (shouldLoad.Equals("y", StringComparison.OrdinalIgnoreCase) ||
                 shouldLoad.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 shouldRead = true;
