@@ -40,6 +40,7 @@ namespace MPTanks.Engine.Gamemodes
         public Team()
         {
             _players = new GamePlayer[0];
+            Objective = "ERR_TEAM_NOT_CONFIGURED";
             TeamName = "ERR_TEAM_NOT_CONFIGURED";
             TeamId = 1102;
         }

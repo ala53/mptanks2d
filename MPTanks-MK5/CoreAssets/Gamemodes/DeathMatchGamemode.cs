@@ -28,11 +28,11 @@ namespace MPTanks.CoreAssets.Gamemodes
             MusicHelper.PlaySongs(Game, Assets.GetSongNames());
         }
 
+        Random rnd = new Random();
+        short teamId = 1;
         public override void MakeTeams(Engine.GamePlayer[] players)
         {
-            var rnd = new Random();
             var teams = new List<Team>();
-            short teamId = 1;
 
             foreach (var p in players)
             {
@@ -69,7 +69,7 @@ namespace MPTanks.CoreAssets.Gamemodes
         private bool IsAlive(Team team)
         {
             if (team.Players.Length == 0) return false;
-            if (team.Players[0].Tank == null) return false;
+            if (team.Players[0]?.Tank == null) return false;
             return team.Players[0].Tank.Alive;
         }
         public override void Update(GameTime gameTime)
@@ -100,10 +100,17 @@ namespace MPTanks.CoreAssets.Gamemodes
         }
         public override Team HotJoinGetPlayerTeam(GamePlayer player)
         {
+            var team = new Team
+            {
+                Objective = "Kill all other players.",
+                TeamColor = new Color(rnd.Next(50, 255), rnd.Next(50, 255), rnd.Next(50, 255)),
+                TeamId = teamId++,
+                TeamName = player.Username
+            };
             var teams = Teams.ToList();
-            teams.Add(new Team());
+            teams.Add(team);
             Teams = teams.ToArray();
-            return Teams.Last();
+            return team;
         }
         public override string[] HotJoinGetAllowedTankTypes(GamePlayer player)
         {

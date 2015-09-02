@@ -22,7 +22,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public PlayerUpdateAction(NetworkPlayer player, GameCore game)
         {
             Player = new FullStatePlayer(player);
-            GamemodeState = game.Gamemode.FullState;
+            GamemodeState = game.Gamemode.GetFullState();
+            game.Gamemode.SetFullState(GamemodeState);
         }
 
         public override void Serialize(NetOutgoingMessage message)

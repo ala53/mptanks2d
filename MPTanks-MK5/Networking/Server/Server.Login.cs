@@ -17,8 +17,8 @@ namespace MPTanks.Networking.Server
         }
         public void HandleConnection(NetIncomingMessage incoming)
         {
-            try
-            {
+            //try
+           // {
                 //read their proclaimed info
                 Guid id = new Guid(incoming.ReadBytes(16));
                 string clan = incoming.ReadString();
@@ -40,13 +40,14 @@ namespace MPTanks.Networking.Server
                         Premium = true
                     });
                 else DenyConnection(incoming, "Too many players");
+                /*
             }
             catch (Exception ex)
             {
                 DenyConnection(incoming, "Invalid connection");
                 Server.Logger.Error("[SERVER] [LOGIN] Connection Approval", ex);
                 return;
-            }
+            }*/
         }
         private void ApproveConnection(NetIncomingMessage msg, WebInterface.WebPlayerInfoResponse offline = null)
         {
