@@ -64,6 +64,13 @@ namespace MPTanks.Networking.Client
                     case NetIncomingMessageType.Receipt:
                         break;
                     case NetIncomingMessageType.StatusChanged:
+                        switch ((NetConnectionStatus)msg.ReadByte())
+                        {
+                            case NetConnectionStatus.Disconnected:
+                                var reason = msg.ReadString();
+
+                                break;
+                        }
                         break;
                     case NetIncomingMessageType.UnconnectedData:
                         break;

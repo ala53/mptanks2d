@@ -12,104 +12,128 @@ namespace MPTanks.DedicatedServer
     {
         public void Debug(string message)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[DEBUG] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[DEBUG] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Error(Exception ex)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToShortTimeString()}] {ex.Message}");
+            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
             Console.WriteLine(ex.StackTrace);
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Error(string message)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Error(string message, Exception ex)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Fatal(Exception ex)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToShortTimeString()}] {ex.Message}");
+            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
             Console.WriteLine(ex.StackTrace);
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Fatal(string message)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Fatal(string message, Exception ex)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Info(object data)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] [{DateTime.Now.ToShortTimeString()}] \n" +
+            Console.WriteLine($"[INFO] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Info(string message)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[INFO] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Trace(Exception ex)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {ex.Message}");
+            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
             Console.WriteLine(ex.StackTrace);
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Trace(object data)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] \n" +
+            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));*/
         }
 
         public void Trace(string message)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {message}");*/
+            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");*/
         }
 
         public void Trace(string message, Exception ex)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);*/
         }
 
         public void Warning(object data)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] [{DateTime.Now.ToShortTimeString()}] \n" +
+            Console.WriteLine($"[WARN] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
         public void Warning(string message)
         {
+            Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] [{DateTime.Now.ToShortTimeString()}] {message}");
+            Console.WriteLine($"[WARN] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
     }
 }
