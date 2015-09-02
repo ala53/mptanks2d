@@ -1,4 +1,5 @@
 ﻿using MPTanks.Engine;
+using MPTanks.Engine.Core.Timing;
 using MPTanks.Networking.Common;
 using MPTanks.Networking.Common.Game;
 using System;
@@ -28,12 +29,13 @@ namespace MPTanks.Networking.Server
                     new Common.Actions.ToClient.FullGameStateSentAction(Game));
             }, TimeSpan.FromSeconds(1));
             //Announce that they joined
-            ChatHandler.SendMessage(Strings.Server.PlayerJoined(player.Player.Username));
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerJoinedAction(player.Player));
+            ChatHandler.SendMessage($"{player.Player.Username} joined the server");
 
             player.LastSentState = PseudoFullGameWorldState.Create(Game);
             player.Player.OnPropertyChanged -= Player_PropertyChanged;
             player.Player.OnPropertyChanged += Player_PropertyChanged;
+            
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerUpdateAction(player.Player, Game));
 
             //Create a state sync loop
             Timers.CreateReccuringTimer(t =>
@@ -64,37 +66,16 @@ namespace MPTanks.Networking.Server
             player.Player.OnPropertyChanged -= Player_PropertyChanged;
 
             ChatHandler.SendMessage($"Player {player.Player.Username} left.");
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player));
+            
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player, Game));
         }
 
+        private bool _disablePropertyNotifications = false;
         private void Player_PropertyChanged(object sender, NetworkPlayer.NetworkPlayerPropertyChanged e)
         {
-            var player = (NetworkPlayer)sender;
-            if (e == NetworkPlayer.NetworkPlayerPropertyChanged.Tank)
-            {
-                MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerTankAssignedAction(
-                    player, player?.Tank?.ObjectId ?? ushort.MaxValue));
-            }
-            else if (e == NetworkPlayer.NetworkPlayerPropertyChanged.SelectedTankReflectionName)
-            {
-                //Validate their selection
-                if (player.TankSelectionIsValid)
-                {
-                    //It's ok: let everyone know
-                    MessageProcessor.SendMessage(
-                        new Common.Actions.ToClient.PlayerSelectedTankAction(
-                            player, player.SelectedTankReflectionName));
-
-                    MessageProcessor.SendPrivateMessage(GetPlayer(player.Id),
-                        new Common.Actions.ToClient.PlayerTankSelectionAcknowledgedAction(true));
-                }
-                else
-                {
-                    //It's not ok: make them switch
-                    MessageProcessor.SendPrivateMessage(GetPlayer(player.Id),
-                        new Common.Actions.ToClient.PlayerTankSelectionAcknowledgedAction(false));
-                }
-            }
+            if (_disablePropertyNotifications) return;
+            var player = (NetworkPlayer)sender; //Send them an update
+            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerUpdateAction(player, Game));
         }
 
         public ServerPlayer GetPlayer(ushort id) => Players.FirstOrDefault(a => a.Player.Id == id);

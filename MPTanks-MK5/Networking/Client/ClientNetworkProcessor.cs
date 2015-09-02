@@ -159,12 +159,18 @@ namespace MPTanks.Networking.Client
                 //if (act.PlayerId == Client.PlayerId) return;
                 Client.Game.InjectPlayerInput(act.PlayerId, act.InputState);
             }
-            else if (action is PlayerJoinedAction)
+            else if (action is PlayerUpdateAction)
             {
-                var act = action as PlayerJoinedAction;
-                if (Client.Game.FindPlayer(act.Player.Id) != null) return; //disregard: already exists
-
+                var act = action as PlayerUpdateAction;
+                if (Client.Game.FindPlayer(act.Player.Id) != null)
+                {
+                    act.Player.Apply(Client.Game.FindPlayer<NetworkPlayer>(act.Player.Id));
+                    Client.Game.Gamemode.SetFullState(act.GamemodeState);
+                    act.Player.ApplySecondPass(Client.Game.FindPlayer<NetworkPlayer>(act.Player.Id), Client.Game);
+                    return; //update: already exists
+                }
                 Client.Game.AddPlayer(act.Player.ToNetworkPlayer());
+                Client.Game.Gamemode.SetFullState(act.GamemodeState);
                 act.Player.ApplySecondPass(
                     (NetworkPlayer)Client.Game.PlayersById[act.Player.Id], Client.Game);
             }
@@ -173,6 +179,7 @@ namespace MPTanks.Networking.Client
                 var act = action as PlayerLeftAction;
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return;
 
+                Client.Game.Gamemode.SetFullState(act.GamemodeState);
                 Client.Game.RemovePlayer(Client.Game.FindPlayer(act.PlayerId));
             }
             else if (action is PlayerReadyToStartChangedAction)
@@ -188,16 +195,6 @@ namespace MPTanks.Networking.Client
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return;
                 Client.Game.FindPlayer(act.PlayerId)
                     .SelectedTankReflectionName = act.TankType;
-
-            }
-            else if (action is PlayerTankAssignedAction)
-            {
-                var act = action as PlayerTankAssignedAction;
-                if (Client.Game.FindPlayer(act.PlayerId) == null) return;
-                if (!Client.Game.GameObjectsById.ContainsKey(act.ObjectId)) return;
-
-                Client.Game.FindPlayer(act.PlayerId).Tank =
-                    Client.Game.GameObjectsById[act.ObjectId] as Tank;
             }
             else if (action is PlayerTankSelectionAcknowledgedAction)
             {

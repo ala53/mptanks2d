@@ -111,8 +111,11 @@ namespace MPTanks.Networking.Common.Game
 
         public void ApplySecondPass(NetworkPlayer player, GameCore game)
         {
-            player.Tank = (HasTank ? (Tank)game.GameObjectsById[TankObjectId] : null);
-            if (HasTank) player.Tank.InputState = Input;
+            if (game.GameObjectsById.ContainsKey(TankObjectId))
+            {
+                player.Tank = (HasTank ? (Tank)game.GameObjectsById[TankObjectId] : null);
+                if (HasTank) player.Tank.InputState = Input;
+            }
             player.Team = (TeamId != -3 ? FindTeam(game.Gamemode.Teams, TeamId) : null);
         }
 

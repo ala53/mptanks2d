@@ -86,6 +86,17 @@ namespace MPTanks.Networking.Common.Game
                 if (!game.PlayersById.ContainsKey(player.Id))
                     game.AddPlayer(nwPlayer);
             }
+            var missingPlayers = new List<NetworkPlayer>();
+            foreach (var plr in game.Players)
+            {
+                bool found = false;
+                foreach (var p in Players)
+                    if (p.UniqueId == ((NetworkPlayer)plr).UniqueId)
+                        found = true;
+                if (!found) missingPlayers.Add((NetworkPlayer)plr);
+            }
+            foreach (var plr in missingPlayers)
+                game.RemovePlayer(plr);
 
             //Add all of the game objects
             foreach (var fullState in ObjectStates)
@@ -141,7 +152,7 @@ namespace MPTanks.Networking.Common.Game
             }
 
             foreach (var obj in objectsToRemove)
-                game.RemoveGameObject(obj, null, true);
+                game.ImmediatelyForceObjectDestruction(obj);
         }
 
         public static FullGameState Create(GameCore game)

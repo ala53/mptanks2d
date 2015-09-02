@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine;
 using MPTanks.Engine.Logging;
+using MPTanks.Engine.Settings;
 using MPTanks.Engine.Tanks;
 using MPTanks.Networking.Common;
 using MPTanks.Networking.Common.Game;
@@ -93,8 +94,7 @@ namespace MPTanks.Networking.Client
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
-                    ConnectionTimeout = 25000,
-                    SimulatedMinimumLatency = 0.6f,
+                    ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
                     AutoFlushSendQueue = false
                 });
             SetupNetwork();
@@ -147,6 +147,8 @@ namespace MPTanks.Networking.Client
 
         public void Update(GameTime gameTime)
         {
+            if (RemainingCountdownTime > TimeSpan.Zero)
+                RemainingCountdownTime -= gameTime.ElapsedGameTime;
             ProcessMessages();
             Game.Update(gameTime);
             if (MessageProcessor.MessageQueue.Count > 0 &&

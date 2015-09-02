@@ -12,6 +12,8 @@ namespace MPTanks.Networking.Server
         public bool GameStartTimeoutHasEnded => GameStartRemainingTimeout <= TimeSpan.Zero;
         public TimeSpan GameStartRemainingTimeout { get; private set; }
             = TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady);
+        public event EventHandler<TimeSpan> OnCountdownStarted = delegate { };
+        public event EventHandler<TimeSpan> OnCountdownStopped = delegate { };
 
         public enum ServerGameStatus
         {
@@ -65,24 +67,27 @@ namespace MPTanks.Networking.Server
                 if (GameStartRemainingTimeout != ttw)
                 {
                     //Send a countdown notification
-                    MessageProcessor.SendMessage(new Common.Actions.ToClient.CountdownStartedAction(ttw));
                     GameStartRemainingTimeout = ttw;
+                    OnCountdownStopped(this, ttw);
                 }
                 return;
             }
+            else
+            {
+                if (GameStartRemainingTimeout ==
+                    TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady))
+                    OnCountdownStarted(this, GameStartRemainingTimeout);
 
-            if (GameStartRemainingTimeout ==
-                TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady))
-                OnCountdownStarted(this, GameStartRemainingTimeout);
+                bool allPlayersReady = true;
+                foreach (var plr in Players)
+                    if (!plr.Player.IsReady) allPlayersReady = false;
+                if (allPlayersReady) GameStartRemainingTimeout = TimeSpan.Zero;
 
-            bool allPlayersReady = true;
-            foreach (var plr in Players)
-                if (!plr.Player.IsReady) allPlayersReady = false;
-            if (allPlayersReady) GameStartRemainingTimeout = TimeSpan.Zero;
+                MessageProcessor.SendMessage(new Common.Actions.ToClient.CountdownStartedAction(GameStartRemainingTimeout));
+                GameStartRemainingTimeout -= gameTime.ElapsedGameTime;
 
-            GameStartRemainingTimeout -= gameTime.ElapsedGameTime;
-
-            if (GameStartTimeoutHasEnded) StartGame();
+                if (GameStartTimeoutHasEnded) StartGame();
+            }
         }
     }
 }

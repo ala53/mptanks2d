@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine;
 using MPTanks.Engine.Logging;
+using MPTanks.Engine.Settings;
 using MPTanks.Networking.Common;
 using MPTanks.Networking.Common.Game;
 using System;
@@ -26,7 +27,6 @@ namespace MPTanks.Networking.Server
         public Extensions.ExtensionManager ExtensionManager { get; private set; }
         internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
-        public event EventHandler<TimeSpan> OnCountdownStarted = delegate { };
 
         //The name of the server
         public string Name { get; set; } = "MPTanks Server";
@@ -66,6 +66,7 @@ namespace MPTanks.Networking.Server
             NetworkServer = new Lidgren.Network.NetServer(
             SetupNetwork(new Lidgren.Network.NetPeerConfiguration("MPTANKS")
             {
+                ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
                 AutoFlushSendQueue = false,
                 Port = Configuration.Port,
                 MaximumConnections = Configuration.MaxPlayers + 4 //so we can gracefully disconnect
@@ -120,11 +121,14 @@ namespace MPTanks.Networking.Server
         }
         public void SetGame(GameCore game)
         {
+            GameStartRemainingTimeout = TimeSpan.FromMilliseconds(
+                ServerSettings.Instance.TimeToWaitForPlayersReady);
+            _disablePropertyNotifications = true;
             foreach (var player in Players)
             {
+                player.Player.Tank = null;
                 player.Player.IsSpectator = false;
                 //Clear existing attributes from the player object
-                player.Player.Tank = null;
                 player.Player.SelectedTankReflectionName = null;
                 player.Player.SpawnPoint = Vector2.Zero;
                 player.Player.Team = null;
@@ -133,6 +137,7 @@ namespace MPTanks.Networking.Server
                 player.Player.IsReady = false;
                 game.AddPlayer(player.Player);
             }
+            _disablePropertyNotifications = false;
             GameInstance.FullGameState = FullGameState.Create(game);
             Game.Authoritative = true;
         }

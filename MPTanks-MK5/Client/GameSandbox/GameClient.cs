@@ -258,6 +258,9 @@ namespace MPTanks.Client.GameSandbox
             if (Client.GameInstance.Game.HasStarted && _ui.PageName == _settingUpPageName)
                 _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
 
+            if (_ui.PageName == _settingUpPageName)
+                _ui.ActiveBinder.TimeRemaining = Client.RemainingCountdownTime;
+
             _ui.Update(gameTime);
             if (CrossDomainObject.Instance.IsGameHost)
                 Server.Update(gameTime);

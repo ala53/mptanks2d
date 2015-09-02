@@ -40,7 +40,7 @@ namespace MPTanks.DedicatedServer
 
             _gamemode = ChooseGamemode();
             _map = ChooseMap();
-            _server = new Server(new Configuration { },
+            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.33) },
                 new GameCore(new NullLogger(), _gamemode, _map,
                 new EngineSettings("enginesettings.json")), true, new ConsoleLogger());
 
@@ -58,15 +58,17 @@ namespace MPTanks.DedicatedServer
              };
             _server.OnCountdownStarted += (a, e) =>
                 _logger.Info($"Game countdown started: {e.TotalSeconds.ToString("N0")} seconds remaining.");
+            _server.OnCountdownStopped += (a, e) =>
+                _logger.Info("Game countdown stopped.");
             _server.SetGame(_server.Game);
 
-            //for (var i = 0; i < 3; i++)
-            //    _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
-            //    {
-            //        Username = "ZZZZZ" + _server.Players.Count,
-            //        UniqueId = Guid.NewGuid(),
-            //        ClanName = ""
-            //    }));
+            for (var i = 0; i < 1; i++)
+                _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
+                {
+                    Username = "ZZZZZ" + _server.Players.Count,
+                    UniqueId = Guid.NewGuid(),
+                    ClanName = ""
+                }));
 
             Logger.Info("For help, type \"help\".");
 
@@ -154,7 +156,8 @@ namespace MPTanks.DedicatedServer
         {
             _logger.Info("Do you want to load any mods (y/n)?");
             bool shouldRead = false;
-            string shouldLoad = WaitLine();
+            string shouldLoad = WaitLine(30000);
+            if (shouldLoad == null) shouldLoad == "n";
             if (shouldLoad.Equals("y", StringComparison.OrdinalIgnoreCase) ||
                 shouldLoad.Equals("yes", StringComparison.OrdinalIgnoreCase))
                 shouldRead = true;
@@ -202,7 +205,8 @@ namespace MPTanks.DedicatedServer
             bool valid = false;
             while (!valid)
             {
-                var line = WaitLine();
+                var line = WaitLine(30000);
+                if (line == null) line = "1"; //Chose the first one if no input
                 if (line.StartsWith("desc", StringComparison.OrdinalIgnoreCase))
                 {
                     if (line.Split(' ').Length < 2)
@@ -265,7 +269,8 @@ namespace MPTanks.DedicatedServer
             bool valid = false;
             while (!valid)
             {
-                var line = WaitLine();
+                var line = WaitLine(30000);
+                if (line == null) line = "1"; //Chose the first one if no input
                 int num;
                 if (!int.TryParse(line, out num))
                 {

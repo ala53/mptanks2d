@@ -125,6 +125,9 @@ namespace MPTanks.Engine
                 //remove them from the team
                 if (player.Team != null && player.Team.Players.Contains(player))
                     player.Team.Players = player.Team.Players.Where(a => a != player).ToArray();
+                //And remove the team if no one is there
+                if (player.Team.Players.Length == 0)
+                    Gamemode.Teams = Gamemode.Teams.Where(t => t != player.Team).ToArray();
                 //and remove them from the players list
                 _playersById.Remove(player.Id);
                 _playerIds.Remove(player.Id);
@@ -140,13 +143,13 @@ namespace MPTanks.Engine
 
         public void InjectPlayerInput(ushort playerId, InputState state)
         {
-            if (Running && PlayersById.ContainsKey(playerId))
+            if (Running && PlayersById.ContainsKey(playerId) && PlayersById[playerId].HasTank)
                 PlayersById[playerId].Tank.InputState = state;
         }
 
         public void InjectPlayerInput(GamePlayer player, InputState state)
         {
-            if (Running)
+            if (Running && player.HasTank)
                 player.Tank.InputState = state;
         }
 

@@ -27,17 +27,23 @@ namespace MPTanks.Engine
             var type = (__SerializationGameObjectType)serializationData[offset]; offset++;
             var uid = serializationData.GetUShort(offset); offset += 2;
 
-            GameObject obj;
-            if (type == __SerializationGameObjectType.Tank &&
-                game.PlayersById.ContainsKey(uid))
-                obj = game.AddTank(name, game.PlayersById[uid], authorized, id);
-            else if (type == __SerializationGameObjectType.Projectile &&
-                game.PlayersById.ContainsKey(uid))
-                obj = game.AddProjectile(name, game.PlayersById[uid].Tank, authorized, id);
+            GameObject obj = null;
+            if (type == __SerializationGameObjectType.Tank)
+            {
+                if (game.PlayersById.ContainsKey(uid))
+                    obj = game.AddTank(name, game.PlayersById[uid], authorized, id);
+            }
+            else if (type == __SerializationGameObjectType.Projectile)
+            {
+                if (game.PlayersById.ContainsKey(uid))
+                    obj = game.AddProjectile(name, game.PlayersById[uid].Tank, authorized, id);
+            }
             else if (type == __SerializationGameObjectType.MapObject)
                 obj = game.AddMapObject(name, authorized, id);
             else
                 obj = game.AddGameObject(name, authorized, id);
+
+            if (obj == null) return null;
 
             obj.UnsafeDisableEvents();
             obj.SetFullState(serializationData);

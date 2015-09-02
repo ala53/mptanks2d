@@ -71,9 +71,8 @@
     <Compile Include="Actions\ToServer\InputChangedAction.cs" />
     <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />
     <Compile Include="Actions\ToClient\GamemodeStateChangedAction.cs" />
-    <Compile Include="Actions\ToClient\PlayerJoinedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerUpdateAction.cs" />
     <Compile Include="Actions\ToClient\PlayerLeftAction.cs" />
-    <Compile Include="Actions\ToClient\PlayerTankAssignedAction.cs" />
     <Compile Include="Actions\ToServer\PlayerReadyChangedAction.cs" />
     <Compile Include="Actions\ToServer\PlayerTankTypeSelectedAction.cs" />
     <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />

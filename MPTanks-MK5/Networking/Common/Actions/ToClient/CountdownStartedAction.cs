@@ -12,7 +12,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public TimeSpan CountdownTime { get; private set; }
         public CountdownStartedAction(NetIncomingMessage msg) : base(msg)
         {
-            CountdownTime = TimeSpan.FromMilliseconds(msg.ReadDouble());
+            CountdownTime = TimeSpan.FromMilliseconds(msg.ReadFloat());
         }
 
         public CountdownStartedAction(TimeSpan countdown)
@@ -22,7 +22,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 
         public override void Serialize(NetOutgoingMessage message)
         {
-            message.Write(CountdownTime.TotalMilliseconds);
+            message.Write((float)CountdownTime.TotalMilliseconds);
         }
     }
 }

@@ -415,6 +415,8 @@ namespace MPTanks.Engine
 
             Diagnostics.BeginMeasurement("Begin UpdateInGame()", DiagnosticsParent);
 
+            Diagnostics.MonitorCall(UpdateHotJoinPlayers, "UpdateHotJoinPlayers()", DiagnosticsParent);
+
             //Mark the in-loop flag so any removals happen next frame and don't corrupt the state
             _inUpdateLoop = true;
 
