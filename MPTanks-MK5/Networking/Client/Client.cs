@@ -44,6 +44,8 @@ namespace MPTanks.Networking.Client
                     MessageProcessor.SendMessage(new Common.Actions.ToServer.InputChangedAction(
                         Player?.Tank?.Position ?? Vector2.Zero, value));
                 _input = value;
+                if (PlayerId != null)
+                    Game.InjectPlayerInput(PlayerId.Value, value);
             }
         }
         public ClientNetworkProcessor MessageProcessor { get; private set; }

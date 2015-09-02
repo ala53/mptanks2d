@@ -156,7 +156,7 @@ namespace MPTanks.Networking.Client
             {
                 var act = action as PlayerInputChangedAction;
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return; //disregard: player not found
-                //if (act.PlayerId == Client.PlayerId) return;
+                if (act.PlayerId == Client.PlayerId) return;
                 Client.Game.InjectPlayerInput(act.PlayerId, act.InputState);
             }
             else if (action is PlayerUpdateAction)

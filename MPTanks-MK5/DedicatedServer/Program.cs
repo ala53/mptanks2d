@@ -40,7 +40,7 @@ namespace MPTanks.DedicatedServer
 
             _gamemode = ChooseGamemode();
             _map = ChooseMap();
-            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.33) },
+            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(1.25) },
                 new GameCore(new NullLogger(), _gamemode, _map,
                 new EngineSettings("enginesettings.json")), true, new ConsoleLogger());
 
