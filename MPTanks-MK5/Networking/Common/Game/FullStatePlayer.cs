@@ -151,8 +151,9 @@ namespace MPTanks.Networking.Common.Game
             msg.Write(SpawnPoint.Y);
             if (HasSelectedTank)
                 msg.Write(TankReflectionName);
-            msg.Write(AllowedTankTypes.Length);
-            foreach (var type in AllowedTankTypes) msg.Write(type);
+            msg.Write(AllowedTankTypes?.Length ?? 0);
+            if (AllowedTankTypes != null)
+                foreach (var type in AllowedTankTypes) msg.Write(type);
             msg.Write(Input.FirePressed);
             msg.Write(Input.LookDirection);
             msg.Write(Input.MovementSpeed);

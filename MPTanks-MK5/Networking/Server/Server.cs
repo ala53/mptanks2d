@@ -131,7 +131,7 @@ namespace MPTanks.Networking.Server
                 player.Player.AllowedTankTypes = null;
 
                 player.Player.IsReady = false;
-                Game.AddPlayer(player.Player);
+                game.AddPlayer(player.Player);
             }
             GameInstance.FullGameState = FullGameState.Create(game);
             Game.Authoritative = true;

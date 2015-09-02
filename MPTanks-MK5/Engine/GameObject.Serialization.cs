@@ -28,9 +28,11 @@ namespace MPTanks.Engine
             var uid = serializationData.GetUShort(offset); offset += 2;
 
             GameObject obj;
-            if (type == __SerializationGameObjectType.Tank)
+            if (type == __SerializationGameObjectType.Tank &&
+                game.PlayersById.ContainsKey(uid))
                 obj = game.AddTank(name, game.PlayersById[uid], authorized, id);
-            else if (type == __SerializationGameObjectType.Projectile)
+            else if (type == __SerializationGameObjectType.Projectile &&
+                game.PlayersById.ContainsKey(uid))
                 obj = game.AddProjectile(name, game.PlayersById[uid].Tank, authorized, id);
             else if (type == __SerializationGameObjectType.MapObject)
                 obj = game.AddMapObject(name, authorized, id);
@@ -68,7 +70,7 @@ namespace MPTanks.Engine
             /////Then, there's the data from the instance
             //variable Private state data bytes
             byte[] privateState = SerializationHelpers.Serialize(GetPrivateStateData());
-            
+
             //And figure out which guid to print
             ushort uidToWrite = 0;
 
@@ -161,7 +163,7 @@ namespace MPTanks.Engine
             var restitution = header.GetFloat(offset); offset += 4;
             var health = header.GetInt(offset); offset += 4;
 
-            SetTypeStateHeader(header, ref offset); 
+            SetTypeStateHeader(header, ref offset);
 
             IsSensor = isSensor;
             IsStatic = isStatic;
@@ -184,7 +186,7 @@ namespace MPTanks.Engine
         /// <param name="offset"></param>
         protected virtual void SetTypeStateHeader(byte[] header, ref int offset)
         {
-            
+
         }
 
         protected virtual void SetFullStateInternal(byte[] stateData) { }
