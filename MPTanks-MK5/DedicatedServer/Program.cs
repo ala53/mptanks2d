@@ -64,11 +64,11 @@ namespace MPTanks.DedicatedServer
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                var curLeft = Console.CursorLeft;
-                Console.CursorLeft = 0;
-                Console.Write(">> ");
-                Console.CursorLeft = curLeft;
-
+                if (Console.CursorLeft <= 1)
+                {
+                    Console.CursorLeft = 0;
+                    Console.Write(">> ");
+                }
                 Process();
                 _server.Update(gt);
                 var elapsed = sw.Elapsed;
@@ -106,10 +106,11 @@ namespace MPTanks.DedicatedServer
         static Stopwatch _lineSw = new Stopwatch();
         static string WaitLine(int timeout = int.MaxValue)
         {
-            var curLeft = Console.CursorLeft;
-            Console.CursorLeft = 0;
-            Console.Write(">> ");
-            Console.CursorLeft = curLeft;
+            if (Console.CursorLeft <= 1)
+            {
+                Console.CursorLeft = 0;
+                Console.Write(">> ");
+            }
             return TimeoutReader.ReadLine(timeout);
         }
 
