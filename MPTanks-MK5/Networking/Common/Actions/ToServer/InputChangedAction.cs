@@ -1,4 +1,4 @@
-﻿#define DBG_FULL_SERIALIZE
+﻿//#define DBG_FULL_SERIALIZE
 
 using Lidgren.Network;
 using Microsoft.Xna.Framework;

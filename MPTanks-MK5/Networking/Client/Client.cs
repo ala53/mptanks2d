@@ -44,8 +44,8 @@ namespace MPTanks.Networking.Client
                     MessageProcessor.SendMessage(new Common.Actions.ToServer.InputChangedAction(
                         Player?.Tank?.Position ?? Vector2.Zero, value));
                 _input = value;
-                if (PlayerId != null)
-                    Game.InjectPlayerInput(PlayerId.Value, value);
+                //if (PlayerId != null)
+                //    Game.InjectPlayerInput(PlayerId.Value, value);
             }
         }
         public ClientNetworkProcessor MessageProcessor { get; private set; }
@@ -96,6 +96,10 @@ namespace MPTanks.Networking.Client
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
+                    SimulatedMinimumLatency = 0.4f,
+                    SimulatedLoss = 0.1f,
+                    SimulatedDuplicatesChance = 0.1f,
+                    SimulatedRandomLatency = 0.1f,
                     ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
                     AutoFlushSendQueue = false
                 });
