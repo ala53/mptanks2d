@@ -30,6 +30,7 @@ namespace MPTanks.Networking.Client
         {
             ElapsedTime = TimeSpan.Zero;
             _game = game;
+            _corrections.Clear();
             foreach (var obj in state.ObjectStates)
             {
                 if (_game.GameObjectsById.ContainsKey(obj.Key))
