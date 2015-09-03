@@ -13,7 +13,7 @@ namespace MPTanks.Networking.Client
     {
         private struct PseudoStateObjectCorrection
         {
-            public ushort ObjectId { get; set; }
+            public GameObject Object { get; set; }
             public Vector2 DistanceOffset { get; set; }
             public Vector2 DistanceAmountApplied { get; set; }
             public float RotationOffset { get; set; }
@@ -34,16 +34,17 @@ namespace MPTanks.Networking.Client
             {
                 if (_game.GameObjectsById.ContainsKey(obj.Key))
                 {
+                    var gameObj = _game.GameObjectsById[obj.Key];
                     if (!obj.Value.PositionChanged && !obj.Value.RotationChanged) continue;
 
                     Vector2 dist;
                     if (obj.Value.PositionChanged)
-                        dist = obj.Value.Position - _game.GameObjectsById[obj.Key].Position;
+                        dist = obj.Value.Position - gameObj.Position;
                     else dist = Vector2.Zero;
 
                     float rot;
                     if (obj.Value.RotationChanged)
-                        rot = obj.Value.Rotation - _game.GameObjectsById[obj.Key].Rotation;
+                        rot = obj.Value.Rotation - gameObj.Rotation;
                     else rot = 0;
 
                     //Apply directly if it's too large
@@ -60,7 +61,7 @@ namespace MPTanks.Networking.Client
                         var corr = new PseudoStateObjectCorrection();
                         corr.DistanceOffset = dist;
                         corr.RotationOffset = rot;
-                        corr.ObjectId = obj.Key;
+                        corr.Object = gameObj;
                         _corrections.Add(corr);
                     }
                 }
@@ -75,7 +76,7 @@ namespace MPTanks.Networking.Client
             for (var i = 0; i < _corrections.Count; i++)
             {
                 var correction = _corrections[i];
-                if (_game.GameObjectsById.ContainsKey(correction.ObjectId))
+                if (correction.Object.Alive)
                 {
                     //Compute how far to rotate it
                     float rotationAmount;
@@ -105,7 +106,7 @@ namespace MPTanks.Networking.Client
                     correction.RotationAmountApplied += rotationAmount;
                     correction.DistanceAmountApplied += new Vector2(distanceX, distanceY);
                     //And apply
-                    var obj = _game.GameObjectsById[correction.ObjectId];
+                    var obj = correction.Object;
                     obj.Position += new Vector2(distanceX, distanceY);
                     obj.Rotation += rotationAmount;
                 }
