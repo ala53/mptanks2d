@@ -103,7 +103,6 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             public class JSONAnimation
             {
                 public string Name = null;
-                public string Friendly = null;
                 public float FrameRate = 0;
                 public string[] Frames = null;
             }

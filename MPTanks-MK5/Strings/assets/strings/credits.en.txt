@@ -1,8 +1,12 @@
 ﻿Programmer Alastair Bennett
 Artist Alastair Bennett
+"Wants Steak" Alastair Bennett
+----------------------- -----------------------
+"Professional Steak Thief" Jacob Sortors
 Artist Jacob Sortors
 ----------------------- -----------------------
 "Mooral Support" Xander Moore
+"Primary Steak Developer" Xander Moore
 ----------------------- -----------------------
 Tools FMOD Studio by Firelight Technologies (© 1994-2015) 
 Tools MonoGame Framework

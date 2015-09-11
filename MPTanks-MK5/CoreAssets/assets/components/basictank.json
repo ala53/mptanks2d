@@ -161,7 +161,7 @@
   "health": 150,
   "sheet": {
     "key": "main_sheet",
-    "file": "basictank2d.png"
+    "file": "basictank2d"
   },
   "size": { "x": 3, "y": 5 }
 }

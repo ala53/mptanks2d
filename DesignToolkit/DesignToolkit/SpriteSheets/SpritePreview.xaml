@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Toolkit.SpriteSheets.SpritePreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Toolkit.SpriteSheets"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Image x:Name="image" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Image>
+        <TextBox x:Name="title" Margin="10" IsHitTestVisible="false" Background="#33FFFFFF" FontSize="16"
+                 HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="20" Foreground="#FFFFFFFF" BorderBrush="#00ABADB3" TextChanged="title_TextChanged">TEST_TEXT_BOX</TextBox>
+        <Button x:Name="resizeBtn" Content="Resize" HorizontalAlignment="Left" Margin="10,0,0,10" Width="41" Height="20" VerticalAlignment="Bottom" Click="resizeBtn_Click"/>
+        <Button x:Name="deleteBtn" Content="Delete" HorizontalAlignment="Left" Margin="56,0,0,10" Width="41" Height="20" VerticalAlignment="Bottom" Click="deleteBtn_Click"/>
+    </Grid>
+</UserControl>

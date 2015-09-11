@@ -15,15 +15,22 @@ namespace MPTanks.ModCompiler.Packer
     {
         public static byte[] Pack()
         {
+            var ms = new MemoryStream();
+            var zipFile = new ZipOutputStream(ms);
+            zipFile.IsStreamOwner = false;
+            zipFile.SetLevel(9);
+
             var header = new ModHeader();
             header.Name = Program.name;
             header.Major = DependencyResolver.ParseVersionMajor(Program.version);
             header.Minor = DependencyResolver.ParseVersionMinor(Program.version);
             header.Tag = DependencyResolver.ParseVersionTag(Program.version);
             header.CodeFiles = GetFileNamesOnly(Program.srcFiles).ToArray();
+
+            header.ImageFiles = ArchiveImages(zipFile, Program.imageAssets);
+
             header.ComponentFiles = GetFileNamesOnly(Program.components).ToArray();
             header.DLLFiles = GetFileNamesOnly(Program.dlls).ToArray();
-            header.ImageFiles = GetFileNamesOnly(Program.imageAssets).ToArray();
             header.SoundFiles = GetFileNamesOnly(Program.soundAssets).ToArray();
             header.MapFiles = GetFileNamesOnly(Program.maps).ToArray();
             header.DatabaseUrl = DependencyResolver.GetModUrl(Program.name);
@@ -31,17 +38,12 @@ namespace MPTanks.ModCompiler.Packer
             header.Dependencies = BuildDependencies();
 
             var headerString = JsonConvert.SerializeObject(header, Formatting.Indented);
-            var ms = new MemoryStream();
-            var zipFile = new ZipOutputStream(ms);
-            zipFile.IsStreamOwner = false;
-            zipFile.SetLevel(9);
 
             WriteFile(zipFile, "mod.json", headerString);
 
             Archive(zipFile, Program.srcFiles);
             ArchiveComponents(zipFile, Program.components);
             Archive(zipFile, Program.dlls);
-            Archive(zipFile, Program.imageAssets.SelectMany(a => new[] { a, a + ".json" }).ToList());
             Archive(zipFile, Program.soundAssets);
             Archive(zipFile, Program.maps);
 
@@ -52,6 +54,48 @@ namespace MPTanks.ModCompiler.Packer
             var data = ms.ToArray();
             ms.Dispose();
             return ms.ToArray();
+        }
+
+        private static string[] ArchiveImages(ZipOutputStream zf, List<string> src)
+        {
+            var assets = new List<string>();
+            var assetNames = new List<string>();
+
+            foreach (var fl in src)
+            {
+                var fi = new FileInfo(fl);
+                if (fi.Extension.Equals(".ssjson", StringComparison.OrdinalIgnoreCase))
+                {
+                    var fs = new FileStream(fl, FileMode.Open, FileAccess.Read);
+                    var zif = new ZipFile(fs);
+
+                    var info = GetBytesFromZip(zif, zif.GetEntry("info.json"));
+                    var img = GetBytesFromZip(zif, zif.GetEntry("image.png"));
+
+                    var saveFile = GetFileNameOnly(fl).Replace(".ssjson", "");
+                    WriteFile(zf, saveFile + ".png", info);
+                    WriteFile(zf, saveFile + ".png.json", img);
+
+                    assetNames.Add(saveFile);
+                    assetNames.Add(saveFile + ".json");
+
+                    fs.Dispose();
+                    zif.Close();
+                }
+                else
+                {
+                    //it's a normal sprite sheet
+                    assets.Add(fl);
+                    assets.Add(fl + ".json");
+
+                    assetNames.Add(GetFileNameOnly(fl));
+                    assetNames.Add(GetFileNameOnly(fl) + ".json");
+                }
+            }
+
+            Archive(zf, assets);
+
+            return assetNames.ToArray();
         }
 
         private static void ArchiveComponents(ZipOutputStream zf, List<string> src)
@@ -103,6 +147,22 @@ namespace MPTanks.ModCompiler.Packer
         {
             var fi = new FileInfo(input);
             return fi.Name;
+        }
+        private static string GetStringFromZip(ZipFile zf, ZipEntry ze) =>
+            Encoding.UTF8.GetString(GetBytesFromZip(zf, ze));
+        private static byte[] GetBytesFromZip(ZipFile zf, ZipEntry ze)
+        {
+            byte[] ret = null;
+
+            if (ze != null)
+            {
+                Stream s = zf.GetInputStream(ze);
+                ret = new byte[ze.Size];
+                s.Read(ret, 0, ret.Length);
+                s.Dispose();
+            }
+
+            return ret;
         }
     }
 }

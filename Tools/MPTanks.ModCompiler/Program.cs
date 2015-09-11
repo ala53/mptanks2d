@@ -366,6 +366,11 @@ namespace MPTanks.ModCompiler
                         Console.WriteLine($"Warning! {file} is missing matching .json descriptor. Ignoring for now.");
                     }
                 }
+                else if (ext == ".ssjson")
+                {
+                    mappings.Add(file, "image");
+                    imageAssets.Add(ext);
+                }
                 else if (ext == ".wav" || ext == ".mp3" || ext == ".ogg" || ext == ".flac")
                 {
                     mappings.Add(file, "sound");
