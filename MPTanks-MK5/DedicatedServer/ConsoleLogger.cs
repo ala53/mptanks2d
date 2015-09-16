@@ -77,7 +77,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] {Prefix} \n" +
+            Console.WriteLine($" [INFO] {Prefix} \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -86,7 +86,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] {Prefix} {message}");
+            Console.WriteLine($" [INFO] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
@@ -124,7 +124,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] {Prefix} \n" +
+            Console.WriteLine($" [WARN] {Prefix} \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -133,7 +133,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] {Prefix} {message}");
+            Console.WriteLine($" [WARN] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
     }
