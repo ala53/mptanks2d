@@ -132,7 +132,20 @@ namespace MPTanks.Client
             ui.ActiveBinder.ExitAction = (Action)Exit;
             ui.ActiveBinder.HostAction = (Action)(() =>
             {
-                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo(), new string[] { });
+                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                {
+                    IsHost = true
+                }, new string[] { });
+                game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
+                ui.SetPage("mainmenuplayerisingamepage");
+                game.Run();
+            });
+            ui.ActiveBinder.JoinAction = (Action)(() =>
+            {
+                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                {
+                    IsHost = false
+                }, new string[] { });
                 game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
                 ui.SetPage("mainmenuplayerisingamepage");
                 game.Run();

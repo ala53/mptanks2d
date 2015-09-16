@@ -127,7 +127,7 @@ namespace MPTanks.Client.GameSandbox
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("DeathMatchGamemode"),
                 Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
-                new EngineSettings("enginesettings.json")
+                EngineSettings.GetInstance()
                 );
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;

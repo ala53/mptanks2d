@@ -8,6 +8,7 @@ namespace MPTanks.Engine.Settings
 {
     public class EngineSettings : SettingsBase
     {
+        public static EngineSettings GetInstance() => new EngineSettings("enginesettings.json");
 
         /// <summary>
         /// The physics engine runs best at 1/10 scale for some idiotic reason.

@@ -20,7 +20,7 @@ namespace MPTanks.Networking.Common
     public class NetworkedGame
     {
         #region Properties
-        public EngineSettings EngineSettings { get; set; } = new EngineSettings("enginesettings.json");
+        public EngineSettings EngineSettings { get; set; } = EngineSettings.GetInstance();
 
         public FullGameState FullGameState
         {

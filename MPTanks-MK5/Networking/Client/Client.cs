@@ -26,7 +26,6 @@ namespace MPTanks.Networking.Client
             DownloadingMods,
         }
         public ClientStatus Status { get; private set; } = ClientStatus.NotStarted;
-
         public Lidgren.Network.NetClient NetworkClient { get; private set; }
         public bool Connected =>
             Status == ClientStatus.Connected ||

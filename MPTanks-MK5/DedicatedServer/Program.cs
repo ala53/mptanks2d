@@ -42,7 +42,7 @@ namespace MPTanks.DedicatedServer
             _map = ChooseMap();
             _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.1) },
                 new GameCore(new NullLogger(), _gamemode, _map,
-                new EngineSettings("enginesettings.json")), true, new ConsoleLogger());
+                EngineSettings.GetInstance(), true, new ConsoleLogger());
 
             _server.GameInstance.GameChanged += (a, e) =>
              {
@@ -53,7 +53,7 @@ namespace MPTanks.DedicatedServer
                      _logger.Info("Game ended.");
                      //Start a new game of the same type
                      _server.SetGame(new GameCore(new NullLogger(), _gamemode, _map,
-                         new EngineSettings("enginesettings.json")));
+                         EngineSettings.GetInstance()));
                  };
              };
             _server.OnCountdownStarted += (a, e) =>
@@ -104,7 +104,7 @@ namespace MPTanks.DedicatedServer
             if (info.StartsWith("change-gamemode")) _gamemode = ChooseGamemode();
             else if (info.StartsWith("force-restart"))
                 _server.SetGame(new GameCore(new NullLogger(),
-                    _gamemode, _map, new EngineSettings("enginesettings.json")));
+                    _gamemode, _map, EngineSettings.GetInstance()));
             else if (info.StartsWith("change-map"))
                 _map = ChooseMap();
             else if (info.StartsWith("help"))
