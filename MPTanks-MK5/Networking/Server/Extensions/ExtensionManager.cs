@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +27,15 @@ namespace MPTanks.Networking.Server.Extensions
                 ext.Initialize();
             }
         }
-        public void LoadExtensions(string searchDir)
+        public string[] LoadExtensions(string searchDir, bool recurse = false)
         {
+            var files = new List<string>(Directory.GetFiles(searchDir, "*",
+                recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                .Where(a => new FileInfo(a).Extension.ToLower() == ".dll"));
+            foreach (var file in files)
+                LoadExtension(file);
 
+            return files.ToArray();
         }
 
         public void LoadExtension(string filename)

@@ -27,6 +27,14 @@ namespace MPTanks.Networking.Server
         public Extensions.ExtensionManager ExtensionManager { get; private set; }
         internal List<ServerPlayer> _players = new List<ServerPlayer>();
         public IReadOnlyList<ServerPlayer> Players => _players;
+        public IEnumerable<ServerPlayer> Administrators
+        {
+            get
+            {
+                foreach (var player in Players)
+                    if (player.Player.IsAdmin) yield return player;
+            }
+        }
 
         //The name of the server
         public string Name { get; set; } = "MPTanks Server";
