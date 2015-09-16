@@ -42,7 +42,7 @@ namespace MPTanks.DedicatedServer
             _map = ChooseMap();
             _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.1) },
                 new GameCore(new NullLogger(), _gamemode, _map,
-                EngineSettings.GetInstance(), true, new ConsoleLogger());
+                EngineSettings.GetInstance()), true, new ConsoleLogger());
 
             _server.GameInstance.GameChanged += (a, e) =>
              {
