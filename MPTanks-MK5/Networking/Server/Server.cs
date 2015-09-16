@@ -56,7 +56,7 @@ namespace MPTanks.Networking.Server
             HookEvents();
             SetGame(game);
 
-            Logger = logger ?? new NullLogger();
+            Logger = logger != null ? (ILogger)new ModuleLogger(logger, "Server") : new NullLogger();
             Login = new LoginManager(this);
             Connections = new ConnectionManager(this);
             Configuration = new InitializedConfiguration(configuration);

@@ -9,6 +9,7 @@ namespace MPTanks.Engine.Logging
     public class MultiLogger : ILogger
     {
         private List<ILogger> _loggers = new List<ILogger>();
+        public IReadOnlyList<ILogger> Loggers => _loggers;
         public MultiLogger(params ILogger[] loggers)
         {
             _loggers.AddRange(loggers);

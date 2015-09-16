@@ -91,6 +91,8 @@
     <Compile Include="GameObject.Reflection.cs" />
     <Compile Include="GamePlayer.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\ModuleLogger.cs" />
+    <Compile Include="Logging\MultiLogger.cs" />
     <Compile Include="Logging\NLogLogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Maps\Map.cs" />

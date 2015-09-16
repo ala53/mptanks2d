@@ -25,9 +25,8 @@ namespace MPTanks.Client.GameSandbox
                 MaxArchiveFiles = 10,
                 EnableFileDelete = true,
                 CreateDirs = true,
-                Layout = "${longdate}|${level:uppercase=true}|${logger}|${message}|${exception:innerFormat=ToString:maxInnerExceptionLevel=128:innerExceptionSeparator=String:separator = String:format = ToString}"
+                Layout = "${date:format:HH:mm:ss}|${level:uppercase=true}|${logger}|${message}|${exception:innerFormat=ToString:maxInnerExceptionLevel=128:innerExceptionSeparator=String:separator = String:format = ToString}"
             };
-
             config.AddTarget("logfile", fileTarget);
 
             config.LoggingRules.Add(new NLog.Config.LoggingRule("*",
@@ -36,6 +35,7 @@ namespace MPTanks.Client.GameSandbox
             NLog.LogManager.Configuration = config;
 
             logger = NLog.LogManager.GetLogger("Client");
+            Info("Initialized on " + DateTime.Now.ToShortDateString());
         }
         public static void Debug(string message)
         {

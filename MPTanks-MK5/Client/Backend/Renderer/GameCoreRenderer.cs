@@ -23,7 +23,7 @@ namespace MPTanks.Client.Backend.Renderer
             set { _game = value; }
         }
         public float PhysicsCompensation { get; set; } = 0.085f;
-        public ILogger Logger => Game.Logger;
+        public ModuleLogger Logger => new ModuleLogger(Game.Logger, "Renderer");
         internal AssetFinder Finder { get; private set; }
         public RenderTarget2D Target { get; set; }
         public RectangleF View { get; set; }

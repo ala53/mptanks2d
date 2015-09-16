@@ -7,14 +7,22 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Logging
 {
-    public class ModuleLogger : ILogger
+    public struct ModuleLogger : ILogger
     {
         private ILogger _writes;
+        public ILogger WritesTo { get { return _writes; } set { _writes = value; } }
         private string _moduleName;
+        //Optimization
+        private static Dictionary<string, string> _nameCache = new Dictionary<string, string>();
         public ModuleLogger(ILogger writesTo, string moduleName)
         {
             _writes = writesTo;
-            _moduleName = "[" + moduleName + "] ";
+            //Because moduleloggers are initialized often, we cache the names
+            //to avoid any allocations from string concentation
+            if (!_nameCache.ContainsKey(moduleName))
+                _nameCache.Add(moduleName, "[" + moduleName + "] ");
+
+            _moduleName = _nameCache[moduleName];
         }
 
         public void Trace(string message)

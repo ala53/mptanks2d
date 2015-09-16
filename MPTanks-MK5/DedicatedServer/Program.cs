@@ -21,7 +21,7 @@ namespace MPTanks.DedicatedServer
     class Program
     {
         static Server _server;
-        static ILogger _logger = new ConsoleLogger();
+        static ILogger _logger = new ModuleLogger(new ConsoleLogger(), "Program");
         static string _gamemode;
         static ModAssetInfo _map;
         static void Main(string[] args)
@@ -42,7 +42,7 @@ namespace MPTanks.DedicatedServer
             _map = ChooseMap();
             _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.1) },
                 new GameCore(new NullLogger(), _gamemode, _map,
-                EngineSettings.GetInstance()), true, new ConsoleLogger());
+                EngineSettings.GetInstance()), true, _logger);
 
             _server.GameInstance.GameChanged += (a, e) =>
              {
@@ -151,7 +151,7 @@ namespace MPTanks.DedicatedServer
             }
             return TimeoutReader.ReadLine(timeout);
         }
-        static bool WaitBool(int timeout = int.MaxValue, string prefix = null)
+        static bool WaitBool(int timeout = int.MaxValue)
         {
             if (Console.CursorLeft <= 1)
             {
@@ -161,14 +161,11 @@ namespace MPTanks.DedicatedServer
             var ln = WaitLine(timeout);
             if (ln == null) return false;
             ln = ln.ToLower().Trim();
-
-            if (prefix != null && !ln.StartsWith(prefix.ToLower().Trim())) return false;
-            else if (prefix != null) ln.Replace(prefix, "").Trim();
-
+            
             if (new[] { "y", "yes", "true", "t", "ok" }.Contains(ln)) return true;
             return false;
         }
-        static int WaitInt(int timeout = int.MaxValue, string prefix = "")
+        static int WaitInt(int timeout = int.MaxValue)
         {
             if (Console.CursorLeft <= 1)
             {
@@ -178,10 +175,7 @@ namespace MPTanks.DedicatedServer
             var ln = WaitLine(timeout);
             if (ln == null) return -1;
             ln = ln.ToLower().Trim();
-
-            if (prefix != null && !ln.StartsWith(prefix.ToLower().Trim())) return -1;
-            else if (prefix != null) ln.Replace(prefix, "").Trim();
-
+            
             int num;
             if (int.TryParse(ln, out num)) return num;
             else _logger.Error($"{ln} is not a valid number.");

@@ -10,11 +10,12 @@ namespace MPTanks.DedicatedServer
 {
     class ConsoleLogger : ILogger
     {
+        private string Prefix => $"[{DateTime.Now.ToShortTimeString()}]";
         public void Debug(string message)
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[DEBUG] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[DEBUG] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
@@ -22,7 +23,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
+            Console.WriteLine($"[ERROR] {Prefix} {ex.Message}");
             Console.WriteLine(ex.StackTrace);
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -31,7 +32,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[ERROR] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
@@ -39,7 +40,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[ERROR] {Prefix} {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -49,7 +50,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
+            Console.WriteLine($"[FATAL] {Prefix} {ex.Message}");
             Console.WriteLine(ex.StackTrace);
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -58,7 +59,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[FATAL] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
@@ -66,7 +67,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"[FATAL] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[FATAL] {Prefix} {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -76,7 +77,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
+            Console.WriteLine($"[INFO] {Prefix} \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -85,7 +86,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[INFO] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[INFO] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
 
@@ -93,7 +94,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {ex.Message}");
+            Console.WriteLine($"[TRACE] {Prefix} {ex.Message}");
             Console.WriteLine(ex.StackTrace);
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -101,20 +102,20 @@ namespace MPTanks.DedicatedServer
         public void Trace(object data)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
+            Console.WriteLine($"[TRACE] {Prefix} \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));*/
         }
 
         public void Trace(string message)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");*/
+            Console.WriteLine($"[TRACE] {Prefix} {message}");*/
         }
 
         public void Trace(string message, Exception ex)
         {/*
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"[TRACE] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[TRACE] {Prefix} {message}");
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);*/
         }
@@ -123,7 +124,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] \n" +
+            Console.WriteLine($"[WARN] {Prefix} \n" +
                 JsonConvert.SerializeObject(data, Formatting.Indented));
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
@@ -132,7 +133,7 @@ namespace MPTanks.DedicatedServer
         {
             Console.CursorLeft = 0;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[WARN] [{DateTime.Now.ToLongTimeString()} - {DateTime.Now.ToShortDateString()}] {message}");
+            Console.WriteLine($"[WARN] {Prefix} {message}");
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
     }

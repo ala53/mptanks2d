@@ -222,8 +222,8 @@ namespace MPTanks.Engine
         /// <param name="skipInit">Whether to skip the customary X second init and gamemode setup</param>
         public GameCore(ILogger logger, Gamemodes.Gamemode gamemode, ModAssetInfo map, EngineSettings settings = null)
         {
-            Logger = logger;
             if (Logger == null) Logger = new NullLogger();
+            else Logger = new ModuleLogger(logger, "Game");
             if (settings == null)
                 Settings = new EngineSettings();
             else
