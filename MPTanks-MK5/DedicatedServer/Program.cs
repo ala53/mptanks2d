@@ -151,6 +151,42 @@ namespace MPTanks.DedicatedServer
             }
             return TimeoutReader.ReadLine(timeout);
         }
+        static bool WaitBool(int timeout = int.MaxValue, string prefix = null)
+        {
+            if (Console.CursorLeft <= 1)
+            {
+                Console.CursorLeft = 0;
+                Console.Write(">> ");
+            }
+            var ln = WaitLine(timeout);
+            if (ln == null) return false;
+            ln = ln.ToLower().Trim();
+
+            if (prefix != null && !ln.StartsWith(prefix.ToLower().Trim())) return false;
+            else if (prefix != null) ln.Replace(prefix, "").Trim();
+
+            if (new[] { "y", "yes", "true", "t", "ok" }.Contains(ln)) return true;
+            return false;
+        }
+        static int WaitInt(int timeout = int.MaxValue, string prefix = "")
+        {
+            if (Console.CursorLeft <= 1)
+            {
+                Console.CursorLeft = 0;
+                Console.Write(">> ");
+            }
+            var ln = WaitLine(timeout);
+            if (ln == null) return -1;
+            ln = ln.ToLower().Trim();
+
+            if (prefix != null && !ln.StartsWith(prefix.ToLower().Trim())) return -1;
+            else if (prefix != null) ln.Replace(prefix, "").Trim();
+
+            int num;
+            if (int.TryParse(ln, out num)) return num;
+            else _logger.Error($"{ln} is not a valid number.");
+            return -1;
+        }
 
         static void LoadMods()
         {
@@ -196,10 +232,7 @@ namespace MPTanks.DedicatedServer
             _logger.Info("If you want the description, type desc {number}");
             int id = 1;
             foreach (var gamemode in gamemodes)
-            {
-                _logger.Info($"[{id}] - {gamemode.DisplayName}");
-                id++;
-            }
+                _logger.Info($"[{id++}] - {gamemode.DisplayName}");
 
             GamemodeType selected = null;
             bool valid = false;
@@ -262,21 +295,15 @@ namespace MPTanks.DedicatedServer
             int id = 1;
             foreach (var map in maps)
             {
-                _logger.Info($"[{id}] - {map.AssetName} from {map.ModInfo.ModName}.");
+                _logger.Info($"[{id++}] - {map.AssetName} from {map.ModInfo.ModName}.");
             }
 
             ModAssetInfo info = new ModAssetInfo();
             bool valid = false;
             while (!valid)
             {
-                var line = WaitLine(30000);
-                if (line == null) line = "1"; //Chose the first one if no input
-                int num;
-                if (!int.TryParse(line, out num))
-                {
-                    _logger.Error($"{line} is not a valid number.");
-                    continue;
-                }
+                var num = WaitInt(30000);
+                if (num == -1) num = 1; //Chose the first one if no input
                 if (num < 1 || num > maps.Count)
                 {
                     _logger.Error($"{num} is out of range. It must be between 1 and {maps.Count}.");
