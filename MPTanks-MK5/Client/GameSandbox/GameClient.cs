@@ -215,6 +215,8 @@ namespace MPTanks.Client.GameSandbox
                 if (Debugger.IsAttached) Debugger.Break();
             if (e.Key == Keys.M)
                 Client.MessageProcessor.SendMessage(new Networking.Common.Actions.ToServer.RequestFullGameStateAction());
+            if (e.Key == Keys.F6)
+                Client.MessageProcessor.Diagnostics.Reset();
         }
 
         /// <summary>

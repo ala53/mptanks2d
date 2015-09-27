@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +18,15 @@ namespace MPTanks.Engine.Tanks
                 if (targetRotation > maxRotation) targetRotation = maxRotation.Value;
             }
 
-            currentRotation = NormalizeAngle(currentRotation);
-            targetRotation = NormalizeAngle(targetRotation);
-
-            var a = NormalizeAngle(targetRotation - currentRotation + MathHelper.Pi) - MathHelper.Pi;
-
-            var shortestDistance = a;
+            currentRotation = BasicHelpers.NormalizeAngle(currentRotation);
+            targetRotation = BasicHelpers.NormalizeAngle(targetRotation);
+            
+            var shortestDistance = BasicHelpers.NormalizeAngle(
+                targetRotation - currentRotation + MathHelper.Pi) - MathHelper.Pi;
             if (shortestDistance < 0)
                 return currentRotation + Math.Max(shortestDistance, -maxSpeed);
 
             return currentRotation + Math.Min(shortestDistance, maxSpeed);
-        }
-
-        private static float NormalizeAngle(float angle)
-        {
-            while (angle < 0) angle += MathHelper.TwoPi;
-
-            while (angle > MathHelper.TwoPi) angle -= MathHelper.TwoPi;
-
-            return angle;
         }
     }
 }

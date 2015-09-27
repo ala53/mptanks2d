@@ -90,10 +90,9 @@ namespace MPTanks.Engine.Tanks
 
         protected override void UpdateInternal(GameTime time)
         {
-            UnsafeDisableEvents();
-
             Body.SleepingAllowed = false;
 
+            UnsafeDisableEvents();
             var velocity = InputState.MovementSpeed *
                 MovementSpeed;
 
@@ -107,7 +106,7 @@ namespace MPTanks.Engine.Tanks
             LinearVelocity = new Vector2((float)x, (float)y);
             AngularVelocity = 0;
             Rotation += (float)rotationAmount;
-
+            UnsafeEnableEvents();
             //Set the active weapon
             SetActiveWeapon();
             //And update weapons
@@ -116,8 +115,6 @@ namespace MPTanks.Engine.Tanks
             TertiaryWeapon?.Update(time);
 
             if (ActiveWeapon.Recharged && InputState.FirePressed) ActiveWeapon.Fire();
-
-            UnsafeEnableEvents();
         }
 
         protected sealed override byte[] GetTypeStateHeader()

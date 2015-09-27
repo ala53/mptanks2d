@@ -273,6 +273,7 @@ namespace MPTanks.Engine
         #endregion
         public GameObject(GameCore game, bool authorized, float density = 1, float restitution = 0.1f, Vector2 position = default(Vector2), float rotation = 0, ushort id = ushort.MaxValue)
         {
+            UnsafeDisableEvents();
             ObjectId = id;
             Game = game;
 
@@ -284,11 +285,14 @@ namespace MPTanks.Engine
 
             if (!game.Authoritative && !authorized)
                 game.Logger.Error("Object Created without authorization. Type: " + this.GetType().ToString() + ", ID: " + ObjectId);
+
+            UnsafeEnableEvents();
         }
 
         private bool _hasBeenCreated;
         internal void Create()
         {
+            UnsafeDisableEvents();
             if (_hasBeenCreated)
             {
                 Game.Logger.Fatal("Multiple calls to Create()");
@@ -313,10 +317,12 @@ namespace MPTanks.Engine
             IsSensor = _startIsSensor;
             IsStatic = _startIsStatic;
 
+            UnsafeEnableEvents();
             //Call the event
             RaiseOnCreated();
 
             InvokeTrigger("create");
+
 
             //And call the internal function
             CreateInternal();
@@ -444,12 +450,14 @@ namespace MPTanks.Engine
             //but instead merely desynchronize the game state a bit. This desync
             //will be corrected automatically the next time a game state update
             //occurs in the networking layer
-            
+
             //If we're correct, however, it provides a much more pleasant user 
             //experience as things explode when they should           
 
+            UnsafeDisableEvents();
             if (PostDeathExistenceTime == TimeSpan.Zero)
-            LinearVelocity = Vector2.Zero;
+                LinearVelocity = Vector2.Zero;
+            UnsafeEnableEvents();
 
             if (!_killedAlready && (Authoritative || authorized))
                 Game.RemoveGameObject(this, destroyer, authorized);

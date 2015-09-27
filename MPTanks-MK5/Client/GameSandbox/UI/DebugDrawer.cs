@@ -191,24 +191,32 @@ namespace MPTanks.Client.GameSandbox.UI
             .Append(info.UpdateCPU.ToString("N2")).Append("%, ")
             .Append(info.TotalCPU.ToString("N2")).Append("%");
 
+            for (var i = 0; i < _kbsSent.Length - 1; i++)
+            {
+                _kbsSent[i] = _kbsSent[i + 1];
+                _kbsReceived[i] = _kbsReceived[i + 1];
+            }
+            _kbsSent[_kbsSent.Length - 1] = _netClient.NetworkClient.Statistics.SentBytes;
+            _kbsReceived[_kbsReceived.Length - 1] = _netClient.NetworkClient.Statistics.ReceivedBytes;
+            _bldr.Append("\n");
             if (_netClient?.NetworkClient?.ServerConnection != null)
             {
-                for (var i = 0; i < _kbsSent.Length - 1; i++)
-                {
-                    _kbsSent[i] = _kbsSent[i + 1];
-                    _kbsReceived[i] = _kbsReceived[i + 1];
-                }
-                _kbsSent[_kbsSent.Length - 1] = _netClient.NetworkClient.Statistics.SentBytes;
-                _kbsReceived[_kbsReceived.Length - 1] = _netClient.NetworkClient.Statistics.ReceivedBytes;
-                _bldr.Append("\nPing: ")
-                    .Append((_netClient.NetworkClient.ServerConnection.AverageRoundtripTime * 1000d).ToString("N1"))
-                    .Append("ms, ").Append("Received: ")
-                    .Append((_netClient.NetworkClient.Statistics.ReceivedBytes / 1024d).ToString("N1")).Append("kb total, ")
-                    .Append(((_kbsReceived.Last() - _kbsReceived[_kbsReceived.Length - 60]) / 1024d).ToString("N3")).Append("kb/s")
-                    .Append(", Sent: ")
-                    .Append((_netClient.NetworkClient.Statistics.SentBytes / 1024d).ToString("N1")).Append("kb total, ")
-                    .Append(((_kbsSent.Last() - _kbsSent[_kbsSent.Length - 60]) / 1024d).ToString("N3")).Append("kb/s");
+                _bldr.Append("Ping: ")
+                    .Append((_netClient.NetworkClient.ServerConnection.AverageRoundtripTime * 1000d).ToString("N1"));
             }
+            _bldr.Append("ms, ").Append("Received: ")
+                        .Append((_netClient.NetworkClient.Statistics.ReceivedBytes / 1024d).ToString("N1")).Append("kb total, ")
+                        .Append(((_kbsReceived.Last() - _kbsReceived[_kbsReceived.Length - 60]) / 1024d).ToString("N3")).Append("kb/s")
+                        .Append(", Sent: ")
+                        .Append((_netClient.NetworkClient.Statistics.SentBytes / 1024d).ToString("N1")).Append("kb total, ")
+                        .Append(((_kbsSent.Last() - _kbsSent[_kbsSent.Length - 60]) / 1024d).ToString("N3")).Append("kb/s");
+            //   }
+
+            _bldr.Append("\nMost used: ");
+
+            foreach (var t in _netClient.MessageProcessor.Diagnostics.GetMostUsed(3))
+                _bldr.Append(t.Key.Name.Replace("Action", "").Replace("Message", ""))
+                    .Append(": ").Append(t.Value).Append(", ");
 
             //Find memory usage max
             long maxMem = 0;
@@ -244,10 +252,10 @@ namespace MPTanks.Client.GameSandbox.UI
 
             //And keybind explanation
             _bldr.Append("\nF12: hide\n")
-                .Append("F10: Enable/Disable graphs\n")
-                .Append("F9: Enable/Disable debug text\n")
-                .Append("F8: Switch between vertical and horizontal graphs\n")
-                .Append("ESC: Exit\n");
+                    .Append("F10: Enable/Disable graphs\n")
+                    .Append("F9: Enable/Disable debug text\n")
+                    .Append("F8: Switch between vertical and horizontal graphs\n")
+                    .Append("ESC: Exit\n");
 
             _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(8, 8), Color.Black);
             _spriteBatch.DrawString(_debugFont, _bldr.ToString(), new Vector2(10, 10), Color.White);

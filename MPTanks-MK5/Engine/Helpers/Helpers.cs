@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine.Assets;
+﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Assets;
 using MPTanks.Engine.Rendering;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,16 @@ namespace MPTanks.Engine.Helpers
             return options[index];
         }
 
+
+        public static float NormalizeAngle(float angle)
+        {
+            while (angle < 0)
+                angle += MathHelper.TwoPi;
+
+            while (angle > MathHelper.TwoPi)
+                angle -= MathHelper.TwoPi;
+
+            return angle;
+        }
     }
 }

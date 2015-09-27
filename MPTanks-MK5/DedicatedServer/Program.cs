@@ -40,7 +40,11 @@ namespace MPTanks.DedicatedServer
 
             _gamemode = ChooseGamemode();
             _map = ChooseMap();
-            _server = new Server(new Configuration { StateSyncRate = TimeSpan.FromSeconds(0.1) },
+            _server = new Server(new Configuration
+            {
+                //StateSyncRate = TimeSpan.FromSeconds(2),
+                MaxPlayers = 350
+            },
                 new GameCore(new NullLogger(), _gamemode, _map,
                 EngineSettings.GetInstance()), true, _logger);
 
@@ -62,7 +66,7 @@ namespace MPTanks.DedicatedServer
                 _logger.Info("Game countdown stopped.");
             _server.SetGame(_server.Game);
 
-            for (var i = 0; i < 1; i++)
+            for (var i = 0; i < 7; i++)
                 _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
                 {
                     Username = "ZZZZZ" + _server.Players.Count,
@@ -70,7 +74,7 @@ namespace MPTanks.DedicatedServer
                     ClanName = ""
                 }));
 
-            Logger.Info("For help, type \"help\".");
+            _logger.Info("For help, type \"help\".");
 
             Stopwatch sw = Stopwatch.StartNew();
             GameTime gt = new GameTime();
@@ -82,16 +86,18 @@ namespace MPTanks.DedicatedServer
                     Console.CursorLeft = 0;
                     Console.Write(">> ");
                 }
-                Process();
                 _server.Update(gt);
                 var elapsed = sw.Elapsed;
                 gt.TotalGameTime += elapsed;
+                Process();
                 if (16 - sw.ElapsedMilliseconds > 0)
                 {
                     Thread.Sleep(16 - (int)sw.ElapsedMilliseconds);
-                    gt.ElapsedGameTime = TimeSpan.FromMilliseconds(16);
+
                 }
-                else gt.ElapsedGameTime = TimeSpan.FromMilliseconds(sw.Elapsed.TotalMilliseconds);
+
+                gt.ElapsedGameTime = TimeSpan.FromMilliseconds(sw.Elapsed.TotalMilliseconds);
+
                 sw.Restart();
             }
         }
@@ -161,7 +167,7 @@ namespace MPTanks.DedicatedServer
             var ln = WaitLine(timeout);
             if (ln == null) return false;
             ln = ln.ToLower().Trim();
-            
+
             if (new[] { "y", "yes", "true", "t", "ok" }.Contains(ln)) return true;
             return false;
         }
@@ -175,7 +181,7 @@ namespace MPTanks.DedicatedServer
             var ln = WaitLine(timeout);
             if (ln == null) return -1;
             ln = ln.ToLower().Trim();
-            
+
             int num;
             if (int.TryParse(ln, out num)) return num;
             else _logger.Error($"{ln} is not a valid number.");

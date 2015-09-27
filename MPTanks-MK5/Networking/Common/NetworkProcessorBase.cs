@@ -15,6 +15,7 @@ namespace MPTanks.Networking.Common
     {
         public virtual NetPeer Peer { get; protected set; }
         public virtual ILogger Logger { get; set; }
+        public NetworkProcessorDiagnostics Diagnostics { get; private set; } = new NetworkProcessorDiagnostics();
 
         #region Message Processing
         private static byte _currentMessageTypeId = 0;
@@ -25,7 +26,7 @@ namespace MPTanks.Networking.Common
         private static Dictionary<byte, Type> _allTypes = new Dictionary<byte, Type>();
         private static Dictionary<Type, byte> _allTypesReverse = new Dictionary<Type, byte>();
 
-        public IReadOnlyDictionary<Type, byte> TypeIndexTable =>_allTypesReverse;
+        public IReadOnlyDictionary<Type, byte> TypeIndexTable => _allTypesReverse;
 
         public static void RegisterToClientMessageType(Type messageType)
         {
@@ -99,6 +100,8 @@ namespace MPTanks.Networking.Common
 
         public void ProcessMessage(byte id, NetIncomingMessage message)
         {
+            if (_allTypes.ContainsKey(id))
+                Diagnostics.AddMsg(_allTypes[id]);
             if (_toServerMessageTypes.ContainsKey(id))
             {
                 var obj = (MessageBase)Activator.CreateInstance(_toServerMessageTypes[id], message);
@@ -138,7 +141,7 @@ namespace MPTanks.Networking.Common
 
         public virtual void ProcessToClientAction(NetConnection client, ActionBase action)
         {
-            
+
         }
 
         public virtual void OnProcessingError(Exception error)
@@ -148,7 +151,7 @@ namespace MPTanks.Networking.Common
         #endregion  
 
         private List<MessageBase> _messages = new List<MessageBase>();
-        public IReadOnlyList<MessageBase> MessageQueue  => _messages;
+        public IReadOnlyList<MessageBase> MessageQueue => _messages;
         public void SendMessage(MessageBase message)
         {
             _messages.Add(message);
@@ -167,5 +170,27 @@ namespace MPTanks.Networking.Common
         }
 
         public void ClearQueue() => _messages.Clear();
+    }
+
+    public class NetworkProcessorDiagnostics
+    {
+        private Dictionary<Type, int> _usesByType = new Dictionary<Type, int>();
+
+        public void Reset()
+        {
+            _usesByType.Clear();
+        }
+        public IReadOnlyDictionary<Type, int> GetMostUsed(int count)
+        {
+            var sorted = _usesByType.OrderByDescending(a => a.Value);
+            return sorted.Take(count).ToDictionary(a => a.Key, a => a.Value);
+        }
+
+        internal void AddMsg(Type t)
+        {
+            if (!_usesByType.ContainsKey(t))
+                _usesByType.Add(t, 0);
+            _usesByType[t] = _usesByType[t] + 1;
+        }
     }
 }

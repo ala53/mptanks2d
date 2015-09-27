@@ -99,22 +99,21 @@ namespace MPTanks.CoreAssets.Tanks
         private float _lastStateChangeRotation;
         protected override void UpdateInternal(GameTime time)
         {
-            var rotation = TankHelper.ConstrainTurretRotation(
+            var rotation = BasicHelpers.NormalizeAngle(TankHelper.ConstrainTurretRotation(
                 null, null,
                 Components["turret"].Rotation + Rotation,
                 InputState.LookDirection,
                 1.5f * (float)time.ElapsedGameTime.TotalSeconds
-                ) - Rotation;
+                ) - Rotation);
 
             ComponentGroups["turret"].Rotation = rotation;
 
-            if (MathHelper.Distance(_lastStateChangeRotation, rotation) > 0.05)
+            if (Authoritative && MathHelper.Distance(_lastStateChangeRotation, rotation) > 0.05)
             {
                 RaiseStateChangeEvent(BitConverter.GetBytes(rotation));
                 _lastStateChangeRotation = rotation;
             }
             Animations["death_explosion"].Mask = ColorMask;
-
             base.UpdateInternal(time);
         }
 
