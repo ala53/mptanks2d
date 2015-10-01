@@ -152,16 +152,16 @@ namespace MPTanks.Client
                 {
                     var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
                     {
-                        IsHost = false
+                        IsHost = false,
+                        ServerAddress = ui.ActiveBinder.Address,
+                        ServerPort = ui.ActiveBinder.Port,
+                        Password = ui.ActiveBinder.ServerPassword
                     }, new string[] { });
                     game.RegisterExitCallback((g) => GoToMainMenuPage());
                     ui.SetPage("mainmenuplayerisingamepage");
                     game.Run();
                 });
-                ui.ActiveBinder.GoBackAction = (Action)(() =>
-                {
-                    GoToMainMenuPage();
-                });
+                ui.ActiveBinder.GoBackAction = (Action)(() => GoToMainMenuPage());
             });
         }
 

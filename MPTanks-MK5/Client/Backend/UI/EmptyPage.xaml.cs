@@ -23,7 +23,7 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class EmptyPage : UIRoot {
         
-        private Grid e_26;
+        private Grid e_27;
         
         public EmptyPage(int width, int height) : 
                 base(width, height) {
@@ -37,10 +37,10 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_26 element
-            this.e_26 = new Grid();
-            this.Content = this.e_26;
-            this.e_26.Name = "e_26";
+            // e_27 element
+            this.e_27 = new Grid();
+            this.Content = this.e_27;
+            this.e_27.Name = "e_27";
         }
         
         private static void InitializeElementResources(UIElement elem) {

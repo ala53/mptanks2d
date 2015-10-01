@@ -68,7 +68,10 @@ namespace MPTanks.Client
                 Thread.Sleep(100);
             }
 
-                        DomainProxy.IsGameHost = connectionInfo.IsHost;
+            DomainProxy.ServerIp = connectionInfo.ServerAddress;
+            DomainProxy.ServerPort = connectionInfo.ServerPort;
+            DomainProxy.ServerPassword = connectionInfo.Password;
+            DomainProxy.IsGameHost = connectionInfo.IsHost;
             DomainProxy.ServerEngineSettingsJSON = EngineSettings.GetInstance().Save();
         }
 

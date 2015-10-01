@@ -57,20 +57,40 @@
     <Compile Include="UI\DebugDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="EmptyKeys.UserInterface">
-      <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+    <Reference Include="EmptyKeys.UserInterface, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.Core">
-      <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
+    <Reference Include="EmptyKeys.UserInterface.CocosSharp, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\CocosSharp\AnyCPU\EmptyKeys.UserInterface.CocosSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.Debug">
-      <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Debug.dll</HintPath>
+    <Reference Include="EmptyKeys.UserInterface.Core, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Debug, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Debug.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EmptyKeys.UserInterface.Designer">
       <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\tools\EmptyKeys.UserInterface.Designer.dll</HintPath>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.MonoGame">
-      <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
+    <Reference Include="EmptyKeys.UserInterface.FNA, Version=1.9.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.MonoGame, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Paradox, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Paradox\AnyCPU\EmptyKeys.UserInterface.Paradox.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.SunBurn, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FarseerPhysics.Portable, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Lidgren.Network, Version=3.4.0.456, Culture=neutral, processorArchitecture=MSIL">
@@ -86,8 +106,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\..\packages\NLog.4.0.1\lib\net45\NLog.dll</HintPath>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NLog.4.1.2\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

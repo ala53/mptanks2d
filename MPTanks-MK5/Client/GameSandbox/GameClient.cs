@@ -132,14 +132,19 @@ namespace MPTanks.Client.GameSandbox
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
 
+            var host = CrossDomainObject.Instance.IsGameHost;
+
             _ui.SetPage(_settingUpPageName);
             //TEMP
-            Client = new Networking.Client.Client("localhost", 33132, new Networking.Client.Client.UserSuppliedPlayerInfo
-            {
-                Id = Guid.NewGuid(),
-                Clan = "",
-                Name = "TestPlayer"
-            }, new NLogLogger(Logger.Instance), "password");
+            Client = new Networking.Client.Client(
+                host ? "localhost" : CrossDomainObject.Instance.ServerIp,
+                host ? (ushort)33132 : CrossDomainObject.Instance.ServerPort,
+                new Networking.Client.Client.UserSuppliedPlayerInfo
+                {
+                    Id = Guid.NewGuid(),
+                    Clan = "",
+                    Name = "TestPlayer"
+                }, new NLogLogger(Logger.Instance), "password");
             if (CrossDomainObject.Instance.IsGameHost)
                 Server = new Networking.Server.Server(new Networking.Server.Configuration()
                 {

@@ -43,7 +43,7 @@ namespace MPTanks.Client.Backend.UI.Binders
             get { return _serverAddress; }
             set
             {
-                SetProperty(ref _serverAddress, value, nameof(ServerAddress));
+                SetProperty(ref _serverAddress, value);
             }
         }
         private string _serverPassword = "<none>";

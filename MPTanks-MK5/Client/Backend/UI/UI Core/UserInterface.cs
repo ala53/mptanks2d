@@ -76,7 +76,7 @@ namespace MPTanks.Client.Backend.UI
         {
             _graphics = game.GraphicsDevice;
             _game = game;
-            _engine = new MonoGameEngine(_graphics, _graphics.Viewport.Width, _graphics.Viewport.Height);
+            _engine = new MonoGameEngine(_graphics, 0, 0);
             _content = new ContentManager(contentManager.ServiceProvider, "assets/ui/imgs");
             SpriteFont font = _content.Load<SpriteFont>("Segoe_UI_12_Regular");
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
@@ -91,7 +91,7 @@ namespace MPTanks.Client.Backend.UI
         /// <param name="page">The Page's file name (excluding extension)</param>
         /// <param name="shouldRecreatePage">Whether to use the cached instance of the page or recreate it.</param>
         /// <returns></returns>
-        public UserInterfacePage SetPage(string page, bool shouldRecreatePage = false)
+        public UserInterfacePage SetPage(string page, bool shouldRecreatePage = true)
         {
             if (shouldRecreatePage)
             {
@@ -105,7 +105,7 @@ namespace MPTanks.Client.Backend.UI
                 if (_pageCache.ContainsKey(page))
                 {
                     UIPage = _pageCache[page];
-                    CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
+                    //CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
                     return UIPage;
                 }
                 else return SetPage(page, true);
@@ -134,16 +134,8 @@ namespace MPTanks.Client.Backend.UI
         }
         public void Draw(GameTime gameTime)
         {
-            try
-            {
-                if (_activePage != null)
-                    _activePage.Draw(gameTime);
-            }
-            catch
-            {
-                _engine = new MonoGameEngine(_graphics, _graphics.Viewport.Width, _graphics.Viewport.Height);
-                CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
-            }
+            if (_activePage != null)
+                _activePage.Draw(gameTime);
         }
 
         private float GetPercentageStepForTransition(GameTime gameTime)

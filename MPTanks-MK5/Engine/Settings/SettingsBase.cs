@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading;
 
 namespace MPTanks.Engine.Settings
 {
@@ -22,12 +23,16 @@ namespace MPTanks.Engine.Settings
 
             if (File.Exists(file))
             {
+                _loading = true;
                 SetDefaults();
                 LoadFromFile(file);
+                _loading = false;
             }
             else
             {
+                _loading = true;
                 SetDefaults();
+                _loading = false;
                 Save(file);
             }
         }
@@ -68,15 +73,12 @@ namespace MPTanks.Engine.Settings
         private bool _loading;
         public void Load(string settingsData)
         {
-            _loading = true;
             try { JsonConvert.PopulateObject(settingsData, this, _settings); }
             catch { }
-            _loading = false;
         }
 
         protected abstract void SetDefaults();
 
-        private Task _saveTask;
         public void Save(string fileToSaveTo)
         {
             File.WriteAllText(fileToSaveTo, Save());
@@ -90,8 +92,8 @@ namespace MPTanks.Engine.Settings
         #region Change helper
         public virtual void OnSettingChanged(Setting setting)
         {
-            if (_file != null && !_loading)
-                Save(_file);
+            if (_file == null || _loading) return;
+            Save(_file);
         }
         #endregion
 

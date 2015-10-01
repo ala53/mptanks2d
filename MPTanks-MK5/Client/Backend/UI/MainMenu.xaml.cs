@@ -23,17 +23,17 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class MainMenu : UIRoot {
         
-        private Grid e_27;
-        
-        private StackPanel e_28;
+        private Grid e_28;
         
         private StackPanel e_29;
+        
+        private StackPanel e_30;
         
         private TextBlock _title;
         
         private TextBlock _subtitle;
         
-        private StackPanel e_30;
+        private StackPanel e_31;
         
         private Button _hostBtn;
         
@@ -55,22 +55,22 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 255));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_27 element
-            this.e_27 = new Grid();
-            this.Content = this.e_27;
-            this.e_27.Name = "e_27";
             // e_28 element
-            this.e_28 = new StackPanel();
-            this.e_27.Children.Add(this.e_28);
+            this.e_28 = new Grid();
+            this.Content = this.e_28;
             this.e_28.Name = "e_28";
-            this.e_28.Orientation = Orientation.Vertical;
             // e_29 element
             this.e_29 = new StackPanel();
             this.e_28.Children.Add(this.e_29);
             this.e_29.Name = "e_29";
+            this.e_29.Orientation = Orientation.Vertical;
+            // e_30 element
+            this.e_30 = new StackPanel();
+            this.e_29.Children.Add(this.e_30);
+            this.e_30.Name = "e_30";
             // _title element
             this._title = new TextBlock();
-            this.e_29.Children.Add(this._title);
+            this.e_30.Children.Add(this._title);
             this._title.Name = "_title";
             this._title.Margin = new Thickness(20F, 20F, 20F, 0F);
             this._title.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -82,7 +82,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._title.FontSize = 96F;
             // _subtitle element
             this._subtitle = new TextBlock();
-            this.e_29.Children.Add(this._subtitle);
+            this.e_30.Children.Add(this._subtitle);
             this._subtitle.Name = "_subtitle";
             this._subtitle.HorizontalAlignment = HorizontalAlignment.Stretch;
             this._subtitle.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
@@ -91,15 +91,15 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this._subtitle.FontFamily = new FontFamily("Karmatic Arcade");
             this._subtitle.FontSize = 36F;
-            // e_30 element
-            this.e_30 = new StackPanel();
-            this.e_28.Children.Add(this.e_30);
-            this.e_30.Name = "e_30";
-            this.e_30.Margin = new Thickness(20F, 20F, 20F, 20F);
-            this.e_30.Orientation = Orientation.Vertical;
+            // e_31 element
+            this.e_31 = new StackPanel();
+            this.e_29.Children.Add(this.e_31);
+            this.e_31.Name = "e_31";
+            this.e_31.Margin = new Thickness(20F, 20F, 20F, 20F);
+            this.e_31.Orientation = Orientation.Vertical;
             // _hostBtn element
             this._hostBtn = new Button();
-            this.e_30.Children.Add(this._hostBtn);
+            this.e_31.Children.Add(this._hostBtn);
             this._hostBtn.Name = "_hostBtn";
             this._hostBtn.Width = 500F;
             this._hostBtn.HorizontalAlignment = HorizontalAlignment.Left;
@@ -115,7 +115,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._hostBtn.SetBinding(Button.CommandProperty, binding__hostBtn_Command);
             // _joinBtn element
             this._joinBtn = new Button();
-            this.e_30.Children.Add(this._joinBtn);
+            this.e_31.Children.Add(this._joinBtn);
             this._joinBtn.Name = "_joinBtn";
             this._joinBtn.Width = 500F;
             this._joinBtn.HorizontalAlignment = HorizontalAlignment.Left;
@@ -131,7 +131,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._joinBtn.SetBinding(Button.CommandProperty, binding__joinBtn_Command);
             // _settingsBtn element
             this._settingsBtn = new Button();
-            this.e_30.Children.Add(this._settingsBtn);
+            this.e_31.Children.Add(this._settingsBtn);
             this._settingsBtn.Name = "_settingsBtn";
             this._settingsBtn.Width = 500F;
             this._settingsBtn.HorizontalAlignment = HorizontalAlignment.Left;
@@ -147,7 +147,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._settingsBtn.SetBinding(Button.CommandProperty, binding__settingsBtn_Command);
             // _exitBtn element
             this._exitBtn = new Button();
-            this.e_30.Children.Add(this._exitBtn);
+            this.e_31.Children.Add(this._exitBtn);
             this._exitBtn.Name = "_exitBtn";
             this._exitBtn.Width = 500F;
             this._exitBtn.HorizontalAlignment = HorizontalAlignment.Left;

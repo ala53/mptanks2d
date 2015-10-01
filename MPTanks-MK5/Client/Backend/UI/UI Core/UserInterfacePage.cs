@@ -54,6 +54,7 @@ namespace MPTanks.Client.Backend.UI
 
             Binder.Update(gameTime);
         }
+
         public virtual void Draw(GameTime gameTime, float opacity = 1, EmptyKeys.UserInterface.Renderers.Renderer _renderer = null)
         {
             if (_renderer == null)
