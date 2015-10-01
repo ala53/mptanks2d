@@ -66,10 +66,10 @@ namespace MPTanks.DedicatedServer
                 _logger.Info("Game countdown stopped.");
             _server.SetGame(_server.Game);
 
-            for (var i = 0; i < 7; i++)
+            for (var i = 0; i < 1; i++)
                 _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
                 {
-                    Username = "ZZZZZ" + _server.Players.Count,
+                    Username = "Dummy Player #" + _server.Players.Count,
                     UniqueId = Guid.NewGuid(),
                     ClanName = ""
                 }));
@@ -96,8 +96,9 @@ namespace MPTanks.DedicatedServer
 
                 }
 
-                gt.ElapsedGameTime = TimeSpan.FromMilliseconds(sw.Elapsed.TotalMilliseconds);
-
+                gt.ElapsedGameTime = sw.Elapsed;
+                if (gt.ElapsedGameTime.TotalMilliseconds > 500)
+                    gt.ElapsedGameTime = TimeSpan.FromMilliseconds(500);
                 sw.Restart();
             }
         }

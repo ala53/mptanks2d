@@ -101,6 +101,7 @@
     <Compile Include="Sound\SoundInstance.cs" />
     <Compile Include="Sound\SoundPlayer.cs" />
     <Compile Include="UI\Binders\ConnectingToServerPage.cs" />
+    <Compile Include="UI\Binders\ConnectToServerPage.cs" />
     <Compile Include="UI\Binders\EmptyPage.cs" />
     <Compile Include="UI\Binders\InGame\SettingUpPrompt.cs" />
     <Compile Include="UI\Binders\MainMenu.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="UI\Binders\MessageBoxes\WarningMessageBox.cs" />
     <Compile Include="UI\Binders\MessageBoxes\MessageBoxBinder.cs" />
     <Compile Include="UI\ConnectingToServerPage.xaml.cs" />
+    <Compile Include="UI\ConnectToServerPage.xaml.cs" />
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
@@ -228,6 +230,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="assets\ui\xaml\ConnectToServerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="assets\ui\xaml\InGame\SettingUpPrompt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

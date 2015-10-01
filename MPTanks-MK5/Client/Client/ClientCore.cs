@@ -128,6 +128,11 @@ namespace MPTanks.Client
                     ClientSettings.Instance.WindowRectangle.Value.Height);
 
             ui = new UserInterface(Content, this);
+            GoToMainMenuPage();
+        }
+
+        private void GoToMainMenuPage()
+        {
             ui.SetPage("mainmenu");
             ui.ActiveBinder.ExitAction = (Action)Exit;
             ui.ActiveBinder.HostAction = (Action)(() =>
@@ -136,19 +141,27 @@ namespace MPTanks.Client
                 {
                     IsHost = true
                 }, new string[] { });
-                game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
+                game.RegisterExitCallback((g) => GoToMainMenuPage());
                 ui.SetPage("mainmenuplayerisingamepage");
                 game.Run();
             });
             ui.ActiveBinder.JoinAction = (Action)(() =>
             {
-                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                ui.SetPage("connecttoserverpage");
+                ui.ActiveBinder.ConnectAction = (Action)(() =>
                 {
-                    IsHost = false
-                }, new string[] { });
-                game.RegisterExitCallback((g) => ui.SetPage("mainmenu"));
-                ui.SetPage("mainmenuplayerisingamepage");
-                game.Run();
+                    var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                    {
+                        IsHost = false
+                    }, new string[] { });
+                    game.RegisterExitCallback((g) => GoToMainMenuPage());
+                    ui.SetPage("mainmenuplayerisingamepage");
+                    game.Run();
+                });
+                ui.ActiveBinder.GoBackAction = (Action)(() =>
+                {
+                    GoToMainMenuPage();
+                });
             });
         }
 

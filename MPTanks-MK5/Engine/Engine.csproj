@@ -67,6 +67,7 @@
     <Compile Include="Gamemodes\NullGamemode.cs" />
     <Compile Include="GameObject.Serialization.cs" />
     <Compile Include="GameCore.Timescale.cs" />
+    <Compile Include="Helpers\ByteArrayReader.cs" />
     <Compile Include="Helpers\HalfFloat.cs" />
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Core\Events\Types\GameCore\EndedEventArgs.cs" />
