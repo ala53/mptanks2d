@@ -17,130 +17,121 @@ namespace MPTanks.Client.Backend.UI
 {
     public class UserInterface
     {
-        public UserInterfacePage UIPage
-        {
-            get
-            {
-                return _page;
-            }
-            set
-            {
-                _page = value;
-                _page.UserInterface = this;
-                _page.Page.Resize(currentWidth, currentHeight);
-                FontManager.Instance.LoadFonts(_content);
-                ImageManager.Instance.LoadImages(_content);
-                SoundManager.Instance.LoadSounds(_content);
-            }
-        }
-
-        public dynamic ActiveBinder
-        {
-            get
-            {
-                return _page.Binder;
-            }
-        }
-
-        public TimeSpan PageTransitionTime { get; set; }
-
-        private ContentManager _content;
-        private UserInterfacePage _page;
-        private GraphicsDevice _graphics;
+        private int _currentWidth, _currentHeight;
+        private int _lastWidth, _lastHeight;
+        private Stack<UserInterfacePage> _pages = new Stack<UserInterfacePage>();
+        private GraphicsDevice _gd => _game.GraphicsDevice;
         private Game _game;
         private EmptyKeys.UserInterface.Engine _engine;
-        private List<MessageBox> _messageBoxes = new List<MessageBox>();
-        private UserInterfacePage _activeMessageBox;
+        private ContentManager _content;
+        public UserInterfacePage CurrentPage => _pages.Count > 0 ? _pages.Peek() : null;
+        public dynamic ActiveBinder => CurrentPage?.Binder;
+        public bool IsActive { get; set; }
+        /// <summary>
+        /// UNUSED
+        /// </summary>
+        public TimeSpan PageTransitionTime { get; set; }
 
-        private UserInterfacePage _activePage
+        public UserInterface(Game game)
         {
-            get
-            {
-                if (_activeMessageBox != null)
-                    return _activeMessageBox;
-                else return _page;
-            }
-        }
-
-        public string PageName
-        {
-            get
-            {
-                if (_page != null)
-                    return _page.Name;
-                else return null;
-            }
-        }
-
-        public UserInterface(ContentManager contentManager, Game game)
-        {
-            _graphics = game.GraphicsDevice;
             _game = game;
-            _engine = new MonoGameEngine(_graphics, 0, 0);
-            _content = new ContentManager(contentManager.ServiceProvider, "assets/ui/imgs");
+            _engine = new MonoGameEngine(_gd, 0, 0);
+            _content = new ContentManager(_game.Content.ServiceProvider, "assets/ui/imgs");
             SpriteFont font = _content.Load<SpriteFont>("Segoe_UI_12_Regular");
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
+            GoBack();
         }
 
-        private Dictionary<string, UserInterfacePage> _pageCache =
-            new Dictionary<string, UserInterfacePage>(StringComparer.InvariantCultureIgnoreCase);
-        /// <summary>
-        /// Sets the current UI page.
-        /// </summary>
-        /// <param name="page">The Page's file name (excluding extension)</param>
-        /// <param name="shouldRecreatePage">Whether to use the cached instance of the page or recreate it.</param>
-        /// <returns></returns>
-        public UserInterfacePage SetPage(string page, bool shouldRecreatePage = true)
+        public UserInterfacePage GoToPage(string name)
         {
-            if (shouldRecreatePage)
-            {
-                var pg = new UserInterfacePage(page);
-                _pageCache[page] = pg;
-                UIPage = pg;
-                return UIPage;
-            }
-            else
-            {
-                if (_pageCache.ContainsKey(page))
-                {
-                    UIPage = _pageCache[page];
-                    //CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
-                    return UIPage;
-                }
-                else return SetPage(page, true);
-            }
+            var pg = new UserInterfacePage(name);
+            pg.UserInterface = this;
+            pg.Page.Resize(_currentWidth, _currentHeight);
+            _pages.Push(pg);
+            FontManager.Instance.LoadFonts(_content);
+            ImageManager.Instance.LoadImages(_content);
+            SoundManager.Instance.LoadSounds(_content);
+
+            return pg;
         }
 
-        private int currentWidth;
-        private int currentHeight;
+        public void UnwindPageStack()
+        {
+            _pages.Clear();
+            GoBack();
+        }
+        /// <summary>
+        /// Goes back 1 page in the "history" list
+        /// </summary>
+        public void GoBack()
+        {
+            if (_pages.Count == 0) return;
+            _pages.Pop();
+            if (_pages.Count == 0)
+            {
+                //Add a new "empty" page to the list
+                GoToPage("emptypage");
+            }
+            FixPageStack();
+        }
+
+        public void Resize(int newWidth, int newHeight)
+        {
+            foreach (var pg in _pages)
+                pg.Page.Resize(newWidth, newHeight);
+            _currentWidth = newWidth;
+            _currentHeight = newHeight;
+        }
+
+        private void FixPageStack()
+        {
+            if (_pages.Count == 0) GoBack(); //shortcut to recreate empty page
+            var p = _pages.Pop();
+            _pages.Push(
+                CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(p));
+            Resize(_currentWidth, _currentHeight);
+        }
+
+        private UserInterfacePage
+            CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(UserInterfacePage page)
+        {
+            var newPage = new UserInterfacePage(page.Page.GetType().Name);
+            ViewModelBase binder = page.Binder;
+            ViewModelBase newBinder = newPage.Binder;
+
+            foreach (var property in binder.GetType().GetProperties(
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public
+                ))
+            {
+                if (property.CanWrite && property.CanRead)
+                {
+                    var value = property.GetValue(binder);
+                    property.SetValue(newBinder, value);
+                }
+            }
+
+            if (newBinder is BinderBase)
+                (newBinder as BinderBase).Owner = newPage;
+            return newPage;
+        }
+
         public void Update(GameTime gameTime)
         {
-            if (currentWidth != _graphics.Viewport.Width ||
-                currentHeight != _graphics.Viewport.Height)
-            {
-                currentWidth = _graphics.Viewport.Width;
-                currentHeight = _graphics.Viewport.Height;
-                if (_page != null)
-                    _page.Page.Resize(_graphics.Viewport.Width, _graphics.Viewport.Height);
-                if (_activeMessageBox != null)
-                    _activeMessageBox.Page.Resize(_graphics.Viewport.Width, _graphics.Viewport.Height);
+            var vp = _game.GraphicsDevice.Viewport;
+            if (vp.Width != _lastWidth || vp.Height != _lastHeight)
+                Resize(vp.Width, vp.Height);
+            _lastWidth = vp.Width;
+            _lastHeight = vp.Height;
 
-                _engine = new MonoGameEngine(_graphics, _graphics.Viewport.Width, _graphics.Viewport.Height);
-            }
-
-            if (_activePage != null)
-                _activePage.Update(gameTime, _game.IsActive);
+            CurrentPage.Update(gameTime, IsActive);
         }
+
         public void Draw(GameTime gameTime)
         {
-            if (_activePage != null)
-                _activePage.Draw(gameTime);
-        }
-
-        private float GetPercentageStepForTransition(GameTime gameTime)
-        {
-            return (float)(gameTime.ElapsedGameTime.TotalMilliseconds / PageTransitionTime.TotalMilliseconds);
+            CurrentPage.Draw(gameTime);
         }
 
         #region Message Boxes
@@ -168,113 +159,43 @@ namespace MPTanks.Client.Backend.UI
             No
         }
 
-        public void ShowMessageBox(string header, string content, MessageBoxType type,
-            MessageBoxButtons buttons, Action<MessageBoxResult> callback)
+        public void ShowMessageBox(string content, string header = "",
+            MessageBoxType type = MessageBoxType.OKMessageBox,
+            MessageBoxButtons buttons = MessageBoxButtons.Ok,
+            Action<MessageBoxResult> callback = null)
         {
+            if (callback == null) callback = delegate { };
             content = string.Join("\n", ChunksUpto(content, 30));
-            _messageBoxes.Add(new MessageBox()
-            {
-                Header = header,
-                Content = content,
-                Type = type,
-                Buttons = buttons,
-                Result = callback
-            });
+            GoToPage(type.ToString());
 
-            if (_messageBoxes.Count == 1)
+            CurrentPage.Binder.Header = header;
+            CurrentPage.Binder.Content = content;
+            CurrentPage.Binder.Buttons = buttons;
+            CurrentPage.Binder.OkCommand = new RelayCommand((obj) =>
             {
-                CreateMessageBox(_messageBoxes[0]);
-                _messageBoxes.Clear();
-            }
+                GoBack();
+                callback(MessageBoxResult.Ok);
+            });
+            CurrentPage.Binder.CancelCommand = new RelayCommand((obj) =>
+            {
+                GoBack();
+                callback(MessageBoxResult.Cancel);
+            });
+            CurrentPage.Binder.YesCommand = new RelayCommand((obj) =>
+            {
+                GoBack();
+                callback(MessageBoxResult.Yes);
+            });
+            CurrentPage.Binder.NoCommand = new RelayCommand((obj) =>
+            {
+                GoBack();
+                callback(MessageBoxResult.No);
+            });
         }
         static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
         {
             for (int i = 0; i < str.Length; i += maxChunkSize)
                 yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
-        }
-        private void CreateMessageBox(MessageBox specification)
-        {
-            var page = new UserInterfacePage(specification.Type.ToString());
-            page.Page.Resize(currentWidth, currentHeight);
-            page.Page.Opacity = 1;
-
-            FontManager.Instance.LoadFonts(_content);
-            ImageManager.Instance.LoadImages(_content);
-            SoundManager.Instance.LoadSounds(_content);
-
-            page.Binder.Header = specification.Header;
-            page.Binder.Content = specification.Content;
-            page.Binder.Buttons = specification.Buttons;
-            page.Binder.OkCommand = new RelayCommand((obj) =>
-            {
-                CloseMessageBox();
-                specification.Result(MessageBoxResult.Ok);
-            });
-            page.Binder.CancelCommand = new RelayCommand((obj) =>
-            {
-                CloseMessageBox();
-                specification.Result(MessageBoxResult.Cancel);
-            });
-            page.Binder.YesCommand = new RelayCommand((obj) =>
-            {
-                CloseMessageBox();
-                specification.Result(MessageBoxResult.Yes);
-            });
-            page.Binder.NoCommand = new RelayCommand((obj) =>
-            {
-                CloseMessageBox();
-                specification.Result(MessageBoxResult.No);
-            });
-
-            _activeMessageBox = page;
-        }
-
-        private void CloseMessageBox()
-        {
-            _activeMessageBox = null;
-            UIPage = _page;
-            _page.Page.DataContext = _page.Binder;
-            if (_messageBoxes.Count > 0)
-            {
-                CreateMessageBox(_messageBoxes[0]);
-                _messageBoxes.RemoveAt(0);
-            }
-            else CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic();
-        }
-
-        private void CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic()
-        {
-            var newPage = new UserInterfacePage(UIPage.Page.GetType().Name);
-            ViewModelBase binder = _page.Binder;
-            ViewModelBase newBinder = newPage.Binder;
-            //Update the page cache
-            _pageCache[UIPage.Page.GetType().Name] = newPage;
-
-            foreach (var property in binder.GetType().GetProperties(
-                System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Public
-                ))
-            {
-                if (property.CanWrite && property.CanRead)
-                {
-                    var value = property.GetValue(binder);
-                    property.SetValue(newBinder, value);
-                }
-            }
-
-            if (newBinder is BinderBase)
-                (newBinder as BinderBase).Owner = newPage;
-            UIPage = newPage;
-        }
-
-        private class MessageBox
-        {
-            public string Header { get; set; }
-            public string Content { get; set; }
-            public MessageBoxType Type { get; set; }
-            public MessageBoxButtons Buttons { get; set; }
-            public Action<MessageBoxResult> Result { get; set; }
         }
         #endregion
     }

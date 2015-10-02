@@ -94,7 +94,7 @@ namespace MPTanks.Client.GameSandbox
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
 
-            _ui = new UserInterface(Content, this);
+            _ui = new UserInterface(this);
 
             //initialize the game input driver
             InputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
@@ -134,7 +134,7 @@ namespace MPTanks.Client.GameSandbox
 
             var host = CrossDomainObject.Instance.IsGameHost;
 
-            _ui.SetPage(_settingUpPageName);
+            _ui.GoToPage(_settingUpPageName);
             //TEMP
             Client = new Networking.Client.Client(
                 host ? "localhost" : CrossDomainObject.Instance.ServerIp,
@@ -259,13 +259,13 @@ namespace MPTanks.Client.GameSandbox
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update()");
 
-            if (!Client.GameInstance.Game.HasStarted && _ui.PageName != _settingUpPageName)
-                _ui.SetPage(_settingUpPageName);
+            if (!Client.GameInstance.Game.HasStarted && _ui.CurrentPage.Name != _settingUpPageName)
+                _ui.GoToPage(_settingUpPageName);
 
-            if (Client.GameInstance.Game.HasStarted && _ui.PageName == _settingUpPageName)
-                _ui.UIPage = UserInterfacePage.GetEmptyPageInstance();
+            if (Client.GameInstance.Game.HasStarted && _ui.CurrentPage.Name == _settingUpPageName)
+                _ui.UnwindPageStack();
 
-            if (_ui.PageName == _settingUpPageName)
+            if (_ui.CurrentPage.Name == _settingUpPageName)
                 _ui.ActiveBinder.TimeRemaining = Client.RemainingCountdownTime;
 
             _ui.Update(gameTime);

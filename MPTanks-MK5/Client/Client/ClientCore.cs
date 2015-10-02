@@ -127,13 +127,13 @@ namespace MPTanks.Client
                     ClientSettings.Instance.WindowRectangle.Value.Width,
                     ClientSettings.Instance.WindowRectangle.Value.Height);
 
-            ui = new UserInterface(Content, this);
+            ui = new UserInterface(this);
             GoToMainMenuPage();
         }
 
         private void GoToMainMenuPage()
         {
-            ui.SetPage("mainmenu");
+            ui.GoToPage("mainmenu");
             ui.ActiveBinder.ExitAction = (Action)Exit;
             ui.ActiveBinder.HostAction = (Action)(() =>
             {
@@ -141,13 +141,13 @@ namespace MPTanks.Client
                 {
                     IsHost = true
                 }, new string[] { });
-                game.RegisterExitCallback((g) => GoToMainMenuPage());
-                ui.SetPage("mainmenuplayerisingamepage");
+                game.RegisterExitCallback(a => ui.GoBack());
+                ui.GoToPage("mainmenuplayerisingamepage");
                 game.Run();
             });
             ui.ActiveBinder.JoinAction = (Action)(() =>
             {
-                ui.SetPage("connecttoserverpage");
+                ui.GoToPage("connecttoserverpage");
                 ui.ActiveBinder.ConnectAction = (Action)(() =>
                 {
                     var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
@@ -157,11 +157,11 @@ namespace MPTanks.Client
                         ServerPort = ui.ActiveBinder.Port,
                         Password = ui.ActiveBinder.ServerPassword
                     }, new string[] { });
-                    game.RegisterExitCallback((g) => GoToMainMenuPage());
-                    ui.SetPage("mainmenuplayerisingamepage");
+                    game.RegisterExitCallback((g) => ui.GoBack());
+                    ui.GoToPage("mainmenuplayerisingamepage");
                     game.Run();
                 });
-                ui.ActiveBinder.GoBackAction = (Action)(() => GoToMainMenuPage());
+                ui.ActiveBinder.GoBackAction = (Action)ui.GoBack;
             });
         }
 
