@@ -15,7 +15,6 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox></TextBox>
             <TextBlock Text="Connect to a server" Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="48"></TextBlock>
             <DockPanel Margin="10,0,10,0" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Left" Text="Server Address: " Foreground="White" TextAlignment="Center" FontSize="16"></TextBlock>

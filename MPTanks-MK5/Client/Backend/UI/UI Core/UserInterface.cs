@@ -66,7 +66,8 @@ namespace MPTanks.Client.Backend.UI
         /// </summary>
         public void GoBack()
         {
-            if (_pages.Count == 0) return;
+            if (_pages.Count == 0)
+                GoToPage("emptypage");
             _pages.Pop();
             if (_pages.Count == 0)
             {
@@ -88,9 +89,14 @@ namespace MPTanks.Client.Backend.UI
         {
             if (_pages.Count == 0) GoBack(); //shortcut to recreate empty page
             var p = _pages.Pop();
-            _pages.Push(
-                CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(p));
-            Resize(_currentWidth, _currentHeight);
+            p = CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(p);
+            _pages.Push(p);
+            p.UserInterface = this;
+            p.Page.Resize(_currentWidth, _currentHeight);
+            _pages.Push(p);
+            FontManager.Instance.LoadFonts(_content);
+            ImageManager.Instance.LoadImages(_content);
+            SoundManager.Instance.LoadSounds(_content);
         }
 
         private UserInterfacePage
@@ -115,6 +121,7 @@ namespace MPTanks.Client.Backend.UI
 
             if (newBinder is BinderBase)
                 (newBinder as BinderBase).Owner = newPage;
+            newPage.UserInterface = this;
             return newPage;
         }
 
@@ -159,7 +166,7 @@ namespace MPTanks.Client.Backend.UI
             No
         }
 
-        public void ShowMessageBox(string content, string header = "",
+        public void ShowMessageBox(string header, string content,
             MessageBoxType type = MessageBoxType.OKMessageBox,
             MessageBoxButtons buttons = MessageBoxButtons.Ok,
             Action<MessageBoxResult> callback = null)
