@@ -534,9 +534,10 @@ namespace MPTanks.Engine
             return AssetResolver.ResolveAsset(modName, assetName);
         }
         #endregion
+
         public override string ToString()
         {
-            return $"Class: {base.ToString()} Id: {ObjectId}, Name: {ReflectionName}";
+            return $"Class: {base.ToString()}, Id: {ObjectId}, Name: {ReflectionName}";
         }
     }
 }

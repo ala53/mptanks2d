@@ -20,6 +20,10 @@ namespace MPTanks.Engine.Helpers
         {
             return Data[Offset++];
         }
+        public byte[] ReadBytes()
+        {
+            return Data.GetByteArray(Offset);
+        }
         public ushort ReadUShort()
         {
             var o = BitConverter.ToUInt16(Data, Offset);
@@ -60,9 +64,12 @@ namespace MPTanks.Engine.Helpers
         {
             return Data[Offset++] != 0;
         }
-        public bool ReadString()
+        public string ReadString()
         {
-            return Data[Offset++] != 0;
+            var len = ReadUShort();
+            var str = Encoding.UTF8.GetString(Data, Offset, len);
+            Offset += len;
+            return str;
         }
 
         public Vector2 ReadVector()

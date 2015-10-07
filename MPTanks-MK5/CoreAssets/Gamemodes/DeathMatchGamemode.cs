@@ -19,6 +19,8 @@ namespace MPTanks.CoreAssets.Gamemodes
         public DeathMatchGamemode()
             : base()
         {
+            Engine.Storage.SetPersistentData(new byte[3076], ContainingModule);
+            var dt = Engine.Storage.GetPersistentData(ContainingModule);
             AllowRespawn = false;
             RespawnTimeMs = 0;
         }

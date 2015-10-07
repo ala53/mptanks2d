@@ -59,7 +59,10 @@ namespace MPTanks.Engine
         {
             get
             {
-                return ModDatabase.ReverseTypeTable[GetType()];
+                if (_cachedModule == null)
+                    _cachedModule = ModDatabase.ReverseTypeTable[GetType().FullName];
+
+                return _cachedModule;
             }
         }
         #endregion

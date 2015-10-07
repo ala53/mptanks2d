@@ -120,6 +120,7 @@
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundEvents.cs" />
+    <Compile Include="Storage.cs" />
     <Compile Include="Tanks\InputState.cs" />
     <Compile Include="Tanks\SuperTank.cs" />
     <Compile Include="Tanks\Tank.cs" />
