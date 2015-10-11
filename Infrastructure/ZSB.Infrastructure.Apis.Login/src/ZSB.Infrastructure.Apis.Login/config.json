@@ -1,0 +1,9 @@
+﻿{
+  "AppSettings": {
+    "SiteTitle": "ZSB Login Server"
+  },
+  "Data": {
+    "ConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=login_test_db;Trusted_Connection=True;MultipleActiveResultSets=true",
+    "SendGridAPIKey": ""
+  }
+}

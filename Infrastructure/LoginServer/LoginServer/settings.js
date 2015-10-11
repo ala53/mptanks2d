@@ -1,9 +1,0 @@
-﻿module.exports.maxUploadSize = 1024 * 1024 * 2; //2 mb
-module.exports.port = 1338;
-module.exports.https = true;
-module.exports.httpsKeyFile = "https_key/key.key";
-module.exports.httpsCertFile = "https_key/cert.cert";
-module.exports.hostHttpRedirect = true;
-module.exports.httpRedirectPort = 1337;
-module.exports.authTokenValidityLengthSeconds = 10 * 24 * 60 * 60; //10 days
-module.exports.serverAuthTokenValidityLengthSeconds = 60; //1 minute

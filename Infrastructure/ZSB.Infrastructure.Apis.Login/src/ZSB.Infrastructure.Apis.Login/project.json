@@ -1,0 +1,42 @@
+﻿{
+  "webroot": "wwwroot",
+  "version": "1.0.0-beta7",
+
+  "dependencies": {
+    "EntityFramework.Commands": "7.0.0-beta7",
+    "EntityFramework.SqlServer": "7.0.0-beta7",
+    "Microsoft.AspNet.Mvc": "6.0.0-beta7",
+    "Microsoft.AspNet.Mvc.Core": "6.0.0-beta7",
+    "Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
+    "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
+    "Microsoft.Framework.Configuration": "1.0.0-beta7",
+    "Microsoft.Framework.Configuration.Json": "1.0.0-beta7",
+    "Microsoft.AspNet.Cors": "1.0.0-beta7",
+    "Microsoft.AspNet.Diagnostics": "1.0.0-beta7",
+    "Sendgrid": "6.1.0",
+    "Microsoft.AspNet.Cryptography.KeyDerivation": "1.0.0-beta7",
+    "EntityFramework.Core": "7.0.0-beta7"
+  },
+
+  "commands": {
+    "web": "Microsoft.AspNet.Hosting --config hosting.ini",
+    "ef": "EntityFramework.Commands"
+  },
+
+  "resource": [
+    "*.html"
+  ],
+  "exclude": [
+    "wwwroot",
+    "node_modules",
+    "bower_components"
+  ],
+  "publishExclude": [
+    "node_modules",
+    "bower_components",
+    "**.xproj",
+    "**.user",
+    "**.vspscc"
+  ]
+}
