@@ -32,7 +32,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("username_or_password_incorrect");
             }
 
-            var user = ldb.GetUser(model.Username);
+            var user = ldb.GetUser(model.Username, false);
             user.PasswordHashes = PasswordHasher.GenerateHashPermutations(model.NewPassword);
             ldb.UpdateUser(user);
             return OkModel.Empty;
@@ -68,10 +68,10 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             um.Username = model.Username;
 
             //And validate the email address
-            if (ldb.GetUser(model.EmailAddress) != null)
-                return ErrorModel.Of("email_in_use");
-            if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress))
+            if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
                 return ErrorModel.Of("email_invalid");
+            if (ldb.GetUser(model.EmailAddress, false) != null) //in use
+                return ErrorModel.Of("email_in_use");
             //Username
             if (ldb.DBContext.Users.Where(a => a.Username == model.Username).FirstOrDefault() != null)
                 return ErrorModel.Of("username_in_use");
@@ -87,7 +87,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb.Save();
 
             //Send the registration email
-            await AccountCreation.SendRegistrationEmail(um);
+            await EmailSender.SendRegistrationEmail(um);
 
             return OkModel.Empty;
         }

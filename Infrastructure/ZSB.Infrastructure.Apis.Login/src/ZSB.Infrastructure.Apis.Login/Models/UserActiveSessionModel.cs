@@ -11,9 +11,17 @@ namespace ZSB.Infrastructure.Apis.Login.Models
     public class UserActiveSessionModel
     {
         [Key]
-        public virtual string SessionKey { get; set; }
-        public virtual DateTime ExpiryDate { get; set; }
-        [JsonIgnore, XmlIgnore]
+        public string SessionKey { get; set; }
+        public DateTime ExpiryDate { get; set; }
         public virtual UserModel Owner { get; set; }
+        public UserActiveSessionModel()
+        {
+
+        }
+        public UserActiveSessionModel(TimeSpan lifeTime)
+        {
+            SessionKey = Guid.NewGuid().ToString("N");
+            ExpiryDate = DateTime.UtcNow + lifeTime;
+        }
     }
 }

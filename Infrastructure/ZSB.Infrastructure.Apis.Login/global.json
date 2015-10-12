@@ -3,6 +3,6 @@
     "sdk": {
         "version": "1.0.0-beta7",
         "runtime": "clr",
-        "architecture": "x86"
+        "architecture": "x64"
     }
 }

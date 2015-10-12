@@ -19,13 +19,17 @@ namespace ZSB.Infrastructure.Apis.Login.Database.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Models.UserModel>().Property(a => a.Username)
+            modelBuilder.Entity<Models.UserModel>()
+                .Property(a => a.Username)
                 .Required();
-            modelBuilder.Entity<Models.UserModel>().Property(a => a.UniqueId)
+            modelBuilder.Entity<Models.UserModel>()
+                .Property(a => a.UniqueId)
                 .Required().ValueGeneratedOnAdd();
-            modelBuilder.Entity<Models.UserModel>().Property(a => a.EmailAddress)
+            modelBuilder.Entity<Models.UserModel>()
+                .Property(a => a.EmailAddress)
                 .Required();
-            modelBuilder.Entity<Models.UserModel>().Property(a => a.EmailConfirmCode)
+            modelBuilder.Entity<Models.UserModel>()
+                .Property(a => a.EmailConfirmCode)
                 .Required().ValueGeneratedOnAdd();
             modelBuilder.Entity<Models.UserModel>()
                 .Key(a => a.EmailAddress);
@@ -33,6 +37,24 @@ namespace ZSB.Infrastructure.Apis.Login.Database.Contexts
                 .Key(a => a.Username);
             modelBuilder.Entity<Models.UserModel>()
                 .Key(a => a.UniqueId);
+
+            modelBuilder.Entity<Models.UserModel>()
+                .Index(a => a.Username);
+            modelBuilder.Entity<Models.UserModel>()
+                .Index(a => a.EmailAddress);
+
+            modelBuilder.Entity<Models.UserModel>()
+                .Collection(a => a.ActiveSessions)
+                .InverseReference(b => b.Owner);
+            modelBuilder.Entity<Models.UserModel>()
+                .Collection(a => a.ActiveServerTokens)
+                .InverseReference(b => b.Owner);
+
+            modelBuilder.Entity<Models.UserActiveSessionModel>()
+                .Index(a => a.SessionKey);
+            modelBuilder.Entity<Models.UserServerTokenModel>()
+                .Index(a => a.ServerToken);
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.AspNet.Cryptography.KeyDerivation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -83,7 +82,7 @@ namespace ZSB.Infrastructure.Apis.Login.Backend
         /// <returns>A hash of the password.</returns>
         private static byte[] PBKDF2(string password, byte[] salt, int iterations, int outputBytes)
         {
-            return KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, iterations, outputBytes);
+            return new Rfc2898DeriveBytes(password, salt, iterations).GetBytes(outputBytes);
         }
 
         public static string[] GenerateHashPermutations(string password)
@@ -96,7 +95,7 @@ namespace ZSB.Infrastructure.Apis.Login.Backend
 
             return new[] { pwHash, invertedCase, reversedFirstLetter };
         }
-        
+
         public static bool CompareHash(string password, string[] hashes)
         {
             foreach (var pass in hashes)

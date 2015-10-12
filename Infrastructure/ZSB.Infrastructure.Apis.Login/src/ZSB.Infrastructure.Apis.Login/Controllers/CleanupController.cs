@@ -37,18 +37,15 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 {
                     sessCt++;
                     //remove index from user object
-                    sess?.Owner?.ActiveSessions?.Remove(sess);
+                    sess?.Owner?.RemoveSession(sess);
                 }
                 ldb.Save();
                 foreach (var tkn in oldTokens)
                 {
                     tknCt = 0;
                     //remove index from user object
-                    tkn?.User?.ActiveServerTokens?.Remove(tkn);
+                    tkn?.Owner?.RemoveToken(tkn);
                 }
-                ldb.Save();
-                ldb.DBContext.ServerTokens.RemoveRange(oldTokens);
-                ldb.DBContext.Sessions.RemoveRange(oldSessions);
                 ldb.Save();
                 //Remove accounts more than 7 days old that are not verified
                 var oldUsers = ldb.DBContext.Users.Where(a => !a.IsEmailConfirmed)

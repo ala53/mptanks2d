@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Data.Entity;
 using System.Threading.Tasks;
 using ZSB.Infrastructure.Apis.Login.Models;
 
@@ -16,11 +17,18 @@ namespace ZSB.Infrastructure.Apis.Login.Database
         public const int MaxActiveLoginCount = 25;
         public const int MaxActiveServerTokenCount = 25;
         public readonly TimeSpan LoginLength = TimeSpan.FromDays(15);
-        internal UserModel GetUser(string email)
+        internal UserModel GetUser(string email, bool deep)
         {
-            return DBContext.Users
-                .Where(a => a.Username.Equals(email, StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault();
+            if (deep)
+                return DBContext.Users
+                    .Include(a => a.ActiveSessions)
+                    .Include(a => a.ActiveServerTokens)
+                    .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault();
+            else
+                return DBContext.Users
+                    .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault();
         }
 
         internal bool IsAuthorized(string sessionKey, out UserModel usr)
@@ -40,7 +48,7 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
         internal bool ValidateAccount(string email, string password)
         {
-            var usr = GetUser(email);
+            var usr = GetUser(email, false);
             return usr == null ? false : Backend.PasswordHasher.CompareHash(password, usr.PasswordHashes);
         }
 
@@ -49,7 +57,7 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             if (!ValidateAccount(email, password))
                 throw new ArgumentException("username_or_password_incorrect");
 
-            var usr = GetUser(email);
+            var usr = GetUser(email, true);
             if (!usr.IsEmailConfirmed)
                 throw new ArgumentException("email_not_confirmed");
             //Clean up all of the sessions that have expired
@@ -57,19 +65,16 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             foreach (var mdl in usr.ActiveSessions)
                 if (DateTime.UtcNow > mdl.ExpiryDate)
                     removable.Add(mdl);
-            foreach (var mdl in removable)
-                usr.ActiveSessions.Remove(mdl);
+
+            removable.ForEach(usr.RemoveSession);
             //Check if we are over the limit
             if (usr.ActiveSessions.Count >= MaxActiveLoginCount) //Remove the first one
-                usr.ActiveSessions.Remove(usr.ActiveSessions.First());
-            //And create the login key
-            var sess = new UserActiveSessionModel();
-            sess.Owner = usr;
-            sess.ExpiryDate = DateTime.Now + LoginLength;
-            sess.SessionKey = Guid.NewGuid().ToString("N");
-            usr.ActiveSessions.Add(sess);
-            DBContext.Sessions.Add(sess);
+                usr.RemoveSession(usr.ActiveSessions.First());
 
+            //And create the login key
+            var sess = new UserActiveSessionModel(LoginLength);
+            usr.AddSession(sess);
+            DBContext.Sessions.Add(sess);
             DBContext.SaveChanges();
             return sess;
         }
@@ -100,8 +105,7 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
         internal void RemoveSession(UserActiveSessionModel session)
         {
-            DBContext.Sessions.Remove(session);
-            session.Owner.ActiveSessions.Remove(session);
+            session.Owner.RemoveSession(session);
             DBContext.Users.Update(session.Owner);
             Save();
         }

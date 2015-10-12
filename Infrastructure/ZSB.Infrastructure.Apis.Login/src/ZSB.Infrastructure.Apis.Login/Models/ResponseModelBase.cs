@@ -9,8 +9,7 @@ namespace ZSB.Infrastructure.Apis.Login.Models
 {
     public abstract class ResponseModelBase
     {
-        [JsonIgnore, XmlIgnore]
-        public bool IsOk { get; set; }
+        protected bool IsOk { get; set; }
         public string Type { get { return IsOk ? "ok" : "error"; } }
     }
     public abstract class ResponseModelBase<T> : ResponseModelBase

@@ -11,9 +11,15 @@ namespace ZSB.Infrastructure.Apis.Login.Models
     public class UserServerTokenModel
     {
         [Key]
-        public virtual string ServerToken { get; set; }
-        public virtual DateTime ExpiryDate { get; set; }
-        [Required, XmlIgnore, JsonIgnore]
-        public virtual UserModel User { get; set; }
+        public string ServerToken { get; set; }
+        public DateTime ExpiryDate { get; set; }
+        [Required]
+        public virtual UserModel Owner { get; set; }
+
+        public UserServerTokenModel()
+        {
+            ServerToken = Guid.NewGuid().ToString("N");
+            ExpiryDate = DateTime.UtcNow.AddMinutes(2);
+        }
     }
 }

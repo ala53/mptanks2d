@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Apis.Login.Models
 {
-    public class UserInfoResponse
+    public class UserInfoResponseModel
     {
         public string Username { get; set; }
         public Guid UniqueId { get; set; }
         public bool IsPremium { get; set; }
         public DateTime AccountCreated { get; set; }
 
-        public UserInfoResponse(UserModel user)
+        public UserInfoResponseModel(UserModel user)
         {
             Username = user.Username;
             UniqueId = user.UniqueId;

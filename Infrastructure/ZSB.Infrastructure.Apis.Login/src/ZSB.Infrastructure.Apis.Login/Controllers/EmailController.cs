@@ -35,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             ldb.UpdateUser(usr);
 
-            await Backend.AccountCreation.SendRegistrationEmail(usr);
+            await Backend.EmailSender.SendRegistrationEmail(usr);
 
             return OkModel.Of("email_address_changed");
         }

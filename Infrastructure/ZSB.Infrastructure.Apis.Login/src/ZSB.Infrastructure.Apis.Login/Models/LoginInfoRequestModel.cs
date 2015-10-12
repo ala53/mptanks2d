@@ -7,7 +7,7 @@ namespace ZSB.Infrastructure.Apis.Login.Models
 {
     public class LoginInfoRequestModel
     {
-        public string Email { get; set; }
+        public string EmailAddress { get; set; }
         public string Password { get; set; }
     }
 }

@@ -6,14 +6,15 @@ using Microsoft.Data.Entity.Metadata;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
+using System.Collections.ObjectModel;
 
 namespace ZSB.Infrastructure.Apis.Login.Models
 {
     public class UserModel
     {
         public DateTime AccountCreationDate { get; set; }
-        public virtual string EmailAddress { get; set; }
-        public virtual string Username { get; set; }
+        public string EmailAddress { get; set; }
+        public string Username { get; set; }
         #region Email confirmation
         public DateTime EmailConfirmationSent { get; set; }
         public bool IsEmailConfirmed { get; set; }
@@ -36,7 +37,7 @@ namespace ZSB.Infrastructure.Apis.Login.Models
         /// (AKA we copy facebook's design)
         /// </summary>
         public string[] PasswordHashes { get; set; }
-        public virtual string PasswordHashesCommaDelimited
+        public string PasswordHashesCommaDelimited
         {
             get
             {
@@ -47,8 +48,47 @@ namespace ZSB.Infrastructure.Apis.Login.Models
                 PasswordHashes = value.Split(',');
             }
         }
-        public virtual ICollection<UserActiveSessionModel> ActiveSessions { get; set; }
-        public virtual ICollection<UserServerTokenModel> ActiveServerTokens { get; set; }
-        public virtual Guid UniqueId { get; set; }
+        private ICollection<UserActiveSessionModel> _backingSessions;
+        public virtual ICollection<UserActiveSessionModel> ActiveSessions
+        {
+            get
+            {
+                return _backingSessions ?? (_backingSessions = new Collection<UserActiveSessionModel>());
+            }
+            set
+            {
+                _backingSessions = value;
+            }
+        }
+        private ICollection<UserServerTokenModel> _backingTokens;
+        public virtual ICollection<UserServerTokenModel> ActiveServerTokens
+        {
+            get
+            {
+                return _backingTokens ?? (_backingTokens = new Collection<UserServerTokenModel>());
+            }
+            set { _backingTokens = value; }
+        }
+        public Guid UniqueId { get; set; }
+
+        public void AddSession(UserActiveSessionModel mdl)
+        {
+            mdl.Owner = this;
+            ActiveSessions.Add(mdl);
+        }
+        public void RemoveSession(UserActiveSessionModel mdl)
+        {
+            ActiveSessions.Remove(mdl);
+        }
+
+        public void AddToken(UserServerTokenModel mdl)
+        {
+            mdl.Owner = this;
+            ActiveServerTokens.Add(mdl);
+        }
+        public void RemoveToken(UserServerTokenModel mdl)
+        {
+            ActiveServerTokens.Remove(mdl);
+        }
     }
 }

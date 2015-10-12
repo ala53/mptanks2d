@@ -11,6 +11,7 @@ using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Configuration;
 using Microsoft.Dnx.Runtime;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNet.Diagnostics;
 
 namespace ZSB.Infrastructure.Apis.Login
 {
@@ -34,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Login
                 a.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver());
             services.AddCors();
-
+            
             services.AddEntityFramework()
                 .AddSqlServer()
                 .AddDbContext<Database.Contexts.LoginDatabaseContext>(o =>
@@ -55,6 +56,8 @@ namespace ZSB.Infrastructure.Apis.Login
 
             // Add MVC to the request pipeline.
             app.UseMvc();
+            app.Properties.Add("host.AppMode", "development");
+            app.UseErrorPage();
 
             app.UseCors(a => a.AllowAnyMethod().AllowAnyHeader().WithOrigins("*.zsbgames.me", "localhost"));
             // Add the following route for porting Web API 2 controllers.
