@@ -9,7 +9,7 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/")]
+    [Route("/email")]
     public class EmailController : Controller
     {
         private LoginDB ldb;
@@ -18,14 +18,14 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb = new LoginDB(dbContext);
         }
 
-        [HttpPost, Route("email/change")]
+        [HttpPost, Route("change")]
         public async Task<ResponseModelBase> ChangeEmail([FromBody]ChangeEmailRequestModel model)
         {
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
 
             UserModel usr;
-            if (!ldb.IsAuthorized(model.SessionKey, out usr))
+            if ((usr = await ldb.FindBySessionKey(model.SessionKey)) == null)
                 return ErrorModel.Of("not_logged_in");
 
             usr.EmailAddress = model.NewEmailAddress;
@@ -33,53 +33,68 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             usr.EmailConfirmationSent = DateTime.Now;
             usr.IsEmailConfirmed = false;
 
-            ldb.UpdateUser(usr);
-
-            await Backend.EmailSender.SendRegistrationEmail(usr);
+            Task.WaitAll(
+                ldb.UpdateUser(usr),
+                Backend.EmailSender.SendRegistrationEmail(usr)
+            );
 
             return OkModel.Of("email_address_changed");
         }
 
-        [HttpGet, Route("confirm/{accountId}/{confirmCode}")]
-        public ResponseModelBase ConfirmAccount(Guid accountId, Guid confirmCode)
+        [HttpPost, Route("resend")]
+        public async Task<ResponseModelBase> ResendConfirmationEmail([FromBody]ResendConfirmationRequestModel model)
         {
-            var account = ldb.DBContext.Users.Where(a => a.UniqueId == accountId).FirstOrDefault();
+            if (!ModelState.IsValid)
+                return ErrorModel.Of("invalid_request");
+
+            UserModel usr;
+            if ((usr = await ldb.FindByEmailAddress(model.EmailAddress, false)) == null)
+                return ErrorModel.Of("user_not_found");
+
+            await Backend.EmailSender.SendRegistrationEmail(usr);
+
+            return OkModel.Of("email_confirmation_code_resent");
+        }
+
+        [HttpGet, Route("confirm/{accountId}/{confirmCode}")]
+        public async Task<ResponseModelBase> ConfirmAccount(Guid accountId, Guid confirmCode)
+        {
+            var account = await ldb.FindByUniqueId(accountId, false);
             if (account == null)
                 return ErrorModel.Of("user_not_found");
 
             if (account.IsEmailConfirmed)
-                return ErrorModel.Of("already_confirmed");
+                return ErrorModel.Of("email_already_confirmed");
 
             if (account.EmailConfirmCode != confirmCode)
-                return ErrorModel.Of("confirm_code_wrong");
+                return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Regenerate the code so the link doesn't work anymore
             account.EmailConfirmCode = Guid.NewGuid();
             account.IsEmailConfirmed = true;
 
-            ldb.UpdateUser(account);
+            await ldb.UpdateUser(account);
 
             return OkModel.Of("email_confirmed");
         }
         [HttpGet, Route("disavow/{accountId}/{confirmCode}")]
-        public ResponseModelBase DisavowAccount(Guid accountId, Guid confirmCode)
+        public async Task<ResponseModelBase> DisavowAccount(Guid accountId, Guid confirmCode)
         {
-            var account = ldb.DBContext.Users.Where(a => a.UniqueId == accountId).FirstOrDefault();
+            var account = await ldb.FindByUniqueId(accountId, false);
             //Delete the account
             if (account == null)
                 return ErrorModel.Of("user_not_found");
 
             if (account.IsEmailConfirmed)
-                return ErrorModel.Of("already_confirmed");
+                return ErrorModel.Of("email_already_confirmed");
 
             if (account.EmailConfirmCode != confirmCode)
-                return ErrorModel.Of("confirm_code_wrong");
+                return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Delete the account: they disavowed it
-            ldb.DBContext.Remove(account);
-            ldb.Save();
+            await ldb.DeleteUser(account);
 
-            return OkModel.Of("account_disavowed_and_deleted");
+            return OkModel.Of("account_deleted");
         }
     }
 }

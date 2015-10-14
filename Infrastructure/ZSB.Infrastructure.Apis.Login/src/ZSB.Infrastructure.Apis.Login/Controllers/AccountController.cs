@@ -12,7 +12,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("/")]
+    [Route("/account")]
     public class AccountController : Controller
     {
         private LoginDB ldb;
@@ -22,32 +22,32 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         }
 
         [HttpPost, Route("password/change")]
-        public ResponseModelBase ChangePassword([FromBody]Models.ChangePasswordRequestModel model)
+        public async Task<ResponseModelBase> ChangePassword([FromBody]ChangePasswordRequestModel model)
         {
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
 
-            if (!ldb.ValidateAccount(model.Username, model.OldPassword))
+            if (!await ldb.ValidateAccount(model.Username, model.OldPassword))
             {
                 return ErrorModel.Of("username_or_password_incorrect");
             }
 
-            var user = ldb.GetUser(model.Username, false);
-            user.PasswordHashes = PasswordHasher.GenerateHashPermutations(model.NewPassword);
-            ldb.UpdateUser(user);
+            var user = await ldb.FindByEmailAddress(model.Username, false);
+            user.PasswordHashes = await Task.Run(() => PasswordHasher.GenerateHashPermutations(model.NewPassword));
+            await ldb.UpdateUser(user);
             return OkModel.Empty;
         }
 
-        [HttpGet, Route("test/get")]
+        [HttpGet, Route("challenge/get")]
         public ResponseModelBase GetValidationTest()
         {
             return OkModel.Of(AccountTests.GetRandomQuestion());
         }
 
-        [HttpGet, Route("test/validate/{id}/{answer}")]
+        [HttpGet, Route("challenge/validate/{id}/{answer}")]
         public ResponseModelBase CheckValidationTest(int id, string answer)
         {
-            if (AccountTests.Validate(id, answer))
+            if (AccountTests.ValidateChallenge(id, answer))
                 return OkModel.Empty;
             else return ErrorModel.Of("validation_incorrect");
         }
@@ -70,26 +70,61 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //And validate the email address
             if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
                 return ErrorModel.Of("email_invalid");
-            if (ldb.GetUser(model.EmailAddress, false) != null) //in use
+            if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
                 return ErrorModel.Of("email_in_use");
             //Username
-            if (ldb.DBContext.Users.Where(a => a.Username == model.Username).FirstOrDefault() != null)
+            if (await ldb.FindByUsername(model.Username, false) != null) //also in use
                 return ErrorModel.Of("username_in_use");
             //And password
             if (model.Password.Length < 8)
                 return ErrorModel.Of("password_too_short");
             //And check the question/answer section
-            if (!AccountTests.Validate(model.ChallengeId, model.ChallengeAnswer))
+            if (!AccountTests.ValidateChallenge(model.ChallengeId, model.ChallengeAnswer))
                 return ErrorModel.Of("validation_incorrect");
-
-            //Save user in the DB
-            ldb.DBContext.Users.Add(um);
-            ldb.Save();
 
             //Send the registration email
             await EmailSender.SendRegistrationEmail(um);
+            //Save user in the DB
+            await ldb.AddUser(um);
 
             return OkModel.Empty;
+        }
+        [HttpGet, Route("delete/confirm/{userId}/{confirmCode}")]
+        public async Task<ResponseModelBase> DeleteAccount(Guid userId, Guid confirmCode)
+        {
+            try
+            {
+                var usr = await ldb.FindByUniqueId(userId, false);
+                if (usr == null)
+                    return ErrorModel.Of("user_not_found");
+
+                if (usr.EmailConfirmCode != confirmCode)
+                    return ErrorModel.Of("email_confirmation_code_incorrect");
+
+                await ldb.DeleteUser(usr);
+
+                return OkModel.Of("account_deleted");
+            }
+            catch (Exception ex)
+            {
+                return ErrorModel.Of(ex.Message);
+            }
+        }
+        [HttpPost, Route("delete/request")]
+        public async Task<ResponseModelBase> RequestDeleteAccount([FromBody]AuthenticatedRequestModel model)
+        {
+            try
+            {
+                if (!await ldb.Validate(model))
+                    return ErrorModel.Of("not_logged_in");
+
+                await EmailSender.SendDeletionEmail(await ldb.FindBySessionKey(model.SessionKey));
+                return OkModel.Of("delete_confirmation_email_sent");
+            }
+            catch (Exception e)
+            {
+                return ErrorModel.Of(e.Message);
+            }
         }
     }
 }

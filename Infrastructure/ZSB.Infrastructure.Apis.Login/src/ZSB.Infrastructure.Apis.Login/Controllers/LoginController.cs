@@ -18,113 +18,36 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb = new LoginDB(ctx);
         }
         [HttpPost, Route("login")]
-        public ResponseModelBase DoLogin([FromBody]LoginInfoRequestModel model)
+        public async Task<ResponseModelBase> DoLogin([FromBody]LoginInfoRequestModel model)
         {
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
 
-            //  try
-            // {
-            var resp = ldb.DoLogin(model.EmailAddress, model.Password);
-            if (resp == null)
-                return ErrorModel.Of("unknown_error");
-            return OkModel.Of(new UserSessionResponseModel(resp));
-            // }
-            // catch (ArgumentException e)
-            // {
-            //     return ErrorModel.Of(e);
-            // }
+            try
+            {
+                var resp = await Diagnostic.Log(ldb.DoLogin, model.EmailAddress, model.Password);
+                if (resp == null)
+                    return ErrorModel.Of("unknown_error");
+                return OkModel.Of(new UserSessionResponseModel(resp), "logged_in");
+            }
+            catch (ArgumentException e)
+            {
+                return ErrorModel.Of(e.Message);
+            }
         }
 
         [HttpPost, Route("logout")]
-        public ResponseModelBase DoLogout([FromBody]AuthenticatedRequestModel model)
+        public async Task<ResponseModelBase> DoLogout([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
 
-            var session = ldb.FindBySessionKey(model.SessionKey);
+            var session = await ldb.GetSessionFromKey(model.SessionKey);
             if (session == null)
                 return ErrorModel.Of("not_logged_in");
-            ldb.RemoveSession(session);
+            await ldb.RemoveSession(session);
 
             return OkModel.Of("logged_out");
-        }
-
-        [HttpPost, Route("validate/key")]
-        public ResponseModelBase<bool> ValidateSessionKey([FromBody]AuthenticatedRequestModel model)
-        {
-            if (!ModelState.IsValid)
-                return ErrorModel.Of(false, "invalid_request");
-
-            var session = ldb.FindBySessionKey(model.SessionKey);
-            if (session == null)
-                return ErrorModel.Of(false);
-            //and tell the client that the session key is true
-            return OkModel.Of(true);
-        }
-
-        [HttpPost, Route("refresh")]
-        public ResponseModelBase<bool> RefreshSessionKey([FromBody]AuthenticatedRequestModel model)
-        {
-            if (!ModelState.IsValid)
-                return ErrorModel.Of(false, "invalid_request");
-
-            var session = ldb.FindBySessionKey(model.SessionKey);
-            if (session == null)
-                return ErrorModel.Of(false, "not_logged_in"); //Auth failed
-            session.ExpiryDate = DateTime.UtcNow + ldb.LoginLength;
-            ldb.DBContext.Sessions.Update(session);
-            ldb.Save();
-
-            return OkModel.Of(true);
-        }
-
-        [HttpPost, Route("token/get")]
-        public ResponseModelBase<UserServerTokenResponseModel> CreateServerToken([FromBody]AuthenticatedRequestModel model)
-        {
-            if (!ModelState.IsValid)
-                return ErrorModel.Of<UserServerTokenResponseModel>(null, "invalid_request");
-
-            var session = ldb.FindBySessionKey(model.SessionKey);
-            if (session == null)
-                return ErrorModel.Of<UserServerTokenResponseModel>(null, "not_logged_in"); //Auth failed
-
-            var token = new UserServerTokenModel();
-            token.ExpiryDate = DateTime.UtcNow + TimeSpan.FromMinutes(2);
-            token.ServerToken = Guid.NewGuid().ToString("N");
-            session.Owner.AddToken(token);
-
-            ldb.UpdateUser(session.Owner);
-
-            return OkModel.Of(new UserServerTokenResponseModel(token));
-        }
-
-        [HttpPost, Route("token/validate")]
-        public ResponseModelBase<UserInfoResponseModel> ValidateServerToken([FromBody]ValidateServerTokenRequestModel model)
-        {
-            if (!ModelState.IsValid)
-                return ErrorModel.Of<UserInfoResponseModel>(null, "invalid_request");
-
-            var token = ldb.DBContext.ServerTokens.Where(a => a.ServerToken == model.ServerToken).FirstOrDefault();
-            if (token == null)
-                return ErrorModel.Of<UserInfoResponseModel>(null, "token_not_found");
-            if (DateTime.Now > token.ExpiryDate)
-            {
-                //Remove it
-                token.Owner.RemoveToken(token);
-                ldb.Save();
-                return ErrorModel.Of<UserInfoResponseModel>(null, "token_expired");
-            }
-
-            if (!token.Owner.IsEmailConfirmed)
-                return ErrorModel.Of<UserInfoResponseModel>(null, "account_email_not_confirmed");
-
-            var resp = new UserInfoResponseModel(token.Owner);
-            //Remove it
-            token.Owner.RemoveToken(token);
-            ldb.Save();
-
-            return OkModel.Of(resp);
         }
     }
 }

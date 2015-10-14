@@ -17,47 +17,119 @@ namespace ZSB.Infrastructure.Apis.Login.Database
         public const int MaxActiveLoginCount = 25;
         public const int MaxActiveServerTokenCount = 25;
         public readonly TimeSpan LoginLength = TimeSpan.FromDays(15);
-        internal UserModel GetUser(string email, bool deep)
+        #region Find users
+        internal async Task<UserModel> FindByEmailAddress(string email, bool deep)
         {
-            if (deep)
-                return DBContext.Users
-                    .Include(a => a.ActiveSessions)
-                    .Include(a => a.ActiveServerTokens)
-                    .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
-                    .FirstOrDefault();
-            else
-                return DBContext.Users
-                    .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
-                    .FirstOrDefault();
+            return await Task.Run(() =>
+            {
+                if (deep)
+                    return DBContext.Users
+                        .Include(a => a.ActiveSessions)
+                        .Include(a => a.ActiveServerTokens)
+                        .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault();
+                else
+                    return DBContext.Users
+                        .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault();
+            });
         }
 
-        internal bool IsAuthorized(string sessionKey, out UserModel usr)
+        internal async Task<UserModel> FindBySessionKey(string sessionKey)
         {
-            var sess = FindBySessionKey(sessionKey);
-            usr = null;
-            if (sess == null) return false;
+            var sess = await GetSessionFromKey(sessionKey);
+            if (sess == null) return null;
             if (DateTime.UtcNow > sess.ExpiryDate)
             {
                 //Remove session
-                RemoveSession(sess);
-                return false;
+                await RemoveSession(sess);
+                return null;
             }
-            usr = sess.Owner;
+            return sess.Owner;
+        }
+
+        internal async Task<UserModel> FindByUniqueId(Guid uid, bool deep)
+        {
+            return await Task.Run(() =>
+            {
+                if (deep)
+                    return DBContext.Users
+                        .Include(a => a.ActiveSessions)
+                        .Include(a => a.ActiveServerTokens)
+                        .Where(a => a.UniqueId == uid)
+                        .FirstOrDefault();
+                else
+                    return DBContext.Users
+                        .Where(a => a.UniqueId == uid)
+                        .FirstOrDefault();
+            });
+        }
+        internal async Task<UserModel> FindByUsername(string username, bool deep)
+        {
+            return await Task.Run(() =>
+            {
+                if (deep)
+                    return DBContext.Users
+                        .Include(a => a.ActiveSessions)
+                        .Include(a => a.ActiveServerTokens)
+                        .Where(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault();
+                else
+                    return DBContext.Users
+                        .Where(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault();
+            });
+        }
+        #endregion
+        #region Add, update, and remove users
+
+        internal async Task UpdateUser(UserModel user)
+        {
+            DBContext.Users.Update(user);
+            await Save();
+        }
+
+        internal async Task DeleteUser(UserModel user)
+        {
+            foreach (var sess in (await FindByUniqueId(user.UniqueId, true)).ActiveSessions)
+                DBContext.Sessions.Remove(sess);
+            foreach (var tkn in (await FindByUniqueId(user.UniqueId, true)).ActiveServerTokens)
+                DBContext.ServerTokens.Remove(tkn);
+
+            await Save();
+
+            DBContext.Users.Remove(user);
+            await Save();
+        }
+
+        internal async Task AddUser(UserModel user)
+        {
+            DBContext.Users.Add(user);
+            await Save();
+        }
+
+        #endregion
+
+        internal async Task<bool> Validate(Models.AuthenticatedRequestModel model)
+        {
+            if (await FindBySessionKey(model.SessionKey) == null)
+                return false;
+
             return true;
         }
-
-        internal bool ValidateAccount(string email, string password)
+        internal async Task<bool> ValidateAccount(string email, string password)
         {
-            var usr = GetUser(email, false);
-            return usr == null ? false : Backend.PasswordHasher.CompareHash(password, usr.PasswordHashes);
+            var usr = await FindByEmailAddress(email, false);
+            return usr == null ? false : await
+                Diagnostic.Log(async () => await Task.Run(() => Backend.PasswordHasher.CompareHash(password, usr.PasswordHashes)));
         }
 
-        internal UserActiveSessionModel DoLogin(string email, string password)
+        internal async Task<UserActiveSessionModel> DoLogin(string email, string password)
         {
-            if (!ValidateAccount(email, password))
+            if (!await Diagnostic.Log(ValidateAccount, email, password)) //Hot Spot : hash generation is too slow
                 throw new ArgumentException("username_or_password_incorrect");
 
-            var usr = GetUser(email, true);
+            var usr = await Diagnostic.Log(FindByEmailAddress, email, true);
             if (!usr.IsEmailConfirmed)
                 throw new ArgumentException("email_not_confirmed");
             //Clean up all of the sessions that have expired
@@ -66,28 +138,22 @@ namespace ZSB.Infrastructure.Apis.Login.Database
                 if (DateTime.UtcNow > mdl.ExpiryDate)
                     removable.Add(mdl);
 
-            removable.ForEach(usr.RemoveSession);
+            foreach (var m in removable) await RemoveSession(m);
             //Check if we are over the limit
-            if (usr.ActiveSessions.Count >= MaxActiveLoginCount) //Remove the first one
-                usr.RemoveSession(usr.ActiveSessions.First());
+            while (usr.ActiveSessions.Count > MaxActiveLoginCount)
+                await RemoveSession(usr.ActiveSessions.First());
 
             //And create the login key
             var sess = new UserActiveSessionModel(LoginLength);
-            usr.AddSession(sess);
-            DBContext.Sessions.Add(sess);
-            DBContext.SaveChanges();
+            Diagnostic.LogSync(usr.AddSession, sess);
+            Diagnostic.LogSync(DBContext.Sessions.Add, sess);
+            await Diagnostic.Log(Save);
             return sess;
         }
 
-        internal void UpdateUser(UserModel user)
+        internal async Task<UserActiveSessionModel> GetSessionFromKey(string sessionKey)
         {
-            DBContext.Users.Update(user);
-            DBContext.SaveChanges();
-        }
-
-        internal UserActiveSessionModel FindBySessionKey(string sessionKey)
-        {
-            var sk = DBContext.Sessions
+            var sk = DBContext.Sessions.Include(a => a.Owner)
                 .Where(a => a.SessionKey == sessionKey)
                 .FirstOrDefault();
 
@@ -96,31 +162,31 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             //Check if expired
             if (DateTime.UtcNow > sk.ExpiryDate)
             {
-                RemoveSession(sk);
+                await RemoveSession(sk);
                 return null;
             }
 
             return sk;
         }
 
-        internal void RemoveSession(UserActiveSessionModel session)
+        internal async Task RemoveSession(UserActiveSessionModel session)
         {
             session.Owner.RemoveSession(session);
+            DBContext.Sessions.Remove(session);
             DBContext.Users.Update(session.Owner);
-            Save();
+            await Save();
         }
 
-        internal UserServerTokenModel ValidateServerToken(string token)
+        internal async Task<UserServerTokenModel> ValidateServerToken(string token)
         {
-            var tk = DBContext.ServerTokens
+            return await Task.Run(() => DBContext.ServerTokens
                 .Where(a => a.ServerToken == token)
-                .FirstOrDefault();
-            return tk;
+                .FirstOrDefault());
         }
 
-        internal void Save()
+        internal async Task Save()
         {
-            DBContext.SaveChanges();
+            await DBContext.SaveChangesAsync();
         }
     }
 }

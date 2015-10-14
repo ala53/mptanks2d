@@ -56,6 +56,8 @@ namespace ZSB.Infrastructure.Apis.Login
 
             // Add MVC to the request pipeline.
             app.UseMvc();
+#if DEBUG
+#endif
             app.Properties.Add("host.AppMode", "development");
             app.UseErrorPage();
 

@@ -24,7 +24,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         /// Removes all expired server tokens
         /// </summary>
         [HttpGet, Route("cleanup")]
-        public ResponseModelBase DoDBCleanup()
+        public async Task<ResponseModelBase> DoDBCleanup()
         {
             try
             {
@@ -39,21 +39,21 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                     //remove index from user object
                     sess?.Owner?.RemoveSession(sess);
                 }
-                ldb.Save();
+                await ldb.Save();
                 foreach (var tkn in oldTokens)
                 {
                     tknCt = 0;
                     //remove index from user object
                     tkn?.Owner?.RemoveToken(tkn);
                 }
-                ldb.Save();
+                await ldb.Save();
                 //Remove accounts more than 7 days old that are not verified
                 var oldUsers = ldb.DBContext.Users.Where(a => !a.IsEmailConfirmed)
-                    .Where(a => (DateTime.UtcNow - a.EmailConfirmationSent).TotalDays > 7);
+                    .Where(a => (DateTime.UtcNow - a.EmailConfirmationSent).TotalDays > 7).ToList();
 
                 var usrCt = oldUsers.Count();
-                ldb.DBContext.Users.RemoveRange(oldUsers);
-                ldb.Save();
+                oldUsers.ForEach(async a => await ldb.DeleteUser(a));
+                await ldb.Save();
 
                 return OkModel.Of($"{tknCt} tokens removed, {sessCt} sessions removed, {usrCt} users removed");
             }

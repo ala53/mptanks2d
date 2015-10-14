@@ -48,24 +48,24 @@ namespace ZSB.Infrastructure.Apis.Login.Models
                 PasswordHashes = value.Split(',');
             }
         }
-        private ICollection<UserActiveSessionModel> _backingSessions;
-        public virtual ICollection<UserActiveSessionModel> ActiveSessions
+        private List<UserActiveSessionModel> _backingSessions;
+        public virtual List<UserActiveSessionModel> ActiveSessions
         {
             get
             {
-                return _backingSessions ?? (_backingSessions = new Collection<UserActiveSessionModel>());
+                return _backingSessions ?? (_backingSessions = new List<UserActiveSessionModel>());
             }
             set
             {
                 _backingSessions = value;
             }
         }
-        private ICollection<UserServerTokenModel> _backingTokens;
-        public virtual ICollection<UserServerTokenModel> ActiveServerTokens
+        private List<UserServerTokenModel> _backingTokens;
+        public virtual List<UserServerTokenModel> ActiveServerTokens
         {
             get
             {
-                return _backingTokens ?? (_backingTokens = new Collection<UserServerTokenModel>());
+                return _backingTokens ?? (_backingTokens = new List<UserServerTokenModel>());
             }
             set { _backingTokens = value; }
         }

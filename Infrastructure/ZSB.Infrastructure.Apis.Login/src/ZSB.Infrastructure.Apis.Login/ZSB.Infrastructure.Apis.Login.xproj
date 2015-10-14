@@ -14,6 +14,7 @@
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
     <DevelopmentServerPort>7885</DevelopmentServerPort>
+    <ApplicationInsightsResourceId>/subscriptions/02d4f79f-034f-4c86-a134-f7a319df5833/resourcegroups/zsb-login-api-website/providers/microsoft.insights/components/zsb-login-api</ApplicationInsightsResourceId>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

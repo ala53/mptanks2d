@@ -1,4 +1,5 @@
 ﻿{
+  "userSecretsId": "aspnet5-ZSB.Infrastructure.Apis.Login-20151013041312",
   "webroot": "wwwroot",
   "version": "1.0.0-beta7",
 
@@ -14,23 +15,22 @@
     "Microsoft.Framework.Configuration.Json": "1.0.0-beta7",
     "Microsoft.AspNet.Cors": "1.0.0-beta7",
     "Microsoft.AspNet.Diagnostics": "1.0.0-beta7",
-    "EntityFramework.Core": "7.0.0-beta7"
+    "EntityFramework.Core": "7.0.0-beta7",
+    "System.Net.Http": "4.0.0-beta-23019"
   },
 
   "commands": {
     "web": "Microsoft.AspNet.Hosting --config hosting.ini",
     "ef": "EntityFramework.Commands"
   },
+  "dnx451": {
+    "dependencies": {
+    }
+  },
 
   "frameworks": {
-    "dnx451": {
-      "dependencies": {
-        "Sendgrid": "6.1.0",
-        "Microsoft.AspNet.Cryptography.KeyDerivation": "1.0.0-beta7"
-      }
-    },
     "dnxcore50": {
-      "dependencies": { 
+      "dependencies": {
       }
     }
   },

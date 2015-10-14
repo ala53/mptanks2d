@@ -19,9 +19,11 @@ namespace ZSB.Infrastructure.Apis.Login.Models
             IsOk = true;
         }
 
-        public static OkModel<T> Of<T>(T data)
+        public static OkModel<T> Of<T>(T data, string message = null)
         {
-            return (OkModel<T>)data;
+            var mdl = (OkModel<T>)data;
+            mdl.Message = message;
+            return mdl;
         }
 
         public static OkModel Of(string message)
@@ -33,7 +35,8 @@ namespace ZSB.Infrastructure.Apis.Login.Models
     public class OkModel<T> : ResponseModelBase<T>
     {
         public T Data { get; set; }
-        private OkModel(T data)
+        public string Message { get; set; }
+        private OkModel(T data, string message = null)
         {
             Data = data;
             IsOk = true;

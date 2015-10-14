@@ -90,7 +90,7 @@ namespace ZSB.Infrastructure.Apis.Login.Backend
             };
         }
 
-        public static bool Validate(int questionNumber, string answer)
+        public static bool ValidateChallenge(int questionNumber, string answer)
         {
             if (questionNumber < 0 || questionNumber >= TestOptions.Length)
                 return false;
