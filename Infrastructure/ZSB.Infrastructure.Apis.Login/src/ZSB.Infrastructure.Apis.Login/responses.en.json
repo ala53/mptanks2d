@@ -3,7 +3,7 @@
   "delete_confirmation_email_sent": "We've sent a confirmation email so you can delete your account. We'll miss you!",
   "email_address_changed": "Your email address has been changed. Until you confirm it, your account has been disabled.",
   "email_already_confirmed": "No need to keep clicking, we've got it already. Your email has been confirmed.",
-  "email_confirmation_code_incorrect": "The email confirmation code was incorrect. Visit https://www.zsbgames.me/resend to resend the message",
+  "email_confirmation_code_incorrect": "The email confirmation code provided was incorrect. Visit https://www.zsbgames.me/resend to resend the message",
   "email_confirmation_code_resent": "We've resent the account confirmation email. If it still doesn't work, check your spam folder and contact account_support@zsbgames.me",
   "email_confirmed": "Your email account has been confirmed. Log in at https://www.zsbgames.me/login and you can start playing right now!",
   "email_in_use": "The email address you entered is already in use. Are you sure you don't already have a ZSB account?",
@@ -18,5 +18,6 @@
   "user_not_found": "Hmm. We can't find you by your unique id. Try contacting website_support@zsbgames.me.",
   "username_in_use": "The username you entered is already in use. Are you sure you don't already have a ZSB account?",
   "username_or_password_incorrect": "An incorrect username or password was entered.",
-  "validation_incorrect": "The answer you entered for the validation question is incorrect :/."
+  "validation_incorrect": "The answer you entered for the validation question is incorrect :/.",
+  "account_created": "Your account has successfully been created. Just confirm your email and you can log in."
 }

@@ -146,7 +146,7 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             //And create the login key
             var sess = new UserActiveSessionModel(LoginLength);
             Diagnostic.LogSync(usr.AddSession, sess);
-            Diagnostic.LogSync(DBContext.Sessions.Add, sess);
+            Diagnostic.LogSync(s => DBContext.Sessions.Add(s), sess);
             await Diagnostic.Log(Save);
             return sess;
         }

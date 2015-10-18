@@ -21,22 +21,22 @@ namespace ZSB.Infrastructure.Apis.Login.Database.Contexts
         {
             modelBuilder.Entity<Models.UserModel>()
                 .Property(a => a.Username)
-                .Required();
+                .IsRequired();
             modelBuilder.Entity<Models.UserModel>()
                 .Property(a => a.UniqueId)
-                .Required().ValueGeneratedOnAdd();
+                .IsRequired().ValueGeneratedOnAdd();
             modelBuilder.Entity<Models.UserModel>()
                 .Property(a => a.EmailAddress)
-                .Required();
+                .IsRequired();
             modelBuilder.Entity<Models.UserModel>()
                 .Property(a => a.EmailConfirmCode)
-                .Required().ValueGeneratedOnAdd();
+                .IsRequired().ValueGeneratedOnAdd();
             modelBuilder.Entity<Models.UserModel>()
-                .Key(a => a.EmailAddress);
+                .HasAlternateKey(a => a.EmailAddress);
             modelBuilder.Entity<Models.UserModel>()
-                .Key(a => a.Username);
+                .HasAlternateKey(a => a.Username);
             modelBuilder.Entity<Models.UserModel>()
-                .Key(a => a.UniqueId);
+                .HasKey(a => a.UniqueId);
 
             modelBuilder.Entity<Models.UserModel>()
                 .Index(a => a.Username);
@@ -44,11 +44,11 @@ namespace ZSB.Infrastructure.Apis.Login.Database.Contexts
                 .Index(a => a.EmailAddress);
 
             modelBuilder.Entity<Models.UserModel>()
-                .Collection(a => a.ActiveSessions)
-                .InverseReference(b => b.Owner);
+                .HasMany(a => a.ActiveSessions)
+                .WithOne(b => b.Owner);
             modelBuilder.Entity<Models.UserModel>()
-                .Collection(a => a.ActiveServerTokens)
-                .InverseReference(b => b.Owner);
+                .HasMany(a => a.ActiveServerTokens)
+                .WithOne(b => b.Owner);
 
             modelBuilder.Entity<Models.UserActiveSessionModel>()
                 .Index(a => a.SessionKey);

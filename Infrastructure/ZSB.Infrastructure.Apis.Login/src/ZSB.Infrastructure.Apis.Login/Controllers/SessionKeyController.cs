@@ -25,9 +25,21 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             var session = await ldb.FindBySessionKey(model.SessionKey);
             if (session == null)
-                return ErrorModel.Of(false);
+                return OkModel.Of(false);
             //and tell the client that the session key is true
             return OkModel.Of(true);
+        }
+        [HttpPost, Route("validate/key/info")]
+        public async Task<ResponseModelBase<UserInfoResponseModel>> ValidateSessionKeyWithInfo([FromBody]AuthenticatedRequestModel model)
+        {
+            if (!ModelState.IsValid)
+                return ErrorModel.Of<UserInfoResponseModel>(null, "invalid_request");
+
+            var session = await ldb.FindBySessionKey(model.SessionKey);
+            if (session == null) 
+                return OkModel.Of<UserInfoResponseModel>(null);
+            //and tell the client that the session key is true
+            return OkModel.Of(new UserInfoResponseModel(session));
         }
 
         [HttpPost, Route("refresh")]

@@ -87,7 +87,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //Save user in the DB
             await ldb.AddUser(um);
 
-            return OkModel.Empty;
+            return OkModel.Of("account_created");
         }
         [HttpGet, Route("delete/confirm/{userId}/{confirmCode}")]
         public async Task<ResponseModelBase> DeleteAccount(Guid userId, Guid confirmCode)

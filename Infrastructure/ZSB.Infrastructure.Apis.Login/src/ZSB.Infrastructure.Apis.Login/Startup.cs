@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Cors;
 using Microsoft.Data.Entity;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
@@ -12,6 +13,10 @@ using Microsoft.Framework.Configuration;
 using Microsoft.Dnx.Runtime;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNet.Diagnostics;
+using ZSB.Infrastructure.Apis.Login.Models;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
 
 namespace ZSB.Infrastructure.Apis.Login
 {
@@ -20,7 +25,8 @@ namespace ZSB.Infrastructure.Apis.Login
         public static IConfiguration Configuration { get; set; }
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
-            var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(appEnv.ApplicationBasePath)
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -34,8 +40,11 @@ namespace ZSB.Infrastructure.Apis.Login
                 .AddJsonOptions(a =>
                 a.SerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver());
-            services.AddCors();
-            
+            services.AddCors(
+                a => a.AddPolicy("Allow ZSB",
+                b => b.AllowAnyMethod().AllowAnyHeader().WithOrigins("*.zsbgames.me", "localhost")
+                ));
+
             services.AddEntityFramework()
                 .AddSqlServer()
                 .AddDbContext<Database.Contexts.LoginDatabaseContext>(o =>
@@ -56,12 +65,20 @@ namespace ZSB.Infrastructure.Apis.Login
 
             // Add MVC to the request pipeline.
             app.UseMvc();
-#if DEBUG
-#endif
-            app.Properties.Add("host.AppMode", "development");
-            app.UseErrorPage();
 
-            app.UseCors(a => a.AllowAnyMethod().AllowAnyHeader().WithOrigins("*.zsbgames.me", "localhost"));
+            app.Properties.Add("host.AppMode", "development");
+            app.UseExceptionHandler(a =>
+            {
+                a.Run(async context =>
+                {
+                    await Task.Run(() => { });
+                    context.Response.StatusCode = 500;
+                    byte[] content = Encoding.UTF8.GetBytes(
+                        JsonConvert.SerializeObject(ErrorModel.Of("unknown_error")));
+
+                    context.Response.Body.Write(content, 0, content.Length);
+                });
+            });
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
         }
