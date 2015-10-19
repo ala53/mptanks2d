@@ -48,8 +48,11 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("invalid_request");
 
             UserModel usr;
+
             if ((usr = await ldb.FindByEmailAddress(model.EmailAddress, false)) == null)
                 return ErrorModel.Of("user_not_found");
+
+            await ldb.ChangeConfirmCode(usr);
 
             await Backend.EmailSender.SendRegistrationEmail(usr);
 
@@ -70,7 +73,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Regenerate the code so the link doesn't work anymore
-            account.EmailConfirmCode = Guid.NewGuid();
+            await ldb.ChangeConfirmCode(account);
             account.IsEmailConfirmed = true;
 
             await ldb.UpdateUser(account);
@@ -92,7 +95,14 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Delete the account: they disavowed it
-            await ldb.DeleteUser(account);
+            try
+            {
+                await ldb.DeleteUser(account);
+            }
+            catch (Exception e)
+            {
+
+            }
 
             return OkModel.Of("account_deleted");
         }

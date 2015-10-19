@@ -1,5 +1,5 @@
 {
   "Data": {
-    "LoginServerValidationAddress": "https://login.zsbgames.me/validate/key/info"
+    "LoginServerAddress": "https://login.zsbgames.me/"
   }
 }

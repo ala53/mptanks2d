@@ -81,6 +81,14 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             });
         }
         #endregion
+
+        internal async Task<Guid> ChangeConfirmCode(UserModel user)
+        {
+            user.EmailConfirmCode = Guid.NewGuid();
+            await UpdateUser(user);
+            return user.EmailConfirmCode;
+        }
+
         #region Add, update, and remove users
 
         internal async Task UpdateUser(UserModel user)

@@ -21,13 +21,16 @@ namespace ZSB.Infrastructure.Web.Home
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             // Setup configuration sources.
-            var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(appEnv.ApplicationBasePath)
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            Environment = appEnv;
         }
 
         public static IConfiguration Configuration { get; set; }
+        public static IApplicationEnvironment Environment { get; set; }
 
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
@@ -52,17 +55,19 @@ namespace ZSB.Infrastructure.Web.Home
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
-                app.UseErrorPage(new ErrorPageOptions());
+                app.UseDeveloperExceptionPage(new ErrorPageOptions());
             }
             else
             {
                 // Add Error handling middleware which catches all application specific errors and
                 // send the request to the following path or controller action.
-                app.UseErrorHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error");
             }
 
             // Add static files to the request pipeline.
             app.UseStaticFiles();
+
+            app.UseStatusCodePages();
 
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>

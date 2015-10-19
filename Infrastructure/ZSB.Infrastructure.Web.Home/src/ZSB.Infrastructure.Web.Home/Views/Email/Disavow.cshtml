@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@if (ViewBag.Error)
+{
+    <h1>Something happened :(</h1>
+    <h3>Just not the something we wanted to happen...</h3>
+    <h3 style="color:red">@Html.Raw(ViewBag.ErrorMessage)</h3>
+
+}
+@if (!ViewBag.Error)
+{
+    <h1>Thanks for letting us know!</h1>
+    <h3 style="color:gray">@Html.Raw(ViewBag.ErrorMessage)</h3>
+    <h3>Psst...</h3>
+    <h4>You should really <a href="/Account/Create">sign up for an account</a> and try MP Tanks too.</h4>
+
+}

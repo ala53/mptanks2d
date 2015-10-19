@@ -59,26 +59,16 @@ namespace ZSB.Infrastructure.Apis.Login
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseIISPlatformHandler();
             //app.UseWelcomePage();
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
 
             // Add MVC to the request pipeline.
             app.UseMvc();
-
-            app.Properties.Add("host.AppMode", "development");
-            app.UseExceptionHandler(a =>
-            {
-                a.Run(async context =>
-                {
-                    await Task.Run(() => { });
-                    context.Response.StatusCode = 500;
-                    byte[] content = Encoding.UTF8.GetBytes(
-                        JsonConvert.SerializeObject(ErrorModel.Of("unknown_error")));
-
-                    context.Response.Body.Write(content, 0, content.Length);
-                });
-            });
+            
+            app.UseDeveloperExceptionPage();
+                        
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
         }
