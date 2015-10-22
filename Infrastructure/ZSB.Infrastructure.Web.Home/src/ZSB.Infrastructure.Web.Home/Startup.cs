@@ -50,11 +50,11 @@ namespace ZSB.Infrastructure.Web.Home
             loggerFactory.AddConsole();
 
             // Configure the HTTP request pipeline.
+            app.UseIISPlatformHandler();
 
             // Add the following to the request pipeline only in development environment.
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage(new ErrorPageOptions());
             }
             else
@@ -67,7 +67,7 @@ namespace ZSB.Infrastructure.Web.Home
             // Add static files to the request pipeline.
             app.UseStaticFiles();
 
-            app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/Status/{0}");
 
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
