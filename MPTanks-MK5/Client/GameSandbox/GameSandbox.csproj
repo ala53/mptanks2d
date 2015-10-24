@@ -73,9 +73,6 @@
       <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Debug.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.Designer">
-      <HintPath>..\..\packages\EmptyKeysUI.1.7.5.0\tools\EmptyKeys.UserInterface.Designer.dll</HintPath>
-    </Reference>
     <Reference Include="EmptyKeys.UserInterface.FNA, Version=1.9.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\packages\EmptyKeysUI.1.9.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
       <Private>True</Private>
