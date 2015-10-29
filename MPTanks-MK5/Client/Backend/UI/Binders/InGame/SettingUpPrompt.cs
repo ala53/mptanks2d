@@ -8,27 +8,28 @@ namespace MPTanks.Client.Backend.UI.Binders
 {
     public class SettingUpPrompt : BinderBase
     {
-        private string _secondsRemaining;
-        public string SecondsRemainingText
+        private string _header;
+        public string Header
         {
             get
             {
-                return _secondsRemaining;
+                return _header;
             }
             set
             {
-                SetProperty(ref _secondsRemaining, value);
+                SetProperty(ref _header, value);
             }
         }
-
-        private TimeSpan _time;
-        public TimeSpan TimeRemaining
+        private string _content;
+        public string Content
         {
-            get { return _time; }
+            get
+            {
+                return _content;
+            }
             set
             {
-                _time = value;
-                SecondsRemainingText = $"{_time.TotalSeconds.ToString("N1")} seconds remaining";
+                SetProperty(ref _content, value);
             }
         }
     }

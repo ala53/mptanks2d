@@ -17,6 +17,7 @@ using MPTanks.Client.GameSandbox.Input;
 using MPTanks.Client.GameSandbox.UI;
 using MPTanks.Networking.Server;
 using System.Diagnostics;
+using System.Threading.Tasks;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -35,12 +36,14 @@ namespace MPTanks.Client.GameSandbox
         public InputDriverBase InputDriver { get; private set; }
         public GameCoreRenderer GameRenderer { get; private set; }
         private UserInterface _ui;
+        private AsyncModLoader _modLoader;
         internal DebugDrawer DebugDrawer { get; private set; }
 
         const string _settingUpPageName = "SettingUpPrompt";
 
-        public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics;
-
+        private Diagnostics _tmpDiagnosticsInstance = new Diagnostics();
+        public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics ?? _tmpDiagnosticsInstance;
+        
         public GameClient()
             : base()
         {
@@ -55,9 +58,7 @@ namespace MPTanks.Client.GameSandbox
 
             IsFixedTimeStep = false;
 
-            GameSettings.Instance.InputDriverName.Value = KeyboardMouseInputDriver.Name;
-            CoreModLoader.LoadTrustedMods(GameSettings.Instance);
-
+            _modLoader = AsyncModLoader.Create(GameSettings.Instance);
         }
 
         void graphics_DeviceCreated(object sender, EventArgs e)
@@ -118,7 +119,6 @@ namespace MPTanks.Client.GameSandbox
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            CreateGame();
         }
 
         private void CreateGame()
@@ -224,6 +224,8 @@ namespace MPTanks.Client.GameSandbox
                 Client.MessageProcessor.Diagnostics.Reset();
         }
 
+        bool _hasExecutedPostModLoadTask = false;
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -240,33 +242,47 @@ namespace MPTanks.Client.GameSandbox
                 _graphicsDeviceIsDirty = false;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
-                CreateGame(); //Start anew
-
-            if (Client.Player?.Tank != null && SoundPlayer != null)
+            if (Client?.Player?.Tank != null && SoundPlayer != null)
             {
                 SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
                 SoundPlayer.PlayerVelocity = Client.Player.Tank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
 
+            Diagnostics.BeginMeasurement("Base.Update()");
+            base.Update(gameTime);
+            Diagnostics.EndMeasurement("Base.Update()");
+
+            if (_ui.CurrentPage.Name != _settingUpPageName)
+                if (Client != null && Client.Game.HasStarted) { }
+                else
+                {
+                    _ui.UnwindPageStack();
+                    _ui.GoToPage(_settingUpPageName);
+                }
+
+            if (!_modLoader.Finished)
+            {
+                _ui.ActiveBinder.Header = "Loading mods...";
+                _ui.ActiveBinder.Content = _modLoader.Status;
+                return; //Nothing to do while in loading screen
+            }
+            else if (!_hasExecutedPostModLoadTask)
+            {
+                _hasExecutedPostModLoadTask = true;
+                CreateGame();              
+            }
+
             InputDriver.Update(gameTime);
             var state = InputDriver.GetInputState();
             if (state != Client.Input)
                 Client.Input = state;
 
-            Diagnostics.BeginMeasurement("Base.Update()");
-            base.Update(gameTime);
-            Diagnostics.EndMeasurement("Base.Update()");
-
-            if (!Client.GameInstance.Game.HasStarted && _ui.CurrentPage.Name != _settingUpPageName)
-                _ui.GoToPage(_settingUpPageName);
-
-            if (Client.GameInstance.Game.HasStarted && _ui.CurrentPage.Name == _settingUpPageName)
-                _ui.UnwindPageStack();
-
-            if (_ui.CurrentPage.Name == _settingUpPageName)
-                _ui.ActiveBinder.TimeRemaining = Client.RemainingCountdownTime;
+            if (Client.IsInCountdown)
+            {
+                _ui.ActiveBinder.Header = "Counting down to start...";
+                _ui.ActiveBinder.Content = Client.RemainingCountdownTime.TotalSeconds.ToString("N0") + " seconds remaining";
+            }
 
             _ui.Update(gameTime);
             if (CrossDomainObject.Instance.IsGameHost)
@@ -313,7 +329,7 @@ namespace MPTanks.Client.GameSandbox
 
             //set the render target
 
-            if (Client.GameInstance.Game != null)
+            if (Client?.GameInstance.Game != null)
             {
                 RectangleF drawRect = new RectangleF(0, 0, 1, 1);
                 if (Client.Player?.Tank != null)
@@ -371,7 +387,7 @@ namespace MPTanks.Client.GameSandbox
             }
 
             Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
-            DebugDrawer.DrawDebugInfo(gameTime);
+            DebugDrawer?.DrawDebugInfo(gameTime);
             Diagnostics.EndMeasurement("Draw debug text", "Rendering");
 
             _ui.Draw(gameTime);

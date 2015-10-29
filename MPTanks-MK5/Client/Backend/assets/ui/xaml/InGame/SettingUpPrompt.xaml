@@ -15,9 +15,9 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Setting Up Game..." HorizontalAlignment="Center" Style="{DynamicResource MenuHeader}"></TextBlock>
-            <TextBlock Text="{Binding SecondsRemainingText}" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
-
+            <TextBlock Text="{Binding Header}" HorizontalAlignment="Center" Style="{DynamicResource MenuHeader}"></TextBlock>
+            <TextBlock Text="{Binding Content}" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
+            <Button Margin="10" Padding="10,0,10,0" HorizontalAlignment="Center" Content="Cancel" Style="{DynamicResource PrimaryButton}" Command="{Binding ConnectButton}"></Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

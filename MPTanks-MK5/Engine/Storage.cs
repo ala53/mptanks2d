@@ -105,7 +105,8 @@ namespace MPTanks.Engine
             _offsetTable[GetInfo(module)] = offset;
 
             var fs = new FileStream(_fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            fs.Write(serialized, offset, serialized.Length);
+            fs.Seek(offset, SeekOrigin.Begin);
+            fs.Write(serialized, 0, serialized.Length);
             fs.Flush();
             fs.Close();
             fs.Dispose();
@@ -130,6 +131,8 @@ namespace MPTanks.Engine
 
         private static ModInfo GetInfo(Module module)
         {
+            if (module == null && !GlobalSettings.Debug)
+                return new ModInfo() { ModName = "ERR_MOD_NOT_FOUND" };
             var mi = module.ModInfo;
             mi.ModMinor = 0;
             return mi;

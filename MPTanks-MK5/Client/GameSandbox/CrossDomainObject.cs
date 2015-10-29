@@ -37,26 +37,15 @@ namespace MPTanks.Client.GameSandbox
         public bool SandboxingEnabled { get; set; }
 
         public bool IsGameHost { get; set; }
-        public bool HostIsLanGame { get; set; }
-
-        public string GameSettingsJSON { get; set; }
+        
         public string ServerEngineSettingsJSON { get; set; }
-
-        public bool Connected { get; set; }
-        public bool Connecting { get; set; }
+        
         public string ConnectionFailureCause { get; set; }
-
-        public string[] ModsToInject { get; set; }
-
-        public string AuthKey { get; set; }
-        public string Username { get; set; }
 
         public string ServerIp { get; set; }
         public ushort ServerPort { get; set; }
         public string ServerPassword { get; set; }
-
-        public bool ServerRequiresIntroduction { get; set; }
-        public ulong IntroductionId { get; set; }
-        public string IntroductionServerAddress { get; set; }
     }
+
+
 }

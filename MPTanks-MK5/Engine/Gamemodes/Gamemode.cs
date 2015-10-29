@@ -408,7 +408,7 @@ namespace MPTanks.Engine.Gamemodes
         public static Gamemode ReflectiveInitialize(string gamemodeName, GameCore game = null, byte[] state = null)
         {
             if (!_gamemodeTypes.ContainsKey(gamemodeName.ToLower())) throw new Exception("Gamemode type does not exist.");
-
+            
             var inst = (Gamemode)Activator.CreateInstance(_gamemodeTypes[gamemodeName.ToLower()]);
             if (game != null) inst.SetGame(game);
             if (state != null) inst.ReceiveStateData(state);

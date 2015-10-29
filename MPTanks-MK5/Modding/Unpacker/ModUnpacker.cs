@@ -120,16 +120,6 @@ namespace MPTanks.Modding.Unpacker
                 }
                 catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
                 files.Add(path);
-
-                var jsonPath = Path.Combine(outputDir, $"{header.Name}_{header.Major}_{header.Minor}_{img}.json");
-
-                try
-                {
-                    if (!File.Exists(jsonPath) || overwriteExisting)
-                        File.WriteAllBytes(jsonPath,
-                        GetData($"{img}.json", zf));
-                }
-                catch (IOException) when (File.Exists(path)) { }//Catch in use errors and only those
             }
             zf.Close();
 

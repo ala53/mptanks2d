@@ -31,6 +31,8 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private TextBlock e_39;
         
+        private Button e_40;
+        
         public SettingUpPrompt(int width, int height) : 
                 base(width, height) {
             Style style = RootStyle.CreateRootStyle();
@@ -58,8 +60,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_37.Children.Add(this.e_38);
             this.e_38.Name = "e_38";
             this.e_38.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_38.Text = "Setting Up Game...";
             FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
+            Binding binding_e_38_Text = new Binding("Header");
+            this.e_38.SetBinding(TextBlock.TextProperty, binding_e_38_Text);
             this.e_38.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
             // e_39 element
             this.e_39 = new TextBlock();
@@ -67,9 +70,21 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_39.Name = "e_39";
             this.e_39.HorizontalAlignment = HorizontalAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
-            Binding binding_e_39_Text = new Binding("SecondsRemainingText");
+            Binding binding_e_39_Text = new Binding("Content");
             this.e_39.SetBinding(TextBlock.TextProperty, binding_e_39_Text);
             this.e_39.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
+            // e_40 element
+            this.e_40 = new Button();
+            this.e_37.Children.Add(this.e_40);
+            this.e_40.Name = "e_40";
+            this.e_40.Margin = new Thickness(10F, 10F, 10F, 10F);
+            this.e_40.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_40.Padding = new Thickness(10F, 0F, 10F, 0F);
+            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.e_40.Content = "Cancel";
+            Binding binding_e_40_Command = new Binding("ConnectButton");
+            this.e_40.SetBinding(Button.CommandProperty, binding_e_40_Command);
+            this.e_40.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }
         
         private static void InitializeElementResources(UIElement elem) {

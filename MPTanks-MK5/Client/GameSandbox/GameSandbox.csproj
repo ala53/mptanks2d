@@ -50,6 +50,7 @@
     <Compile Include="Input\KeyBindingCollection.cs" />
     <Compile Include="Input\KeyboardMouseInputDriver.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Mods\AsyncModLoader.cs" />
     <Compile Include="Mods\CoreModLoader.cs" />
     <Compile Include="Mods\ModLoader.cs" />
     <Compile Include="Program.cs" />
