@@ -56,11 +56,19 @@ namespace MPTanks.Client.Backend.UI
             return pg;
         }
 
-        public void UnwindPageStack()
+        public UserInterfacePage GoToPageIfNotThere(string name)
+        {
+            if (CurrentPage.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)) return CurrentPage;
+            else return GoToPage(name);
+        }
+
+        public void UnwindAndEmpty()
         {
             _pages.Clear();
             GoBack();
         }
+
+        public void Empty() => GoToPageIfNotThere("emptypage");
         /// <summary>
         /// Goes back 1 page in the "history" list
         /// </summary>

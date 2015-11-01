@@ -61,7 +61,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             var um = new UserModel();
             um.AccountCreationDate = DateTime.UtcNow;
             um.EmailAddress = model.EmailAddress;
-            um.EmailConfirmCode = Guid.NewGuid();
+            um.UniqueConfirmationCode = Guid.NewGuid();
             um.EmailConfirmationSent = DateTime.UtcNow;
             um.PasswordHashes = PasswordHasher.GenerateHashPermutations(model.Password);
             um.UniqueId = Guid.NewGuid();
@@ -98,7 +98,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 if (usr == null)
                     return ErrorModel.Of("user_not_found");
 
-                if (usr.EmailConfirmCode != confirmCode)
+                if (usr.UniqueConfirmationCode != confirmCode)
                     return ErrorModel.Of("email_confirmation_code_incorrect");
 
                 await ldb.DeleteUser(usr);

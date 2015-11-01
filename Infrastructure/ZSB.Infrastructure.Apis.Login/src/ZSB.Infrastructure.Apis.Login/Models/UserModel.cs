@@ -18,7 +18,7 @@ namespace ZSB.Infrastructure.Apis.Login.Models
         #region Email confirmation
         public DateTime EmailConfirmationSent { get; set; }
         public bool IsEmailConfirmed { get; set; }
-        public Guid EmailConfirmCode { get; set; }
+        public Guid UniqueConfirmationCode { get; set; }
         #endregion
         public bool IsPremiumAccount { get; set; }
         /// <summary>

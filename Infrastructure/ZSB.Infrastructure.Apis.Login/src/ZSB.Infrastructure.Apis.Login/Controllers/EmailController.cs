@@ -29,7 +29,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("not_logged_in");
 
             usr.EmailAddress = model.NewEmailAddress;
-            usr.EmailConfirmCode = Guid.NewGuid();
+            usr.UniqueConfirmationCode = Guid.NewGuid();
             usr.EmailConfirmationSent = DateTime.Now;
             usr.IsEmailConfirmed = false;
 
@@ -69,7 +69,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             if (account.IsEmailConfirmed)
                 return ErrorModel.Of("email_already_confirmed");
 
-            if (account.EmailConfirmCode != confirmCode)
+            if (account.UniqueConfirmationCode != confirmCode)
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Regenerate the code so the link doesn't work anymore
@@ -91,7 +91,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             if (account.IsEmailConfirmed)
                 return ErrorModel.Of("email_already_confirmed");
 
-            if (account.EmailConfirmCode != confirmCode)
+            if (account.UniqueConfirmationCode != confirmCode)
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             //Delete the account: they disavowed it

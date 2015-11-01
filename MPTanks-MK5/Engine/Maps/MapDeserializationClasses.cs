@@ -24,6 +24,7 @@ namespace MPTanks.Engine.Maps.Serialization
         public string[] ModDependencies { get; set; }
         public JSONVector ShadowOffset { get; set; }
         public JSONColor ShadowColor { get; set; }
+        public JSONColor BackgroundColor { get; set; }
 
         public static MapJSON Load(string data)
         {

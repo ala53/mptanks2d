@@ -31,6 +31,7 @@ namespace MPTanks.Engine.Maps
 
         public ModAssetInfo AssetInfo { get; private set; }
 
+        public Color BackgroundColor { get; set; }
         public Color ShadowColor { get; set; }
         public Vector2 ShadowOffset { get; set; }
 
@@ -72,6 +73,9 @@ namespace MPTanks.Engine.Maps
                 ShadowColor = new Color(50, 50, 50, 100);
             else ShadowColor = _deserialized.ShadowColor;
 
+            if (_deserialized.BackgroundColor == null)
+                BackgroundColor = Color.DarkGray;
+            else BackgroundColor = _deserialized.BackgroundColor;
 
             //Process basic
             foreach (var team in _deserialized.Spawns)

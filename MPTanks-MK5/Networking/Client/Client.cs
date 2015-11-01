@@ -153,6 +153,7 @@ namespace MPTanks.Networking.Client
                 RemainingCountdownTime -= gameTime.ElapsedGameTime;
             ProcessMessages();
             _interpolator.Apply(gameTime);
+            TickCountdown(gameTime);
             Game.Update(gameTime);
             if (MessageProcessor.MessageQueue.Count > 0 &&
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected)

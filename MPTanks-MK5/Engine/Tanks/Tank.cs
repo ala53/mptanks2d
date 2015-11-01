@@ -123,9 +123,9 @@ namespace MPTanks.Engine.Tanks
                 PrimaryWeapon != null,
                 SecondaryWeapon != null,
                 TertiaryWeapon != null,
-                PrimaryWeapon,
-                SecondaryWeapon,
-                TertiaryWeapon);
+                PrimaryWeapon.FullState,
+                SecondaryWeapon.FullState,
+                TertiaryWeapon.FullState);
         }
         protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
         {

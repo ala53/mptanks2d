@@ -29,7 +29,7 @@ namespace ZSB.Infrastructure.Apis.Login.Database.Contexts
                 .Property(a => a.EmailAddress)
                 .IsRequired();
             modelBuilder.Entity<Models.UserModel>()
-                .Property(a => a.EmailConfirmCode)
+                .Property(a => a.UniqueConfirmationCode)
                 .IsRequired().ValueGeneratedOnAdd();
             modelBuilder.Entity<Models.UserModel>()
                 .HasAlternateKey(a => a.EmailAddress);

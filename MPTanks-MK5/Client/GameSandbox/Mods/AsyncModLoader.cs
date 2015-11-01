@@ -30,6 +30,7 @@ namespace MPTanks.Client.GameSandbox.Mods
         }
 
         public Task AsyncLoaderTask { get; private set; }
+        public bool Running => !Finished;
 
         private AsyncModLoader() { }
         public static AsyncModLoader Create(GameSettings settings, params string[] otherModNames)

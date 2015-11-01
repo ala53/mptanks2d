@@ -84,9 +84,9 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
         internal async Task<Guid> ChangeConfirmCode(UserModel user)
         {
-            user.EmailConfirmCode = Guid.NewGuid();
+            user.UniqueConfirmationCode = Guid.NewGuid();
             await UpdateUser(user);
-            return user.EmailConfirmCode;
+            return user.UniqueConfirmationCode;
         }
 
         #region Add, update, and remove users

@@ -321,6 +321,12 @@ namespace MPTanks.Engine.Helpers
                     size += ((byte[])obj).Length + 2;
                 else if (obj.GetType().IsValueType)
                     size += ToByteArray(obj).Length + 2;
+                else
+                {
+                    var ser = JsonConvert.SerializeObject(obj);
+                    size += 2;
+                    size += Encoding.UTF8.GetByteCount(ser);
+                }
             }
 
             var arr = new byte[size];
@@ -432,6 +438,15 @@ namespace MPTanks.Engine.Helpers
                         arr.SetContents(data, offset);
                         offset += data.Length;
                     }
+                    else
+                    {
+                        arr.SetContents(JSONSerializationBytes, offset);
+                        offset += JSONSerializationBytes.Length;
+                        var ser = JsonConvert.SerializeObject(obj);
+                        arr.SetContents(ser, offset);
+                        offset += 2; //header
+                        offset += Encoding.UTF8.GetByteCount(ser);
+                    }
                 }
             }
             return arr;
@@ -454,13 +469,13 @@ namespace MPTanks.Engine.Helpers
         };
         public static byte[] Serialize(object obj)
         {
-            if(obj.GetType() == typeof(byte[]))
+            if (obj.GetType() == typeof(byte[]))
                 return (byte[])obj;
             if (obj.GetType() == typeof(string))
                 return Serialize((string)obj);
 
             return AllocateArray(
-                true, 
+                true,
                 JSONSerializationBytes,
                 JsonConvert.SerializeObject(obj, Formatting.None, _serializerSettingsForStateChange));
         }

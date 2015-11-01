@@ -41,7 +41,7 @@ namespace ZSB.Infrastructure.Apis.Login.Backend
             config["sub"] = new JObject();
             config["sub"]["-username-"] = new JArray(model.Username);
             config["sub"]["-userId-"] = new JArray(model.UniqueId.ToString());
-            config["sub"]["-emailConfirmCode-"] = new JArray(model.EmailConfirmCode.ToString());
+            config["sub"]["-emailConfirmCode-"] = new JArray(model.UniqueConfirmationCode.ToString());
             param["x-smtpapi"] = config.ToString();
             //And set request body
             request.Content = new FormUrlEncodedContent(param);
@@ -84,7 +84,7 @@ namespace ZSB.Infrastructure.Apis.Login.Backend
             config["sub"] = new JObject();
             config["sub"]["-username-"] = new JArray(model.Username);
             config["sub"]["-userId-"] = new JArray(model.UniqueId.ToString());
-            config["sub"]["-emailConfirmCode-"] = new JArray(model.EmailConfirmCode.ToString());
+            config["sub"]["-emailConfirmCode-"] = new JArray(model.UniqueConfirmationCode.ToString());
             param["x-smtpapi"] = config.ToString();
             //And set request body
             request.Content = new FormUrlEncodedContent(param);

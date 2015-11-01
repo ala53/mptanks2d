@@ -43,7 +43,7 @@ namespace MPTanks.Client.GameSandbox
 
         private Diagnostics _tmpDiagnosticsInstance = new Diagnostics();
         public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics ?? _tmpDiagnosticsInstance;
-        
+
         public GameClient()
             : base()
         {
@@ -249,28 +249,26 @@ namespace MPTanks.Client.GameSandbox
             }
             SoundPlayer?.Update(gameTime);
 
-            Diagnostics.BeginMeasurement("Base.Update()");
+            Diagnostics.BeginMeasurement("Base.Update() & UI Update");
+            _ui.Update(gameTime);
             base.Update(gameTime);
-            Diagnostics.EndMeasurement("Base.Update()");
+            Diagnostics.EndMeasurement("Base.Update() & UI Update");
 
-            if (_ui.CurrentPage.Name != _settingUpPageName)
-                if (Client != null && Client.Game.HasStarted) { }
-                else
-                {
-                    _ui.UnwindPageStack();
-                    _ui.GoToPage(_settingUpPageName);
-                }
-
-            if (!_modLoader.Finished)
+            if (Client != null && !Client.IsInCountdown)
             {
+                _ui.UnwindAndEmpty();
+            }
+            if (_modLoader.Running)
+            {
+                _ui.GoToPageIfNotThere(_settingUpPageName);
                 _ui.ActiveBinder.Header = "Loading mods...";
                 _ui.ActiveBinder.Content = _modLoader.Status;
-                return; //Nothing to do while in loading screen
+                return;
             }
             else if (!_hasExecutedPostModLoadTask)
             {
                 _hasExecutedPostModLoadTask = true;
-                CreateGame();              
+                CreateGame();
             }
 
             InputDriver.Update(gameTime);
@@ -280,11 +278,12 @@ namespace MPTanks.Client.GameSandbox
 
             if (Client.IsInCountdown)
             {
+                _ui.GoToPageIfNotThere(_settingUpPageName);
                 _ui.ActiveBinder.Header = "Counting down to start...";
                 _ui.ActiveBinder.Content = Client.RemainingCountdownTime.TotalSeconds.ToString("N0") + " seconds remaining";
             }
 
-            _ui.Update(gameTime);
+
             if (CrossDomainObject.Instance.IsGameHost)
                 Server.Update(gameTime);
             //     if (Keyboard.GetState().IsKeyDown(Keys.M))
@@ -299,9 +298,12 @@ namespace MPTanks.Client.GameSandbox
         }
 
         RenderTarget2D _worldRenderTarget;
-        private float _zoom = 1;
-        private Vector2 _currentOffset;
+        private float _currentMotionZoomLevel = 1;
+        private Vector2 _currentCameraSwingOffset;
         public float _ssaaRate = 1.25f;
+        private static readonly Vector2 _viewRectangle = new Vector2(40, 40);
+        private static readonly Vector2 _halfViewRectangleSize = _viewRectangle / 2f;
+        private static readonly Vector2 _quarterViewRectangleSize = _viewRectangle / 4f;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -310,66 +312,67 @@ namespace MPTanks.Client.GameSandbox
         {
             Diagnostics.BeginMeasurement("Rendering");
             GraphicsDevice.SetRenderTarget(null);
-            var size = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) * _ssaaRate;
+
+            var computedRenderSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) * _ssaaRate;
             //if we're in game
             //check if we need to remake the rendertarget
             if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
             {
-                if (_worldRenderTarget == null || _worldRenderTarget.Width != size.X ||
-                    _worldRenderTarget.Height != size.Y)
+                if (_worldRenderTarget == null || _worldRenderTarget.Width != computedRenderSize.X ||
+                    _worldRenderTarget.Height != computedRenderSize.Y)
                 {
                     _worldRenderTarget?.Dispose();
                     //recreate with correct size
                     _worldRenderTarget = new RenderTarget2D(
-                        GraphicsDevice, (int)size.X, (int)size.Y);
+                        GraphicsDevice, (int)computedRenderSize.X, (int)computedRenderSize.Y);
                 }
             }
             GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-            GraphicsDevice.Clear(Color.Gray);
+            GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
 
             //set the render target
 
-            if (Client?.GameInstance.Game != null)
+            if (Client?.Game != null)
             {
-                RectangleF drawRect = new RectangleF(0, 0, 1, 1);
+                RectangleF computedDrawRectangle = new RectangleF(0, 0, 1, 1);
                 if (Client.Player?.Tank != null)
                 {
-                    _currentOffset =
-                        Vector2.Lerp(_currentOffset, Client.Player.Tank.LinearVelocity / 2,
+                    _currentCameraSwingOffset =
+                        Vector2.Lerp(_currentCameraSwingOffset, Client.Player.Tank.LinearVelocity / 2,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                    if (_currentOffset.X > 10)
-                        _currentOffset.X = 10;
-                    else if (_currentOffset.X < -10)
-                        _currentOffset.X = -10;
-                    else if (_currentOffset.Y > 10)
-                        _currentOffset.Y = 10;
-                    else if (_currentOffset.Y < -10)
-                        _currentOffset.Y = -10;
+                    if (_currentCameraSwingOffset.X > _quarterViewRectangleSize.X)
+                        _currentCameraSwingOffset.X = _quarterViewRectangleSize.X;
+                    else if (_currentCameraSwingOffset.X < -_quarterViewRectangleSize.X)
+                        _currentCameraSwingOffset.X = -_quarterViewRectangleSize.X;
+                    else if (_currentCameraSwingOffset.Y > _quarterViewRectangleSize.Y)
+                        _currentCameraSwingOffset.Y = _quarterViewRectangleSize.Y;
+                    else if (_currentCameraSwingOffset.Y < -_quarterViewRectangleSize.Y)
+                        _currentCameraSwingOffset.Y = -_quarterViewRectangleSize.Y;
 
-                    var targetZoom = 0.75f;
-                    targetZoom += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
-                    targetZoom *= GameSettings.Instance.Zoom;
+                    var targetMotionZoomLevel = 0.75f;
+                    targetMotionZoomLevel += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
+                    targetMotionZoomLevel *= GameSettings.Instance.Zoom;
 
-                    _zoom = MathHelper.Lerp(_zoom, targetZoom,
+                    _currentMotionZoomLevel = MathHelper.Lerp(_currentMotionZoomLevel, targetMotionZoomLevel,
                         2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                    var offset = _currentOffset * _zoom + Client.Player.Tank.Position;
+                    var calculatedWorldOffsetCenter = _currentCameraSwingOffset * _currentMotionZoomLevel + Client.Player.Tank.Position;
 
-                    var widthHeightRelative =
+                    var aspectRatio =
                         (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
 
-                    drawRect = new RectangleF(
-                        offset.X -
-                        ((20 * widthHeightRelative) * _zoom),
-                        offset.Y - (20 * _zoom),
-                        (40 * widthHeightRelative) * _zoom,
-                        40 * _zoom);
+                    computedDrawRectangle = new RectangleF(
+                        calculatedWorldOffsetCenter.X -
+                        ((_halfViewRectangleSize.X * aspectRatio) * _currentMotionZoomLevel),
+                        calculatedWorldOffsetCenter.Y - (_halfViewRectangleSize.Y * _currentMotionZoomLevel),
+                        (_viewRectangle.X * aspectRatio) * _currentMotionZoomLevel,
+                        _viewRectangle.Y * _currentMotionZoomLevel);
                 }
                 Diagnostics.BeginMeasurement("World rendering", "Rendering");
 
                 GameRenderer.Game = Client.Game;
-                GameRenderer.View = drawRect;
+                GameRenderer.View = computedDrawRectangle;
                 GameRenderer.Target = _worldRenderTarget;
                 GameRenderer.Draw(gameTime);
 
@@ -389,7 +392,7 @@ namespace MPTanks.Client.GameSandbox
             Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
             DebugDrawer?.DrawDebugInfo(gameTime);
             Diagnostics.EndMeasurement("Draw debug text", "Rendering");
-
+            //And render the draw
             _ui.Draw(gameTime);
 
             base.Draw(gameTime);

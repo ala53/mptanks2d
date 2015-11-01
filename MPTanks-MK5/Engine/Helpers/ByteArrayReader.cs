@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,10 @@ namespace MPTanks.Engine.Helpers
         public byte[] ReadBytes()
         {
             return Data.GetByteArray(Offset);
+        }
+        public byte[] ReadBytes(int count)
+        {
+            return Data.GetByteArray(Offset, count);
         }
         public ushort ReadUShort()
         {
@@ -99,6 +104,15 @@ namespace MPTanks.Engine.Helpers
             return o;
         }
 
+        public T ReadGeneric<T>()
+        {
+            //Validate header
+            if (ReadBytes(SerializationHelpers.JSONSerializationBytes.Length) != 
+                SerializationHelpers.JSONSerializationBytes)
+                throw new Exception("Unexpected token! JSON serialization preamble not found");
+            var str = ReadString();
+            return JsonConvert.DeserializeObject<T>(str);
+        }
 
         private static Stack<ByteArrayReader> _cache = new Stack<ByteArrayReader>();
 
