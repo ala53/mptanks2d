@@ -15,10 +15,12 @@
   "logged_out": "You've been sucessfully logged out. Come back soon?",
   "not_logged_in": "You're not logged in right now. <a href=\"https://www.zsbgames.me/login\">Click (or tap) to log in</a>.",
   "password_too_short": "The password you entered is a bit short. Try and make it at least 8 letters, ok?",
+  "password_changed": "Your password was successfully changed. You will need to log back in, as all existing sessions have been closed for security.",
   "string_not_found": "Oh no! We can't find a description for what happened. Have a rectangle instead [].",
-  "unknown_error": "We have absolutely no idea what went wrong. Like, none at all. Just email us at <a href=\"mailto:support@zsbgames.me\">support@zsbgames.me</a> so we can figure out what went wrong.",
+  "unknown_error": "We have absolutely no idea what went wrong. Like, none at all. If it's really important, email us at <a href=\"mailto:support@zsbgames.me\">support@zsbgames.me</a> so we can help.",
   "user_not_found": "Hmm. That account does not exist. You can always <a href=\"https://www.zsbgames.me/account/register\">create a new account</a>.",
   "username_in_use": "The username you entered is already in use. Are you sure you don't already have a ZSB account?",
   "username_or_password_incorrect": "An incorrect username or password was entered.",
-  "validation_incorrect": "The answer you entered for the validation question is incorrect :/."
+  "validation_incorrect": "The answer you entered for the validation question is incorrect :/.",
+  "forgot_password_request_sent": "A \"forgot my password\" link has been sent to your email account. Click that and you'll be on your way in no time!"
 }

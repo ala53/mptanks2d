@@ -27,15 +27,30 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
 
-            if (!await ldb.ValidateAccount(model.Username, model.OldPassword))
+            if (!await ldb.ValidateAccount(model.EmailAddress, model.OldPassword))
             {
                 return ErrorModel.Of("username_or_password_incorrect");
             }
 
-            var user = await ldb.FindByEmailAddress(model.Username, false);
+            if (model.NewPassword.Length < 8)
+                return ErrorModel.Of("password_too_short");
+
+            //Change their password
+            var user = await ldb.FindByEmailAddress(model.EmailAddress, false);
+
+            if (user == null)
+                return ErrorModel.Of("user_not_found");
+
             user.PasswordHashes = await Task.Run(() => PasswordHasher.GenerateHashPermutations(model.NewPassword));
+            //Clear all sessions
+            ldb.DBContext.Sessions.RemoveRange(user.ActiveSessions);
+            user.ActiveSessions.Clear();
+            //And login tokens
+            ldb.DBContext.ServerTokens.RemoveRange(user.ActiveServerTokens);
+            user.ActiveServerTokens.Clear();
+            //Update
             await ldb.UpdateUser(user);
-            return OkModel.Empty;
+            return OkModel.Of("password_changed");
         }
 
         [HttpGet, Route("challenge/get")]
@@ -70,8 +85,15 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //And validate the email address
             if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
                 return ErrorModel.Of("email_invalid");
-            if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
-                return ErrorModel.Of("email_in_use");
+            try
+            {
+                if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
+                    return ErrorModel.Of("email_in_use");
+            }
+            catch (Exception e)
+            {
+
+            }
             //Username
             if (await ldb.FindByUsername(model.Username, false) != null) //also in use
                 return ErrorModel.Of("username_in_use");
@@ -92,23 +114,16 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         [HttpGet, Route("delete/confirm/{userId}/{confirmCode}")]
         public async Task<ResponseModelBase> DeleteAccount(Guid userId, Guid confirmCode)
         {
-            try
-            {
-                var usr = await ldb.FindByUniqueId(userId, false);
-                if (usr == null)
-                    return ErrorModel.Of("user_not_found");
+            var usr = await ldb.FindByUniqueId(userId, false);
+            if (usr == null)
+                return ErrorModel.Of("user_not_found");
 
-                if (usr.UniqueConfirmationCode != confirmCode)
-                    return ErrorModel.Of("email_confirmation_code_incorrect");
+            if (usr.UniqueConfirmationCode != confirmCode)
+                return ErrorModel.Of("email_confirmation_code_incorrect");
 
-                await ldb.DeleteUser(usr);
+            await ldb.DeleteUser(usr);
 
-                return OkModel.Of("account_deleted");
-            }
-            catch (Exception ex)
-            {
-                return ErrorModel.Of(ex.Message);
-            }
+            return OkModel.Of("account_deleted");
         }
         [HttpPost, Route("delete/request")]
         public async Task<ResponseModelBase> RequestDeleteAccount([FromBody]AuthenticatedRequestModel model)
