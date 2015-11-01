@@ -2,5 +2,30 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    // ViewBag.Title = "Home Page";
+    ViewBag.Title = "Create Account";
+}
+
+<br/>
+<form method="post">
+    <input type="email" name="EmailAddress" placeholder="Enter email address" value="@ViewBag.EmailAddress" />
+    <br />
+    <input type="text" name="Username" placeholder="Enter username" value="@ViewBag.Username" />
+    <br />
+    <input type="password" name="Password" placeholder="Enter password" value="@ViewBag.Password" />
+    <br />
+    <input type="password" name="ConfirmPassword" placeholder="Confirm password" value="@ViewBag.Password" />
+    <br />
+    <input type="hidden" name="ChallengeId" value="@ViewBag.ChallengeId" />
+    <h5>Answer the following: @ViewBag.ChallengeQuestion</h5>
+    <input type="text" name="ChallengeAnswer" />
+    <input type="hidden" name="ChallengeQuestion" value="@ViewBag.ChallengeQuestion" />
+    <br />
+    <input type="submit" value="Create my account" />
+</form>
+
+<hr />
+@if (ViewBag.Error)
+{
+    <h3 style="color:red">Something's wrong</h3>
+    <h4>@Html.Raw(ViewBag.Message)</h4>
 }

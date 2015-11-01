@@ -30,7 +30,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
         public async Task<IActionResult> Confirm(Guid accountId, Guid emailConfirmCode)
         {
             var response = await Rest.RestHelper.DoGetDynamic(
-                Startup.Configuration["Data:LoginServerAddress"] + $"email/confirm/{accountId}/{emailConfirmCode}");
+                Startup.LoginServerAddress + $"email/confirm/{accountId}/{emailConfirmCode}");
 
             ViewBag.Error = response == null || response.Error;
             if (response != null)
@@ -42,7 +42,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
         public async Task<IActionResult> Disavow(Guid accountId, Guid emailConfirmCode)
         {
             var response = await Rest.RestHelper.DoGetDynamic(
-                Startup.Configuration["Data:LoginServerAddress"] + $"email/disavow/{accountId}/{emailConfirmCode}");
+                Startup.LoginServerAddress + $"email/disavow/{accountId}/{emailConfirmCode}");
 
             ViewBag.Error = response == null || response.Error;
             if (response != null)

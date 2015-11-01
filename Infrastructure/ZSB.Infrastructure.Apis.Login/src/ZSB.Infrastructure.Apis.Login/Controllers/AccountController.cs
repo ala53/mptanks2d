@@ -85,18 +85,15 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //And validate the email address
             if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
                 return ErrorModel.Of("email_invalid");
-            try
-            {
-                if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
-                    return ErrorModel.Of("email_in_use");
-            }
-            catch (Exception e)
-            {
-
-            }
+            if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
+                return ErrorModel.Of("email_in_use");
             //Username
             if (await ldb.FindByUsername(model.Username, false) != null) //also in use
                 return ErrorModel.Of("username_in_use");
+            if (model.Password.ToLower().Contains("password"))
+                return ErrorModel.Of("password_too_simple");
+            if (model.Password.ToLower().StartsWith("1234"))
+                return ErrorModel.Of("password_too_simple");
             //And password
             if (model.Password.Length < 8)
                 return ErrorModel.Of("password_too_short");

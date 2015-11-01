@@ -30,6 +30,7 @@ namespace ZSB.Infrastructure.Web.Home
         }
 
         public static IConfiguration Configuration { get; set; }
+        public static string LoginServerAddress => Configuration["Data:LoginServerAddress"];
         public static IApplicationEnvironment Environment { get; set; }
 
         // This method gets called by the runtime.
