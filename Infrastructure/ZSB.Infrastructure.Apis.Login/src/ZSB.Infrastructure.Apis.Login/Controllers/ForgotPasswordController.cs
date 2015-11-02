@@ -55,6 +55,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             user.PasswordHashes = await Task.Run(() => PasswordHasher.GenerateHashPermutations(model.NewPassword));
+            user.UniqueConfirmationCode = Guid.NewGuid();
             //Clear all sessions
             ldb.DBContext.Sessions.RemoveRange(user.ActiveSessions);
             user.ActiveSessions.Clear();

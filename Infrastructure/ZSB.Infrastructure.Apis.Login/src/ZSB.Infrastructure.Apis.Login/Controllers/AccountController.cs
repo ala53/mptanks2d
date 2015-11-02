@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ZSB.Infrastructure.Apis.Login.Backend;
 using ZSB.Infrastructure.Apis.Login.Database;
@@ -80,7 +81,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             um.EmailConfirmationSent = DateTime.UtcNow;
             um.PasswordHashes = PasswordHasher.GenerateHashPermutations(model.Password);
             um.UniqueId = Guid.NewGuid();
-            um.Username = model.Username;
+            um.Username = model.Username.Trim();
 
             //And validate the email address
             if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
@@ -90,11 +91,15 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //Username
             if (await ldb.FindByUsername(model.Username, false) != null) //also in use
                 return ErrorModel.Of("username_in_use");
+            if (um.Username.Length < 5)
+                return ErrorModel.Of("username_invalid");
+            if (!new Regex(@"[a-zA-Z0-9\s_-]").IsMatch(um.Username))
+                return ErrorModel.Of("username_invalid");
+            //Password
             if (model.Password.ToLower().Contains("password"))
                 return ErrorModel.Of("password_too_simple");
             if (model.Password.ToLower().StartsWith("1234"))
                 return ErrorModel.Of("password_too_simple");
-            //And password
             if (model.Password.Length < 8)
                 return ErrorModel.Of("password_too_short");
             //And check the question/answer section

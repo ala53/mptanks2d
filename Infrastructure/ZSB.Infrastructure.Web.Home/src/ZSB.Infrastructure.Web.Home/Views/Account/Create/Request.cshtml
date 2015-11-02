@@ -5,27 +5,48 @@
     ViewBag.Title = "Create Account";
 }
 
-<br/>
-<form method="post">
-    <input type="email" name="EmailAddress" placeholder="Enter email address" value="@ViewBag.EmailAddress" />
-    <br />
-    <input type="text" name="Username" placeholder="Enter username" value="@ViewBag.Username" />
-    <br />
-    <input type="password" name="Password" placeholder="Enter password" value="@ViewBag.Password" />
-    <br />
-    <input type="password" name="ConfirmPassword" placeholder="Confirm password" value="@ViewBag.Password" />
-    <br />
-    <input type="hidden" name="ChallengeId" value="@ViewBag.ChallengeId" />
-    <h5>Answer the following: @ViewBag.ChallengeQuestion</h5>
-    <input type="text" name="ChallengeAnswer" />
-    <input type="hidden" name="ChallengeQuestion" value="@ViewBag.ChallengeQuestion" />
-    <br />
-    <input type="submit" value="Create my account" />
-</form>
+<h1 style="text-align:center">Create your ZSB account</h1>
+<br />
+<div class="col-md-6 col-md-offset-3">
+    <form class="form-inline" method="post">
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon" id="basic-addon1">Email address</span>
+            <input class="form-control" style="min-width:100%" type="email" name="EmailAddress" placeholder="E.g. my_name@domain.com" value="@ViewBag.EmailAddress" />
+        </div>
+        <br />
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon" id="basic-addon1">Username</span>
+            <input class="form-control" style="min-width:100%" type="text" name="Username" placeholder="E.g. l337_master" value="@ViewBag.Username" />
+        </div>
+        <br />
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon" id="basic-addon1">Password</span>
+            <input class="form-control" style="min-width:100%" type="password" name="Password" placeholder="Choose something secure" value="@ViewBag.Password" />
+        </div>
+        <br />
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon" id="basic-addon1">Confirm it</span>
+            <input class="form-control" style="min-width:100%" type="password" name="ConfirmPassword" placeholder="Just copy what you wrote before" value="@ViewBag.Password" />
+        </div>
+        <br />
+        <input type="hidden" name="ChallengeId" value="@ViewBag.ChallengeId" />
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon" id="basic-addon1">@ViewBag.ChallengeQuestion</span>
+            <input class="form-control" style="min-width:100%" type="text" name="ChallengeAnswer" placeholder="" />
+        </div>
+        <input type="hidden" name="ChallengeQuestion" value="@ViewBag.ChallengeQuestion" />
+        <br />
+        <input class="btn btn-default" style="min-width:100%" type="submit" value="Create my account" />
+    </form>
+    <hr />
+    @if (ViewBag.Error)
+    {
+        <div class="alert alert-danger">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            @Html.Raw(ViewBag.Message)
+        </div>
+    }
+</div>
 
-<hr />
-@if (ViewBag.Error)
-{
-    <h3 style="color:red">Something's wrong</h3>
-    <h4>@Html.Raw(ViewBag.Message)</h4>
-}
+<div class="clearfix"></div>

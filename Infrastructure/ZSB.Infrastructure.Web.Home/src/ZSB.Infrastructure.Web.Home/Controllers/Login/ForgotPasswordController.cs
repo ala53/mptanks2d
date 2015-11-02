@@ -32,6 +32,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             {
                 if (result == null)
                     ViewBag.Message = Rest.ResponseHelper.Get("unknown_error");
+                else ViewBag.Message = Rest.ResponseHelper.Get(result.Message);
             }
             else ViewBag.Message = Rest.ResponseHelper.Get(result.Message);
 

@@ -17,11 +17,12 @@
   "password_too_short": "The password you entered is a bit short. Try and make it at least 8 letters, ok?",
   "password_changed": "Your password was successfully changed. You will need to log back in, as all existing sessions have been closed for security.",
   "password_do_not_match": "The passwords you entered didn't match",
-  "password_too_simple": " This password has been accepted, but due to unforseen circumstances, has accidentally been published on you social media accounts. We recommend changing your password as quickly as possible.",
+  "password_too_simple": " This password has been accepted, but due to unforseen circumstances, has accidentally been published on your social media accounts. We recommend changing your password as quickly as possible. (Please don't use \"password\" or \"1234\")",
   "string_not_found": "Oh no! We can't find a description for what happened. Have a rectangle instead [].",
   "unknown_error": "We have absolutely no idea what went wrong. Like, none at all. If it's really important, email us at <a href=\"mailto:support@zsbgames.me\">support@zsbgames.me</a> so we can help.",
   "user_not_found": "Hmm. That account does not exist. You can always <a href=\"https://www.zsbgames.me/login/account/create\">create a new account</a>.",
   "username_in_use": "The username you entered is already in use. Are you sure you don't already have a ZSB account?",
+  "username_invalid": "The username entered is invalid. It must be at least 5 letters and include only a-z, 0-9, space, underscore, and hyphen.",
   "username_or_password_incorrect": "An incorrect username or password was entered.",
   "validation_incorrect": "The answer you entered for the validation question is incorrect :/.",
   "forgot_password_request_sent": "A \"forgot my password\" link has been sent to your email account. Click that and you'll be on your way in no time!"

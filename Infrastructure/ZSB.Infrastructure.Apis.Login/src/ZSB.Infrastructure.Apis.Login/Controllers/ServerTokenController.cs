@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
+using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,9 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             if (!ModelState.IsValid)
                 return ErrorModel.Of<UserInfoResponseModel>(null, "invalid_request");
 
-            var token = ldb.DBContext.ServerTokens.Where(a => a.ServerToken == model.ServerToken).FirstOrDefault();
+            var token = ldb.DBContext.ServerTokens
+                .Include(a => a.Owner)
+                .Where(a => a.ServerToken == model.ServerToken).FirstOrDefault();
             if (token == null)
                 return ErrorModel.Of<UserInfoResponseModel>(null, "token_not_found");
             if (DateTime.Now > token.ExpiryDate)
@@ -61,8 +64,9 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             var resp = new UserInfoResponseModel(token.Owner);
             //Remove it
             token.Owner.RemoveToken(token);
-            await ldb.Save();
+            ldb.DBContext.ServerTokens.Remove(token);
 
+            await ldb.Save();
             return OkModel.Of(resp);
         }
     }
