@@ -20,7 +20,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
         public async Task<IActionResult> ConfirmSendEmail(string EmailAddress)
         {
             var result = await Rest.RestHelper.DoPostDynamic(
-                Startup.Configuration["Data:LoginServerAddress"] + "account/password/forgot/request",
+                Startup.LoginServerAddress + "account/password/forgot/request",
                 new
                 {
                     EmailAddress = EmailAddress
@@ -40,15 +40,44 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
         }
 
         [HttpGet, Route("Change/{accountId}/{emailConfirmCode}")]
-        public async Task<IActionResult> ChangePassword(Guid accountId, Guid emailConfirmCode)
+        public IActionResult ChangePassword(Guid accountId, Guid emailConfirmCode)
         {
+            ViewBag.Error = false;
             return View("Change/Change");
         }
 
-        [HttpPost, Route("PasswordChanged")]
-        public async Task<IActionResult> ConfirmPasswordChanged()
+        [HttpPost, Route("Change/{accountId}/{emailConfirmCode}")]
+        public async Task<IActionResult> ConfirmPasswordChanged(
+            Guid accountId, Guid emailConfirmCode, string Password, string ConfirmPassword)
         {
-            return View("Change/Confirm");
+            ViewBag.Error = false;
+            ViewBag.Password = Password;
+            ViewBag.ConfirmPassword = ConfirmPassword;
+            //Check that they match
+            if (Password != ConfirmPassword)
+            {
+                ViewBag.Error = true;
+                ViewBag.Message = Rest.ResponseHelper.Get("password_do_not_match");
+                return View("Change/Change");
+            }
+
+            var resp = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "account/password/forgot/change",
+                new
+                {
+                    ConfirmationCode = emailConfirmCode,
+                    UserId = accountId,
+                    NewPassword = Password
+                });
+
+            ViewBag.Error = resp == null || resp.Error;
+
+            if (resp != null)
+                ViewBag.Message = Rest.ResponseHelper.Get(resp.Message);
+
+            if (ViewBag.Error)
+                return View("Change/Change");
+            else
+                return View("Change/Confirm");
         }
     }
 }

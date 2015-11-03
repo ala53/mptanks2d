@@ -63,6 +63,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 ViewBag.ChallengeId = ChallengeId;
                 ViewBag.ChallengeQuestion = ChallengeQuestion;
                 ViewBag.Password = Password;
+                ViewBag.ConfirmPassword = ConfirmPassword;
 
                 return View("~/Views/Account/Create/Request");
             }

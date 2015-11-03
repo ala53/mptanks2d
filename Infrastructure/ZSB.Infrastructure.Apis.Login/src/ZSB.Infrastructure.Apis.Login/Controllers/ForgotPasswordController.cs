@@ -51,7 +51,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             if (user == null)
                 return ErrorModel.Of("user_not_found");
             //and code
-            if (user.UniqueConfirmationCode == model.ConfirmationCode)
+            if (user.UniqueConfirmationCode != model.ConfirmationCode)
                 return ErrorModel.Of("email_confirmation_code_incorrect");
 
             user.PasswordHashes = await Task.Run(() => PasswordHasher.GenerateHashPermutations(model.NewPassword));
