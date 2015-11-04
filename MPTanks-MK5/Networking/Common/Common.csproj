@@ -47,8 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountServer\Models\PrivateUserInfoModel.cs" />
-    <Compile Include="AccountServer\Models\PublicUserInfoModel.cs" />
+    <Compile Include="AccountServer\Models\UserInfoResponseModel.cs" />
     <Compile Include="Actions\ActionBase.cs" />
     <Compile Include="ActionQueue.cs" />
     <Compile Include="Actions\ToClient\CountdownStartedAction.cs" />

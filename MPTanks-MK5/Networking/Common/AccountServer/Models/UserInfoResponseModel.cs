@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Common.AccountServer.Models
 {
-    public class PrivateUserInfoModel
+    public class UserInfoResponseModel
     {
     }
 }

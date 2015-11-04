@@ -7,10 +7,9 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/")]
     public class ErrorController : Controller
     {
-        [Route("error")]
+        [Route("/Error")]
         public ErrorModel Error()
         {
             return ErrorModel.Of("unknown_error");

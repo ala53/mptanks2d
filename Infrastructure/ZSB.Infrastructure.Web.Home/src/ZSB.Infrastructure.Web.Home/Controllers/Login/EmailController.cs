@@ -6,27 +6,32 @@ using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
 {
-    [Route("/Login/Email")]
     public class EmailController : Controller
     {
-        [HttpGet, Route("Resend/Request")]
+        [HttpGet, Route("/EmailConfirmation/Resend")]
         public IActionResult Resend()
         {
-
             return View("Resend/Request");
         }
-        [HttpPost, Route("Resend/Confirm")]
-        public async Task<IActionResult> ConfirmResend([FromBody]Models.EmailResendRequestModel model)
+        [HttpPost, Route("/EmailConfirmation/Resend")]
+        public async Task<IActionResult> ConfirmResend(string EmailAddress)
         {
-            if (ModelState.IsValid)
-            {
-                throw new Exception();
-            }
+            var response = await Rest.RestHelper.DoPostDynamic(
+                Startup.LoginServerAddress + "email/resend", new
+                {
+                    EmailAddress = EmailAddress
+                });
+
+            ViewBag.Error = response == null || response.Error;
+
+            if (response == null)
+                ViewBag.Message = Rest.ResponseHelper.Get("unknown_error");
+            else ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
 
             return View("Resend/Confirm");
         }
 
-        [HttpGet, Route("Confirm/{accountId}/{emailConfirmCode}")]
+        [HttpGet, Route("/EmailConfirmation/Confirm/{accountId}/{emailConfirmCode}")]
         public async Task<IActionResult> Confirm(Guid accountId, Guid emailConfirmCode)
         {
             var response = await Rest.RestHelper.DoGetDynamic(
@@ -38,7 +43,14 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
 
             return View("Confirm");
         }
-        [HttpGet, Route("Disavow/{accountId}/{emailConfirmCode}")]
+
+        [HttpGet, Route("/EmailConfirmation/Disavow/{accountId}/{emailConfirmCode}")]
+        public IActionResult DisavowPage(Guid accountId, Guid emailConfirmCode)
+        {
+            return View("DisavowCheck");
+        }
+
+        [HttpPost, Route("/EmailConfirmation/Disavow/{accountId}/{emailConfirmCode}")]
         public async Task<IActionResult> Disavow(Guid accountId, Guid emailConfirmCode)
         {
             var response = await Rest.RestHelper.DoGetDynamic(

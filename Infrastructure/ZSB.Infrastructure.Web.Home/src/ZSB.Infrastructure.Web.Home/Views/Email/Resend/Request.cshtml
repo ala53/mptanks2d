@@ -2,5 +2,12 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    // ViewBag.Title = "Home Page";
+    ViewBag.Title = "Resend confirmation email";
 }
+
+<form method="post">
+    <h1>Couldn't find your confirmation?</h1>
+    <h3>Enter the email address associated with your account and we'll resend the confirmation.</h3>
+    <input type="email" name="EmailAddress" placeholder="Enter email..." />
+    <input type="submit" value="Resend confirmation" />
+</form>

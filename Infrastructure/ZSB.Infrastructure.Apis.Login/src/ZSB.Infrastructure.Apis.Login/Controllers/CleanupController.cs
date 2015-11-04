@@ -9,7 +9,6 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/private/internal")]
     public class CleanupController : Controller
     {
         LoginDB ldb;
@@ -23,7 +22,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         /// Removes all expired session keys and
         /// Removes all expired server tokens
         /// </summary>
-        [HttpGet, Route("cleanup")]
+        [HttpGet, Route("/Private/Internal/Cleanup")]
         public async Task<ResponseModelBase> DoDBCleanup()
         {
             try

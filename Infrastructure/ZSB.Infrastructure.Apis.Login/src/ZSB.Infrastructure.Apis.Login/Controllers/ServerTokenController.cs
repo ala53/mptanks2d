@@ -10,7 +10,6 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/")]
     public class ServerTokenController : Controller
     {
         private LoginDB ldb;
@@ -19,7 +18,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb = new LoginDB(ctx);
         }
 
-        [HttpPost, Route("token/get")]
+        [HttpPost, Route("/Token/Get")]
         public async Task<ResponseModelBase<UserServerTokenResponseModel>> CreateServerToken([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -39,7 +38,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             return OkModel.Of(new UserServerTokenResponseModel(token));
         }
 
-        [HttpPost, Route("token/validate")]
+        [HttpPost, Route("/Token/Validate")]
         public async Task<ResponseModelBase<UserInfoResponseModel>> ValidateServerToken([FromBody]ValidateServerTokenRequestModel model)
         {
             if (!ModelState.IsValid)

@@ -7,16 +7,15 @@ using ZSB.Infrastructure.Web.Home.Models;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
 {
-    [Route("/Login/ForgotPassword")]
     public class ForgotPasswordController : Controller
     {
-        [HttpGet, Route("Request")]
+        [HttpGet, Route("/ForgotPassword")]
         public IActionResult RequestSendEmail()
         {
             return View("SendEmail/Request");
         }
 
-        [HttpPost, Route("Request")]
+        [HttpPost, Route("/ForgotPassword")]
         public async Task<IActionResult> ConfirmSendEmail(string EmailAddress)
         {
             var result = await Rest.RestHelper.DoPostDynamic(
@@ -39,14 +38,14 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             return View("SendEmail/Confirm");
         }
 
-        [HttpGet, Route("Change/{accountId}/{emailConfirmCode}")]
+        [HttpGet, Route("/ForgotPassword/Change/{accountId}/{emailConfirmCode}")]
         public IActionResult ChangePassword(Guid accountId, Guid emailConfirmCode)
         {
             ViewBag.Error = false;
             return View("Change/Change");
         }
 
-        [HttpPost, Route("Change/{accountId}/{emailConfirmCode}")]
+        [HttpPost, Route("/ForgotPassword/Change/{accountId}/{emailConfirmCode}")]
         public async Task<IActionResult> ConfirmPasswordChanged(
             Guid accountId, Guid emailConfirmCode, string Password, string ConfirmPassword)
         {

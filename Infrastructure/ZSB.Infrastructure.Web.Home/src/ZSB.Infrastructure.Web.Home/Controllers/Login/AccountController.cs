@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
 {
-    [Route("Login/Account")]
     public class AccountController : Controller
     {
-        [HttpGet, Route("Create")]
+        [HttpGet, Route("/Register")]
         public async Task<IActionResult> RequestCreateAccount()
         {
             //Get the challenge for them
@@ -27,7 +26,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             return View("~/Views/Account/Create/Request");
         }
 
-        [HttpPost, Route("Create")]
+        [HttpPost, Route("/Register")]
         public async Task<IActionResult> ConfirmCreateAccount(
             string EmailAddress, string Username, int ChallengeId, 
             string ChallengeQuestion, string ChallengeAnswer, 

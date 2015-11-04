@@ -8,7 +8,6 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/")]
     public class LoginController : Controller
     {
         private LoginDB ldb;
@@ -17,7 +16,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         {
             ldb = new LoginDB(ctx);
         }
-        [HttpPost, Route("login")]
+        [HttpPost, Route("/Login")]
         public async Task<ResponseModelBase> DoLogin([FromBody]LoginInfoRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -36,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             }
         }
 
-        [HttpPost, Route("logout")]
+        [HttpPost, Route("/Logout")]
         public async Task<ResponseModelBase> DoLogout([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)

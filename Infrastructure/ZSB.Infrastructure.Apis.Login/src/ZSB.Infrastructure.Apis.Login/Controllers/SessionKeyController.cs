@@ -9,7 +9,6 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/")]
     public class SessionKeyController : Controller
     {
         private LoginDB ldb;
@@ -17,7 +16,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
         {
             ldb = new LoginDB(ctx);
         }
-        [HttpPost, Route("validate/key")]
+        [HttpPost, Route("/Key/Validate")]
         public async Task<ResponseModelBase<bool>> ValidateSessionKey([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -29,7 +28,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //and tell the client that the session key is true
             return OkModel.Of(true);
         }
-        [HttpPost, Route("validate/key/info")]
+        [HttpPost, Route("/Key/Validate/Info")]
         public async Task<ResponseModelBase<UserInfoResponseModel>> ValidateSessionKeyWithInfo([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -42,7 +41,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             return OkModel.Of(new UserInfoResponseModel(session));
         }
 
-        [HttpPost, Route("refresh")]
+        [HttpPost, Route("/Key/Refresh")]
         public async Task<ResponseModelBase<bool>> RefreshSessionKey([FromBody]AuthenticatedRequestModel model)
         {
             if (!ModelState.IsValid)

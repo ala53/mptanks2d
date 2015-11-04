@@ -9,7 +9,6 @@ using ZSB.Infrastructure.Apis.Login.Models;
 
 namespace ZSB.Infrastructure.Apis.Login.Controllers
 {
-    [Route("/account")]
     public class ForgotPasswordController : Controller
     {
         private LoginDB ldb;
@@ -19,7 +18,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb = new LoginDB(dbContext);
         }
 
-        [HttpPost, Route("password/forgot/request")]
+        [HttpPost, Route("/Account/Password/Forgot/Request")]
         public async Task<ResponseModelBase> SendForgotPasswordMessage([FromBody]ForgotPasswordRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -36,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             return OkModel.Of("forgot_password_request_sent");
         }
 
-        [HttpPost, Route("password/forgot/change")]
+        [HttpPost, Route("/Account/Password/Forgot/Change")]
         public async Task<ResponseModelBase> ChangeForgottenPassword([FromBody]ForgotPasswordDoChangeModel model)
         {
             if (!ModelState.IsValid)

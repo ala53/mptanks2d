@@ -16372,7 +16372,8 @@
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta8",
       "Microsoft.AspNet.Mvc.ViewFeatures >= 6.0.0-beta8",
       "System.Net.Http >= 4.0.1-beta-23409",
-      "Newtonsoft.Json >= 7.0.1"
+      "Newtonsoft.Json >= 7.0.1",
+      "Microsoft.Framework.Caching.Memory >= 1.0.0-beta8"
     ],
     "DNX,Version=v4.5.1": [],
     "DNXCore,Version=v5.0": []

@@ -13,7 +13,6 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("/account")]
     public class AccountController : Controller
     {
         private LoginDB ldb;
@@ -22,7 +21,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb = new LoginDB(ctx);
         }
 
-        [HttpPost, Route("password/change")]
+        [HttpPost, Route("/Account/Password/Change")]
         public async Task<ResponseModelBase> ChangePassword([FromBody]ChangePasswordRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -54,13 +53,13 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             return OkModel.Of("password_changed");
         }
 
-        [HttpGet, Route("challenge/get")]
+        [HttpGet, Route("/Account/Challenge/Get")]
         public ResponseModelBase GetValidationTest()
         {
             return OkModel.Of(AccountTests.GetRandomQuestion());
         }
 
-        [HttpGet, Route("challenge/validate/{id}/{answer}")]
+        [HttpGet, Route("/Account/Challenge/Validate/{id}/{answer}")]
         public ResponseModelBase CheckValidationTest(int id, string answer)
         {
             if (AccountTests.ValidateChallenge(id, answer))
@@ -68,7 +67,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             else return ErrorModel.Of("validation_incorrect");
         }
 
-        [HttpPost, Route("register")]
+        [HttpPost, Route("/Account/Register")]
         public async Task<ResponseModelBase> CreateAccount([FromBody]CreateAccountRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -113,7 +112,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             return OkModel.Of("account_created");
         }
-        [HttpGet, Route("delete/confirm/{userId}/{confirmCode}")]
+        [HttpGet, Route("/Account/Delete/Confirm/{userId}/{confirmCode}")]
         public async Task<ResponseModelBase> DeleteAccount(Guid userId, Guid confirmCode)
         {
             var usr = await ldb.FindByUniqueId(userId, false);
@@ -127,7 +126,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             return OkModel.Of("account_deleted");
         }
-        [HttpPost, Route("delete/request")]
+        [HttpPost, Route("/Account/Delete/Request")]
         public async Task<ResponseModelBase> RequestDeleteAccount([FromBody]AuthenticatedRequestModel model)
         {
             try
