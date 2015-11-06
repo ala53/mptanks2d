@@ -8,8 +8,8 @@ using ZSB.Infrastructure.Apis.Account.Database.Contexts;
 namespace ZSB.Infrastructure.Apis.Login.Migrations
 {
     [DbContext(typeof(LoginDatabaseContext))]
-    [Migration("20151105181447_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20151106024401_RemoveProductAndEditionNames")]
+    partial class RemoveProductAndEditionNames
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,26 +68,19 @@ namespace ZSB.Infrastructure.Apis.Login.Migrations
                 {
                     b.Property<string>("ProductKey");
 
-                    b.Property<string>("DisplayName");
-
                     b.Property<Guid>("EditionId");
-
-                    b.Property<string>("EditionName");
 
                     b.Property<Guid?>("OwnerUniqueId");
 
                     b.Property<Guid>("ProductId");
 
-                    b.Property<string>("ProductName");
-
                     b.Property<DateTime>("RedemptionDate");
 
                     b.HasKey("ProductKey");
 
-                    b.HasAlternateKey("EditionId");
+                    b.Index("EditionId");
 
-
-                    b.HasAlternateKey("ProductId");
+                    b.Index("ProductId");
 
                     b.Index("ProductKey");
                 });

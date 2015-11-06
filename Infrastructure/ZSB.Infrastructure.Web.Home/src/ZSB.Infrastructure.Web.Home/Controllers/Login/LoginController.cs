@@ -11,17 +11,58 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
         [HttpGet, Route("/Login")]
         public IActionResult Login()
         {
+            ViewBag.Error = false;
+            ViewBag.EmailAddress = "";
             return View("Login");
         }
         [HttpPost, Route("/Login")]
-        public IActionResult DoLogin()
+        public async Task<IActionResult> DoLogin(string EmailAddress, string Password)
         {
-            return View("Login");
+            ViewBag.Error = false;
+            if (EmailAddress == null || EmailAddress == "" || Password == "" || Password == null)
+            {
+                ViewBag.EmailAddress = EmailAddress;
+                ViewBag.Error = true;
+                ViewBag.Message = Rest.ResponseHelper.Get("empty_field");
+                return View("Login");
+            }
+
+            //do rest request
+            var response = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "login", new
+            {
+                EmailAddress = EmailAddress,
+                Password = Password
+            });
+
+            if (response.Error)
+            {
+                ViewBag.Error = true;
+                ViewBag.EmailAddress = EmailAddress;
+                ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                return View("Login");
+            }
+
+            Response.Cookies.Append("__ZSB_login_sessionKey__", response.Data.sessionKey.ToString(),
+                new Microsoft.AspNet.Http.CookieOptions
+                {
+                    HttpOnly = false,
+                    Expires = DateTime.UtcNow.AddDays(14)
+                });
+
+            ViewBag.RedirectTo = "/";
+            return View("LoginRedirect");
         }
         [HttpGet, Route("/Logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            return View("Logout");
+            Response.Cookies.Delete("__ZSB_login_sessionKey__");
+            var response = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "logout",
+                 new { SessionKey = Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault() });
+
+            LoginChecker.MarkInvalid(Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault());
+            ViewBag.IsLoggingOut = true;
+            ViewBag.RedirectTo = "/";
+            return View("LoginRedirect");
         }
     }
 }

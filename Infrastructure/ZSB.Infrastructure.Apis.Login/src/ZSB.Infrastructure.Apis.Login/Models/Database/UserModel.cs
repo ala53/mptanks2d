@@ -133,6 +133,9 @@ namespace ZSB.Infrastructure.Apis.Account.Models
         public UserModel With(Database.Contexts.LoginDatabaseContext ldb)
         {
             DBContext = ldb;
+            _backingTokens = null;
+            _backingSessions = null;
+            _backingProducts = null;
             return this;
         }
     }

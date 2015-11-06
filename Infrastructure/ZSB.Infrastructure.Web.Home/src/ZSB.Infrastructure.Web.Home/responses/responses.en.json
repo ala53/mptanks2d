@@ -25,5 +25,6 @@
   "username_invalid": "The username entered is invalid. It must be at least 5 letters and include only a-z, 0-9, space, underscore, and hyphen.",
   "username_or_password_incorrect": "An incorrect username or password was entered.",
   "validation_incorrect": "The answer you entered for the validation question is incorrect :/.",
+  "empty_field": "A required field has been left blank.",
   "forgot_password_request_sent": "A \"forgot my password\" link has been sent to your email account. Click that and you'll be on your way in no time!"
 }

@@ -57,9 +57,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             user.OwnedProducts.Add(new UserOwnedProductModel
             {
                 EditionId = obj.EditionId,
-                EditionName = obj.EditionName,
                 ProductId = obj.ProductId,
-                ProductName = obj.ProductName,
                 ProductKey = obj.Key,
                 RedemptionDate = DateTime.UtcNow
             });
@@ -141,7 +139,6 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
 
             //Transform it into a gift object
             productObject.EditionId = new Guid("e6c94547-355b-4d39-a5f0-513a3cc3b807");
-            productObject.EditionName = "ZSB Gifted Key";
 
             user.UniqueConfirmationCode = Guid.NewGuid();
             await ldb.UpdateUser(user);

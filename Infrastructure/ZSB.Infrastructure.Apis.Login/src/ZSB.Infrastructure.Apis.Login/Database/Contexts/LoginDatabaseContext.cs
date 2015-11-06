@@ -66,9 +66,9 @@ namespace ZSB.Infrastructure.Apis.Account.Database.Contexts
             modelBuilder.Entity<Models.UserOwnedProductModel>()
                 .HasKey(a => a.ProductKey);
             modelBuilder.Entity<Models.UserOwnedProductModel>()
-                .HasAlternateKey(a => a.ProductId);
+                .Index(a => a.ProductId);
             modelBuilder.Entity<Models.UserOwnedProductModel>()
-                .HasAlternateKey(a => a.EditionId);
+                .Index(a => a.EditionId);
 
             base.OnModelCreating(modelBuilder);
         }

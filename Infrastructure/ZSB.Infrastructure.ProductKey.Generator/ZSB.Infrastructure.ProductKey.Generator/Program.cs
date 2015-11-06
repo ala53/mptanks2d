@@ -12,22 +12,101 @@ namespace ZSB.Infrastructure.ProductKey.Generator
 {
     class Program
     {
+        static string storageKey = File.ReadAllText("CloudStorageKey.txt");
         static void Main(string[] args)
+        {
+            if (args.Length == 0)
+            { Help(); return; }
+
+            if (args[0] == "generate")
+                Generate(args);
+            else if (args[0] == "unredeem")
+                Unredeem(args);
+            else Help();
+
+            Console.WriteLine("Press any key to exit");
+            Console.Read();
+        }
+
+        public static void Help()
+        {
+            Console.WriteLine("ZSB Product Key Helper");
+            Console.WriteLine("Help...");
+            Console.WriteLine("Available Options:");
+            Console.WriteLine("\tunredeem KEY-CODE-GOES-HERE - Marks a key code as free and able to be used.");
+            Console.WriteLine("\thelp - Show this menu");
+            Console.WriteLine("\tgenerate <Count> <Allowed Characters> <Key Prefix> <Product Name> <Product GUID> <Edition Name> <Edition GUID>");
+            Console.WriteLine("\t\tE.g. generate 5 ABCDFGH MPTK \"MP Tanks 2D\" guid-here \"1337 Edition\" guid-here");
+        }
+
+        public static void Unredeem(string[] args)
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Missing <key> argument!");
+                return;
+            }
+
+            string key = args[1].ToUpper().Replace("-", "");
+            string partition = key.Substring(0, 4); //must be 4 char
+            Console.WriteLine("Unredeeming key (marking available) " + key + ". Press any key to continue or CTRL+C to exit.");
+
+            CloudStorageAccount account = CloudStorageAccount.Parse(storageKey);
+
+            var client = account.CreateCloudTableClient();
+            var table = client.GetTableReference("ZSBProductKeys");
+            table.CreateIfNotExists();
+
+            var result = table.Execute(TableOperation.Retrieve<ProductKeyStorageModel>(partition, key));
+
+            if (result.HttpStatusCode != 200)
+            {
+                Console.WriteLine("An error occurred:");
+                Console.WriteLine(result.Result);
+                return;
+            }
+
+            var obj = (ProductKeyStorageModel)result.Result;
+
+            obj.HasBeenRedeemed = false;
+            obj.RedeemerAccountEmailAddress = "";
+            obj.RedeemerAccountId = Guid.Empty;
+
+            table.Execute(TableOperation.Merge(obj));
+
+            Console.WriteLine($"Key {key} unredeemed. It is now available for use.");
+
+        }
+
+        public static void Generate(string[] args)
         {
             string allowedCharacters, keyPrefix, productName, productId, editionName, editionId, displayName;
 
-            allowedCharacters = "ABCDFGHJKLMNPQRSTVWXYZ0123456789";
-            keyPrefix = "MPPA";
-            productName = "MP Tanks 2D Premium Addon";
-            productId = "a8e46236-ce79-4480-aeed-28faec2bc0b8";
-            editionName = "ZSB Gift";
-            editionId = "e6c94547-355b-4d39-a5f0-513a3cc3b807";
-            displayName = "MP Tanks 2D Premium Addon (Gifted by ZSB)";
+            if (args.Length < 8)
+            {
+                Console.WriteLine("Missing arguments!");
+                return;
+            }
 
-            int keyCount = 1000;
+            int keyCount = int.Parse(args[1]);
+            allowedCharacters = args[2];
+            keyPrefix = args[3];
+            productName = args[4];
+            productId = args[5];
+            editionName = args[6];
+            editionId = args[7];
+            displayName = productName + " (" + editionName + ")";
 
-            CloudStorageAccount account = CloudStorageAccount.Parse(
-                "DefaultEndpointsProtocol=https;AccountName=zsbstorage;AccountKey=Szr83kIE2xgO+5hbH9j2Z5HK17q62TM6l+NhTLfOfCwbi8Cj1OQgNutteUpr9uc6Ggm6Bya/3o1V1GWIJ9hyAA==;BlobEndpoint=https://zsbstorage.blob.core.windows.net/;TableEndpoint=https://zsbstorage.table.core.windows.net/;QueueEndpoint=https://zsbstorage.queue.core.windows.net/;FileEndpoint=https://zsbstorage.file.core.windows.net/");
+            if (keyPrefix.Length != 4)
+            {
+                Console.WriteLine("KeyPrefix MUST be 4 characters long");
+                return;
+            }
+
+            Console.WriteLine($"Generating {keyCount} keys. Press enter to continue or press CTRL+C to cancel.");
+            Console.Read();
+
+            CloudStorageAccount account = CloudStorageAccount.Parse(storageKey);
 
             var client = account.CreateCloudTableClient();
             var table = client.GetTableReference("ZSBProductKeys");
@@ -38,7 +117,7 @@ namespace ZSB.Infrastructure.ProductKey.Generator
                 File.AppendAllText(filename,
                     "Unique Key, Created, Key Prefix, Display Name, Product Name, Product ID, Product Edition Name, Product Edition ID, Key Allowed Characters");
 
-            var tsk = new List<Task>();
+            Console.WriteLine("Key list saved to " + filename);
 
             int done = 0;
             for (var i = 1; i <= keyCount / 100; i++)
@@ -85,9 +164,6 @@ namespace ZSB.Infrastructure.ProductKey.Generator
                 done += 100;
                 Console.WriteLine($"{done}/{keyCount} done");
             }
-
-            Task.WaitAll(tsk.ToArray());
-            Console.Read();
         }
     }
 }

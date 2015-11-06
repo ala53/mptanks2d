@@ -8,9 +8,10 @@ using ZSB.Infrastructure.Apis.Account.Database.Contexts;
 namespace ZSB.Infrastructure.Apis.Login.Migrations
 {
     [DbContext(typeof(LoginDatabaseContext))]
-    partial class LoginDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20151106022635_FixIndexingForEditionAndProductIds")]
+    partial class FixIndexingForEditionAndProductIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Annotation("ProductVersion", "7.0.0-beta8-15964")
@@ -69,9 +70,13 @@ namespace ZSB.Infrastructure.Apis.Login.Migrations
 
                     b.Property<Guid>("EditionId");
 
+                    b.Property<string>("EditionName");
+
                     b.Property<Guid?>("OwnerUniqueId");
 
                     b.Property<Guid>("ProductId");
+
+                    b.Property<string>("ProductName");
 
                     b.Property<DateTime>("RedemptionDate");
 

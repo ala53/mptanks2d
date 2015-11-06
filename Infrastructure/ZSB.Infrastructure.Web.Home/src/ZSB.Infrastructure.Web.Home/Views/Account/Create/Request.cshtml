@@ -10,28 +10,28 @@
 <div class="col-md-6 col-md-offset-3">
     <form class="form-inline" method="post">
         <div class="input-group" style="width:100%">
-            <span class="input-group-addon" id="basic-addon1">Email address</span>
+            <span class="input-group-addon">Email address</span>
             <input class="form-control" style="min-width:100%" type="email" name="EmailAddress" placeholder="E.g. my_name@domain.com" value="@ViewBag.EmailAddress" />
         </div>
         <br />
         <div class="input-group" style="width:100%">
-            <span class="input-group-addon" id="basic-addon1">Username</span>
+            <span class="input-group-addon">Username</span>
             <input class="form-control" style="min-width:100%" type="text" name="Username" placeholder="E.g. l337_master" value="@ViewBag.Username" />
         </div>
         <br />
         <div class="input-group" style="width:100%">
-            <span class="input-group-addon" id="basic-addon1">Password</span>
+            <span class="input-group-addon">Password</span>
             <input class="form-control" style="min-width:100%" type="password" name="Password" placeholder="Choose something secure" value="@ViewBag.Password" />
         </div>
         <br />
         <div class="input-group" style="width:100%">
-            <span class="input-group-addon" id="basic-addon1">Confirm it</span>
+            <span class="input-group-addon">Confirm it</span>
             <input class="form-control" style="min-width:100%" type="password" name="ConfirmPassword" placeholder="Just copy what you wrote before" value="@ViewBag.ConfirmPassword" />
         </div>
         <br />
         <input type="hidden" name="ChallengeId" value="@ViewBag.ChallengeId" />
         <div class="input-group" style="width:100%">
-            <span class="input-group-addon" id="basic-addon1">@ViewBag.ChallengeQuestion</span>
+            <span class="input-group-addon">@ViewBag.ChallengeQuestion</span>
             <input class="form-control" style="min-width:100%" type="text" name="ChallengeAnswer" placeholder="" />
         </div>
         <input type="hidden" name="ChallengeQuestion" value="@ViewBag.ChallengeQuestion" />
