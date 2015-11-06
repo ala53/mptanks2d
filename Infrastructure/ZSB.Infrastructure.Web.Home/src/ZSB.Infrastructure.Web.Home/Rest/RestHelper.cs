@@ -27,12 +27,12 @@ namespace ZSB.Infrastructure.Web.Home.Rest
             using (var resp = await new HttpClient().SendAsync(request))
             {
                 if (!resp.IsSuccessStatusCode)
-                    return null; //Not logged in / server error
+                    return new Model<T>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
 
                 var asObject =
                     JsonConvert.DeserializeObject<Model<T>>(
                     await resp.Content.ReadAsStringAsync());
-                
+
                 return asObject;
             }
 
@@ -47,12 +47,12 @@ namespace ZSB.Infrastructure.Web.Home.Rest
             using (var resp = await new HttpClient().SendAsync(request))
             {
                 if (!resp.IsSuccessStatusCode)
-                    return null; //Not logged in / server error
+                    return new Model<dynamic>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
 
                 var asObject =
                     JsonConvert.DeserializeObject<Model<dynamic>>(
                     await resp.Content.ReadAsStringAsync());
-                
+
                 return asObject;
             }
         }
@@ -65,12 +65,12 @@ namespace ZSB.Infrastructure.Web.Home.Rest
             using (var resp = await new HttpClient().SendAsync(request))
             {
                 if (!resp.IsSuccessStatusCode)
-                    return null; //Not logged in / server error
+                    return new Model<T>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
 
                 var asObject =
                     JsonConvert.DeserializeObject<Model<T>>(
                     await resp.Content.ReadAsStringAsync());
-                
+
                 return asObject;
             }
 
@@ -82,12 +82,12 @@ namespace ZSB.Infrastructure.Web.Home.Rest
             using (var resp = await new HttpClient().SendAsync(request))
             {
                 if (!resp.IsSuccessStatusCode)
-                    return null; //Not logged in / server error
+                    return new Model<dynamic>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
 
                 var asObject =
                     JsonConvert.DeserializeObject<Model<dynamic>>(
                     await resp.Content.ReadAsStringAsync());
-                
+
                 return asObject;
             }
 
