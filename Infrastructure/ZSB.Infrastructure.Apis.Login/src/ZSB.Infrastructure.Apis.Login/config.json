@@ -4,7 +4,8 @@
   },
   "Data": {
     "ConnectionString": "Server=tcp:zsb-login-sql.database.windows.net,1433;Database=zsb-login-db;User ID=zsb@zsb-login-sql;Password=Mustang1a!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
-    "SendGridAPIKey": "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"
+    "SendGridAPIKey": "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",
+    "TableStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=zsbstorage;AccountKey=Szr83kIE2xgO+5hbH9j2Z5HK17q62TM6l+NhTLfOfCwbi8Cj1OQgNutteUpr9uc6Ggm6Bya/3o1V1GWIJ9hyAA==;BlobEndpoint=https://zsbstorage.blob.core.windows.net/;TableEndpoint=https://zsbstorage.table.core.windows.net/;QueueEndpoint=https://zsbstorage.queue.core.windows.net/;FileEndpoint=https://zsbstorage.file.core.windows.net/"
   },
   "ApplicationInsights": {
     "InstrumentationKey": "82c9e031-8bff-4477-b8f2-e487905a2bea"

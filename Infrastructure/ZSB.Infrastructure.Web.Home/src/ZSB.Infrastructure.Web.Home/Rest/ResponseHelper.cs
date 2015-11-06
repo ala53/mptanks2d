@@ -13,6 +13,7 @@ namespace ZSB.Infrastructure.Web.Home.Rest
         private static Dictionary<string, JObject> _langs = new Dictionary<string, JObject>();
         public static string Get(string msg, string lang = "en")
         {
+            if (msg == null) msg = "unknown_error";
             if (!_langs.ContainsKey(lang))
                 Load(lang, lang);
 

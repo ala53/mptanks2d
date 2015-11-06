@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ZSB.Infrastructure.Apis.Login.Backend
+namespace ZSB.Infrastructure.Apis.Account.Backend
 {
     public static class AccountTests
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Entity;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Database
+namespace ZSB.Infrastructure.Apis.Account.Database
 {
     public class LoginDB
     {
@@ -18,20 +18,13 @@ namespace ZSB.Infrastructure.Apis.Login.Database
         public const int MaxActiveServerTokenCount = 25;
         public readonly TimeSpan LoginLength = TimeSpan.FromDays(15);
         #region Find users
-        internal async Task<UserModel> FindByEmailAddress(string email, bool deep)
+        internal async Task<UserModel> FindByEmailAddress(string email)
         {
             return await Task.Run(() =>
             {
-                if (deep)
-                    return DBContext.Users
-                        .Include(a => a.ActiveSessions)
-                        .Include(a => a.ActiveServerTokens)
-                        .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
-                else
-                    return DBContext.Users
-                        .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
+                return DBContext.Users
+                    .Where(a => a.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault()?.With(DBContext);
             });
         }
 
@@ -48,36 +41,22 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             return sess.Owner;
         }
 
-        internal async Task<UserModel> FindByUniqueId(Guid uid, bool deep)
+        internal async Task<UserModel> FindByUniqueId(Guid uid)
         {
             return await Task.Run(() =>
             {
-                if (deep)
-                    return DBContext.Users
-                        .Include(a => a.ActiveSessions)
-                        .Include(a => a.ActiveServerTokens)
-                        .Where(a => a.UniqueId == uid)
-                        .FirstOrDefault();
-                else
-                    return DBContext.Users
-                        .Where(a => a.UniqueId == uid)
-                        .FirstOrDefault();
+                return DBContext.Users
+                    .Where(a => a.UniqueId == uid)
+                    .FirstOrDefault()?.With(DBContext);
             });
         }
-        internal async Task<UserModel> FindByUsername(string username, bool deep)
+        internal async Task<UserModel> FindByUsername(string username)
         {
             return await Task.Run(() =>
             {
-                if (deep)
-                    return DBContext.Users
-                        .Include(a => a.ActiveSessions)
-                        .Include(a => a.ActiveServerTokens)
-                        .Where(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
-                else
-                    return DBContext.Users
-                        .Where(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
-                        .FirstOrDefault();
+                return DBContext.Users
+                    .Where(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault()?.With(DBContext);
             });
         }
         #endregion
@@ -99,9 +78,9 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
         internal async Task DeleteUser(UserModel user)
         {
-            foreach (var sess in (await FindByUniqueId(user.UniqueId, true)).ActiveSessions)
+            foreach (var sess in (await FindByUniqueId(user.UniqueId)).ActiveSessions)
                 DBContext.Sessions.Remove(sess);
-            foreach (var tkn in (await FindByUniqueId(user.UniqueId, true)).ActiveServerTokens)
+            foreach (var tkn in (await FindByUniqueId(user.UniqueId)).ActiveServerTokens)
                 DBContext.ServerTokens.Remove(tkn);
 
             await Save();
@@ -127,17 +106,16 @@ namespace ZSB.Infrastructure.Apis.Login.Database
         }
         internal async Task<bool> ValidateAccount(string email, string password)
         {
-            var usr = await FindByEmailAddress(email, false);
-            return usr == null ? false : await
-                Diagnostic.Log(async () => await Task.Run(() => Backend.PasswordHasher.CompareHash(password, usr.PasswordHashes)));
+            var usr = await FindByEmailAddress(email);
+            return usr == null ? false : await Task.Run(() => Backend.PasswordHasher.CompareHash(password, usr.PasswordHashes));
         }
 
         internal async Task<UserActiveSessionModel> DoLogin(string email, string password)
         {
-            if (!await Diagnostic.Log(ValidateAccount, email, password)) //Hot Spot : hash generation is too slow
+            if (!await ValidateAccount(email, password)) //Hot Spot : hash generation is too slow
                 throw new ArgumentException("username_or_password_incorrect");
 
-            var usr = await Diagnostic.Log(FindByEmailAddress, email, true);
+            var usr = await FindByEmailAddress(email);
             if (!usr.IsEmailConfirmed)
                 throw new ArgumentException("email_not_confirmed");
             //Clean up all of the sessions that have expired
@@ -153,9 +131,9 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
             //And create the login key
             var sess = new UserActiveSessionModel(LoginLength);
-            Diagnostic.LogSync(usr.AddSession, sess);
-            Diagnostic.LogSync(s => DBContext.Sessions.Add(s), sess);
-            await Diagnostic.Log(Save);
+            usr.AddSession(sess);
+            DBContext.Sessions.Add(sess);
+            await Save();
             return sess;
         }
 
@@ -164,6 +142,8 @@ namespace ZSB.Infrastructure.Apis.Login.Database
             var sk = DBContext.Sessions.Include(a => a.Owner)
                 .Where(a => a.SessionKey == sessionKey)
                 .FirstOrDefault();
+
+            sk?.Owner?.With(DBContext);
 
             if (sk == null) return null;
 
@@ -187,9 +167,13 @@ namespace ZSB.Infrastructure.Apis.Login.Database
 
         internal async Task<UserServerTokenModel> ValidateServerToken(string token)
         {
-            return await Task.Run(() => DBContext.ServerTokens
+            var tkn = await Task.Run(() => DBContext.ServerTokens
+                .Include(a => a.Owner)
                 .Where(a => a.ServerToken == token)
                 .FirstOrDefault());
+
+            tkn?.Owner?.With(DBContext);
+            return tkn;
         }
 
         internal async Task Save()

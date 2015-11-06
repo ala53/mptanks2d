@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Database.Contexts;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Database.Contexts;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class SessionKeyController : Controller
     {
@@ -24,9 +24,9 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             var session = await ldb.FindBySessionKey(model.SessionKey);
             if (session == null)
-                return OkModel.Of(false);
+                return Models.OkModel.Of(false);
             //and tell the client that the session key is true
-            return OkModel.Of(true);
+            return Models.OkModel.Of(true);
         }
         [HttpPost, Route("/Key/Validate/Info")]
         public async Task<ResponseModelBase<UserInfoResponseModel>> ValidateSessionKeyWithInfo([FromBody]AuthenticatedRequestModel model)
@@ -36,9 +36,9 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             var session = await ldb.FindBySessionKey(model.SessionKey);
             if (session == null) 
-                return OkModel.Of<UserInfoResponseModel>(null);
+                return Models.OkModel.Of<UserInfoResponseModel>(null);
             //and tell the client that the session key is true
-            return OkModel.Of(new UserInfoResponseModel(session));
+            return Models.OkModel.Of(new UserInfoResponseModel(session));
         }
 
         [HttpPost, Route("/Key/Refresh")]
@@ -54,7 +54,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             await Task.Run(() => ldb.DBContext.Sessions.Update(session));
             await ldb.Save();
 
-            return OkModel.Of(true);
+            return Models.OkModel.Of(true);
         }
     }
 }

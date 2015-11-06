@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace ZSB.Infrastructure.Apis.Login
+namespace ZSB.Infrastructure.Apis.Account
 {
     public class Diagnostic
     {

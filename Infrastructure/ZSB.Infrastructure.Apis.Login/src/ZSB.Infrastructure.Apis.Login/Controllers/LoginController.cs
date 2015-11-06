@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class LoginController : Controller
     {
@@ -24,10 +24,10 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             try
             {
-                var resp = await Diagnostic.Log(ldb.DoLogin, model.EmailAddress, model.Password);
+                var resp = await ldb.DoLogin(model.EmailAddress, model.Password);
                 if (resp == null)
                     return ErrorModel.Of("unknown_error");
-                return OkModel.Of(new UserSessionResponseModel(resp), "logged_in");
+                return Models.OkModel.Of(new UserSessionResponseModel(resp), "logged_in");
             }
             catch (ArgumentException e)
             {
@@ -46,7 +46,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("not_logged_in");
             await ldb.RemoveSession(session);
 
-            return OkModel.Of("logged_out");
+            return Models.OkModel.Of("logged_out");
         }
     }
 }

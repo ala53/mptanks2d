@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Database.Contexts;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Database.Contexts;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class ServerTokenController : Controller
     {
@@ -35,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             await ldb.UpdateUser(session.Owner);
 
-            return OkModel.Of(new UserServerTokenResponseModel(token));
+            return Models.OkModel.Of(new UserServerTokenResponseModel(token));
         }
 
         [HttpPost, Route("/Token/Validate")]
@@ -66,7 +66,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             ldb.DBContext.ServerTokens.Remove(token);
 
             await ldb.Save();
-            return OkModel.Of(resp);
+            return Models.OkModel.Of(resp);
         }
     }
 }

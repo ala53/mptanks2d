@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Database.Contexts;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Database.Contexts;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class EmailController : Controller
     {
@@ -34,10 +34,10 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             Task.WaitAll(
                 ldb.UpdateUser(usr),
-                Backend.EmailSender.SendRegistrationEmail(usr)
+                Backend.EmailSender.SendEmail(usr, Backend.EmailSender.RegistrationTemplate)
             );
 
-            return OkModel.Of("email_address_changed");
+            return Models.OkModel.Of("email_address_changed");
         }
 
         [HttpPost, Route("/Email/Resend")]
@@ -48,20 +48,20 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             UserModel usr;
 
-            if ((usr = await ldb.FindByEmailAddress(model.EmailAddress, false)) == null)
+            if ((usr = await ldb.FindByEmailAddress(model.EmailAddress)) == null)
                 return ErrorModel.Of("user_not_found");
 
             await ldb.ChangeConfirmCode(usr);
 
-            await Backend.EmailSender.SendRegistrationEmail(usr);
+            await Backend.EmailSender.SendEmail(usr, Backend.EmailSender.RegistrationTemplate);
 
-            return OkModel.Of("email_confirmation_code_resent");
+            return Models.OkModel.Of("email_confirmation_code_resent");
         }
 
         [HttpGet, Route("/Email/Confirm/{accountId}/{confirmCode}")]
         public async Task<ResponseModelBase> ConfirmAccount(Guid accountId, Guid confirmCode)
         {
-            var account = await ldb.FindByUniqueId(accountId, false);
+            var account = await ldb.FindByUniqueId(accountId);
             if (account == null)
                 return ErrorModel.Of("user_not_found");
 
@@ -77,12 +77,12 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             await ldb.UpdateUser(account);
 
-            return OkModel.Of("email_confirmed");
+            return Models.OkModel.Of("email_confirmed");
         }
         [HttpGet, Route("/Email/Disavow/{accountId}/{confirmCode}")]
         public async Task<ResponseModelBase> DisavowAccount(Guid accountId, Guid confirmCode)
         {
-            var account = await ldb.FindByUniqueId(accountId, false);
+            var account = await ldb.FindByUniqueId(accountId);
             //Delete the account
             if (account == null)
                 return ErrorModel.Of("user_not_found");
@@ -96,7 +96,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //Delete the account: they disavowed it
             await ldb.DeleteUser(account);
 
-            return OkModel.Of("account_deleted");
+            return Models.OkModel.Of("account_deleted");
         }
     }
 }

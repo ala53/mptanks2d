@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Backend;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Backend;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class ForgotPasswordController : Controller
     {
@@ -25,18 +25,18 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("invalid_request");
 
             //Find them
-            var user = await ldb.FindByEmailAddress(model.EmailAddress, true);
+            var user = await ldb.FindByEmailAddress(model.EmailAddress);
 
             if (user == null)
                 return ErrorModel.Of("user_not_found");
 
-            await EmailSender.SendForgotPasswordEmail(user);
+            await EmailSender.SendEmail(user, EmailSender.ForgotPasswordTemplate);
 
-            return OkModel.Of("forgot_password_request_sent");
+            return Models.OkModel.Of("forgot_password_request_sent");
         }
 
         [HttpPost, Route("/Account/Password/Forgot/Change")]
-        public async Task<ResponseModelBase> ChangeForgottenPassword([FromBody]ForgotPasswordDoChangeModel model)
+        public async Task<ResponseModelBase> ChangeForgottenPassword([FromBody]ForgotPasswordDoChangeRequestModel model)
         {
             if (!ModelState.IsValid)
                 return ErrorModel.Of("invalid_request");
@@ -45,7 +45,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("password_too_short");
             
             //Change their password
-            var user = await ldb.FindByUniqueId(model.UserId, true);
+            var user = await ldb.FindByUniqueId(model.UserId);
             //validate user
             if (user == null)
                 return ErrorModel.Of("user_not_found");
@@ -64,7 +64,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //And save
             await ldb.UpdateUser(user);
 
-            return OkModel.Of("password_changed");
+            return Models.OkModel.Of("password_changed");
         }
     }
 }

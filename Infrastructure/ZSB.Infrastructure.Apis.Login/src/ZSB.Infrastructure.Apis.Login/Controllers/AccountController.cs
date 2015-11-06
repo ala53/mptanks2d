@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Backend;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Backend;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     /// <summary>
     /// 
@@ -36,7 +36,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("password_too_short");
 
             //Change their password
-            var user = await ldb.FindByEmailAddress(model.EmailAddress, false);
+            var user = await ldb.FindByEmailAddress(model.EmailAddress);
 
             if (user == null)
                 return ErrorModel.Of("user_not_found");
@@ -50,20 +50,20 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             user.ActiveServerTokens.Clear();
             //Update
             await ldb.UpdateUser(user);
-            return OkModel.Of("password_changed");
+            return Models.OkModel.Of("password_changed");
         }
 
         [HttpGet, Route("/Account/Challenge/Get")]
         public ResponseModelBase GetValidationTest()
         {
-            return OkModel.Of(AccountTests.GetRandomQuestion());
+            return Models.OkModel.Of(AccountTests.GetRandomQuestion());
         }
 
         [HttpGet, Route("/Account/Challenge/Validate/{id}/{answer}")]
         public ResponseModelBase CheckValidationTest(int id, string answer)
         {
             if (AccountTests.ValidateChallenge(id, answer))
-                return OkModel.Empty;
+                return Models.OkModel.Empty;
             else return ErrorModel.Of("validation_incorrect");
         }
 
@@ -85,10 +85,10 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
             //And validate the email address
             if (!EmailAddressVerifier.IsValidEmail(model.EmailAddress)) //valid address
                 return ErrorModel.Of("email_invalid");
-            if (await ldb.FindByEmailAddress(model.EmailAddress, false) != null) //in use
+            if (await ldb.FindByEmailAddress(model.EmailAddress) != null) //in use
                 return ErrorModel.Of("email_in_use");
             //Username
-            if (await ldb.FindByUsername(model.Username, false) != null) //also in use
+            if (await ldb.FindByUsername(model.Username) != null) //also in use
                 return ErrorModel.Of("username_in_use");
             if (um.Username.Length < 5)
                 return ErrorModel.Of("username_invalid");
@@ -106,16 +106,16 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 return ErrorModel.Of("validation_incorrect");
 
             //Send the registration email
-            await EmailSender.SendRegistrationEmail(um);
+            await EmailSender.SendEmail(um, EmailSender.RegistrationTemplate);
             //Save user in the DB
             await ldb.AddUser(um);
 
-            return OkModel.Of("account_created");
+            return Models.OkModel.Of("account_created");
         }
         [HttpGet, Route("/Account/Delete/Confirm/{userId}/{confirmCode}")]
         public async Task<ResponseModelBase> DeleteAccount(Guid userId, Guid confirmCode)
         {
-            var usr = await ldb.FindByUniqueId(userId, false);
+            var usr = await ldb.FindByUniqueId(userId);
             if (usr == null)
                 return ErrorModel.Of("user_not_found");
 
@@ -124,7 +124,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
 
             await ldb.DeleteUser(usr);
 
-            return OkModel.Of("account_deleted");
+            return Models.OkModel.Of("account_deleted");
         }
         [HttpPost, Route("/Account/Delete/Request")]
         public async Task<ResponseModelBase> RequestDeleteAccount([FromBody]AuthenticatedRequestModel model)
@@ -134,8 +134,8 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 if (!await ldb.Validate(model))
                     return ErrorModel.Of("not_logged_in");
 
-                await EmailSender.SendDeletionEmail(await ldb.FindBySessionKey(model.SessionKey));
-                return OkModel.Of("delete_confirmation_email_sent");
+                await EmailSender.SendEmail(await ldb.FindBySessionKey(model.SessionKey), EmailSender.DeletionTemplate);
+                return Models.OkModel.Of("delete_confirmation_email_sent");
             }
             catch (Exception e)
             {

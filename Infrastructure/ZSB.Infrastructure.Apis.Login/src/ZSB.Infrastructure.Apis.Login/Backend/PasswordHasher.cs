@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZSB.Infrastructure.Apis.Login.Backend
+namespace ZSB.Infrastructure.Apis.Account.Backend
 {
     public class PasswordHasher
     {  // The following constants may be changed without breaking existing hashes.

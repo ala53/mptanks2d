@@ -13,12 +13,12 @@ using Microsoft.Framework.Configuration;
 using Microsoft.Dnx.Runtime;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNet.Diagnostics;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Models;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 
-namespace ZSB.Infrastructure.Apis.Login
+namespace ZSB.Infrastructure.Apis.Account
 {
     public class Startup
     {

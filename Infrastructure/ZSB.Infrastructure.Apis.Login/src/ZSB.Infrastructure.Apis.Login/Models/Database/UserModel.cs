@@ -8,10 +8,11 @@ using Newtonsoft.Json;
 using System.Xml.Serialization;
 using System.Collections.ObjectModel;
 
-namespace ZSB.Infrastructure.Apis.Login.Models
+namespace ZSB.Infrastructure.Apis.Account.Models
 {
     public class UserModel
     {
+        internal Database.Contexts.LoginDatabaseContext DBContext { get; set; }
         public DateTime AccountCreationDate { get; set; }
         public string EmailAddress { get; set; }
         public string Username { get; set; }
@@ -20,7 +21,6 @@ namespace ZSB.Infrastructure.Apis.Login.Models
         public bool IsEmailConfirmed { get; set; }
         public Guid UniqueConfirmationCode { get; set; }
         #endregion
-        public bool IsPremiumAccount { get; set; }
         /// <summary>
         /// Keeps several hashes
         /// If the word is "password"
@@ -53,7 +53,10 @@ namespace ZSB.Infrastructure.Apis.Login.Models
         {
             get
             {
-                return _backingSessions ?? (_backingSessions = new List<UserActiveSessionModel>());
+                return _backingSessions ?? (_backingSessions =
+                    DBContext?.Sessions?.Where(
+                        a => a.Owner.UniqueId == UniqueId)?.ToList() ??
+                    new List<UserActiveSessionModel>());
             }
             set
             {
@@ -65,30 +68,72 @@ namespace ZSB.Infrastructure.Apis.Login.Models
         {
             get
             {
-                return _backingTokens ?? (_backingTokens = new List<UserServerTokenModel>());
+                return _backingTokens ?? (_backingTokens =
+                    DBContext?.ServerTokens?.Where(a => a.Owner.UniqueId == UniqueId)?.ToList() ??
+                    new List<UserServerTokenModel>());
             }
             set { _backingTokens = value; }
         }
+        private List<UserOwnedProductModel> _backingProducts;
+        public virtual List<UserOwnedProductModel> OwnedProducts
+        {
+            get
+            {
+                return _backingProducts ?? (_backingProducts =
+                    DBContext?.OwnedProducts?.Where(a => a.Owner.UniqueId == UniqueId)?.ToList() ??
+                    new List<UserOwnedProductModel>());
+            }
+            set { _backingProducts = value; }
+        }
         public Guid UniqueId { get; set; }
 
-        public void AddSession(UserActiveSessionModel mdl)
+        public virtual void AddSession(UserActiveSessionModel mdl)
         {
             mdl.Owner = this;
             ActiveSessions.Add(mdl);
+            if (DBContext != null)
+                DBContext.Sessions.Add(mdl);
+
         }
-        public void RemoveSession(UserActiveSessionModel mdl)
+        public virtual void RemoveSession(UserActiveSessionModel mdl)
         {
             ActiveSessions.Remove(mdl);
+            if (DBContext != null)
+                DBContext.Sessions.Remove(mdl);
         }
 
-        public void AddToken(UserServerTokenModel mdl)
+        public virtual void AddToken(UserServerTokenModel mdl)
         {
             mdl.Owner = this;
             ActiveServerTokens.Add(mdl);
+            if (DBContext != null)
+                DBContext.ServerTokens.Add(mdl);
         }
-        public void RemoveToken(UserServerTokenModel mdl)
+        public virtual void RemoveToken(UserServerTokenModel mdl)
         {
             ActiveServerTokens.Remove(mdl);
+            if (DBContext != null)
+                DBContext.ServerTokens.Remove(mdl);
+        }
+
+        public virtual void AddProduct(UserOwnedProductModel mdl)
+        {
+            mdl.Owner = this;
+            OwnedProducts.Add(mdl);
+            if (DBContext != null)
+                DBContext.OwnedProducts.Add(mdl);
+        }
+        public virtual void RemoveProduct(UserOwnedProductModel mdl)
+        {
+            OwnedProducts.Remove(mdl);
+            if (DBContext != null)
+                DBContext.OwnedProducts.Remove(mdl);
+        }
+
+        public UserModel With(Database.Contexts.LoginDatabaseContext ldb)
+        {
+            DBContext = ldb;
+            return this;
         }
     }
 }

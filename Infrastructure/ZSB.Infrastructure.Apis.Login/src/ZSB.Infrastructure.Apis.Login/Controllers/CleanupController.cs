@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ZSB.Infrastructure.Apis.Login.Database;
-using ZSB.Infrastructure.Apis.Login.Database.Contexts;
-using ZSB.Infrastructure.Apis.Login.Models;
+using ZSB.Infrastructure.Apis.Account.Database;
+using ZSB.Infrastructure.Apis.Account.Database.Contexts;
+using ZSB.Infrastructure.Apis.Account.Models;
 
-namespace ZSB.Infrastructure.Apis.Login.Controllers
+namespace ZSB.Infrastructure.Apis.Account.Controllers
 {
     public class CleanupController : Controller
     {
@@ -54,7 +54,7 @@ namespace ZSB.Infrastructure.Apis.Login.Controllers
                 oldUsers.ForEach(async a => await ldb.DeleteUser(a));
                 await ldb.Save();
 
-                return OkModel.Of($"{tknCt} tokens removed, {sessCt} sessions removed, {usrCt} users removed");
+                return Models.OkModel.Of($"{tknCt} tokens removed, {sessCt} sessions removed, {usrCt} users removed");
             }
             catch (Exception e)
             {

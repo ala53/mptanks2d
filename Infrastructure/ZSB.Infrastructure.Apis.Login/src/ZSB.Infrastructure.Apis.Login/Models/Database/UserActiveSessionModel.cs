@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace ZSB.Infrastructure.Apis.Login.Models
+namespace ZSB.Infrastructure.Apis.Account.Models
 {
     public class UserActiveSessionModel
     {

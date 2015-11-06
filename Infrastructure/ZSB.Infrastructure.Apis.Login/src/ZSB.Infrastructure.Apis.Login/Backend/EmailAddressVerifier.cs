@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ZSB.Infrastructure.Apis.Login.Backend
+namespace ZSB.Infrastructure.Apis.Account.Backend
 {
     public class EmailAddressVerifier
     {
