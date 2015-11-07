@@ -33,9 +33,11 @@ namespace ZSB.Infrastructure.Apis.Account.Database.Contexts
                 .Property(a => a.UniqueConfirmationCode)
                 .IsRequired().ValueGeneratedOnAdd();
             modelBuilder.Entity<Models.UserModel>()
-                .HasAlternateKey(a => a.EmailAddress);
+                .Index(a => a.EmailAddress)
+                .Unique();
             modelBuilder.Entity<Models.UserModel>()
-                .HasAlternateKey(a => a.Username);
+                .Index(a => a.Username)
+                .Unique();
             modelBuilder.Entity<Models.UserModel>()
                 .HasKey(a => a.UniqueId);
             modelBuilder.Entity<Models.UserModel>()

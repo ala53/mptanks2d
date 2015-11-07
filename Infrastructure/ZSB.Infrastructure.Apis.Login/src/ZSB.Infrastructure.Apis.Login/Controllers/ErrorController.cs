@@ -10,9 +10,9 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
     public class ErrorController : Controller
     {
         [Route("/Error")]
-        public ErrorModel Error()
+        public ErrorModel<string> Error()
         {
-            return Models.ErrorModel.Of("unknown_error");
+            return Models.ErrorModel.Of("ERR_HANDLER", "unknown_error");
         }
     }
 }

@@ -11,13 +11,15 @@ namespace ZSB.Infrastructure.Apis.Account.Models
         public Guid UniqueId { get; set; }
         public DateTime AccountCreated { get; set; }
         public UserOwnedProductResponseModel[] OwnedProducts { get; set; }
+        public string EmailAddress { get; set; }
 
-        public UserInfoResponseModel(UserModel user)
+        public UserInfoResponseModel(UserModel user, bool includePrivate = false)
         {
             Username = user.Username;
+            if (includePrivate) EmailAddress = user.EmailAddress;
             UniqueId = user.UniqueId;
             AccountCreated = user.AccountCreationDate;
-            OwnedProducts = user.OwnedProducts.Select(a => new UserOwnedProductResponseModel(a)).ToArray();
+            OwnedProducts = user.OwnedProducts.Select(a => new UserOwnedProductResponseModel(a, includePrivate)).ToArray();
         }
 
         public class UserOwnedProductResponseModel
@@ -28,8 +30,9 @@ namespace ZSB.Infrastructure.Apis.Account.Models
             public Guid EditionId { get; set; }
             public string EditionName { get; set; }
             public string DisplayName { get; set; }
+            public string ProductKey { get; set; }
 
-            public UserOwnedProductResponseModel(UserOwnedProductModel mdl)
+            public UserOwnedProductResponseModel(UserOwnedProductModel mdl, bool showKey = false)
             {
                 RedemptionDate = mdl.RedemptionDate;
                 ProductId = mdl.ProductId;
@@ -37,6 +40,7 @@ namespace ZSB.Infrastructure.Apis.Account.Models
                 EditionId = mdl.EditionId;
                 EditionName = mdl.EditionName;
                 DisplayName = mdl.DisplayName;
+                if (showKey) ProductKey = mdl.ProductKey;
             }
         }
     }

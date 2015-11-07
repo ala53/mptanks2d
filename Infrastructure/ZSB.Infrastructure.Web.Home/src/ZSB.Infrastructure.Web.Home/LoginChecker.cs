@@ -5,6 +5,7 @@ using Microsoft.Framework.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Web.Home
@@ -23,8 +24,20 @@ namespace ZSB.Infrastructure.Web.Home
         {
             public string Username { get; set; }
             public Guid UniqueId { get; set; }
-            public bool IsPremium { get; set; }
             public DateTime AccountCreated { get; set; }
+            public UserOwnedProductResponseModel[] OwnedProducts { get; set; }
+            public string EmailAddress { get; set; }
+            public class UserOwnedProductResponseModel
+            {
+                public DateTime RedemptionDate { get; set; }
+                public Guid ProductId { get; set; }
+                public string ProductName { get; set; }
+                public Guid EditionId { get; set; }
+                public string EditionName { get; set; }
+                public string DisplayName { get; set; }
+                public string ProductKey { get; set; }
+
+            }
         }
 
         private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions { CompactOnMemoryPressure = true });
@@ -95,7 +108,31 @@ namespace ZSB.Infrastructure.Web.Home
 
         public static IActionResult SendToLogin(this Controller controller)
         {
-            return controller.RedirectToAction("/Login/" + controller.Request.GetEncodedUrl());
+            return controller.Redirect("/Login?to=" + controller.Request.GetEncodedUrl());
+        }
+
+        public static UserInfoResponse UserData(this Controller controller)
+        {
+            //If we've already fetched user data this request, don't invalidate caches
+            if (controller.ViewBag.__Fetched__USER__Data != null)
+                return (CheckLogin(controller.Request).Result)?.Data; 
+
+            controller.ViewBag.__Fetched__USER__Data = true;
+            var cookie = controller.Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault();
+            MarkInvalid(cookie);
+            return (CheckLogin(controller.Request).Result)?.Data;
+        }
+        public static void InvalidateUserCache(this Controller controller)
+        {
+            var cookie = controller.Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault();
+            if (cookie == null) return;
+            MarkInvalid(cookie);
+        }
+
+        public static string SessionKey(this Controller controller)
+        {
+            if (controller.NotLoggedIn()) return null;
+            return controller.Request.Cookies["__ZSB_login_sessionKey__"].First();
         }
     }
 }

@@ -8,9 +8,10 @@ using ZSB.Infrastructure.Apis.Account.Database.Contexts;
 namespace ZSB.Infrastructure.Apis.Login.Migrations
 {
     [DbContext(typeof(LoginDatabaseContext))]
-    partial class LoginDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20151107203709_RemoveUnnecessaryKeys")]
+    partial class RemoveUnnecessaryKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Annotation("ProductVersion", "7.0.0-beta8-15964")

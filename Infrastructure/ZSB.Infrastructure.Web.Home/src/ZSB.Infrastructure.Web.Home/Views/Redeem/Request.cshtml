@@ -15,12 +15,20 @@
         var msg = document.getElementById("message_name");
         var key = document.getElementById("product_key");
 
+        //upper case and remove hyphens
+        key.value = key.value.toUpperCase().replace(/-/g, '');
+        //Remove invalid characters
+        key.value = key.value.replace(/[^A-Za-z0-9]/g, '');
+        //auto insert hyphens
+        key.value = key.value.match(/.{1,4}/g).join('-');
+
+
         if (key.value.replace(/-/g, "").length > 24) {
             msg.style.color = "red";
             msg.innerText = "Key too long!";
         }
         else if (key.value.length >= 4) {
-            var prog = progNames[key.value.substring(0, 4).toUpperCase()];
+            var prog = progNames[key.value.substring(0, 4)];
             if (prog == undefined) {
                 msg.style.color = "red";
                 msg.innerText = "Invalid key!";
@@ -43,7 +51,7 @@
     <form class="form-inline" method="post">
         <div class="input-group" style="width:100%">
             <span class="input-group-addon">Product Key</span>
-            <input id="product_key" class="form-control" onkeydown="onChange()" style="min-width:100%" type="text" name="ProductKey" placeholder="24 characters, hyphens inserted automatically" value="@ViewBag.ProductKey" />
+            <input id="product_key" class="form-control" onkeyup="onChange()" style="min-width:100%" type="text" name="ProductKey" placeholder="24 characters, hyphens not needed" value="@ViewBag.ProductKey" />
         </div>
         <span style="color:gray" id="message_name"></span>
         <br />

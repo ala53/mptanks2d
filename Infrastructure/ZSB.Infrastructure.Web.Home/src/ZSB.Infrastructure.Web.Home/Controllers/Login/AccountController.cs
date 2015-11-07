@@ -23,13 +23,13 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             ViewBag.Password = "";
             ViewBag.Error = false;
 
-            return View("~/Views/Account/Create/Request");
+            return View("Create/Request");
         }
 
         [HttpPost, Route("/Register")]
         public async Task<IActionResult> ConfirmCreateAccount(
-            string EmailAddress, string Username, int ChallengeId, 
-            string ChallengeQuestion, string ChallengeAnswer, 
+            string EmailAddress, string Username, int ChallengeId,
+            string ChallengeQuestion, string ChallengeAnswer,
             string Password, string ConfirmPassword)
         {
             //Post and check
@@ -64,14 +64,125 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 ViewBag.Password = Password;
                 ViewBag.ConfirmPassword = ConfirmPassword;
 
-                return View("~/Views/Account/Create/Request");
+                return View("Create/Request");
             }
             else
             {
                 //It completed, display confirmation screen
-                return View("~/Views/Account/Create/Confirm");
+                return View("Create/Confirm");
             }
         }
 
+        [HttpGet, Route("/Account")]
+        public IActionResult AccountPage()
+        {
+            if (this.NotLoggedIn()) return this.SendToLogin();
+
+            var loginData = this.UserData();
+            ViewBag.Data = loginData;
+            ViewBag.Username = loginData.Username;
+            ViewBag.Error = false;
+            ViewBag.EmailAddress = loginData.EmailAddress;
+
+            return View("Account");
+        }
+
+        [HttpPost, Route("/Account")]
+        public async Task<IActionResult> SaveSettings(string NewEmailAddress, string CurrentPassword, string NewPassword, string ConfirmNewPassword, string NewUsername)
+        {
+            if (this.NotLoggedIn()) return this.SendToLogin();
+
+            var loginData = this.UserData();
+            ViewBag.Error = false;
+            ViewBag.Data = loginData;
+            ViewBag.Username = loginData.Username;
+            ViewBag.EmailAddress = loginData.EmailAddress;
+            
+            if (loginData.Username != NewUsername)
+            {
+                //Change Username
+                var response = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "account/username/change",
+                    new
+                    {
+                        EmailAddress = loginData.EmailAddress,
+                        Password = CurrentPassword,
+                        NewUsername = NewUsername
+                    });
+
+                if (response.Error)
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    return View("Account");
+                }
+
+                ViewBag.Username = NewUsername;
+            }
+
+            if (loginData.EmailAddress != NewEmailAddress)
+            {
+                //Change Email
+                var response = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "account/password/change",
+                    new
+                    {
+                        EmailAddress = loginData.EmailAddress,
+                        Password = CurrentPassword,
+                        NewEmailAddress = NewEmailAddress
+                    });
+
+                if (response.Error)
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    return View("Account");
+                }
+
+                ViewBag.EmailAddress = NewEmailAddress;
+            }
+
+            if (!string.IsNullOrWhiteSpace(NewPassword))
+            {
+                if (NewPassword != ConfirmNewPassword)
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = Rest.ResponseHelper.Get("passwords_do_not_match");
+                    return View("Account");
+                }
+                //Change Password
+                var response = await Rest.RestHelper.DoPostDynamic(Startup.LoginServerAddress + "account/password/change",
+                    new
+                    {
+                        EmailAddress = NewEmailAddress,
+                        OldPassword = CurrentPassword,
+                        NewPassword = NewPassword
+                    });
+
+                if (response.Error)
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    return View("Account");
+                }
+            }
+
+
+            //Log them out
+            ViewBag.RedirectTo = "/Logout";
+            ViewBag.Time = 5;
+            ViewBag.Message = "Your settings have been updated. Logging you out.";
+            return View("~/Views/RedirectPage");
+        }
+
+        [HttpGet, Route("/Account/Owned")]
+        public IActionResult OwnedProducts()
+        {
+            if (this.NotLoggedIn()) return this.SendToLogin();
+
+            var loginData = this.UserData();
+            ViewBag.Data = loginData;
+            ViewBag.Products = loginData.OwnedProducts;
+
+            return View("Owned");
+        }
     }
 }

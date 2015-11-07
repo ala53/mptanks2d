@@ -38,7 +38,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             if (session == null) 
                 return Models.OkModel.Of<UserInfoResponseModel>(null);
             //and tell the client that the session key is true
-            return Models.OkModel.Of(new UserInfoResponseModel(session));
+            return Models.OkModel.Of(new UserInfoResponseModel(session, true));
         }
 
         [HttpPost, Route("/Key/Refresh")]

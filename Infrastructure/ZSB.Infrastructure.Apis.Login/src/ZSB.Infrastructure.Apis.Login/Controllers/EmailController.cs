@@ -24,8 +24,18 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                 return ErrorModel.Of("invalid_request");
 
             UserModel usr;
-            if ((usr = await ldb.FindBySessionKey(model.SessionKey)) == null)
-                return ErrorModel.Of("not_logged_in");
+            if (await ldb.ValidateAccount(model.EmailAddress, model.Password))
+                return ErrorModel.Of("username_or_password_incorrect");
+
+            //retrieve the user
+            usr = await ldb.FindByEmailAddress(model.EmailAddress);
+            if (usr == null)
+                return ErrorModel.Of("user_not_found");
+
+            //make sure that the email address isn't in use
+            var other = await ldb.FindByEmailAddress(model.NewEmailAddress);
+            if (other != null)
+                return ErrorModel.Of("email_address_in_use");
 
             usr.EmailAddress = model.NewEmailAddress;
             usr.UniqueConfirmationCode = Guid.NewGuid();

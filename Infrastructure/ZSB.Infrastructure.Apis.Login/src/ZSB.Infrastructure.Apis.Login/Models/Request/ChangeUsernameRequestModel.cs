@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Apis.Account.Models
 {
-    public class ChangeEmailRequestModel
+    public class ChangeUsernameRequestModel
     {
         [Required]
         public string EmailAddress { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
-        public string NewEmailAddress { get; set; }
+        public string NewUsername { get; set; }
     }
 }

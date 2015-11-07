@@ -52,6 +52,36 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             await ldb.UpdateUser(user);
             return Models.OkModel.Of("password_changed");
         }
+        [HttpPost, Route("/Account/Username/Change")]
+        public async Task<ResponseModelBase> ChangeUsername([FromBody]ChangeUsernameRequestModel model)
+        {
+            if (!ModelState.IsValid)
+                return ErrorModel.Of("invalid_request");
+
+            if (!await ldb.ValidateAccount(model.EmailAddress, model.Password))
+            {
+                return ErrorModel.Of("username_or_password_incorrect");
+            }
+
+            if (model.NewUsername.Length < 5)
+                return ErrorModel.Of("username_too_short");
+
+            //Change their username
+            var user = await ldb.FindByEmailAddress(model.EmailAddress);
+
+            if (user == null)
+                return ErrorModel.Of("user_not_found");
+
+            //Check not in use
+            var other = await ldb.FindByUsername(model.NewUsername);
+            if (other != null)
+                return ErrorModel.Of("username_in_use");
+
+            user.Username = model.NewUsername;
+            //Update
+            await ldb.UpdateUser(user);
+            return Models.OkModel.Of("username_changed");
+        }
 
         [HttpGet, Route("/Account/Challenge/Get")]
         public ResponseModelBase GetValidationTest()

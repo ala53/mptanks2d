@@ -43,8 +43,7 @@
                     }
                     else
                     {
-                        <li><a href="/Account">Hello @((await LoginChecker.CheckLogin(Context.Request)).Data.Username)</a></li>
-                        <li><a href="/Account">My Account</a></li>
+                        <li><a href="/Account" alt="Account information">Hello, @((await LoginChecker.CheckLogin(Context.Request)).Data.Username)</a></li>
                         <li><a href="/Logout">Log out?</a></li>
                     }
                 </ul>

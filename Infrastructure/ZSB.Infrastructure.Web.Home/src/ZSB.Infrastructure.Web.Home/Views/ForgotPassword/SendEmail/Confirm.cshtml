@@ -8,12 +8,12 @@
 {
     <h1 style="color:red">An error occurred</h1>
     <h3>@Html.Raw(ViewBag.Message)</h3>
-    <h5>You can click <a href="/Login/ForgotPassword/Request">here</a> to try again, or contact <a href="mailto:account_support@zsbgames.me">account_support@zsbgames.me</a> for support.</h5>
+    <h5>You can click <a href="/ForgotPassword">here</a> to try again, or contact <a href="mailto:account_support@zsbgames.me">account_support@zsbgames.me</a> for support.</h5>
 }
 
 @if (!ViewBag.Error)
 {
     <h1>An email has been sent</h1>
     <h3>It should be in your inbox within a few minutes</h3>
-    <h3>Don't see it? Check your spam folders. If it's still not there, click <a href="/Login/ForgotPassword/Request">here</a> to try again, or contact <a href="mailto:account_support@zsbgames.me">account_support@zsbgames.me</a> for support.</h3>
+    <h3>Don't see it? Check your spam folders. If it's still not there, click <a href="/ForgotPassword">here</a> to try again, or contact <a href="mailto:account_support@zsbgames.me">account_support@zsbgames.me</a> for support.</h3>
 }

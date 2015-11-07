@@ -2,5 +2,15 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    // ViewBag.Title = "Home Page";
+    ViewBag.Title = "Gift Confirmation";
 }
+
+@if(!ViewBag.Error)
+{
+    <h1>Your gift has been sent to its recipient.</h1>
+}
+ @if (ViewBag.Error)
+ {
+     <h1>Something went very wrong</h1>
+     <h3>@Html.Raw(ViewBag.Message)</h3>
+ }

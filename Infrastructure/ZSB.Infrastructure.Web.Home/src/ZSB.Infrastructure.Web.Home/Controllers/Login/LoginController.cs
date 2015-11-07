@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
@@ -9,14 +10,22 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
     public class LoginController : Controller
     {
         [HttpGet, Route("/Login")]
-        public IActionResult Login()
+        public IActionResult Login(string to = null)
         {
             ViewBag.Error = false;
             ViewBag.EmailAddress = "";
             return View("Login");
         }
         [HttpPost, Route("/Login")]
-        public async Task<IActionResult> DoLogin(string EmailAddress, string Password)
+        public async Task<IActionResult> DoLogin(string EmailAddress, string Password, string to = null)
+        {
+            var res = await DoLoginAction(EmailAddress, Password);
+            if (res != null) return res;
+            ViewBag.RedirectTo = to ?? "/";
+            return View("~/Views/RedirectPage");
+        }
+
+        private async Task<IActionResult> DoLoginAction(string EmailAddress, string Password)
         {
             ViewBag.Error = false;
             if (EmailAddress == null || EmailAddress == "" || Password == "" || Password == null)
@@ -49,9 +58,9 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                     Expires = DateTime.UtcNow.AddDays(14)
                 });
 
-            ViewBag.RedirectTo = "/";
-            return View("LoginRedirect");
+            return null;
         }
+
         [HttpGet, Route("/Logout")]
         public async Task<IActionResult> Logout()
         {
@@ -62,7 +71,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             LoginChecker.MarkInvalid(Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault());
             ViewBag.IsLoggingOut = true;
             ViewBag.RedirectTo = "/";
-            return View("LoginRedirect");
+            return View("~/Views/RedirectPage");
         }
     }
 }
