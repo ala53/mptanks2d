@@ -42,17 +42,17 @@ namespace ZSB.Infrastructure.Web.Home
 
         private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions { CompactOnMemoryPressure = true });
 
-        public static bool IsLoggedIn(HttpRequest request) => CheckLogin(request).Result != null;
-        public static bool IsLoggedIn(string sessionKey) => CheckLogin(sessionKey).Result != null;
-        public static async Task<bool> IsLoggedInAsync(HttpRequest request) => await CheckLogin(request) != null;
-        public static async Task<bool> IsLoggedInAsync(string sessionKey) => await CheckLogin(sessionKey) != null;
+        public static bool IsLoggedIn(HttpRequest request) => CheckLogin(request).Result.LoggedIn;
+        public static bool IsLoggedIn(string sessionKey) => CheckLogin(sessionKey).Result.LoggedIn;
+        public static async Task<bool> IsLoggedInAsync(HttpRequest request) => (await CheckLogin(request)).LoggedIn;
+        public static async Task<bool> IsLoggedInAsync(string sessionKey) => (await CheckLogin(sessionKey)).LoggedIn;
 
         public static async Task<LoginResponseInfo> CheckLogin(HttpRequest request)
         {
             if (!request.Cookies.ContainsKey("__ZSB_login_sessionkey__"))
                 return null;
 
-            return await CheckLogin(request.Cookies["__ZSB_login_sessionKey__"].First());
+            return await CheckLogin(request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault());
         }
 
         public static async Task<LoginResponseInfo> CheckLogin(string sessionKey)
