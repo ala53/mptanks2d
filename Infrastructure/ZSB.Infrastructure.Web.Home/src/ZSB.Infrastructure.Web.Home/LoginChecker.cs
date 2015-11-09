@@ -42,10 +42,22 @@ namespace ZSB.Infrastructure.Web.Home
 
         private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions { CompactOnMemoryPressure = true });
 
-        public static bool IsLoggedIn(HttpRequest request) => CheckLogin(request).Result.LoggedIn;
-        public static bool IsLoggedIn(string sessionKey) => CheckLogin(sessionKey).Result.LoggedIn;
-        public static async Task<bool> IsLoggedInAsync(HttpRequest request) => (await CheckLogin(request)).LoggedIn;
-        public static async Task<bool> IsLoggedInAsync(string sessionKey) => (await CheckLogin(sessionKey)).LoggedIn;
+        public static bool IsLoggedIn(HttpRequest request) => IsLoggedInAsync(request).Result;
+        public static bool IsLoggedIn(string sessionKey) => IsLoggedInAsync(sessionKey).Result;
+        public static async Task<bool> IsLoggedInAsync(HttpRequest request)
+        {
+            var result = await CheckLogin(request);
+            if (result?.LoggedIn != null && result.LoggedIn)
+                return true;
+            return false;
+        }
+        public static async Task<bool> IsLoggedInAsync(string sessionKey)
+        {
+            var result = await CheckLogin(sessionKey);
+            if (result?.LoggedIn != null && result.LoggedIn)
+                return true;
+            return false;
+        }
 
         public static async Task<LoginResponseInfo> CheckLogin(HttpRequest request)
         {
@@ -115,7 +127,7 @@ namespace ZSB.Infrastructure.Web.Home
         {
             //If we've already fetched user data this request, don't invalidate caches
             if (controller.ViewBag.__Fetched__USER__Data != null)
-                return (CheckLogin(controller.Request).Result)?.Data; 
+                return (CheckLogin(controller.Request).Result)?.Data;
 
             controller.ViewBag.__Fetched__USER__Data = true;
             var cookie = controller.Request.Cookies["__ZSB_login_sessionKey__"].FirstOrDefault();
