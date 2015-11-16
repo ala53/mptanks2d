@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net20", "ZSB.Drm.Client.Net20\ZSB.Drm.Client.Net20.csproj", "{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net20", "ZSB.Drm.Client.Net20.csproj", "{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net45", "ZSB.Drm.Client.Net20\ZSB.Drm.Client.Net45.csproj", "{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net45", "ZSB.Drm.Client.Net45.csproj", "{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
