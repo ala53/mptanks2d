@@ -32,7 +32,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             {
                 ViewBag.EmailAddress = EmailAddress;
                 ViewBag.Error = true;
-                ViewBag.Message = Rest.ResponseHelper.Get("empty_field");
+                ViewBag.Message = this.Localize("empty_field");
                 return View("Login");
             }
 
@@ -47,7 +47,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             {
                 ViewBag.Error = true;
                 ViewBag.EmailAddress = EmailAddress;
-                ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                ViewBag.Message = this.Localize(response.Message);
                 return View("Login");
             }
 

@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ZSB.Drm.Client.Dnx", "src\ZSB.Drm.Client.Dnx\ZSB.Drm.Client.Dnx.xproj", "{9597F128-C240-49A1-832B-1CAD229CBE66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net20", "ZSB.Drm.Client.Net20\ZSB.Drm.Client.Net20.csproj", "{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZSB.Drm.Client.Net45", "ZSB.Drm.Client.Net20\ZSB.Drm.Client.Net45.csproj", "{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,11 +27,21 @@ Global
 		{9597F128-C240-49A1-832B-1CAD229CBE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9597F128-C240-49A1-832B-1CAD229CBE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9597F128-C240-49A1-832B-1CAD229CBE66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9597F128-C240-49A1-832B-1CAD229CBE66} = {DC119065-295A-427A-A617-221CB0C97C82}
+		{FAF7713D-96FE-414F-8B69-E0B6977E7B1E} = {DC119065-295A-427A-A617-221CB0C97C82}
+		{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B} = {DC119065-295A-427A-A617-221CB0C97C82}
 	EndGlobalSection
 EndGlobal

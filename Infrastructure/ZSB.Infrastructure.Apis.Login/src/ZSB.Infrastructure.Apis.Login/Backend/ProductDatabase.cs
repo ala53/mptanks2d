@@ -1,20 +1,14 @@
-﻿using System;
+﻿using Microsoft.Framework.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ZSB.Infrastructure.Apis.Account.Models;
 
 namespace ZSB.Infrastructure.Apis.Account.Backend
 {
     public class ProductDatabase
     {
-        public class ProductObject
-        {
-            public string ProductName { get; set; }
-            public Guid ProductId { get; set; }
-            public string EditionName { get; set; }
-            public Guid EditionId { get; set; }
-            public string DownloadUrl { get; set; }
-        }
 
         private struct DoubleGuid
         {
@@ -34,89 +28,40 @@ namespace ZSB.Infrastructure.Apis.Account.Backend
             }
         }
 
-        private static Dictionary<DoubleGuid, ProductObject> _products = new Dictionary<DoubleGuid, ProductObject>();
+        private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions
+        {
+            CompactOnMemoryPressure = true,
+            ExpirationScanFrequency = TimeSpan.FromMinutes(1)
+        });
 
         static ProductDatabase()
         {
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D",
-                ProductId = new Guid("6de5dd93-2c13-4a28-b722-4a28b79c67b8"),
-                EditionName = "ZSB Store Purchase",
-                EditionId = new Guid("d26fb367-4cc9-4854-a004-90616c23b6ab")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D",
-                ProductId = new Guid("6de5dd93-2c13-4a28-b722-4a28b79c67b8"),
-                EditionName = "Humble Widget / Store Purchase",
-                EditionId = new Guid("0bcd1355-cc0f-46a3-8d11-d6b3fa12d455")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D",
-                ProductId = new Guid("6de5dd93-2c13-4a28-b722-4a28b79c67b8"),
-                EditionName = "Steam Purchase",
-                EditionId = new Guid("e907a4ab-2b39-4e16-a9fc-5e0bf5872b53")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D",
-                ProductId = new Guid("6de5dd93-2c13-4a28-b722-4a28b79c67b8"),
-                EditionName = "ZSB Gifted Key",
-                EditionId = new Guid("e6c94547-355b-4d39-a5f0-513a3cc3b807")
-            });
-
-
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D Premium Addon",
-                ProductId = new Guid("a8e46236-ce79-4480-aeed-28faec2bc0b8"),
-                EditionName = "ZSB Store Purchase",
-                EditionId = new Guid("d26fb367-4cc9-4854-a004-90616c23b6ab")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D Premium Addon",
-                ProductId = new Guid("a8e46236-ce79-4480-aeed-28faec2bc0b8"),
-                EditionName = "Humble Widget / Store Purchase",
-                EditionId = new Guid("0bcd1355-cc0f-46a3-8d11-d6b3fa12d455")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D Premium Addon",
-                ProductId = new Guid("a8e46236-ce79-4480-aeed-28faec2bc0b8"),
-                EditionName = "Steam Purchase",
-                EditionId = new Guid("e907a4ab-2b39-4e16-a9fc-5e0bf5872b53")
-            });
-            AddProduct(new ProductObject
-            {
-                DownloadUrl = "https://mptanks.zsbgames.me/download",
-                ProductName = "MP Tanks 2D Premium Addon",
-                ProductId = new Guid("a8e46236-ce79-4480-aeed-28faec2bc0b8"),
-                EditionName = "ZSB Gifted Key",
-                EditionId = new Guid("e6c94547-355b-4d39-a5f0-513a3cc3b807")
-            });
         }
 
-        public static void AddProduct(ProductObject obj)
+        public static async Task<ProductObject> GetProduct(Guid product, Guid edition)
         {
-            _products.Add(new DoubleGuid { First = obj.ProductId, Second = obj.EditionId }, obj);
-        }
+            var combinedKey = new DoubleGuid { First = product, Second = edition };
+            object result;
+            //Check the cache
+            if (_cache.TryGetValue(combinedKey, out result))
+                return (ProductObject)result;
 
-        public static ProductObject GetProduct(Guid product, Guid edition)
-        {
-            if (_products.ContainsKey(new DoubleGuid { First = product, Second = edition }))
-                return _products[new DoubleGuid { First = product, Second = edition }];
+            //Not in cache
+            //Do a request against the drmdev server for more info
+            var rest = await Rest.RestHelper.DoGet<ProductObject>(
+                Startup.Configuration["Data:DrmDevServerAddress"] +
+                $"{Startup.Configuration["Data:DrmDevServerInternalAPIKey"]}/product/by/uniqueid/{product}/{edition}");
 
-            return null;
+            if (rest.Error) return null;
+
+            //Add to cache
+            _cache.Set(combinedKey, rest.Data, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30),
+                SlidingExpiration = TimeSpan.FromMinutes(5)
+            });
+
+            return rest.Data;
         }
     }
 }

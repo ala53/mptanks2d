@@ -31,7 +31,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers.Login
                 });
 
             ViewBag.Error = response.Error;
-            ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+            ViewBag.Message = this.Localize(response.Message);
 
             if (response.Error)
                 return View("Request");
@@ -53,7 +53,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers.Login
                 );
 
             ViewBag.Error = request.Error;
-            ViewBag.Message = Rest.ResponseHelper.Get(request.Message);
+            ViewBag.Message = this.Localize(request.Message);
 
             return View("Gift/Request");
         }
@@ -65,7 +65,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers.Login
                 "product/gift/confirm/" + userId + "/" + emailConfirmCode + "/" + productKey + "/" + addressToSendTo);
 
             ViewBag.Error = response.Error;
-            ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+            ViewBag.Message = this.Localize(response.Message);
 
             return View("Gift/EmailConfirm");
         }

@@ -18,7 +18,8 @@
     "Microsoft.AspNet.Diagnostics": "1.0.0-beta8",
     "EntityFramework.Core": "7.0.0-beta8",
     "System.Net.Http": "4.0.1-beta-23409",
-    "WindowsAzure.Storage": "6.1.1-preview"
+    "WindowsAzure.Storage": "6.1.1-preview",
+    "Microsoft.Framework.Caching.Memory": "1.0.0-beta8"
   },
 
   "commands": {

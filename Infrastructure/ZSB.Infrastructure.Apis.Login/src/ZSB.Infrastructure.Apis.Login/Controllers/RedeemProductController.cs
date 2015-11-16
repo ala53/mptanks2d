@@ -74,7 +74,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionName-", obj.EditionName },
                     {"-editionId-", obj.EditionId.ToString() },
                     {"-productKey-", obj.Key },
-                    {"-downloadUrl-", Backend.ProductDatabase.GetProduct(obj.ProductId, obj.EditionId).DownloadUrl },
+                    {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(obj.ProductId, obj.EditionId)).DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") }
                 });
 
@@ -107,8 +107,8 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionName-", productObject.EditionName },
                     {"-editionId-", productObject.EditionId.ToString() },
                     {"-productKey-", productObject.ProductKey },
-                    {"-downloadUrl-", Backend.ProductDatabase.GetProduct(
-                        productObject.ProductId, productObject.EditionId).DownloadUrl },
+                    {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(
+                        productObject.ProductId, productObject.EditionId)).DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") },
                     {"-giftEmailAddress-", model.EmailAddressToGiftTo },
                     {"-giftUsername-", otherUser.Username }
@@ -155,8 +155,8 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionName-", productObject.EditionName },
                     {"-editionId-", productObject.EditionId.ToString() },
                     {"-productKey-", productObject.ProductKey },
-                    {"-downloadUrl-", Backend.ProductDatabase.GetProduct(
-                        productObject.ProductId, productObject.EditionId).DownloadUrl },
+                    {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(
+                        productObject.ProductId, productObject.EditionId)).DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") }
                 });
 

@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FAF7713D-96FE-414F-8B69-E0B6977E7B1E}</ProjectGuid>
+    <ProjectGuid>{F378CF06-3A94-4E04-8AF4-1BB41D15CC0B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZSB.Drm.Client</RootNamespace>
     <AssemblyName>ZSB.Drm.Client.Net20</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>TRACE;DEBUG;NET20</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,10 +30,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -41,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountDrmClient.cs" />
-    <Compile Include="AsyncScheduler.cs" />
     <Compile Include="DrmClient.cs" />
     <Compile Include="Exceptions\AccountServerException.cs" />
     <Compile Include="Exceptions\AggregateException.cs" />
@@ -56,17 +57,16 @@
     <Compile Include="Models\Internal\LoginResult.cs" />
     <Compile Include="MultiplayerDrmClient.cs" />
     <Compile Include="PersistentStorageData.cs" />
-    <Compile Include="Task.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Internal\PublicUserInfo.cs" />
     <Compile Include="RestClient.cs" />
     <Compile Include="Models\Internal\ValidateServerTokenResult.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Folder Include="Models\Response\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Response\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

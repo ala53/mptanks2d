@@ -16,13 +16,18 @@ namespace ZSB.Infrastructure.Apis.Account.Backend
         public static AccountTest[] TestOptions = {
             new AccountTest
             {
+                Question = "On a color wheel, what color is between yellow and red?",
+                Answer = "orange"
+            },
+            new AccountTest
+            {
                 Question = "What color is in between blue and green (hint: t__l)?",
                 Answer = "teal"
             },
             new AccountTest
             {
-                Question = "What game is ZSB Making (3 words)?",
-                Answer = "mp tanks 2d"
+                Question = "If there are two cats and three more show up, how many cats are there?",
+                Answer = "5"
             },
             new AccountTest
             {
@@ -66,7 +71,7 @@ namespace ZSB.Infrastructure.Apis.Account.Backend
             },
             new AccountTest
             {
-                Question = "Are seats for sitting (yes () no)?",
+                Question = "Are seats for sitting (yes or no)?",
                 Answer = "yes"
             }
         };

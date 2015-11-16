@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using ZSB.Drm.Client;
 using ZSB.Drm.Client.Exceptions;
-using ZSB.Drm.Client.Results;
+using ZSB.Drm.Client.Models;
 
 namespace ZSB
 {
@@ -27,7 +28,7 @@ namespace ZSB
             }
         }
         internal static PersistentStorageData StoredData { get; set; }
-        public static FullUserInfo UserInfo
+        public static FullUserInfo User
         {
             get
             {
@@ -36,39 +37,28 @@ namespace ZSB
             }
         }
         public static bool Offline { get; internal set; }
-        public static bool LoggedIn => UserInfo != null;
+        public static bool LoggedIn => User != null;
         public static MultiplayerDrmClient Multiplayer { get; private set; } = new MultiplayerDrmClient();
-        private static bool _initialized;
+        public static AccountDrmClient Account { get; private set; } = new AccountDrmClient();
+        public static ProductDrmClient Products { get; private set; } = new ProductDrmClient();
+        internal static bool _initialized;
         public static void Initialize(string persistentData = null) => InitializeAsync(persistentData).Wait();
 
-        public static Promise<bool> InitializeAsync(string persistentData = null)
+        public static Task InitializeAsync(string persistentData = null)
         {
-            return null;
+            return Task.Run(() =>
+            {
+                _initialized = true;
+            });
         }
 
-        public static LoginResult Login(string email, string password) => LoginAsync(email, password).Wait();
+        public static LoginResult Login(string email, string password) => LoginAsync(email, password).Result;
 
-        public static Promise<LoginResult> LoginAsync(string email, string password)
+        public static Task<LoginResult> LoginAsync(string email, string password)
         {
             if (!_initialized) throw new NotInitializedException();
 
-            var promise = new Promise<LoginResult>();
-            promise.Status = "Not started";
-            ThreadPool.QueueUserWorkItem((state) =>
-            {
-                try
-                {
-                    promise.Succeeded = true;
-                }
-                catch (Exception ex)
-                {
-                    promise.Failed = true;
-                    promise.Status = "Errored";
-                    promise.State = ex;
-                }
-            });
-
-            return promise;
+            return Task.Run<LoginResult>(() => { return (LoginResult)null; });
         }
 
         /// <summary>
@@ -80,25 +70,13 @@ namespace ZSB
         /// </summary>
         /// <param name="allowOffline"></param>
         /// <returns></returns>
-        public static bool IsLoggedIn(bool allowOffline = true) => IsLoggedInAsync(allowOffline).Wait();
+        public static bool IsLoggedIn(bool allowOffline = true) => IsLoggedInAsync(allowOffline).Result;
 
-        public static Promise<bool> IsLoggedInAsync(bool allowOffline = true)
+        public static Task<bool> IsLoggedInAsync(bool allowOffline = true)
         {
             if (!_initialized) throw new NotInitializedException();
 
-        }
-
-        /// <summary>
-        /// Sends a "forgot my password" email to the person at the specified email address. Useful if you want
-        /// to add a "forgot my password" link to your login page.
-        /// </summary>
-        /// <param name="address"></param>
-        public static void SendForgotPasswordEmail(string address) =>
-            SendForgotPasswordEmailAsync(address).Wait();
-        
-        public static Promise<bool> SendForgotPasswordEmailAsync(string address)
-        {
-
+            return Task.Run(() => { return false; });
         }
     }
 }

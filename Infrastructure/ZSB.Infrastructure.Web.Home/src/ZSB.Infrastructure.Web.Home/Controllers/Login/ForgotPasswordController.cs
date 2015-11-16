@@ -30,10 +30,10 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             if (ViewBag.Error)
             {
                 if (result == null)
-                    ViewBag.Message = Rest.ResponseHelper.Get("unknown_error");
-                else ViewBag.Message = Rest.ResponseHelper.Get(result.Message);
+                    ViewBag.Message = this.Localize("unknown_error");
+                else ViewBag.Message = this.Localize(result.Message);
             }
-            else ViewBag.Message = Rest.ResponseHelper.Get(result.Message);
+            else ViewBag.Message = this.Localize(result.Message);
 
             return View("SendEmail/Confirm");
         }
@@ -56,7 +56,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             if (Password != ConfirmPassword)
             {
                 ViewBag.Error = true;
-                ViewBag.Message = Rest.ResponseHelper.Get("password_do_not_match");
+                ViewBag.Message = this.Localize("password_do_not_match");
                 return View("Change/Change");
             }
 
@@ -71,7 +71,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             ViewBag.Error = resp == null || resp.Error;
 
             if (resp != null)
-                ViewBag.Message = Rest.ResponseHelper.Get(resp.Message);
+                ViewBag.Message = this.Localize(resp.Message);
 
             if (ViewBag.Error)
                 return View("Change/Change");

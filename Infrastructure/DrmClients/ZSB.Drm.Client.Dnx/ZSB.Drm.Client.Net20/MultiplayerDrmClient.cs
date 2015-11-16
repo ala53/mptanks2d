@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ZSB.Drm.Client.Results;
-
+using System.Threading.Tasks;
+using ZSB.Drm.Client.Models;
 namespace ZSB.Drm.Client
 {
     public class MultiplayerDrmClient
@@ -12,17 +12,17 @@ namespace ZSB.Drm.Client
 
         }
 
-        public static string GetServerToken() => GetServerTokenAsync().Wait();
-        public static Promise<string> GetServerTokenAsync()
+        public string GetServerToken() => GetServerTokenAsync().Result;
+        public Task<string> GetServerTokenAsync()
         {
-
+            return Task.Run<string>(() => { return string.Empty; });
         }
 
-        public static ValidateServerTokenResult ValidateServerToken(string token) =>
-            ValidateServerTokenAsync(token).Wait();
-        public static Promise<ValidateServerTokenResult> ValidateServerTokenAsync(string token)
+        public ValidateServerTokenResult ValidateServerToken(string token) =>
+            ValidateServerTokenAsync(token).Result;
+        public Task<ValidateServerTokenResult> ValidateServerTokenAsync(string token)
         {
-
+            return Task.Run<ValidateServerTokenResult>(() => { return (ValidateServerTokenResult)null; });
         }
     }
 }

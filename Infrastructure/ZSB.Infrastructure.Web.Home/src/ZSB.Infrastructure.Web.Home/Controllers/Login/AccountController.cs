@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ZSB.Infrastructure.Web.Home.Rest;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
 {
@@ -51,8 +52,8 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
 
             //And show the error message
             if (postback == null)
-                ViewBag.Message = Rest.ResponseHelper.Get("unknown_error");
-            else ViewBag.Message = Rest.ResponseHelper.Get(postback.Message);
+                ViewBag.Message = Rest.ResponseHelper.UnknownErrorMessage(Request);
+            else ViewBag.Message = this.Localize(postback.Message);
 
             if (ViewBag.Error)
             {
@@ -112,7 +113,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 if (response.Error)
                 {
                     ViewBag.Error = true;
-                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    ViewBag.Message = this.Localize(response.Message);
                     return View("Account");
                 }
 
@@ -133,7 +134,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 if (response.Error)
                 {
                     ViewBag.Error = true;
-                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    ViewBag.Message = this.Localize(response.Message);
                     return View("Account");
                 }
 
@@ -145,7 +146,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 if (NewPassword != ConfirmNewPassword)
                 {
                     ViewBag.Error = true;
-                    ViewBag.Message = Rest.ResponseHelper.Get("passwords_do_not_match");
+                    ViewBag.Message = this.Localize("passwords_do_not_match");
                     return View("Account");
                 }
                 //Change Password
@@ -160,7 +161,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
                 if (response.Error)
                 {
                     ViewBag.Error = true;
-                    ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                    ViewBag.Message = this.Localize(response.Message);
                     return View("Account");
                 }
             }

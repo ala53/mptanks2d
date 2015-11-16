@@ -4,7 +4,10 @@ using System.Text;
 
 namespace ZSB.Drm.Client.Exceptions
 {
-    class AccountServerException
+    public class AccountServerException : Exception
     {
+        public AccountServerException(Exception inner = null)
+            : base("An internal error occurred with the account server", inner)
+        { }
     }
 }

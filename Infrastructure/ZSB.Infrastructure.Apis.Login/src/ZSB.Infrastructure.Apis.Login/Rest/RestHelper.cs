@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ZSB.Infrastructure.Web.Home.Rest
+namespace ZSB.Infrastructure.Apis.Account.Rest
 {
     public static class RestHelper
     {

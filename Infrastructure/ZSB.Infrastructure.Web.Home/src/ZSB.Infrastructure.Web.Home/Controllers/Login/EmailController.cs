@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ZSB.Infrastructure.Web.Home.Rest;
 
 namespace ZSB.Infrastructure.Web.Home.Controllers
 {
@@ -25,8 +26,8 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
             ViewBag.Error = response == null || response.Error;
 
             if (response == null)
-                ViewBag.Message = Rest.ResponseHelper.Get("unknown_error");
-            else ViewBag.Message = Rest.ResponseHelper.Get(response.Message);
+                ViewBag.Message = this.Localize("unknown_error");
+            else ViewBag.Message = this.Localize(response.Message);
 
             return View("Resend/Confirm");
         }
@@ -39,7 +40,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
 
             ViewBag.Error = response == null || response.Error;
             if (response != null)
-                ViewBag.ErrorMessage = Rest.ResponseHelper.Get(response.Message);
+                ViewBag.ErrorMessage = this.Localize(response.Message);
 
             return View("Confirm");
         }
@@ -58,7 +59,7 @@ namespace ZSB.Infrastructure.Web.Home.Controllers
 
             ViewBag.Error = response == null || response.Error;
             if (response != null)
-                ViewBag.ErrorMessage = Rest.ResponseHelper.Get(response.Message);
+                ViewBag.ErrorMessage = this.Localize(response.Message);
 
             return View("Disavow");
         }

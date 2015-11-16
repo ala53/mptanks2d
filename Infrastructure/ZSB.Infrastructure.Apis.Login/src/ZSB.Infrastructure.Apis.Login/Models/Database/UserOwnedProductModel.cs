@@ -7,7 +7,7 @@ namespace ZSB.Infrastructure.Apis.Account.Models
 {
     public class UserOwnedProductModel
     {
-        public Backend.ProductDatabase.ProductObject Product => Backend.ProductDatabase.GetProduct(ProductId, EditionId);
+        public ProductObject Product => Backend.ProductDatabase.GetProduct(ProductId, EditionId).Result;
         public DateTime RedemptionDate { get; set; }
         public Guid ProductId { get; set; }
         public string ProductName => Product.ProductName;
