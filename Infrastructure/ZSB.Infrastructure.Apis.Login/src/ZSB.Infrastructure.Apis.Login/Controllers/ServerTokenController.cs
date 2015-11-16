@@ -35,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
 
             await ldb.UpdateUser(session.Owner);
 
-            return Models.OkModel.Of(new UserServerTokenResponseModel(token));
+            return OkModel.Of(new UserServerTokenResponseModel(token));
         }
 
         [HttpPost, Route("/Token/Validate")]
@@ -58,7 +58,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             }
 
             if (!token.Owner.IsEmailConfirmed)
-                return ErrorModel.Of<UserInfoResponseModel>(null, "account_email_not_confirmed");
+                return ErrorModel.Of<UserInfoResponseModel>(null, "email_not_confirmed");
 
             var resp = new UserInfoResponseModel(token.Owner);
             //Remove it

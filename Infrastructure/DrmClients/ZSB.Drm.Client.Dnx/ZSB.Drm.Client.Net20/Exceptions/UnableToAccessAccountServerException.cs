@@ -11,7 +11,8 @@ namespace ZSB.Drm.Client.Exceptions
     public class UnableToAccessAccountServerException : Exception
     {
         public UnableToAccessAccountServerException(Exception inner = null) 
-            :base("Unable to reach the ZSB account server.", inner)
-        { }
+            :base(LocalizationHandler.Localize("timed_out"), inner)
+        {
+        }
     }
 }

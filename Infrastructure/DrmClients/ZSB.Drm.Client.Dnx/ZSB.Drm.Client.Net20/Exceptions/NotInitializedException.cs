@@ -7,7 +7,7 @@ namespace ZSB.Drm.Client.Exceptions
     public class NotInitializedException : Exception
     {
         public NotInitializedException() 
-            :base("DrmClient.Initialize()/InitializeAsync() has not been called yet!")
+            :base(LocalizationHandler.Localize("not_initialized"))
         { }
     }
 }

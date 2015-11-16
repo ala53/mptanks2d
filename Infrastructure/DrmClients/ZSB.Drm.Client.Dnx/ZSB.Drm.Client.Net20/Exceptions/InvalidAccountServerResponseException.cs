@@ -10,7 +10,7 @@ namespace ZSB.Drm.Client.Exceptions
     public class InvalidAccountServerResponseException : Exception
     {
         public InvalidAccountServerResponseException(Exception inner = null) 
-            :base("The account server responded with an unparsable body.", inner)
+            :base(LocalizationHandler.Localize("invalid_response"), inner)
         { }
     }
 }

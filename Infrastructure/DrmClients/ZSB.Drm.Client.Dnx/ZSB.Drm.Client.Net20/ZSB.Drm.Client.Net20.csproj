@@ -43,15 +43,23 @@
     <Compile Include="AccountDrmClient.cs" />
     <Compile Include="AsyncScheduler.cs" />
     <Compile Include="DrmClient.cs" />
+    <Compile Include="Exceptions\AccountCreationException.cs" />
+    <Compile Include="Exceptions\AccountDetailsIncorrectException.cs" />
+    <Compile Include="Exceptions\AccountEmailNotConfirmedException.cs" />
     <Compile Include="Exceptions\AccountServerException.cs" />
     <Compile Include="Exceptions\AggregateException.cs" />
     <Compile Include="Exceptions\InvalidAccountServerResponseException.cs" />
-    <Compile Include="Exceptions\LoginExpiredException.cs" />
+    <Compile Include="Exceptions\MultiplayerAuthTokenInvalidException.cs" />
     <Compile Include="Exceptions\NotInitializedException.cs" />
+    <Compile Include="Exceptions\NotLoggedInException.cs" />
     <Compile Include="Exceptions\PersistentStorageInvalidException.cs" />
+    <Compile Include="Exceptions\ProductKeyAlreadyRedeemedException.cs" />
+    <Compile Include="Exceptions\ProductKeyNotFoundException.cs" />
     <Compile Include="Exceptions\UnableToAccessAccountServerException.cs" />
+    <Compile Include="LocalizationHandler.cs" />
     <Compile Include="Models\Internal\FullUserInfo.cs" />
-    <Compile Include="Models\Request\LoginRequest.cs" />
+    <Compile Include="Models\Response\GetServerTokenResponse.cs" />
+    <Compile Include="Models\Response\LoginResponse.cs" />
     <Compile Include="ProductDrmClient.cs" />
     <Compile Include="Models\Internal\LoginResult.cs" />
     <Compile Include="MultiplayerDrmClient.cs" />
@@ -60,14 +68,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Internal\PublicUserInfo.cs" />
     <Compile Include="RestClient.cs" />
-    <Compile Include="Models\Internal\ValidateServerTokenResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Response\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

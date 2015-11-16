@@ -6,5 +6,6 @@ namespace ZSB.Drm.Client.Models
 {
     public sealed class FullUserInfo : PublicUserInfo
     {
+        public string EmailAddress { get; set; }
     }
 }

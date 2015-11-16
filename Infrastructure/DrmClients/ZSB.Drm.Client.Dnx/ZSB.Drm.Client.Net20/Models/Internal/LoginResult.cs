@@ -6,8 +6,7 @@ namespace ZSB.Drm.Client.Models
 {
     public class LoginResult
     {
-        public bool LoginSuccess { get; set; }
-        public string Message { get; set; }
         public FullUserInfo FullUserInfo { get; set; }
+        public DateTime Expires { get; set; }
     }
 }

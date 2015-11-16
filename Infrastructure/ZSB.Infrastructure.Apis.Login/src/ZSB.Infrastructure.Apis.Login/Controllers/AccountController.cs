@@ -50,7 +50,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             user.ActiveServerTokens.Clear();
             //Update
             await ldb.UpdateUser(user);
-            return Models.OkModel.Of("password_changed");
+            return OkModel.Of("password_changed");
         }
         [HttpPost, Route("/Account/Username/Change")]
         public async Task<ResponseModelBase> ChangeUsername([FromBody]ChangeUsernameRequestModel model)
@@ -80,20 +80,20 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             user.Username = model.NewUsername;
             //Update
             await ldb.UpdateUser(user);
-            return Models.OkModel.Of("username_changed");
+            return OkModel.Of("username_changed");
         }
 
         [HttpGet, Route("/Account/Challenge/Get")]
         public ResponseModelBase GetValidationTest()
         {
-            return Models.OkModel.Of(AccountTests.GetRandomQuestion());
+            return OkModel.Of(AccountTests.GetRandomQuestion());
         }
 
         [HttpGet, Route("/Account/Challenge/Validate/{id}/{answer}")]
         public ResponseModelBase CheckValidationTest(int id, string answer)
         {
             if (AccountTests.ValidateChallenge(id, answer))
-                return Models.OkModel.Empty;
+                return OkModel.Empty;
             else return ErrorModel.Of("validation_incorrect");
         }
 

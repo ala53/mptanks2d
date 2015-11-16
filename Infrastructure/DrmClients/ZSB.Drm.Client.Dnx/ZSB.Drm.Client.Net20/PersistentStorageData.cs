@@ -7,7 +7,18 @@ namespace ZSB.Drm.Client
 {
     class PersistentStorageData
     {
-        public FullUserInfo CachedInfo { get; set; }
-        public string SessionKey { get; set; }
+        private FullUserInfo _cachedInfoBacking;
+        public FullUserInfo CachedInfo
+        {
+            get { return _cachedInfoBacking; }
+            set { _cachedInfoBacking = value; DrmClient.RaiseStorageChanged(); }
+        }
+
+        private string _sessionKeyBacking;
+        public string SessionKey
+        {
+            get { return _sessionKeyBacking; }
+            set { _sessionKeyBacking = value; DrmClient.RaiseStorageChanged(); }
+        }
     }
 }

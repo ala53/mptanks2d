@@ -1,12 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ZSB.Drm.Client;
 using ZSB.Drm.Client.Exceptions;
 using ZSB.Drm.Client.Models;
+using ZSB.Drm.Client.Models.Response;
 
 namespace ZSB
 {
@@ -27,13 +29,27 @@ namespace ZSB
                 { throw new PersistentStorageInvalidException(ex); }
             }
         }
+
+        public static event EventHandler<PropertyChangedEventArgs> OnPersistentStorageChanged = delegate { };
         internal static PersistentStorageData StoredData { get; set; }
+        internal static void RaiseStorageChanged()
+        {
+            OnPersistentStorageChanged(StoredData, new PropertyChangedEventArgs(nameof(PersistentData)));
+        }
         public static FullUserInfo User
         {
             get
             {
-                if (!_initialized) throw new NotInitializedException();
+                EnsureInitialized();
                 return StoredData?.CachedInfo;
+            }
+        }
+        internal static string SessionKey
+        {
+            get
+            {
+                EnsureInitialized();
+                return StoredData?.SessionKey;
             }
         }
         public static bool Offline { get; internal set; }
@@ -48,17 +64,80 @@ namespace ZSB
         {
             return Task.Run(() =>
             {
+                PersistentData = persistentData;
+                //Try online login and token refresh -- if logged in
+                if (StoredData != null && StoredData.CachedInfo != null && StoredData.SessionKey != null)
+                {
+                    try
+                    {
+                        var resp = RestClient.DoPost("Key/Refresh", new
+                        {
+                            SessionKey = StoredData.SessionKey
+                        }).Result;
+                        if (resp.Error)
+                        {
+                            if (resp.Message == "not_logged_in")
+                            {
+                                //not logged in, clear cached data
+                                StoredData.SessionKey = null;
+                                StoredData.CachedInfo = null;
+                            }
+                        }
+
+                        //And update the user info
+                        try { UpdateUserInfo(); }
+                        catch (NotLoggedInException) { }
+                    }
+                    catch (UnableToAccessAccountServerException) { } //we're in offline mode, I guess
+                }
                 _initialized = true;
             });
         }
 
-        public static LoginResult Login(string email, string password) => LoginAsync(email, password).Result;
-
-        public static Task<LoginResult> LoginAsync(string email, string password)
+        internal static void EnsureLoggedIn(bool allowOffline = true)
+        {
+            EnsureInitialized();
+            if (!IsLoggedIn(allowOffline))
+                throw new NotLoggedInException();
+        }
+        internal static void EnsureInitialized()
         {
             if (!_initialized) throw new NotInitializedException();
+        }
+        public static LoginResult Login(string email, string password) => LoginAsync(email, password).Result;
 
-            return Task.Run<LoginResult>(() => { return (LoginResult)null; });
+        public static Task<LoginResult> LoginAsync(string emailAddress, string password)
+        {
+            EnsureInitialized();
+            if (emailAddress == null) throw new ArgumentNullException(nameof(emailAddress));
+            if (password == null) throw new ArgumentNullException(nameof(password));
+            return Task.Run(() =>
+            {
+                //Log in
+
+                var resp = RestClient.DoPost<LoginResponse>("Login", new
+                {
+                    EmailAddress = emailAddress,
+                    Password = password
+                }).Result;
+
+                if (resp.Message == "email_not_confirmed")
+                    throw new AccountEmailNotConfirmedException();
+
+                if (resp.Message == "username_or_password_incorrect")
+                    throw new AccountDetailsIncorrectException();
+
+                if (!resp.Error)
+                {
+                    StoredData.SessionKey = resp.Data.SessionKey;
+                    UpdateUserInfo();
+                }
+                return new LoginResult()
+                {
+                    Expires = resp.Data.ExpiryDate,
+                    FullUserInfo = User
+                };
+            });
         }
 
         /// <summary>
@@ -74,9 +153,47 @@ namespace ZSB
 
         public static Task<bool> IsLoggedInAsync(bool allowOffline = true)
         {
-            if (!_initialized) throw new NotInitializedException();
+            EnsureInitialized();
 
-            return Task.Run(() => { return false; });
+            return Task.Run(() =>
+            {
+                //try the request
+                try
+                {
+                    if (SessionKey == null) return false;
+                    var resp = RestClient.DoPost<bool>("Key/Validate", new
+                    {
+                        SessionKey = SessionKey
+                    }).Result;
+                    return resp.Data;
+                }
+                catch (UnableToAccessAccountServerException)
+                {
+                    //Check offline
+                    if (!allowOffline) return false;
+                    if (User != null) return true; //The cached data is correct
+                }
+                return false;
+            });
+        }
+
+        public static void UpdateUserInfo() => UpdateUserInfoAsync().Wait();
+
+        public static Task UpdateUserInfoAsync()
+        {
+            return Task.Run(() =>
+            {
+                //Redownload the user info from the account server
+                var accountData = RestClient.DoPost<FullUserInfo>("Key/Validate/Info", new
+                {
+                    SessionKey = SessionKey
+                }).Result;
+
+                if (accountData.Data == null) //Welp, something happened that shouldn't have
+                    throw new NotLoggedInException();
+
+                StoredData.CachedInfo = accountData.Data;
+            });
         }
     }
 }
