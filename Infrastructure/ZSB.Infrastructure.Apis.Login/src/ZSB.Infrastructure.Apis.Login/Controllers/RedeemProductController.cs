@@ -74,7 +74,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionName-", obj.EditionName },
                     {"-editionId-", obj.EditionId.ToString() },
                     {"-productKey-", obj.Key },
-                    {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(obj.ProductId, obj.EditionId)).DownloadUrl },
+                    {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(obj.ProductId, obj.EditionId)).Product.DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") }
                 });
 
@@ -108,7 +108,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionId-", productObject.EditionId.ToString() },
                     {"-productKey-", productObject.ProductKey },
                     {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(
-                        productObject.ProductId, productObject.EditionId)).DownloadUrl },
+                        productObject.ProductId, productObject.EditionId)).Product.DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") },
                     {"-giftEmailAddress-", model.EmailAddressToGiftTo },
                     {"-giftUsername-", otherUser.Username }
@@ -156,7 +156,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
                     {"-editionId-", productObject.EditionId.ToString() },
                     {"-productKey-", productObject.ProductKey },
                     {"-downloadUrl-", (await Backend.ProductDatabase.GetProduct(
-                        productObject.ProductId, productObject.EditionId)).DownloadUrl },
+                        productObject.ProductId, productObject.EditionId)).Product.DownloadUrl },
                     {"-redemptionDate-", DateTime.UtcNow.ToString("G") }
                 });
 

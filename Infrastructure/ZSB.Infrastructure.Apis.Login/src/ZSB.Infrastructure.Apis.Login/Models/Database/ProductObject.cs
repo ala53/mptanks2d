@@ -41,6 +41,7 @@ namespace ZSB.Infrastructure.Apis.Account.Models
     }
     public class ProductEdition
     {
+        public ProductObject Product { get; set; }
         public string EditionName { get; set; }
         public Guid EditionId { get; set; }
     }

@@ -3,7 +3,7 @@
     "SiteTitle": "ZSB Login Server"
   },
   "Data": {
-    "DrmDevServerAddress": "https://drmdev.zsbgames.me/api/",
+    "DrmDevServerAddress": "https://zsb-drm-web.azurewebsites.net/api/",
     "DrmDevServerInternalAPIKey": "aigpdewppoipijpgipPIneipwipIPJWIPRuoUHuoweuoUOUQOoufuOfonl",
     "ConnectionString": "Server=tcp:zsb-login-sql.database.windows.net,1433;Database=zsb-login-db;User ID=zsb@zsb-login-sql;Password=Mustang1a!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;MultipleActiveResultSets=true;",
     "SendGridAPIKey": "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",

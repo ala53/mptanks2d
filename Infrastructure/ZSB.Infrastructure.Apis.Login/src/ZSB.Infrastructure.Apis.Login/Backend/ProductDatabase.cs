@@ -38,17 +38,17 @@ namespace ZSB.Infrastructure.Apis.Account.Backend
         {
         }
 
-        public static async Task<ProductObject> GetProduct(Guid product, Guid edition)
+        public static async Task<ProductEdition> GetProduct(Guid product, Guid edition)
         {
             var combinedKey = new DoubleGuid { First = product, Second = edition };
             object result;
             //Check the cache
             if (_cache.TryGetValue(combinedKey, out result))
-                return (ProductObject)result;
+                return (ProductEdition)result;
 
             //Not in cache
             //Do a request against the drmdev server for more info
-            var rest = await Rest.RestHelper.DoGet<ProductObject>(
+            var rest = await Rest.RestHelper.DoGet<ProductEdition>(
                 Startup.Configuration["Data:DrmDevServerAddress"] +
                 $"{Startup.Configuration["Data:DrmDevServerInternalAPIKey"]}/product/by/uniqueid/{product}/{edition}");
 

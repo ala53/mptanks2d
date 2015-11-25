@@ -38,25 +38,8 @@ namespace ZSB.Infrastructure.Apis.Account.Rest
             }
 
         }
-        public static async Task<Model<dynamic>> DoPostDynamic(string address, object postData)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, address);
-            request.Content = new StringContent(
-                JsonConvert.SerializeObject(postData),
-                System.Text.Encoding.UTF8, "application/json");
-
-            using (var resp = await new HttpClient().SendAsync(request))
-            {
-                if (!resp.IsSuccessStatusCode)
-                    return new Model<dynamic>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
-
-                var asObject =
-                    JsonConvert.DeserializeObject<Model<dynamic>>(
-                    await resp.Content.ReadAsStringAsync());
-
-                return asObject;
-            }
-        }
+        public static async Task<Model<dynamic>> DoPostDynamic(string address, object postData) =>
+            await DoPost<dynamic>(address, postData);
         #endregion
         #region Get
         public static async Task<Model<T>> DoGet<T>(string address) where T : class
@@ -67,32 +50,16 @@ namespace ZSB.Infrastructure.Apis.Account.Rest
             {
                 if (!resp.IsSuccessStatusCode)
                     return new Model<T>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
-
+                var str = await resp.Content.ReadAsStringAsync();
                 var asObject =
-                    JsonConvert.DeserializeObject<Model<T>>(
-                    await resp.Content.ReadAsStringAsync());
+                    JsonConvert.DeserializeObject<Model<T>>(str);
 
                 return asObject;
             }
 
         }
-        public static async Task<Model<dynamic>> DoGetDynamic(string address)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, address);
-
-            using (var resp = await new HttpClient().SendAsync(request))
-            {
-                if (!resp.IsSuccessStatusCode)
-                    return new Model<dynamic>() { Message = "unknown_error", Type = "error" }; //Not logged in / server error
-
-                var asObject =
-                    JsonConvert.DeserializeObject<Model<dynamic>>(
-                    await resp.Content.ReadAsStringAsync());
-
-                return asObject;
-            }
-
-        }
+        public static async Task<Model<dynamic>> DoGetDynamic(string address) =>
+            await DoGet<dynamic>(address);
         #endregion
     }
 }
