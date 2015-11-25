@@ -12,6 +12,7 @@ namespace MPTanks.Networking.Server
         public ushort Port { get; set; } = 33132;
         public string Password { get; set; }
         public TimeSpan StateSyncRate { get; set; } = TimeSpan.FromSeconds(0.5);
+        public bool Offline { get; set; }
     }
 
     public class InitializedConfiguration
@@ -20,12 +21,15 @@ namespace MPTanks.Networking.Server
         public ushort Port { get; private set; }
         public string Password { get; set; }
         public  TimeSpan StateSyncRate { get; private set; }
+        public bool Offline { get; private set; }
+
         internal InitializedConfiguration(Configuration configuration)
         {
             MaxPlayers = configuration.MaxPlayers;
             Port = configuration.Port;
             Password = configuration.Password;
             StateSyncRate = configuration.StateSyncRate;
+            Offline = configuration.Offline;
         }
     }
 }

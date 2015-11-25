@@ -49,6 +49,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZSB.Drm.Client.Net45">
+      <HintPath>..\..\..\Build\ZSB.Drm.Client\Net45\Release\ZSB.Drm.Client.Net45.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chat\ChatServer.ChatCommands.cs" />

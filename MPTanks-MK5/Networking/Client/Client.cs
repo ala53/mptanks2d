@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZSB.Drm.Client.Exceptions;
 
 namespace MPTanks.Networking.Client
 {
@@ -56,18 +57,12 @@ namespace MPTanks.Networking.Client
             {
                 return
                     GameInstance.Game.Players.FirstOrDefault(
-                        a => (a as NetworkPlayer)?.UniqueId == _userPlayerInfo.Id);
+                        a => (a as NetworkPlayer)?.UniqueId == ZSB.DrmClient.User?.UniqueId);
             }
         }
         public bool NeedsToSelectTank { get; internal set; }
         public bool IsInCountdown { get; internal set; }
         public TimeSpan RemainingCountdownTime { get; internal set; }
-        public struct UserSuppliedPlayerInfo
-        {
-            public string Name { get; set; }
-            public string Clan { get; set; }
-            public Guid Id { get; set; }
-        }
 
         public string Host { get; private set; }
         public ushort Port { get; private set; }
@@ -76,13 +71,12 @@ namespace MPTanks.Networking.Client
         public ILogger Logger { get; set; }
 
         public bool GameRunning { get { return Connected && GameInstance != null; } }
-        private UserSuppliedPlayerInfo _userPlayerInfo;
-        public Client(string connection, ushort port, UserSuppliedPlayerInfo pInfo, ILogger logger = null,
+        public Client(string connection, ushort port, ILogger logger = null,
             string password = null, bool connectOnInit = true)
         {
-            _userPlayerInfo = pInfo;
-
-            Logger = logger ?? new NullLogger();
+            if (logger != null)
+                Logger = new ModuleLogger(logger, "CLIENT");
+            else Logger = new NullLogger();
 
             MessageProcessor = new ClientNetworkProcessor(this);
             GameInstance = new NetworkedGame(null);
@@ -120,13 +114,33 @@ namespace MPTanks.Networking.Client
             Status = ClientStatus.Connecting;
             if (!string.IsNullOrWhiteSpace(Host) && Port != 0)
             {
-                var msg = NetworkClient.CreateMessage();
-                msg.Write(_userPlayerInfo.Id.ToByteArray());
-                msg.Write(_userPlayerInfo.Clan);
-                msg.Write(_userPlayerInfo.Name);
-                if (Password != null) msg.Write(Password);
-                NetworkClient.Start();
-                NetworkClient.Connect(Host, Port, msg);
+                //Do a deferred web request to get a token
+                Logger.Trace("Doing web request for auth token");
+                Task.Run(async () =>
+                {
+                    string token = "OFFLINE";
+                    try
+                    {
+                        token = await ZSB.DrmClient.Multiplayer.GetServerTokenAsync();
+                    }
+                    //Catch issues that force us offline
+                    catch (UnableToAccessAccountServerException)
+                    { } //Offline mode
+                    catch (AccountServerException)
+                    { if (GlobalSettings.Trace) throw; }
+                    catch (InvalidAccountServerResponseException)
+                    { if (GlobalSettings.Trace) throw; }
+                    //And send connection message
+                    var msg = NetworkClient.CreateMessage();
+                    msg.Write(ZSB.DrmClient.User.UniqueId.ToByteArray());
+                    msg.Write(ZSB.DrmClient.User.Username);
+                    msg.Write(token);
+                    msg.Write(Password ?? ""); //Write an empty password just in case
+                    NetworkClient.Start();
+                    NetworkClient.Connect(Host, Port, msg);
+                    Logger.Trace("Connection message sent");
+                });
+
             }
         }
 

@@ -39,6 +39,8 @@ namespace MPTanks.Client.GameSandbox
         public bool IsGameHost { get; set; }
         
         public string ServerEngineSettingsJSON { get; set; }
+
+        public string DrmEngineSerializedInfo { get; set; }
         
         public string ConnectionFailureCause { get; set; }
 

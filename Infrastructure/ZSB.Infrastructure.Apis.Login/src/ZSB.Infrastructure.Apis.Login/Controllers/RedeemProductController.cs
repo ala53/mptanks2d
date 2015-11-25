@@ -138,7 +138,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             userToGiveTo.OwnedProducts.Add(productObject);
 
             //Transform it into a gift object
-            productObject.EditionId = new Guid("e6c94547-355b-4d39-a5f0-513a3cc3b807");
+            //productObject.EditionId = new Guid("e6c94547-355b-4d39-a5f0-513a3cc3b807");
 
             user.UniqueConfirmationCode = Guid.NewGuid();
             await ldb.UpdateUser(user);

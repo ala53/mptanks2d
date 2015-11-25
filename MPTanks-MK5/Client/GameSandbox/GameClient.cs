@@ -134,17 +134,15 @@ namespace MPTanks.Client.GameSandbox
 
             var host = CrossDomainObject.Instance.IsGameHost;
 
+            //Log in
+            ZSB.DrmClient.Login("test@zsbgames.me", "drowssap");
+
             _ui.GoToPage(_settingUpPageName);
             //TEMP
             Client = new Networking.Client.Client(
                 host ? "localhost" : CrossDomainObject.Instance.ServerIp,
-                host ? (ushort)33132 : CrossDomainObject.Instance.ServerPort,
-                new Networking.Client.Client.UserSuppliedPlayerInfo
-                {
-                    Id = Guid.NewGuid(),
-                    Clan = "",
-                    Name = "TestPlayer"
-                }, new NLogLogger(Logger.Instance), "password");
+                host ? (ushort)33132 : CrossDomainObject.Instance.ServerPort
+                , new NLogLogger(Logger.Instance), "password");
             if (CrossDomainObject.Instance.IsGameHost)
                 Server = new Networking.Server.Server(new Networking.Server.Configuration()
                 {

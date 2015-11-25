@@ -67,7 +67,9 @@ namespace ZSB.Infrastructure.Apis.Account
             // Add MVC to the request pipeline.
             app.UseMvc();
 
-            app.UseExceptionHandler("/error");
+            app.Properties["host.AppMode"] = "development";
+            app.UseDeveloperExceptionPage();
+            //app.UseExceptionHandler("/error");
                         
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");

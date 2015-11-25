@@ -44,7 +44,7 @@ namespace ZSB.Infrastructure.Apis.Account.Controllers
             var session = await ldb.GetSessionFromKey(model.SessionKey);
             if (session == null)
                 return ErrorModel.Of("not_logged_in");
-            await ldb.RemoveSession(session);
+            await ldb.RemoveSession(session, session.Owner);
 
             return Models.OkModel.Of("logged_out");
         }

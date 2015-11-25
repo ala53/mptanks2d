@@ -35,7 +35,7 @@ namespace ZSB.Infrastructure.Apis.Account.Database
             if (DateTime.UtcNow > sess.ExpiryDate)
             {
                 //Remove session
-                await RemoveSession(sess);
+                await RemoveSession(sess, sess.Owner);
                 return null;
             }
             return sess.Owner;
@@ -124,10 +124,10 @@ namespace ZSB.Infrastructure.Apis.Account.Database
                 if (DateTime.UtcNow > mdl.ExpiryDate)
                     removable.Add(mdl);
 
-            foreach (var m in removable) await RemoveSession(m);
+            foreach (var m in removable) await RemoveSession(m, usr);
             //Check if we are over the limit
             while (usr.ActiveSessions.Count > MaxActiveLoginCount)
-                await RemoveSession(usr.ActiveSessions.First());
+                await RemoveSession(usr.ActiveSessions.First(), usr);
 
             //And create the login key
             var sess = new UserActiveSessionModel(LoginLength);
@@ -150,18 +150,18 @@ namespace ZSB.Infrastructure.Apis.Account.Database
             //Check if expired
             if (DateTime.UtcNow > sk.ExpiryDate)
             {
-                await RemoveSession(sk);
+                await RemoveSession(sk, sk.Owner);
                 return null;
             }
 
             return sk;
         }
 
-        internal async Task RemoveSession(UserActiveSessionModel session)
+        internal async Task RemoveSession(UserActiveSessionModel session, UserModel owner)
         {
-            session.Owner.RemoveSession(session);
+            owner.RemoveSession(session);
             DBContext.Sessions.Remove(session);
-            DBContext.Users.Update(session.Owner);
+            DBContext.Users.Update(owner);
             await Save();
         }
 

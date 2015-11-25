@@ -57,7 +57,7 @@ namespace ZSB.Infrastructure.Apis.Account.Backend
             new AccountTest
             {
                 Question = "Fill this sequence in: Q, R, _, T, U, V?",
-                Answer = "U"
+                Answer = "s"
             },
             new AccountTest
             {

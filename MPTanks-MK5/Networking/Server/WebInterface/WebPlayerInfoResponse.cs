@@ -11,7 +11,6 @@ namespace MPTanks.Networking.Server.WebInterface
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
-        public string ClanName { get; set; }
         public bool Premium { get; set; }
     }
 }
