@@ -21,10 +21,10 @@ namespace ZSB.Drm.Client
             {
                 DrmClient.EnsureLoggedIn(false);
 
-                var resp = RestClient.DoPost<GetServerTokenResponse>("Token/Get", new
+                var resp = Rest.DoPost<GetServerTokenResponse>("Token/Get", new
                 {
                     SessionKey = DrmClient.SessionKey
-                }).Result;
+                });
 
                 return resp.Data.Token;
             });
@@ -37,10 +37,10 @@ namespace ZSB.Drm.Client
             if (token == null) throw new ArgumentNullException(nameof(token));
             return Task.Run(() =>
             {
-                var resp = RestClient.DoPost<PublicUserInfo>("Token/Validate", new
+                var resp = Rest.DoPost<PublicUserInfo>("Token/Validate", new
                 {
                     ServerToken = token
-                }).Result;
+                });
 
                 if (resp.Message == "email_not_confirmed")
                     throw new Exceptions.AccountEmailNotConfirmedException();

@@ -89,6 +89,7 @@
     <Compile Include="NetworkPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NetworkCommonSettings.cs" />
+    <Compile Include="StaticSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Engine.csproj">

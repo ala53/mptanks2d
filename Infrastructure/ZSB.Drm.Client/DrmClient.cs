@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace ZSB
         }
 
         public static event EventHandler<PropertyChangedEventArgs> OnPersistentStorageChanged = delegate { };
-        internal static PersistentStorageData StoredData { get; set; }
+        internal static PersistentStorageData StoredData { get; set; } = new PersistentStorageData();
         internal static void RaiseStorageChanged()
         {
             OnPersistentStorageChanged(StoredData, new PropertyChangedEventArgs(nameof(PersistentData)));
@@ -64,16 +65,16 @@ namespace ZSB
         {
             return Task.Run(() =>
             {
-                PersistentData = persistentData;
+                if (persistentData != null) PersistentData = persistentData;
                 //Try online login and token refresh -- if logged in
                 if (StoredData != null && StoredData.CachedInfo != null && StoredData.SessionKey != null)
                 {
                     try
                     {
-                        var resp = RestClient.DoPost("Key/Refresh", new
+                        var resp = Rest.DoPost("Key/Refresh", new
                         {
                             SessionKey = StoredData.SessionKey
-                        }).Result;
+                        });
                         if (resp.Error)
                         {
                             if (resp.Message == "not_logged_in")
@@ -106,38 +107,42 @@ namespace ZSB
         }
         public static LoginResult Login(string email, string password) => LoginAsync(email, password).Result;
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         public static Task<LoginResult> LoginAsync(string emailAddress, string password)
         {
             EnsureInitialized();
             if (emailAddress == null) throw new ArgumentNullException(nameof(emailAddress));
             if (password == null) throw new ArgumentNullException(nameof(password));
-            return Task.Run(() =>
+            return Task.Run(() => LoginAsyncBody(emailAddress, password));
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        private static LoginResult LoginAsyncBody(string email, string pass)
+        {
+            Rest.Model<LoginResponse> resp = null;
+            //PLEASE, FOR THE LOVE OF GOD, NEVER ENABLE OPTIMIZATION. IT WILL DESTROY THIS CODE
+            resp = Rest.DoPost<LoginResponse>("Login", new Dictionary<string, string>()
+                    {
+                        {"emailAddress", email },
+                        {"password", pass }
+                    });
+
+            if (resp.Message == "email_not_confirmed")
+                throw new AccountEmailNotConfirmedException();
+
+            if (resp.Message == "username_or_password_incorrect")
+                throw new AccountDetailsIncorrectException();
+
+            if (!resp.Error)
             {
-                //Log in
-
-                var resp = RestClient.DoPost<LoginResponse>("Login", new
-                {
-                    EmailAddress = emailAddress,
-                    Password = password
-                }).Result;
-
-                if (resp.Message == "email_not_confirmed")
-                    throw new AccountEmailNotConfirmedException();
-
-                if (resp.Message == "username_or_password_incorrect")
-                    throw new AccountDetailsIncorrectException();
-
-                if (!resp.Error)
-                {
-                    StoredData.SessionKey = resp.Data.SessionKey;
-                    UpdateUserInfo();
-                }
-                return new LoginResult()
-                {
-                    Expires = resp.Data.ExpiryDate,
-                    FullUserInfo = User
-                };
-            });
+                StoredData.SessionKey = resp.Data.SessionKey;
+                UpdateUserInfo();
+            }
+            return new LoginResult()
+            {
+                Expires = resp.Data.ExpiryDate,
+                FullUserInfo = User
+            };
         }
 
         /// <summary>
@@ -161,10 +166,10 @@ namespace ZSB
                 try
                 {
                     if (SessionKey == null) return false;
-                    var resp = RestClient.DoPost<bool>("Key/Validate", new
+                    var resp = Rest.DoPost<bool>("Key/Validate", new
                     {
                         SessionKey = SessionKey
-                    }).Result;
+                    });
                     return resp.Data;
                 }
                 catch (UnableToAccessAccountServerException)
@@ -184,10 +189,10 @@ namespace ZSB
             return Task.Run(() =>
             {
                 //Redownload the user info from the account server
-                var accountData = RestClient.DoPost<FullUserInfo>("Key/Validate/Info", new
+                var accountData = Rest.DoPost<FullUserInfo>("Key/Validate/Info", new
                 {
                     SessionKey = SessionKey
-                }).Result;
+                });
 
                 if (accountData.Data == null) //Welp, something happened that shouldn't have
                     throw new NotLoggedInException();

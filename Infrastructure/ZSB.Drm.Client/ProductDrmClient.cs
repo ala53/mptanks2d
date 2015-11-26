@@ -19,11 +19,11 @@ namespace ZSB.Drm.Client
             {
                 DrmClient.EnsureLoggedIn();
 
-                var resp = RestClient.DoPost("Product/Redeem", new
+                var resp = Rest.DoPost("Product/Redeem", new
                 {
                     SessionKey = DrmClient.SessionKey,
                     ProductKey = productKey
-                }).Result;
+                });
 
                 if (resp.Message == "product_key_not_found")
                     throw new ProductKeyNotFoundException();
@@ -44,12 +44,12 @@ namespace ZSB.Drm.Client
             return Task.Run(() =>
             {
                 DrmClient.EnsureLoggedIn(false);
-                var resp = RestClient.DoPost("Product/Gift/Request", new
+                var resp = Rest.DoPost("Product/Gift/Request", new
                 {
                     SessionKey = DrmClient.SessionKey,
                     ProductKeyToGift = productKey,
                     EmailAddressToGiftTo = recipientEmail
-                }).Result;
+                });
 
                 if (resp.Message == "user_not_found")
                     throw new AccountDetailsIncorrectException("user_not_found");

@@ -135,6 +135,7 @@ namespace MPTanks.Client.GameSandbox
             var host = CrossDomainObject.Instance.IsGameHost;
 
             //Log in
+            ZSB.DrmClient.Initialize();
             ZSB.DrmClient.Login("test@zsbgames.me", "drowssap");
 
             _ui.GoToPage(_settingUpPageName);

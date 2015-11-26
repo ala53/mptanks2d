@@ -31,8 +31,8 @@ namespace ZSB.Drm.Client
             if (emailAddress == null) throw new ArgumentNullException(nameof(emailAddress));
             return Task.Run(() =>
             {
-                var res = RestClient.DoPost("Account/Password/Forgot/Request",
-                    new { EmailAddress = emailAddress }).Result;
+                var res = Rest.DoPost("Account/Password/Forgot/Request",
+                    new { EmailAddress = emailAddress });
 
                 if (res.Error)
                     throw new Exceptions.AccountDetailsIncorrectException("user_not_found");
@@ -46,7 +46,7 @@ namespace ZSB.Drm.Client
         {
             return Task.Run(() =>
             {
-                var res = RestClient.DoGet<AccountCreationChallenge>("Account/Challenge/Get").Result;
+                var res = Rest.DoGet<AccountCreationChallenge>("Account/Challenge/Get");
                 if (res.Error)
                     throw new Exceptions.InvalidAccountServerResponseException();
 
@@ -66,14 +66,14 @@ namespace ZSB.Drm.Client
             if (challengeAnswer == null) throw new ArgumentNullException(nameof(challengeAnswer));
             return Task.Run(() =>
             {
-                var resp = RestClient.DoPost("Account/Create", new
+                var resp = Rest.DoPost("Account/Create", new
                 {
                     ChallengeId = challenge.Id,
                     ChallengeAnswer = challengeAnswer,
                     EmailAddress = emailAddress,
                     Username = username,
                     Password = password
-                }).Result;
+                });
 
                 if (resp.Error)
                     throw new Exceptions.AccountCreationException(resp.Message);
