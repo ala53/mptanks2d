@@ -4,6 +4,7 @@
 /*                                                                                            */
 /* ========================================================================================== */
 
+#pragma warning disable 1060
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -2315,3 +2316,5 @@ namespace Studio
 } // System
 
 } // FMOD
+
+#pragma warning restore 1060

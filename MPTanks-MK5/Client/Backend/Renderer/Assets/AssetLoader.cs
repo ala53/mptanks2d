@@ -79,7 +79,6 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         {
             var fs = new FileStream(fn, FileMode.Open, FileAccess.Read);
             var texture = Texture2D.FromStream(_graphics, fs);
-            fs.Close();
             fs.Dispose();
             return texture;
         }

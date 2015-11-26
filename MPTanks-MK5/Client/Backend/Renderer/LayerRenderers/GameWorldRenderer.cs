@@ -242,11 +242,16 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
         {
             if (!disposedValue)
             {
-                _shadowBuffer?.Dispose();
-                _spriteBatch?.Dispose();
-                _outputBuffer?.Dispose();
-                _vertexBuffer?.Dispose();
-                _indexBuffer?.Dispose();
+                if (_shadowBuffer != null)
+                    _shadowBuffer.Dispose();
+                if (_spriteBatch != null)
+                    _spriteBatch.Dispose();
+                if (_outputBuffer != null)
+                    _outputBuffer.Dispose();
+                if (_vertexBuffer != null)
+                    _vertexBuffer.Dispose();
+                if (_indexBuffer != null)
+                    _indexBuffer.Dispose();
                 disposedValue = true;
                 //These are left commented out because
                 //MonoGame leaves shaders as singleton objects,

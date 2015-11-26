@@ -83,6 +83,8 @@ namespace MPTanks.Client.Backend.Renderer
                 {
                     (obj as IDisposable)?.Dispose();
                 }
+                if (_fxaaRenderer != null)
+                    _fxaaRenderer.Dispose();
                 Finder.Cache.Dispose();
 
                 disposedValue = true;

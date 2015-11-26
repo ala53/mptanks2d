@@ -8,6 +8,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
+#pragma warning disable 1060
 namespace FMOD
 {
     /*
@@ -4316,3 +4317,4 @@ namespace FMOD
         }
     }
 }
+#pragma warning restore 1060
