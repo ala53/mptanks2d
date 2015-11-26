@@ -10,14 +10,17 @@ namespace MPTanks.Modding
         static ModSettings()
         {
             Directory.CreateDirectory(MetadataModUnpackDir);
-            if (File.Exists("configpath.txt"))
+            try
+            {
+                if (File.Exists("configpath.txt"))
 #if DEBUG
                 ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
 #else
-                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
+                    ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
 #endif
-            if (ConfigDir != "")
-                Directory.CreateDirectory(ConfigDir);
+                if (ConfigDir != "")
+                    Directory.CreateDirectory(ConfigDir);
+            } catch { }
         }
         public static readonly string MetadataModUnpackDir = Path.Combine(ConfigDir, "tempmodmetadataunpack");
 

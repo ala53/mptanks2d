@@ -48,8 +48,8 @@ namespace MPTanks.Client.Backend.UI
 
         public virtual void Update(GameTime gameTime, bool isActiveWindow)
         {
-            //if (isActiveWindow)
-            Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
+            if (isActiveWindow)
+                Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
             Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
 
             Binder.Update(gameTime);

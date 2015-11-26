@@ -135,6 +135,7 @@ namespace MPTanks.Client.Backend.UI
 
         public void Update(GameTime gameTime)
         {
+            IsActive = _game.IsActive;
             var vp = _game.GraphicsDevice.Viewport;
             if (vp.Width != _lastWidth || vp.Height != _lastHeight)
                 Resize(vp.Width, vp.Height);

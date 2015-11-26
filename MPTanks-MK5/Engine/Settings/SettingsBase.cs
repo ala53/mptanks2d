@@ -47,13 +47,16 @@ namespace MPTanks.Engine.Settings
 
         static SettingsBase()
         {
-            if (File.Exists("configpath.txt"))
+            try
+            {
+                if (File.Exists("configpath.txt"))
 #if DEBUG
-                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
+                    ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[0]);
 #else
-                ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
+                    ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
 #endif
-
+            }
+            catch { } //Ignore configuration issues
             if (Path.IsPathRooted(ConfigDir))
                 Directory.CreateDirectory(ConfigDir);
         }

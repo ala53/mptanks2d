@@ -35,8 +35,11 @@ namespace MPTanks.DedicatedServer
 
             _logger.Info("Loaded mods list: ");
             foreach (var mod in Modding.ModLoader.LoadedMods)
-                _logger.Info($"\t{mod.Value.Name} version {mod.Value.Version.Major}." +
-                    $"{mod.Value.Version.Minor}-{mod.Value.Version.Tag ?? ""}");
+            {
+                var m = mod.Value;
+                _logger.Info($"\t{m.Name} version {m.Version.Major}." +
+                    $"{m.Version.Minor}-{m.Version.Tag ?? ""}");
+            }
 
             _gamemode = ChooseGamemode();
             _map = ChooseMap();

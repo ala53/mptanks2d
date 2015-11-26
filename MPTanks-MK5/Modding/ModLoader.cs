@@ -11,7 +11,7 @@ namespace MPTanks.Modding
 {
     public static class ModLoader
     {
-        private static Dictionary<string, Module> loadedModFiles = new Dictionary<string, Module>();
+        private static Dictionary<string, Module> loadedModFiles { get; set; } = new Dictionary<string, Module>();
         public static IReadOnlyDictionary<string, Module> LoadedMods { get { return loadedModFiles; } }
 
         public static Module LoadMod(string modFile, string dllUnpackDir, string mapUnpackDir, string assetUnpackDir, out string errors, bool verifySafe = true, bool overwriteExisting = false)
@@ -75,6 +75,7 @@ namespace MPTanks.Modding
             }
 #endif
             errors = err;
+            if (output == null) return null;
             loadedModFiles.Add(modFile, output);
 
             output.PackedFile = modFile;
@@ -89,7 +90,7 @@ namespace MPTanks.Modding
             for (var i = 0; i < src.Length; i++)
                 module.AssetMappings.Add(src[i], dst[i]);
         }
-
+        
         public static Module Load(string source, bool verifySafe, out string errors, string[] precompiledAssemblies = null, string[] otherAssemblyReferences = null)
         {
             return Load(new[] { source }, verifySafe, out errors, precompiledAssemblies, otherAssemblyReferences);
