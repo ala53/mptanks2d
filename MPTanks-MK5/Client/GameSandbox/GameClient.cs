@@ -138,7 +138,7 @@ namespace MPTanks.Client.GameSandbox
             ZSB.DrmClient.Initialize();
             ZSB.DrmClient.Login("test@zsbgames.me", "drowssap");
 
-            _ui.GoToPage(_settingUpPageName);
+            //_ui.GoToPage(_settingUpPageName);
             //TEMP
             Client = new Networking.Client.Client(
                 host ? "localhost" : CrossDomainObject.Instance.ServerIp,
@@ -259,9 +259,6 @@ namespace MPTanks.Client.GameSandbox
             }
             if (_modLoader.Running)
             {
-                _ui.GoToPageIfNotThere(_settingUpPageName);
-                _ui.ActiveBinder.Header = "Loading mods...";
-                _ui.ActiveBinder.Content = _modLoader.Status;
                 return;
             }
             else if (!_hasExecutedPostModLoadTask)
@@ -277,10 +274,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (Client.IsInCountdown)
             {
-                _ui.GoToPageIfNotThere(_settingUpPageName);
-                _ui.ActiveBinder.Header = "Counting down to start...";
-                _ui.ActiveBinder.Content = Client.RemainingCountdownTime.TotalSeconds.ToString("N0") + " seconds remaining";
-            }
+             }
 
 
             if (CrossDomainObject.Instance.IsGameHost)

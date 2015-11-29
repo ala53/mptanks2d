@@ -128,42 +128,101 @@ namespace MPTanks.Client
                     ClientSettings.Instance.WindowRectangle.Value.Height);
 
             ui = new UserInterface(this);
-            GoToMainMenuPage();
-        }
-
-        private void GoToMainMenuPage()
-        {
-            ui.GoToPage("mainmenu");
-            ui.ActiveBinder.ExitAction = (Action)Exit;
-            ui.ActiveBinder.HostAction = (Action)(() =>
+            ui.GoToPage("mainmenu", a =>
             {
-                var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
-                {
-                    IsHost = true
-                }, new string[] { });
-                game.RegisterExitCallback(a => ui.GoBack());
-                ui.GoToPage("mainmenuplayerisingamepage");
-                game.Run();
-            });
-            ui.ActiveBinder.JoinAction = (Action)(() =>
-            {
-                ui.GoToPage("connecttoserverpage");
-                ui.ActiveBinder.ConnectAction = (Action)(() =>
+                a.Element<Button>("HostBtn").Click += (b, c) =>
                 {
                     var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
                     {
-                        IsHost = false,
-                        ServerAddress = ui.ActiveBinder.Address,
-                        ServerPort = ui.ActiveBinder.Port,
-                        Password = ui.ActiveBinder.ServerPassword
+                        IsHost = true
                     }, new string[] { });
-                    game.RegisterExitCallback((g) => ui.GoBack());
-                    ui.GoToPage("mainmenuplayerisingamepage");
+                    game.RegisterExitCallback(d => ui.GoBack());
+                    ui.GoToPage("mainmenuplayerisingamepage", d =>
+                    {
+                        d.Element<Button>("ForceCloseBtn").Click += (e, f) =>
+                        {
+                            game.Close();
+                            ui.GoBack();
+                        };
+                    });
                     game.Run();
-                });
-                ui.ActiveBinder.GoBackAction = (Action)ui.GoBack;
+                };
+                a.Element<Button>("JoinBtn").Click += (b, c) =>
+                {
+                    ui.GoToPage("connecttoserverpage", d =>
+                    {
+                        d.Element<Button>("GoBackBtn").Click += (e, f) => ui.GoBack();
+                        d.Element<Button>("ConnectBtn").Click += (e, f) =>
+                        {
+                            var unparsedAddress = d.Element<TextBox>("ServerAddress").Text;
+                            ushort port = 33132;
+                            string address = unparsedAddress.Split(':')[0];
+                            try { port = ushort.Parse(unparsedAddress.Split(':')[1]); } catch { }
+
+                            var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                            {
+                                IsHost = false,
+                                ServerAddress = address,
+                                ServerPort = port,
+                                Password = d.Element<TextBox>("ServerPassword").Text
+                            }, new string[] { });
+                            game.RegisterExitCallback((g) => ui.GoBack());
+                            ui.GoToPage("mainmenuplayerisingamepage", g =>
+                            {
+                                g.Element<Button>("ForceCloseBtn").Click += (h, i) =>
+                                {
+                                    game.Close();
+                                    ui.GoBack();
+                                };
+                            });
+                            game.Run();
+                        };
+                    });
+
+                };
+                a.Element<Button>("ExitBtn").Click += (b, c) =>
+                {
+                    ui.ShowMessageBox("Exit?", "Are you sure you wish to exit?",
+                        UserInterface.MessageBoxType.WarningMessageBox,
+                        UserInterface.MessageBoxButtons.YesNo, d =>
+                        { if (d == UserInterface.MessageBoxResult.Yes) Exit(); });
+                };
             });
         }
+
+        //private void GoToMainMenuPage()
+        //{
+        //    ui.GoToPage("mainmenu");
+        //    ui.ActiveBinder.ExitAction = (Action)Exit;
+        //    ui.ActiveBinder.HostAction = (Action)(() =>
+        //    {
+        //        var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+        //        {
+        //            IsHost = true
+        //        }, new string[] { });
+        //        game.RegisterExitCallback(a => ui.GoBack());
+        //        ui.GoToPage("mainmenuplayerisingamepage");
+        //        game.Run();
+        //    });
+        //    ui.ActiveBinder.JoinAction = (Action)(() =>
+        //    {
+        //        ui.GoToPage("connecttoserverpage");
+        //        ui.ActiveBinder.ConnectAction = (Action)(() =>
+        //        {
+        //            var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+        //            {
+        //                IsHost = false,
+        //                ServerAddress = ui.ActiveBinder.Address,
+        //                ServerPort = ui.ActiveBinder.Port,
+        //                Password = ui.ActiveBinder.ServerPassword
+        //            }, new string[] { });
+        //            game.RegisterExitCallback((g) => ui.GoBack());
+        //            ui.GoToPage("mainmenuplayerisingamepage");
+        //            game.Run();
+        //        });
+        //        ui.ActiveBinder.GoBackAction = (Action)ui.GoBack;
+        //    });
+        //}
 
         private void ExitEvent(object parameter)
         {

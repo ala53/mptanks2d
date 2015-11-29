@@ -23,13 +23,13 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class CreateAccountPage : UIRoot {
         
-        private Grid e_11;
+        private Grid e_7;
         
-        private StackPanel e_12;
+        private StackPanel e_8;
         
         private TextBox TbNumber1;
         
-        private Button e_13;
+        private Button e_9;
         
         public CreateAccountPage(int width, int height) : 
                 base(width, height) {
@@ -42,30 +42,30 @@ namespace EmptyKeys.UserInterface.Generated {
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(0, 128, 0, 255));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
-            // e_11 element
-            this.e_11 = new Grid();
-            this.Content = this.e_11;
-            this.e_11.Name = "e_11";
-            RowDefinition row_e_11_0 = new RowDefinition();
-            row_e_11_0.Height = new GridLength(14F, GridUnitType.Star);
-            this.e_11.RowDefinitions.Add(row_e_11_0);
-            RowDefinition row_e_11_1 = new RowDefinition();
-            row_e_11_1.Height = new GridLength(11F, GridUnitType.Star);
-            this.e_11.RowDefinitions.Add(row_e_11_1);
-            ColumnDefinition col_e_11_0 = new ColumnDefinition();
-            col_e_11_0.Width = new GridLength(47F, GridUnitType.Star);
-            this.e_11.ColumnDefinitions.Add(col_e_11_0);
-            ColumnDefinition col_e_11_1 = new ColumnDefinition();
-            col_e_11_1.Width = new GridLength(103F, GridUnitType.Star);
-            this.e_11.ColumnDefinitions.Add(col_e_11_1);
-            // e_12 element
-            this.e_12 = new StackPanel();
-            this.e_11.Children.Add(this.e_12);
-            this.e_12.Name = "e_12";
-            Grid.SetRowSpan(this.e_12, 2);
+            // e_7 element
+            this.e_7 = new Grid();
+            this.Content = this.e_7;
+            this.e_7.Name = "e_7";
+            RowDefinition row_e_7_0 = new RowDefinition();
+            row_e_7_0.Height = new GridLength(14F, GridUnitType.Star);
+            this.e_7.RowDefinitions.Add(row_e_7_0);
+            RowDefinition row_e_7_1 = new RowDefinition();
+            row_e_7_1.Height = new GridLength(11F, GridUnitType.Star);
+            this.e_7.RowDefinitions.Add(row_e_7_1);
+            ColumnDefinition col_e_7_0 = new ColumnDefinition();
+            col_e_7_0.Width = new GridLength(47F, GridUnitType.Star);
+            this.e_7.ColumnDefinitions.Add(col_e_7_0);
+            ColumnDefinition col_e_7_1 = new ColumnDefinition();
+            col_e_7_1.Width = new GridLength(103F, GridUnitType.Star);
+            this.e_7.ColumnDefinitions.Add(col_e_7_1);
+            // e_8 element
+            this.e_8 = new StackPanel();
+            this.e_7.Children.Add(this.e_8);
+            this.e_8.Name = "e_8";
+            Grid.SetRowSpan(this.e_8, 2);
             // TbNumber1 element
             this.TbNumber1 = new TextBox();
-            this.e_12.Children.Add(this.TbNumber1);
+            this.e_8.Children.Add(this.TbNumber1);
             this.TbNumber1.Name = "TbNumber1";
             this.TbNumber1.Height = 23F;
             this.TbNumber1.Width = 94F;
@@ -74,15 +74,15 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             Binding binding_TbNumber1_Text = new Binding("TextBoxText");
             this.TbNumber1.SetBinding(TextBox.TextProperty, binding_TbNumber1_Text);
-            // e_13 element
-            this.e_13 = new Button();
-            this.e_12.Children.Add(this.e_13);
-            this.e_13.Name = "e_13";
-            this.e_13.Width = 75F;
-            this.e_13.HorizontalAlignment = HorizontalAlignment.Left;
-            this.e_13.VerticalAlignment = VerticalAlignment.Top;
+            // e_9 element
+            this.e_9 = new Button();
+            this.e_8.Children.Add(this.e_9);
+            this.e_9.Name = "e_9";
+            this.e_9.Width = 75F;
+            this.e_9.HorizontalAlignment = HorizontalAlignment.Left;
+            this.e_9.VerticalAlignment = VerticalAlignment.Top;
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
-            this.e_13.Content = "Button";
+            this.e_9.Content = "Button";
         }
     }
 }

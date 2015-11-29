@@ -23,25 +23,25 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class MainMenu : UIRoot {
         
-        private Grid e_15;
+        private Grid e_11;
         
-        private StackPanel e_16;
+        private StackPanel e_12;
         
-        private StackPanel e_17;
+        private StackPanel e_13;
         
         private TextBlock _title;
         
         private TextBlock _subtitle;
         
-        private StackPanel e_18;
+        private StackPanel e_14;
         
-        private Button _hostBtn;
+        private Button HostBtn;
         
-        private Button _joinBtn;
+        private Button JoinBtn;
         
-        private Button _settingsBtn;
+        private Button SettingsBtn;
         
-        private Button _exitBtn;
+        private Button ExitBtn;
         
         public MainMenu(int width, int height) : 
                 base(width, height) {
@@ -55,22 +55,22 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 255));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_15 element
-            this.e_15 = new Grid();
-            this.Content = this.e_15;
-            this.e_15.Name = "e_15";
-            // e_16 element
-            this.e_16 = new StackPanel();
-            this.e_15.Children.Add(this.e_16);
-            this.e_16.Name = "e_16";
-            this.e_16.Orientation = Orientation.Vertical;
-            // e_17 element
-            this.e_17 = new StackPanel();
-            this.e_16.Children.Add(this.e_17);
-            this.e_17.Name = "e_17";
+            // e_11 element
+            this.e_11 = new Grid();
+            this.Content = this.e_11;
+            this.e_11.Name = "e_11";
+            // e_12 element
+            this.e_12 = new StackPanel();
+            this.e_11.Children.Add(this.e_12);
+            this.e_12.Name = "e_12";
+            this.e_12.Orientation = Orientation.Vertical;
+            // e_13 element
+            this.e_13 = new StackPanel();
+            this.e_12.Children.Add(this.e_13);
+            this.e_13.Name = "e_13";
             // _title element
             this._title = new TextBlock();
-            this.e_17.Children.Add(this._title);
+            this.e_13.Children.Add(this._title);
             this._title.Name = "_title";
             this._title.Margin = new Thickness(20F, 20F, 20F, 0F);
             this._title.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -82,7 +82,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._title.FontSize = 96F;
             // _subtitle element
             this._subtitle = new TextBlock();
-            this.e_17.Children.Add(this._subtitle);
+            this.e_13.Children.Add(this._subtitle);
             this._subtitle.Name = "_subtitle";
             this._subtitle.HorizontalAlignment = HorizontalAlignment.Stretch;
             this._subtitle.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
@@ -91,76 +91,76 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this._subtitle.FontFamily = new FontFamily("Karmatic Arcade");
             this._subtitle.FontSize = 36F;
-            // e_18 element
-            this.e_18 = new StackPanel();
-            this.e_16.Children.Add(this.e_18);
-            this.e_18.Name = "e_18";
-            this.e_18.Margin = new Thickness(20F, 20F, 20F, 20F);
-            this.e_18.Orientation = Orientation.Vertical;
-            // _hostBtn element
-            this._hostBtn = new Button();
-            this.e_18.Children.Add(this._hostBtn);
-            this._hostBtn.Name = "_hostBtn";
-            this._hostBtn.Width = 500F;
-            this._hostBtn.HorizontalAlignment = HorizontalAlignment.Left;
-            this._hostBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._hostBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._hostBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this._hostBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            // e_14 element
+            this.e_14 = new StackPanel();
+            this.e_12.Children.Add(this.e_14);
+            this.e_14.Name = "e_14";
+            this.e_14.Margin = new Thickness(20F, 20F, 20F, 20F);
+            this.e_14.Orientation = Orientation.Vertical;
+            // HostBtn element
+            this.HostBtn = new Button();
+            this.e_14.Children.Add(this.HostBtn);
+            this.HostBtn.Name = "HostBtn";
+            this.HostBtn.Width = 500F;
+            this.HostBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.HostBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.HostBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.HostBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.HostBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            this._hostBtn.FontFamily = new FontFamily("Karmatic Arcade");
-            this._hostBtn.FontSize = 36F;
-            this._hostBtn.Content = "Host game";
-            Binding binding__hostBtn_Command = new Binding("HostGameCommand");
-            this._hostBtn.SetBinding(Button.CommandProperty, binding__hostBtn_Command);
-            // _joinBtn element
-            this._joinBtn = new Button();
-            this.e_18.Children.Add(this._joinBtn);
-            this._joinBtn.Name = "_joinBtn";
-            this._joinBtn.Width = 500F;
-            this._joinBtn.HorizontalAlignment = HorizontalAlignment.Left;
-            this._joinBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._joinBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._joinBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this._joinBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.HostBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.HostBtn.FontSize = 36F;
+            this.HostBtn.Content = "Host game";
+            Binding binding_HostBtn_Command = new Binding("HostGameCommand");
+            this.HostBtn.SetBinding(Button.CommandProperty, binding_HostBtn_Command);
+            // JoinBtn element
+            this.JoinBtn = new Button();
+            this.e_14.Children.Add(this.JoinBtn);
+            this.JoinBtn.Name = "JoinBtn";
+            this.JoinBtn.Width = 500F;
+            this.JoinBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.JoinBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.JoinBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.JoinBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.JoinBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            this._joinBtn.FontFamily = new FontFamily("Karmatic Arcade");
-            this._joinBtn.FontSize = 36F;
-            this._joinBtn.Content = "Join game";
-            Binding binding__joinBtn_Command = new Binding("JoinGameCommand");
-            this._joinBtn.SetBinding(Button.CommandProperty, binding__joinBtn_Command);
-            // _settingsBtn element
-            this._settingsBtn = new Button();
-            this.e_18.Children.Add(this._settingsBtn);
-            this._settingsBtn.Name = "_settingsBtn";
-            this._settingsBtn.Width = 500F;
-            this._settingsBtn.HorizontalAlignment = HorizontalAlignment.Left;
-            this._settingsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._settingsBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._settingsBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this._settingsBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.JoinBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.JoinBtn.FontSize = 36F;
+            this.JoinBtn.Content = "Join game";
+            Binding binding_JoinBtn_Command = new Binding("JoinGameCommand");
+            this.JoinBtn.SetBinding(Button.CommandProperty, binding_JoinBtn_Command);
+            // SettingsBtn element
+            this.SettingsBtn = new Button();
+            this.e_14.Children.Add(this.SettingsBtn);
+            this.SettingsBtn.Name = "SettingsBtn";
+            this.SettingsBtn.Width = 500F;
+            this.SettingsBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.SettingsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.SettingsBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.SettingsBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.SettingsBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            this._settingsBtn.FontFamily = new FontFamily("Karmatic Arcade");
-            this._settingsBtn.FontSize = 36F;
-            this._settingsBtn.Content = "Settings";
-            Binding binding__settingsBtn_Command = new Binding("SettingsCommand");
-            this._settingsBtn.SetBinding(Button.CommandProperty, binding__settingsBtn_Command);
-            // _exitBtn element
-            this._exitBtn = new Button();
-            this.e_18.Children.Add(this._exitBtn);
-            this._exitBtn.Name = "_exitBtn";
-            this._exitBtn.Width = 500F;
-            this._exitBtn.HorizontalAlignment = HorizontalAlignment.Left;
-            this._exitBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._exitBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this._exitBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this._exitBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.SettingsBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.SettingsBtn.FontSize = 36F;
+            this.SettingsBtn.Content = "Settings";
+            Binding binding_SettingsBtn_Command = new Binding("SettingsCommand");
+            this.SettingsBtn.SetBinding(Button.CommandProperty, binding_SettingsBtn_Command);
+            // ExitBtn element
+            this.ExitBtn = new Button();
+            this.e_14.Children.Add(this.ExitBtn);
+            this.ExitBtn.Name = "ExitBtn";
+            this.ExitBtn.Width = 500F;
+            this.ExitBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.ExitBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ExitBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ExitBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.ExitBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            this._exitBtn.FontFamily = new FontFamily("Karmatic Arcade");
-            this._exitBtn.FontSize = 36F;
-            this._exitBtn.Content = "Exit";
-            Binding binding__exitBtn_Command = new Binding("ExitCommand");
-            this._exitBtn.SetBinding(Button.CommandProperty, binding__exitBtn_Command);
+            this.ExitBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ExitBtn.FontSize = 36F;
+            this.ExitBtn.Content = "Exit";
+            Binding binding_ExitBtn_Command = new Binding("ExitCommand");
+            this.ExitBtn.SetBinding(Button.CommandProperty, binding_ExitBtn_Command);
         }
         
         private static void InitializeElementResources(UIElement elem) {

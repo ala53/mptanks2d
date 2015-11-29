@@ -18,14 +18,14 @@
             <TextBlock Text="Connect to a server" Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="48"></TextBlock>
             <DockPanel Margin="10,0,10,0" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Left" Text="Server Address: " Foreground="White" TextAlignment="Center" FontSize="16"></TextBlock>
-                <TextBox Text="{Binding ServerAddress}" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
+                <TextBox x:Name="ServerAddress" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
             </DockPanel>
             <DockPanel Margin="10,5,10,0" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Left" Text="Password: " Foreground="White" TextAlignment="Center" FontSize="16"></TextBlock>
-                <TextBox Text="{Binding ServerPassword}" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
+                <TextBox x:Name="ServerPassword" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
             </DockPanel>
-            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" Command="{Binding ConnectButton}">Connect</Button>
-            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" Command="{Binding GoBackButton}">Go back</Button>
+            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" x:Name="ConnectBtn">Connect</Button>
+            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" x:Name="GoBackBtn">Go back</Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

@@ -18,11 +18,13 @@ namespace MPTanks.Client.Backend.UI
             return new UserInterfacePage("emptypage");
         }
         public UIRoot Page { get; private set; }
-        public dynamic Binder { get; private set; }
         public UserInterface UserInterface { get; internal set; }
         public string Name { get; private set; }
         public int Id { get; private set; }
         private static int _id;
+        public event EventHandler<GameTime> OnUpdate = delegate { };
+        internal Delegate Generator { get; set; }
+        public object State { get; set; }
 
         public UserInterfacePage(string pageName)
         {
@@ -30,18 +32,6 @@ namespace MPTanks.Client.Backend.UI
             Name = pageName;
             //Generate an instance of the page
             Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
-            var binderType = Type.GetType("MPTanks.Client.Backend.UI.Binders." + pageName, true, true);
-            if (binderType != null)
-                Binder = Activator.CreateInstance(binderType);
-            else Binder = new Binders.EmptyPage();
-
-            if (Binder is BinderBase)
-            {
-                Binder.Owner = this;
-                Binder.Recreated();
-            }
-
-            Page.DataContext = Binder;
         }
 
         private UserInterfacePage() { }
@@ -52,12 +42,26 @@ namespace MPTanks.Client.Backend.UI
                 Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
             Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
 
-            Binder.Update(gameTime);
+            OnUpdate(this, gameTime);
         }
 
         public virtual void Draw(GameTime gameTime)
         {
             Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
+        }
+
+        public virtual T Element<T>(string name) where T : Control
+        {
+            var field = Page.GetType().GetField(name, 
+                System.Reflection.BindingFlags.NonPublic | 
+                System.Reflection.BindingFlags.Public | 
+                System.Reflection.BindingFlags.GetField |
+                System.Reflection.BindingFlags.Default |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.IgnoreCase);
+            if (field == null) return null;
+            if (!field.FieldType.IsSubclassOf(typeof(T)) && field.FieldType != typeof(T)) return null;
+            return (T)field.GetValue(Page);
         }
     }
 }

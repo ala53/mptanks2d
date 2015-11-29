@@ -1,4 +1,5 @@
 ﻿using EmptyKeys.UserInterface;
+using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface.Input;
 using EmptyKeys.UserInterface.Media;
 using EmptyKeys.UserInterface.Mvvm;
@@ -25,7 +26,11 @@ namespace MPTanks.Client.Backend.UI
         private EmptyKeys.UserInterface.Engine _engine;
         private ContentManager _content;
         public UserInterfacePage CurrentPage => _pages.Count > 0 ? _pages.Peek() : null;
-        public dynamic ActiveBinder => CurrentPage?.Binder;
+        public object State
+        {
+            get { return CurrentPage.State; }
+            set { UpdateState(value); }
+        }
         public bool IsActive { get; set; }
         /// <summary>
         /// UNUSED
@@ -40,34 +45,78 @@ namespace MPTanks.Client.Backend.UI
             SpriteFont font = _content.Load<SpriteFont>("Segoe_UI_12_Regular");
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
-            GoBack();
+            Empty();
         }
 
-        public void GoToPage(string page, Action<UserInterfacePage, object> generator) =>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="generator"></param>
+        public void GoToPage(string page, Action<UserInterfacePage, object, OldPageObject> generator) =>
             GoToPage<object>(page, generator);
 
-        public void GoToPage<T>(string page, Action<UserInterfacePage, T> generator)
+        public void GoToPage(string page, Action<UserInterfacePage> generator) =>
+            GoToPage(page, (a, b, c) => generator(a));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="generator">A generator for the page which takes the page to draw to, 
+        /// an object state, and (optionally) the last page, 
+        /// which will be included when GoBack() is called or the state object is updated</param>
+        /// <param name="state"></param>
+        public void GoToPage<T>(string page, Action<UserInterfacePage, T, OldPageObject> generator, T state = null) where T : class
         {
-
-        }
-
-        public UserInterfacePage GoToPage(string name)
-        {
-            var pg = new UserInterfacePage(name);
+            var pg = new UserInterfacePage(page);
             pg.UserInterface = this;
             pg.Page.Resize(_currentWidth, _currentHeight);
+            pg.Generator = generator;
+            pg.State = state;
             _pages.Push(pg);
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
             SoundManager.Instance.LoadSounds(_content);
 
+            generator(pg, state, null);
+        }
+
+        public void UpdateState<T>(T newState) where T : class
+        {
+            //regenerate the page
+            var oldPg = CurrentPage;
+            var currentPage = CopyCurrentPage();
+            currentPage.Generator.DynamicInvoke(currentPage, newState, new OldPageObject { OldPage = oldPg });
+        }
+
+        private UserInterfacePage CopyCurrentPage()
+        {
+            var oldPg = _pages.Pop();
+            var pg = new UserInterfacePage(oldPg.Name);
+            pg.UserInterface = this;
+            pg.Page.Resize(_currentWidth, _currentHeight);
+            pg.Generator = oldPg.Generator;
+            pg.State = pg.State;
+            _pages.Push(pg);
+            FontManager.Instance.LoadFonts(_content);
+            ImageManager.Instance.LoadImages(_content);
+            SoundManager.Instance.LoadSounds(_content);
             return pg;
         }
 
-        public UserInterfacePage GoToPageIfNotThere(string name)
+        public void GoBack()
         {
-            if (CurrentPage.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)) return CurrentPage;
-            else return GoToPage(name);
+            //pop the stack
+            if (_pages.Count > 1)
+            {
+                _pages.Pop();
+                var oldPg = CurrentPage;
+                var newPg = CopyCurrentPage();
+                newPg.Generator.DynamicInvoke(newPg, newPg.State, new OldPageObject { OldPage = oldPg });
+            }
+            //otherwise
+            else UnwindAndEmpty();
         }
 
         public void UnwindAndEmpty()
@@ -76,21 +125,13 @@ namespace MPTanks.Client.Backend.UI
             GoBack();
         }
 
-        public void Empty() => GoToPageIfNotThere("emptypage");
-        /// <summary>
-        /// Goes back 1 page in the "history" list
-        /// </summary>
-        public void GoBack()
+        public bool IsOnPage(string name) => CurrentPage == null ?
+            false : CurrentPage.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase);
+
+        public void Empty()
         {
-            if (_pages.Count == 0)
-                GoToPage("emptypage");
-            _pages.Pop();
-            if (_pages.Count == 0)
-            {
-                //Add a new "empty" page to the list
-                GoToPage("emptypage");
-            }
-            FixPageStack();
+            if (!IsOnPage("emptypage"))
+                GoToPage("emptypage", (a, b, c) => { });
         }
 
         public void Resize(int newWidth, int newHeight)
@@ -99,46 +140,6 @@ namespace MPTanks.Client.Backend.UI
                 pg.Page.Resize(newWidth, newHeight);
             _currentWidth = newWidth;
             _currentHeight = newHeight;
-        }
-
-        private void FixPageStack()
-        {
-            if (_pages.Count == 0) GoBack(); //shortcut to recreate empty page
-            var p = _pages.Pop();
-            p = CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(p);
-            _pages.Push(p);
-            p.UserInterface = this;
-            p.Page.Resize(_currentWidth, _currentHeight);
-            //_pages.Push(p);
-            FontManager.Instance.LoadFonts(_content);
-            ImageManager.Instance.LoadImages(_content);
-            SoundManager.Instance.LoadSounds(_content);
-        }
-
-        private UserInterfacePage
-            CrappyReflectionHackToFixBrokenBindersBreakingThePagesInEmptyKeysBecauseFckLogic(UserInterfacePage page)
-        {
-            var newPage = new UserInterfacePage(page.Page.GetType().Name);
-            ViewModelBase binder = page.Binder;
-            ViewModelBase newBinder = newPage.Binder;
-
-            foreach (var property in binder.GetType().GetProperties(
-                System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Public
-                ))
-            {
-                if (property.CanWrite && property.CanRead)
-                {
-                    var value = property.GetValue(binder);
-                    property.SetValue(newBinder, value);
-                }
-            }
-
-            if (newBinder is BinderBase)
-                (newBinder as BinderBase).Owner = newPage;
-            newPage.UserInterface = this;
-            return newPage;
         }
 
         public void Update(GameTime gameTime)
@@ -190,30 +191,54 @@ namespace MPTanks.Client.Backend.UI
         {
             if (callback == null) callback = delegate { };
             content = string.Join("\n", ChunksUpto(content, 30));
-            GoToPage(type.ToString());
+            GoToPage(type.ToString(), (p) =>
+            {
+                p.Element<TextBlock>("Header").Text = header;
+                p.Element<TextBlock>("ContentT").Text = content;
 
-            CurrentPage.Binder.Header = header;
-            CurrentPage.Binder.Content = content;
-            CurrentPage.Binder.Buttons = buttons;
-            CurrentPage.Binder.OkCommand = new RelayCommand((obj) =>
-            {
-                GoBack();
-                callback(MessageBoxResult.Ok);
-            });
-            CurrentPage.Binder.CancelCommand = new RelayCommand((obj) =>
-            {
-                GoBack();
-                callback(MessageBoxResult.Cancel);
-            });
-            CurrentPage.Binder.YesCommand = new RelayCommand((obj) =>
-            {
-                GoBack();
-                callback(MessageBoxResult.Yes);
-            });
-            CurrentPage.Binder.NoCommand = new RelayCommand((obj) =>
-            {
-                GoBack();
-                callback(MessageBoxResult.No);
+                new[] { "Ok", "Yes", "No", "Cancel" }.Select(a =>
+                {
+                    p.Element<Button>(a).Visibility = Visibility.Collapsed;
+                    p.Element<Button>(a).Click += (c, d) =>
+                    {
+                        callback((MessageBoxResult)Enum.Parse(typeof(MessageBoxResult), a));
+                        GoBack();
+                    };
+                    return "";
+                });
+
+                List<string> visible = new List<string>();
+
+                switch (buttons)
+                {
+                    case MessageBoxButtons.Ok:
+                        visible.Add("Ok");
+                        break;
+                    case MessageBoxButtons.OkCancel:
+                        visible.Add("Ok");
+                        visible.Add("Cancel");
+                        break;
+                    case MessageBoxButtons.OkNo:
+                        visible.Add("Ok");
+                        visible.Add("No");
+                        break;
+                    case MessageBoxButtons.OkNoCancel:
+                        visible.Add("Ok");
+                        visible.Add("No");
+                        visible.Add("Cancel");
+                        break;
+                    case MessageBoxButtons.YesNo:
+                        visible.Add("Yes");
+                        visible.Add("No");
+                        break;
+                    case MessageBoxButtons.YesNoCancel:
+                        visible.Add("Yes");
+                        visible.Add("No");
+                        visible.Add("Cancel");
+                        break;
+                }
+
+                visible.ForEach(a => p.Element<Button>(a).Visibility = Visibility.Visible);
             });
         }
         static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)

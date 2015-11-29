@@ -135,12 +135,12 @@
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
-    <Compile Include="UI\MainMenu.extensions.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />
+    <Compile Include="UI\OldPageObject.cs" />
     <Compile Include="UI\UI Core\BinderBase.cs" />
     <Compile Include="UI\UITemplateDictionary.xaml.cs" />
     <Compile Include="UI\UI Core\UserInterfacePage.cs" />

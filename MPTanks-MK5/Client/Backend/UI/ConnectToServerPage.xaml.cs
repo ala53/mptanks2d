@@ -33,17 +33,17 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private TextBlock e_4;
         
-        private TextBox e_5;
+        private TextBox ServerAddress;
         
-        private DockPanel e_6;
+        private DockPanel e_5;
         
-        private TextBlock e_7;
+        private TextBlock e_6;
         
-        private TextBox e_8;
+        private TextBox ServerPassword;
         
-        private Button e_9;
+        private Button ConnectBtn;
         
-        private Button e_10;
+        private Button GoBackBtn;
         
         public ConnectToServerPage(int width, int height) : 
                 base(width, height) {
@@ -93,62 +93,54 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 16F, FontStyle.Regular, "Segoe_UI_12_Regular");
             this.e_4.FontSize = 16F;
             DockPanel.SetDock(this.e_4, Dock.Left);
+            // ServerAddress element
+            this.ServerAddress = new TextBox();
+            this.e_3.Children.Add(this.ServerAddress);
+            this.ServerAddress.Name = "ServerAddress";
+            this.ServerAddress.MinWidth = 200F;
+            this.ServerAddress.Margin = new Thickness(10F, 0F, 0F, 0F);
+            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
+            DockPanel.SetDock(this.ServerAddress, Dock.Right);
             // e_5 element
-            this.e_5 = new TextBox();
-            this.e_3.Children.Add(this.e_5);
+            this.e_5 = new DockPanel();
+            this.e_1.Children.Add(this.e_5);
             this.e_5.Name = "e_5";
-            this.e_5.MinWidth = 200F;
-            this.e_5.Margin = new Thickness(10F, 0F, 0F, 0F);
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
-            DockPanel.SetDock(this.e_5, Dock.Right);
-            Binding binding_e_5_Text = new Binding("ServerAddress");
-            this.e_5.SetBinding(TextBox.TextProperty, binding_e_5_Text);
+            this.e_5.Margin = new Thickness(10F, 5F, 10F, 0F);
+            this.e_5.LastChildFill = true;
             // e_6 element
-            this.e_6 = new DockPanel();
-            this.e_1.Children.Add(this.e_6);
+            this.e_6 = new TextBlock();
+            this.e_5.Children.Add(this.e_6);
             this.e_6.Name = "e_6";
-            this.e_6.Margin = new Thickness(10F, 5F, 10F, 0F);
-            this.e_6.LastChildFill = true;
-            // e_7 element
-            this.e_7 = new TextBlock();
-            this.e_6.Children.Add(this.e_7);
-            this.e_7.Name = "e_7";
-            this.e_7.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_7.Text = "Password: ";
-            this.e_7.TextAlignment = TextAlignment.Center;
+            this.e_6.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_6.Text = "Password: ";
+            this.e_6.TextAlignment = TextAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 16F, FontStyle.Regular, "Segoe_UI_12_Regular");
-            this.e_7.FontSize = 16F;
-            DockPanel.SetDock(this.e_7, Dock.Left);
-            // e_8 element
-            this.e_8 = new TextBox();
-            this.e_6.Children.Add(this.e_8);
-            this.e_8.Name = "e_8";
-            this.e_8.MinWidth = 200F;
-            this.e_8.Margin = new Thickness(10F, 0F, 0F, 0F);
+            this.e_6.FontSize = 16F;
+            DockPanel.SetDock(this.e_6, Dock.Left);
+            // ServerPassword element
+            this.ServerPassword = new TextBox();
+            this.e_5.Children.Add(this.ServerPassword);
+            this.ServerPassword.Name = "ServerPassword";
+            this.ServerPassword.MinWidth = 200F;
+            this.ServerPassword.Margin = new Thickness(10F, 0F, 0F, 0F);
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
-            DockPanel.SetDock(this.e_8, Dock.Right);
-            Binding binding_e_8_Text = new Binding("ServerPassword");
-            this.e_8.SetBinding(TextBox.TextProperty, binding_e_8_Text);
-            // e_9 element
-            this.e_9 = new Button();
-            this.e_1.Children.Add(this.e_9);
-            this.e_9.Name = "e_9";
-            this.e_9.Margin = new Thickness(10F, 5F, 10F, 0F);
+            DockPanel.SetDock(this.ServerPassword, Dock.Right);
+            // ConnectBtn element
+            this.ConnectBtn = new Button();
+            this.e_1.Children.Add(this.ConnectBtn);
+            this.ConnectBtn.Name = "ConnectBtn";
+            this.ConnectBtn.Margin = new Thickness(10F, 5F, 10F, 0F);
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            this.e_9.Content = "Connect";
-            Binding binding_e_9_Command = new Binding("ConnectButton");
-            this.e_9.SetBinding(Button.CommandProperty, binding_e_9_Command);
-            this.e_9.SetResourceReference(Button.StyleProperty, "PrimaryButton");
-            // e_10 element
-            this.e_10 = new Button();
-            this.e_1.Children.Add(this.e_10);
-            this.e_10.Name = "e_10";
-            this.e_10.Margin = new Thickness(10F, 5F, 10F, 0F);
+            this.ConnectBtn.Content = "Connect";
+            this.ConnectBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            // GoBackBtn element
+            this.GoBackBtn = new Button();
+            this.e_1.Children.Add(this.GoBackBtn);
+            this.GoBackBtn.Name = "GoBackBtn";
+            this.GoBackBtn.Margin = new Thickness(10F, 5F, 10F, 0F);
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            this.e_10.Content = "Go back";
-            Binding binding_e_10_Command = new Binding("GoBackButton");
-            this.e_10.SetBinding(Button.CommandProperty, binding_e_10_Command);
-            this.e_10.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            this.GoBackBtn.Content = "Go back";
+            this.GoBackBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }
         
         private static void InitializeElementResources(UIElement elem) {

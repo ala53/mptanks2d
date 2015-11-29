@@ -25,16 +25,16 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="20">
                 <Button Content="Host game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Transparent" Foreground="White" x:Name="_hostBtn" BorderBrush="Transparent"
+                        Background="Transparent" Foreground="White" x:Name="HostBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding HostGameCommand}"/>
                 <Button Content="Join game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Transparent" Foreground="White" x:Name="_joinBtn" BorderBrush="Transparent"
+                        Background="Transparent" Foreground="White" x:Name="JoinBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding JoinGameCommand}"/>
                 <Button Content="Settings" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Transparent" Foreground="White" x:Name="_settingsBtn" BorderBrush="Transparent"
+                        Background="Transparent" Foreground="White" x:Name="SettingsBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding SettingsCommand}"/>
                 <Button Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Transparent" Foreground="White" x:Name="_exitBtn" BorderBrush="Transparent"
+                        Background="Transparent" Foreground="White" x:Name="ExitBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="500" Command="{Binding ExitCommand}"/>
             </StackPanel>
         </StackPanel>
