@@ -196,7 +196,7 @@ namespace MPTanks.Client.Backend.UI
                 p.Element<TextBlock>("Header").Text = header;
                 p.Element<TextBlock>("ContentT").Text = content;
 
-                new[] { "Ok", "Yes", "No", "Cancel" }.Select(a =>
+                new List<string>() { "Ok", "Yes", "No", "Cancel" }.ForEach(a =>
                 {
                     p.Element<Button>(a).Visibility = Visibility.Collapsed;
                     p.Element<Button>(a).Click += (c, d) =>
@@ -204,7 +204,6 @@ namespace MPTanks.Client.Backend.UI
                         callback((MessageBoxResult)Enum.Parse(typeof(MessageBoxResult), a));
                         GoBack();
                     };
-                    return "";
                 });
 
                 List<string> visible = new List<string>();
