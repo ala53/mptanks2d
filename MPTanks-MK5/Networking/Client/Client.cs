@@ -19,18 +19,19 @@ namespace MPTanks.Networking.Client
         public enum ClientStatus
         {
             NotStarted,
+            Authenticating,
             Connecting,
-            ConnectionFailed,
+            Disconnected,
             Errored,
             Connected,
-            LoggingIn,
             DownloadingMods,
         }
         public ClientStatus Status { get; private set; } = ClientStatus.NotStarted;
+        public string Message { get; private set; }
         public Lidgren.Network.NetClient NetworkClient { get; private set; }
         public bool Connected =>
             Status == ClientStatus.Connected ||
-            Status == ClientStatus.LoggingIn ||
+            Status == ClientStatus.Authenticating ||
             Status == ClientStatus.DownloadingMods;
         public NetworkedGame GameInstance { get; private set; }
         public ushort? PlayerId => Player?.Id;
@@ -111,13 +112,14 @@ namespace MPTanks.Networking.Client
         {
             if (_hasConnected == true) return;
             _hasConnected = true;
-            Status = ClientStatus.Connecting;
             if (!string.IsNullOrWhiteSpace(Host) && Port != 0)
             {
                 //Do a deferred web request to get a token
                 Logger.Trace("Doing web request for auth token");
                 Task.Run(async () =>
                 {
+                    Status = ClientStatus.Authenticating;
+                    Message = "Authenticating with ZSB servers...";
                     string token = "OFFLINE";
                     try
                     {
@@ -131,6 +133,10 @@ namespace MPTanks.Networking.Client
                     catch (InvalidAccountServerResponseException)
                     { if (GlobalSettings.Trace) throw; }
                     //And send connection message
+
+                    Status = ClientStatus.Connecting;
+                    Message = $"Connecting to server (" + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode)...";
+
                     var msg = NetworkClient.CreateMessage();
                     msg.Write(ZSB.DrmClient.User.UniqueId.ToByteArray());
                     msg.Write(ZSB.DrmClient.User.Username);

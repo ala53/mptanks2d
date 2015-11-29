@@ -12,22 +12,7 @@ namespace MPTanks.Client.Backend.UI.Binders
     public class ConnectingToServerPage : BinderBase
     {
         #region Stuff that is there for the UI Layer and not the user
-        public string ConnectingToServer
-        {
-            get
-            {
-                return Strings.ClientMenus.ConnectingToServerHeader;
-            }
-        }
-
-        public string CancelButton
-        {
-            get
-            {
-                return Strings.ClientMenus.CancelButton;
-            }
-        }
-
+        
         private string _addrLabel;
         public string AddressLabel
         {
@@ -40,23 +25,7 @@ namespace MPTanks.Client.Backend.UI.Binders
                 SetProperty(ref _addrLabel, value, nameof(AddressLabel));
             }
         }
-
-        public string ReturnToMenu
-        {
-            get
-            {
-                return Strings.ClientMenus.ConnectingToServerReturnToMenu;
-            }
-        }
-
-        public string ConnectionFailed
-        {
-            get
-            {
-                return Strings.ClientMenus.ConnectingToServerConnectionFailed;
-            }
-        }
-
+        
         private Visibility _failureAreaVisibility;
         public Visibility FailureAreaVisibility
         {

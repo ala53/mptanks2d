@@ -43,6 +43,14 @@ namespace MPTanks.Client.Backend.UI
             GoBack();
         }
 
+        public void GoToPage(string page, Action<UserInterfacePage, object> generator) =>
+            GoToPage<object>(page, generator);
+
+        public void GoToPage<T>(string page, Action<UserInterfacePage, T> generator)
+        {
+
+        }
+
         public UserInterfacePage GoToPage(string name)
         {
             var pg = new UserInterfacePage(name);
@@ -101,7 +109,7 @@ namespace MPTanks.Client.Backend.UI
             _pages.Push(p);
             p.UserInterface = this;
             p.Page.Resize(_currentWidth, _currentHeight);
-            _pages.Push(p);
+            //_pages.Push(p);
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
             SoundManager.Instance.LoadSounds(_content);

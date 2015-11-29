@@ -27,7 +27,7 @@ namespace MPTanks.CoreAssets.MapObjects
         protected override bool CollideInternal(GameObject other, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {
             if (other.GetType().IsSubclassOf(typeof(Projectile))) return false; //let projectiles go through
-            if (other.Flags.Contains("goes_through_tank_blocks")) return false; //take advantage of flags so some tanks
+            if (other.Flags.Contains("PassesThroughTankBlocks")) return false; //take advantage of flags so some tanks
                                                                                 //can go through, if explicitly allowed
             return base.CollideInternal(other, contact);
         }

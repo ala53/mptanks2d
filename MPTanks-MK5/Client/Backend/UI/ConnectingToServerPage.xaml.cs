@@ -74,9 +74,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_1.Children.Add(this.e_2);
             this.e_2.Name = "e_2";
             this.e_2.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_2.Text = "Connecting to Server";
             FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            Binding binding_e_2_Text = new Binding("ConnectingToServer");
-            this.e_2.SetBinding(TextBlock.TextProperty, binding_e_2_Text);
             this.e_2.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
             // e_3 element
             this.e_3 = new TextBlock();
@@ -106,8 +105,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_5.Children.Add(this.e_6);
             this.e_6.Name = "e_6";
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            Binding binding_e_6_Content = new Binding("CancelButton");
-            this.e_6.SetBinding(Button.ContentProperty, binding_e_6_Content);
+            this.e_6.Content = "Cancel";
             Binding binding_e_6_Command = new Binding("CancelButtonCommand");
             this.e_6.SetBinding(Button.CommandProperty, binding_e_6_Command);
             this.e_6.SetResourceReference(Button.StyleProperty, "PrimaryButton");
@@ -130,9 +128,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_8.Children.Add(this.e_9);
             this.e_9.Name = "e_9";
             this.e_9.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_9.Text = "Error";
             FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
-            Binding binding_e_9_Text = new Binding("ConnectionFailed");
-            this.e_9.SetBinding(TextBlock.TextProperty, binding_e_9_Text);
             this.e_9.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
             this.e_9.SetResourceReference(TextBlock.ForegroundProperty, "ErrorTextColor");
             // e_10 element
@@ -151,8 +148,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_8.Children.Add(this.e_11);
             this.e_11.Name = "e_11";
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            Binding binding_e_11_Content = new Binding("ReturnToMenu");
-            this.e_11.SetBinding(Button.ContentProperty, binding_e_11_Content);
+            this.e_11.Content = "Return to Menu";
             Binding binding_e_11_Command = new Binding("ReturnButtonCommand");
             this.e_11.SetBinding(Button.CommandProperty, binding_e_11_Command);
             this.e_11.SetResourceReference(Button.StyleProperty, "PrimaryButton");

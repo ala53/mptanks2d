@@ -66,8 +66,17 @@ namespace MPTanks.Networking.Client
                     case NetIncomingMessageType.StatusChanged:
                         switch ((NetConnectionStatus)msg.ReadByte())
                         {
+                            case NetConnectionStatus.Connected:
+                                Status = ClientStatus.Connected;
+                                Message = "Connected, waiting for server...";
+                                break;
                             case NetConnectionStatus.Disconnected:
                                 var reason = msg.ReadString();
+                                Status = ClientStatus.Disconnected;
+                                if (string.IsNullOrEmpty(reason))
+                                    Message = "Disconnected (Unknown Error)";
+                                else
+                                    Message = "Disconnected: " + reason;
 
                                 break;
                         }

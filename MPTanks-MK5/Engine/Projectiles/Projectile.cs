@@ -22,6 +22,8 @@ namespace MPTanks.Engine.Projectiles
             : base(game, authorized, density, bounciness, position, rotation)
         {
             Owner = owner;
+            //Default for projectiles
+            Flags.Add("PassesThroughTankBlocks");
         }
 
         protected override void CreateInternal()
@@ -51,7 +53,8 @@ namespace MPTanks.Engine.Projectiles
         }
         public virtual void CollidedWithMapObject(Maps.MapObjects.MapObject mapObject)
         {
-            if (DamagesMapObjects)
+            if (DamagesMapObjects ||
+                mapObject.Flags.Contains("DamagedByAll"))
                 Kill(mapObject);
         }
 

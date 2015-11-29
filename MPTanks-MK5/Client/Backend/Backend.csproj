@@ -229,10 +229,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Include="assets\ui\xaml\ConnectingToServerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\ui\xaml\MessageBoxes\ErrorMessageBox.xaml">
