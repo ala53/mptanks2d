@@ -122,7 +122,7 @@ namespace MPTanks.Client.Backend.UI
         public void UnwindAndEmpty()
         {
             _pages.Clear();
-            GoBack();
+            Empty();
         }
 
         public bool IsOnPage(string name) => CurrentPage == null ?

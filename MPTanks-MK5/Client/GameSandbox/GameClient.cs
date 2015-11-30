@@ -230,9 +230,9 @@ namespace MPTanks.Client.GameSandbox
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
+
         protected override void Update(GameTime gameTime)
         {
-            return;
             //Check for GD changes 
             //It's done here because applychanges can cause issues
             //when called repeatedly - Window Resize causes a stack overflow
@@ -276,7 +276,7 @@ namespace MPTanks.Client.GameSandbox
             if (Client.IsInCountdown)
             {
                 return;
-             }
+            }
 
 
             if (CrossDomainObject.Instance.IsGameHost)
