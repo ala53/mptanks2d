@@ -298,7 +298,7 @@
 
 "$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
 
-"$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" /incremental /build:"$(ProjectDir)assets\mgcontent\shadowRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\componentRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\fxaa3.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskPreCompositor.fx"</PreBuildEvent>
+"$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" /incremental /platform:WindowsGL /build:"$(ProjectDir)assets\mgcontent\shadowRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\componentRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\fxaa3.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskPreCompositor.fx"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

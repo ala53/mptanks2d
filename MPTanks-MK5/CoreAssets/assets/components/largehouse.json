@@ -1,8 +1,14 @@
 ﻿{
+  "flags": [ "DamagedByAll" ],
   "components": [
     {
       "drawLayer": 0,
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      },
       "name": "house",
       "image": {
         "frame": "house",
@@ -24,10 +30,19 @@
           }
         ]
       },
-      "offset": { "x": 0, "y": 0 },
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
       "rotation": 0,
-      "rotationOrigin": { "x": 0, "y": 0 },
-      "size": { "x": 8, "y": 8.25 }
+      "rotationOrigin": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "x": 8,
+        "y": 8.25
+      }
     }
   ],
   "emitters": [
@@ -42,26 +57,54 @@
         "y": 3
       },
       "keepAliveAfterDeath": false,
-      "maxAcceleration": { "x": 0, "y": 0 },
-      "maxColorMask": { "r": 100, "g": 100, "b": 100, "a": 255 },
+      "maxAcceleration": {
+        "x": 0,
+        "y": 0
+      },
+      "maxColorMask": {
+        "r": 100,
+        "g": 100,
+        "b": 100,
+        "a": 255
+      },
       "maxFadeInTime": 500,
       "maxFadeOutTime": 1500,
       "maxLifeSpan": 10050,
       "maxParticlesPerSecond": 5,
       "maxRotation": 6.28,
       "maxRotationVelocity": 0.5,
-      "maxSize": { "x": 0.3, "y": 0.3 },
-      "maxVelocity": { "x": 1, "y": 1 },
-      "minAcceleration": { "x": 0, "y": 0 },
-      "minColorMask": { "r": 0, "g": 0, "b": 0, "a": 127 },
+      "maxSize": {
+        "x": 0.3,
+        "y": 0.3
+      },
+      "maxVelocity": {
+        "x": 1,
+        "y": 1
+      },
+      "minAcceleration": {
+        "x": 0,
+        "y": 0
+      },
+      "minColorMask": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 127
+      },
       "minFadeInTime": 250,
       "minFadeOutTime": 1000,
       "minLifeSpan": 3250,
       "minParticlesPerSecond": 5,
       "minRotation": 0,
       "minRotationVelocity": -0.5,
-      "minSize": { "x": 0.2, "y": 0.2 },
-      "minVelocity": { "x": 0.1, "y": 0.1 },
+      "minSize": {
+        "x": 0.2,
+        "y": 0.2
+      },
+      "minVelocity": {
+        "x": 0.1,
+        "y": 0.1
+      },
       "name": "chimney_smoke",
       "renderBelowObjects": false,
       "shrinkInsteadOfFade": false,
@@ -80,7 +123,10 @@
   "name": "Large House #1",
   "reflectionName": "LargeHouseMultiLevel",
   "invincible": true,
-  "size": { "x": 8, "y": 8 },
+  "size": {
+    "x": 8,
+    "y": 8
+  },
   "sheet": {
     "file": "housetexturebasic.png"
   }
