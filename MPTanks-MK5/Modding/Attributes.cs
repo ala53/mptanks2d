@@ -34,6 +34,8 @@ namespace MPTanks.Modding
         public bool IsStatic { get; set; }
         public float MinWidthBlocks { get; set; }
         public float MinHeightBlocks { get; set; }
+        public string[] InstanceSettingNames { get; set; }
+        public string[] InstanceSettingDefaults { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]

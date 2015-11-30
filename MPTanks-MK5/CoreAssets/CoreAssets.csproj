@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\components\spawnpoint.json" />
     <None Include="assets\components\tankblocks.json" />
     <None Include="assets\components\basictank.json" />
     <Compile Include="Assets.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Gamemodes\TeamDeathMatchGamemode.cs" />
     <Compile Include="MapObjects\MultilevelHouse.cs" />
     <Compile Include="MapObjects\SatelliteDishLarge.cs" />
+    <Compile Include="MapObjects\SpawnPoint.cs" />
     <Compile Include="MapObjects\TankBlocks.cs" />
     <Compile Include="MapObjects\Wall.cs" />
     <Compile Include="ModuleInfo.cs" />

@@ -23,15 +23,15 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class SettingUpPrompt : UIRoot {
         
-        private Grid e_19;
+        private Grid e_21;
         
-        private StackPanel e_20;
+        private StackPanel e_22;
         
-        private TextBlock e_21;
+        private TextBlock e_23;
         
-        private TextBlock e_22;
+        private TextBlock e_24;
         
-        private Button e_23;
+        private Button e_25;
         
         public SettingUpPrompt(int width, int height) : 
                 base(width, height) {
@@ -45,49 +45,49 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             this.SetResourceReference(UIRoot.BackgroundProperty, "MenuPageBGBrush");
             InitializeElementResources(this);
-            // e_19 element
-            this.e_19 = new Grid();
-            this.Content = this.e_19;
-            this.e_19.Name = "e_19";
-            // e_20 element
-            this.e_20 = new StackPanel();
-            this.e_19.Children.Add(this.e_20);
-            this.e_20.Name = "e_20";
-            this.e_20.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_20.VerticalAlignment = VerticalAlignment.Center;
             // e_21 element
-            this.e_21 = new TextBlock();
-            this.e_20.Children.Add(this.e_21);
+            this.e_21 = new Grid();
+            this.Content = this.e_21;
             this.e_21.Name = "e_21";
-            this.e_21.HorizontalAlignment = HorizontalAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            Binding binding_e_21_Text = new Binding("Header");
-            this.e_21.SetBinding(TextBlock.TextProperty, binding_e_21_Text);
-            this.e_21.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
             // e_22 element
-            this.e_22 = new TextBlock();
-            this.e_20.Children.Add(this.e_22);
+            this.e_22 = new StackPanel();
+            this.e_21.Children.Add(this.e_22);
             this.e_22.Name = "e_22";
             this.e_22.HorizontalAlignment = HorizontalAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
-            Binding binding_e_22_Text = new Binding("Content");
-            this.e_22.SetBinding(TextBlock.TextProperty, binding_e_22_Text);
-            this.e_22.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
+            this.e_22.VerticalAlignment = VerticalAlignment.Center;
             // e_23 element
-            this.e_23 = new Button();
-            this.e_20.Children.Add(this.e_23);
+            this.e_23 = new TextBlock();
+            this.e_22.Children.Add(this.e_23);
             this.e_23.Name = "e_23";
-            this.e_23.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.e_23.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_23.Padding = new Thickness(10F, 0F, 10F, 0F);
+            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
+            Binding binding_e_23_Text = new Binding("Header");
+            this.e_23.SetBinding(TextBlock.TextProperty, binding_e_23_Text);
+            this.e_23.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
+            // e_24 element
+            this.e_24 = new TextBlock();
+            this.e_22.Children.Add(this.e_24);
+            this.e_24.Name = "e_24";
+            this.e_24.HorizontalAlignment = HorizontalAlignment.Center;
+            FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
+            Binding binding_e_24_Text = new Binding("Content");
+            this.e_24.SetBinding(TextBlock.TextProperty, binding_e_24_Text);
+            this.e_24.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
+            // e_25 element
+            this.e_25 = new Button();
+            this.e_22.Children.Add(this.e_25);
+            this.e_25.Name = "e_25";
+            this.e_25.Margin = new Thickness(10F, 10F, 10F, 10F);
+            this.e_25.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_25.Padding = new Thickness(10F, 0F, 10F, 0F);
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            Binding binding_e_23_Visibility = new Binding("ControlButtonVisibility");
-            this.e_23.SetBinding(Button.VisibilityProperty, binding_e_23_Visibility);
-            Binding binding_e_23_Content = new Binding("ControlButtonInfo");
-            this.e_23.SetBinding(Button.ContentProperty, binding_e_23_Content);
-            Binding binding_e_23_Command = new Binding("ControlButtonCommand");
-            this.e_23.SetBinding(Button.CommandProperty, binding_e_23_Command);
-            this.e_23.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            Binding binding_e_25_Visibility = new Binding("ControlButtonVisibility");
+            this.e_25.SetBinding(Button.VisibilityProperty, binding_e_25_Visibility);
+            Binding binding_e_25_Content = new Binding("ControlButtonInfo");
+            this.e_25.SetBinding(Button.ContentProperty, binding_e_25_Content);
+            Binding binding_e_25_Command = new Binding("ControlButtonCommand");
+            this.e_25.SetBinding(Button.CommandProperty, binding_e_25_Command);
+            this.e_25.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }
         
         private static void InitializeElementResources(UIElement elem) {

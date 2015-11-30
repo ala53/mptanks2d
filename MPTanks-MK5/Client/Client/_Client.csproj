@@ -100,6 +100,10 @@
     <Content Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MapMaker\MapMaker.csproj">
+      <Project>{c5343a23-8b29-49ba-b377-f0faf83cfb99}</Project>
+      <Name>MapMaker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Networking\Client\Client.csproj">
       <Project>{2f77b6ce-2d2d-4e67-a7bd-38e896a52931}</Project>
       <Name>Client</Name>

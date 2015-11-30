@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,15 @@ namespace MPTanks.Engine.Maps.MapObjects
             Vector2 position = default(Vector2), float rotation = 0, float density = 100, float restitution = 0f)
             : base(game, authorized, density, restitution, position, rotation)
         {
+        }
+        
+        /// <summary>
+        /// Allows you to handle design time instance settings (configured via the [GameObjectAttribute])
+        /// </summary>
+        /// <param name="settings"></param>
+        internal virtual void ProcessInstanceSettings(IDictionary<string, string> settings)
+        {
+
         }
 
         protected override void CreateInternal()

@@ -35,6 +35,8 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel e_14;
         
+        private StackPanel e_15;
+        
         private Button HostBtn;
         
         private Button JoinBtn;
@@ -42,6 +44,14 @@ namespace EmptyKeys.UserInterface.Generated {
         private Button SettingsBtn;
         
         private Button ExitBtn;
+        
+        private StackPanel e_16;
+        
+        private Button MapMakerBtn;
+        
+        private Button ModsPageBtn;
+        
+        private Button CreditsBtn;
         
         public MainMenu(int width, int height) : 
                 base(width, height) {
@@ -95,13 +105,18 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_14 = new StackPanel();
             this.e_12.Children.Add(this.e_14);
             this.e_14.Name = "e_14";
-            this.e_14.Margin = new Thickness(20F, 20F, 20F, 20F);
-            this.e_14.Orientation = Orientation.Vertical;
+            this.e_14.Orientation = Orientation.Horizontal;
+            // e_15 element
+            this.e_15 = new StackPanel();
+            this.e_14.Children.Add(this.e_15);
+            this.e_15.Name = "e_15";
+            this.e_15.Margin = new Thickness(20F, 20F, 20F, 20F);
+            this.e_15.Orientation = Orientation.Vertical;
             // HostBtn element
             this.HostBtn = new Button();
-            this.e_14.Children.Add(this.HostBtn);
+            this.e_15.Children.Add(this.HostBtn);
             this.HostBtn.Name = "HostBtn";
-            this.HostBtn.Width = 500F;
+            this.HostBtn.Width = 350F;
             this.HostBtn.HorizontalAlignment = HorizontalAlignment.Left;
             this.HostBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.HostBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -115,9 +130,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.HostBtn.SetBinding(Button.CommandProperty, binding_HostBtn_Command);
             // JoinBtn element
             this.JoinBtn = new Button();
-            this.e_14.Children.Add(this.JoinBtn);
+            this.e_15.Children.Add(this.JoinBtn);
             this.JoinBtn.Name = "JoinBtn";
-            this.JoinBtn.Width = 500F;
+            this.JoinBtn.Width = 350F;
             this.JoinBtn.HorizontalAlignment = HorizontalAlignment.Left;
             this.JoinBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.JoinBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -131,9 +146,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.JoinBtn.SetBinding(Button.CommandProperty, binding_JoinBtn_Command);
             // SettingsBtn element
             this.SettingsBtn = new Button();
-            this.e_14.Children.Add(this.SettingsBtn);
+            this.e_15.Children.Add(this.SettingsBtn);
             this.SettingsBtn.Name = "SettingsBtn";
-            this.SettingsBtn.Width = 500F;
+            this.SettingsBtn.Width = 350F;
             this.SettingsBtn.HorizontalAlignment = HorizontalAlignment.Left;
             this.SettingsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.SettingsBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -147,9 +162,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.SettingsBtn.SetBinding(Button.CommandProperty, binding_SettingsBtn_Command);
             // ExitBtn element
             this.ExitBtn = new Button();
-            this.e_14.Children.Add(this.ExitBtn);
+            this.e_15.Children.Add(this.ExitBtn);
             this.ExitBtn.Name = "ExitBtn";
-            this.ExitBtn.Width = 500F;
+            this.ExitBtn.Width = 350F;
             this.ExitBtn.HorizontalAlignment = HorizontalAlignment.Left;
             this.ExitBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ExitBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -161,6 +176,60 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ExitBtn.Content = "Exit";
             Binding binding_ExitBtn_Command = new Binding("ExitCommand");
             this.ExitBtn.SetBinding(Button.CommandProperty, binding_ExitBtn_Command);
+            // e_16 element
+            this.e_16 = new StackPanel();
+            this.e_14.Children.Add(this.e_16);
+            this.e_16.Name = "e_16";
+            this.e_16.Margin = new Thickness(20F, 20F, 20F, 20F);
+            this.e_16.Orientation = Orientation.Vertical;
+            // MapMakerBtn element
+            this.MapMakerBtn = new Button();
+            this.e_16.Children.Add(this.MapMakerBtn);
+            this.MapMakerBtn.Name = "MapMakerBtn";
+            this.MapMakerBtn.Width = 350F;
+            this.MapMakerBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.MapMakerBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.MapMakerBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.MapMakerBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.MapMakerBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.MapMakerBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.MapMakerBtn.FontSize = 36F;
+            this.MapMakerBtn.Content = "Map Maker";
+            Binding binding_MapMakerBtn_Command = new Binding("ExitCommand");
+            this.MapMakerBtn.SetBinding(Button.CommandProperty, binding_MapMakerBtn_Command);
+            // ModsPageBtn element
+            this.ModsPageBtn = new Button();
+            this.e_16.Children.Add(this.ModsPageBtn);
+            this.ModsPageBtn.Name = "ModsPageBtn";
+            this.ModsPageBtn.Width = 350F;
+            this.ModsPageBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.ModsPageBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ModsPageBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ModsPageBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.ModsPageBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.ModsPageBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ModsPageBtn.FontSize = 36F;
+            this.ModsPageBtn.Content = "Mods";
+            Binding binding_ModsPageBtn_Command = new Binding("ExitCommand");
+            this.ModsPageBtn.SetBinding(Button.CommandProperty, binding_ModsPageBtn_Command);
+            // CreditsBtn element
+            this.CreditsBtn = new Button();
+            this.e_16.Children.Add(this.CreditsBtn);
+            this.CreditsBtn.Name = "CreditsBtn";
+            this.CreditsBtn.Width = 350F;
+            this.CreditsBtn.HorizontalAlignment = HorizontalAlignment.Left;
+            this.CreditsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.CreditsBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.CreditsBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.CreditsBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.CreditsBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.CreditsBtn.FontSize = 36F;
+            this.CreditsBtn.Content = "Credits";
+            Binding binding_CreditsBtn_Command = new Binding("ExitCommand");
+            this.CreditsBtn.SetBinding(Button.CommandProperty, binding_CreditsBtn_Command);
         }
         
         private static void InitializeElementResources(UIElement elem) {

@@ -2,8 +2,10 @@
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 using MPTanks.Engine.Rendering;
+using MPTanks.Modding;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace MPTanks.Engine
 {
@@ -284,7 +286,7 @@ namespace MPTanks.Engine
             _startRestitution = restitution;
 
             if (!game.Authoritative && !authorized)
-                game.Logger.Error("Object Created without authorization. Type: " + this.GetType().ToString() + ", ID: " + ObjectId);
+                game.Logger.Error("Object created without authorization. Type: " + GetType().ToString() + ", ID: " + ObjectId);
 
             UnsafeEnableEvents();
         }

@@ -45,7 +45,6 @@ namespace MPTanks.Engine.Maps.Serialization
         public string AssetFileName { get; set; }
         public Color Mask { get; set; }
         public JSONVector Position { get; set; }
-        public JSONVector Repeat { get; set; }
     }
 
     public class MapTeamsJSON
@@ -61,6 +60,8 @@ namespace MPTanks.Engine.Maps.Serialization
         public JSONVector Position { get; set; }
         [JsonProperty("size")]
         public JSONVector DesiredSize { get; set; }
+        public Dictionary<string, string> ConfiguredSettings { get; set; }
         public Color Mask { get; set; }
+        public int DrawLayer { get; set; }
     }
 }

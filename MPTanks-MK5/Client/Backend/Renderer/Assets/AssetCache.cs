@@ -99,7 +99,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             sprites.Add(LoadingTextureSpriteName, new Sprite(60, 60, 4, 4, LoadingTextureSpriteName));
 
             _spriteSheets.Add("asset_cache_internal_spritesheet",
-                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx, 
+                new SpriteSheet(new Dictionary<string, Animation>(), sprites, tx,
                 "asset_cache_internal_spritesheet", "asset_cache_internal_spritesheet"));
             _blankSprite = _internalSprites[BlankTextureSpriteName];
             _loadingSprite = _internalSprites[LoadingTextureSpriteName];
@@ -183,6 +183,16 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
                 disposedValue = true;
             }
+        }
+
+        public void Clear()
+        {
+            foreach (var spriteSheet in _spriteSheets)
+                spriteSheet.Value.Texture.Dispose();
+
+            _spriteSheets.Clear();
+            GC.Collect(2, GCCollectionMode.Optimized);
+
         }
 
         // This code added to correctly implement the disposable pattern.

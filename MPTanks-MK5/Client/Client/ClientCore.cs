@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.UI;
 using System;
+using System.Diagnostics;
 
 namespace MPTanks.Client
 {
@@ -179,6 +180,21 @@ namespace MPTanks.Client
                         };
                     });
 
+                };
+
+                a.Element<Button>("MapMakerBtn").Click += (b, c) => {
+                    var prc = Process.Start("MPTanks.Clients.MapMaker.exe");
+
+                    ui.GoToPage("mainmenuplayerisingamepage", g =>
+                    {
+                        g.Element<Button>("ForceCloseBtn").Click += (h, i) =>
+                        {
+                            prc.Close();
+                            ui.GoBack();
+                        };
+                    });
+
+                    prc.Exited += (d, e) => { ui.GoBack(); };
                 };
                 a.Element<Button>("ExitBtn").Click += (b, c) =>
                 {

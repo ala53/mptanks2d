@@ -23,19 +23,32 @@
                 <TextBlock x:Name="_subtitle" Text="Pre-Alpha Version" Foreground="White" HorizontalAlignment="Stretch" 
                        TextAlignment="Center" FontSize="36"  FontFamily="Karmatic Arcade"></TextBlock>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="20">
-                <Button Content="Host game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical" Margin="20">
+                    <Button Content="Host game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
                         Background="Transparent" Foreground="White" x:Name="HostBtn" BorderBrush="Transparent"
-                        HorizontalAlignment="Left" Width="500" Command="{Binding HostGameCommand}"/>
-                <Button Content="Join game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding HostGameCommand}"/>
+                    <Button Content="Join game" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
                         Background="Transparent" Foreground="White" x:Name="JoinBtn" BorderBrush="Transparent"
-                        HorizontalAlignment="Left" Width="500" Command="{Binding JoinGameCommand}"/>
-                <Button Content="Settings" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding JoinGameCommand}"/>
+                    <Button Content="Settings" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
                         Background="Transparent" Foreground="White" x:Name="SettingsBtn" BorderBrush="Transparent"
-                        HorizontalAlignment="Left" Width="500" Command="{Binding SettingsCommand}"/>
-                <Button Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding SettingsCommand}"/>
+                    <Button Content="Exit" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
                         Background="Transparent" Foreground="White" x:Name="ExitBtn" BorderBrush="Transparent"
-                        HorizontalAlignment="Left" Width="500" Command="{Binding ExitCommand}"/>
+                        HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="20">
+                    <Button Content="Map Maker" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="MapMakerBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
+                    <Button Content="Mods" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="ModsPageBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
+                    <Button Content="Credits" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="CreditsBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>
