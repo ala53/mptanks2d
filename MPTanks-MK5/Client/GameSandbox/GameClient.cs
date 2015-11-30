@@ -273,17 +273,18 @@ namespace MPTanks.Client.GameSandbox
             if (state != Client.Input)
                 Client.Input = state;
 
-            if (Client.IsInCountdown)
-            {
-                return;
-            }
-
 
             if (CrossDomainObject.Instance.IsGameHost)
                 Server.Update(gameTime);
             //     if (Keyboard.GetState().IsKeyDown(Keys.M))
             //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
+
+            if (Client.IsInCountdown)
+            {
+                return;
+            }
+
             //Client.GameInstance.Game.Authoritative = true;
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
