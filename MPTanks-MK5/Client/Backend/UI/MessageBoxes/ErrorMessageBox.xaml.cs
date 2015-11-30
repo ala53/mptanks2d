@@ -23,21 +23,21 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class ErrorMessageBox : UIRoot {
         
-        private Grid e_26;
+        private Grid e_23;
         
-        private Border e_27;
+        private Border e_24;
         
-        private StackPanel e_28;
+        private StackPanel e_25;
         
-        private Border e_29;
+        private Border e_26;
         
         private TextBlock Header;
         
         private TextBlock ContentT;
         
-        private Border e_30;
+        private Border e_27;
         
-        private StackPanel e_31;
+        private StackPanel e_28;
         
         private Button Cancel;
         
@@ -59,33 +59,33 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 51));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
+            // e_23 element
+            this.e_23 = new Grid();
+            this.Content = this.e_23;
+            this.e_23.Name = "e_23";
+            // e_24 element
+            this.e_24 = new Border();
+            this.e_23.Children.Add(this.e_24);
+            this.e_24.Name = "e_24";
+            this.e_24.MaxWidth = 600F;
+            this.e_24.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_24.VerticalAlignment = VerticalAlignment.Center;
+            this.e_24.BorderThickness = new Thickness(2F, 2F, 2F, 2F);
+            this.e_24.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
+            // e_25 element
+            this.e_25 = new StackPanel();
+            this.e_24.Child = this.e_25;
+            this.e_25.Name = "e_25";
+            this.e_25.Background = new SolidColorBrush(new ColorW(0, 0, 0, 204));
             // e_26 element
-            this.e_26 = new Grid();
-            this.Content = this.e_26;
+            this.e_26 = new Border();
+            this.e_25.Children.Add(this.e_26);
             this.e_26.Name = "e_26";
-            // e_27 element
-            this.e_27 = new Border();
-            this.e_26.Children.Add(this.e_27);
-            this.e_27.Name = "e_27";
-            this.e_27.MaxWidth = 600F;
-            this.e_27.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_27.VerticalAlignment = VerticalAlignment.Center;
-            this.e_27.BorderThickness = new Thickness(2F, 2F, 2F, 2F);
-            this.e_27.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
-            // e_28 element
-            this.e_28 = new StackPanel();
-            this.e_27.Child = this.e_28;
-            this.e_28.Name = "e_28";
-            this.e_28.Background = new SolidColorBrush(new ColorW(0, 0, 0, 204));
-            // e_29 element
-            this.e_29 = new Border();
-            this.e_28.Children.Add(this.e_29);
-            this.e_29.Name = "e_29";
-            this.e_29.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
-            this.e_29.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
+            this.e_26.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
+            this.e_26.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
             // Header element
             this.Header = new TextBlock();
-            this.e_29.Child = this.Header;
+            this.e_26.Child = this.Header;
             this.Header.Name = "Header";
             this.Header.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.Header.HorizontalAlignment = HorizontalAlignment.Center;
@@ -96,7 +96,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Header.SetResourceReference(TextBlock.ForegroundProperty, "ErrorTextColor");
             // ContentT element
             this.ContentT = new TextBlock();
-            this.e_28.Children.Add(this.ContentT);
+            this.e_25.Children.Add(this.ContentT);
             this.ContentT.Name = "ContentT";
             this.ContentT.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.ContentT.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -105,21 +105,21 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ContentT.FontFamily = new FontFamily("Karmatic Arcade");
             this.ContentT.FontSize = 20F;
             this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuContent");
-            // e_30 element
-            this.e_30 = new Border();
-            this.e_28.Children.Add(this.e_30);
-            this.e_30.Name = "e_30";
-            this.e_30.BorderThickness = new Thickness(0F, 2F, 0F, 0F);
-            this.e_30.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
-            // e_31 element
-            this.e_31 = new StackPanel();
-            this.e_30.Child = this.e_31;
-            this.e_31.Name = "e_31";
-            this.e_31.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_31.Orientation = Orientation.Horizontal;
+            // e_27 element
+            this.e_27 = new Border();
+            this.e_25.Children.Add(this.e_27);
+            this.e_27.Name = "e_27";
+            this.e_27.BorderThickness = new Thickness(0F, 2F, 0F, 0F);
+            this.e_27.SetResourceReference(Border.BorderBrushProperty, "ErrorTextColor");
+            // e_28 element
+            this.e_28 = new StackPanel();
+            this.e_27.Child = this.e_28;
+            this.e_28.Name = "e_28";
+            this.e_28.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_28.Orientation = Orientation.Horizontal;
             // Cancel element
             this.Cancel = new Button();
-            this.e_31.Children.Add(this.Cancel);
+            this.e_28.Children.Add(this.Cancel);
             this.Cancel.Name = "Cancel";
             this.Cancel.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Cancel.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -133,7 +133,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Cancel.SetBinding(Button.VisibilityProperty, binding_Cancel_Visibility);
             // No element
             this.No = new Button();
-            this.e_31.Children.Add(this.No);
+            this.e_28.Children.Add(this.No);
             this.No.Name = "No";
             this.No.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.No.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -147,7 +147,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.No.SetBinding(Button.VisibilityProperty, binding_No_Visibility);
             // Yes element
             this.Yes = new Button();
-            this.e_31.Children.Add(this.Yes);
+            this.e_28.Children.Add(this.Yes);
             this.Yes.Name = "Yes";
             this.Yes.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Yes.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -161,7 +161,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Yes.SetBinding(Button.VisibilityProperty, binding_Yes_Visibility);
             // Ok element
             this.Ok = new Button();
-            this.e_31.Children.Add(this.Ok);
+            this.e_28.Children.Add(this.Ok);
             this.Ok.Name = "Ok";
             this.Ok.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Ok.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));

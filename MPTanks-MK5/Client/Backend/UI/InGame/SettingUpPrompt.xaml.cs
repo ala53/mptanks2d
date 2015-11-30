@@ -27,11 +27,11 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel e_22;
         
-        private TextBlock e_23;
+        private TextBlock Header;
         
-        private TextBlock e_24;
+        private TextBlock ContentT;
         
-        private Button e_25;
+        private Button ControlButton;
         
         public SettingUpPrompt(int width, int height) : 
                 base(width, height) {
@@ -55,39 +55,29 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_22.Name = "e_22";
             this.e_22.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_22.VerticalAlignment = VerticalAlignment.Center;
-            // e_23 element
-            this.e_23 = new TextBlock();
-            this.e_22.Children.Add(this.e_23);
-            this.e_23.Name = "e_23";
-            this.e_23.HorizontalAlignment = HorizontalAlignment.Center;
+            // Header element
+            this.Header = new TextBlock();
+            this.e_22.Children.Add(this.Header);
+            this.Header.Name = "Header";
+            this.Header.HorizontalAlignment = HorizontalAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            Binding binding_e_23_Text = new Binding("Header");
-            this.e_23.SetBinding(TextBlock.TextProperty, binding_e_23_Text);
-            this.e_23.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
-            // e_24 element
-            this.e_24 = new TextBlock();
-            this.e_22.Children.Add(this.e_24);
-            this.e_24.Name = "e_24";
-            this.e_24.HorizontalAlignment = HorizontalAlignment.Center;
+            this.Header.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
+            // ContentT element
+            this.ContentT = new TextBlock();
+            this.e_22.Children.Add(this.ContentT);
+            this.ContentT.Name = "ContentT";
+            this.ContentT.HorizontalAlignment = HorizontalAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
-            Binding binding_e_24_Text = new Binding("Content");
-            this.e_24.SetBinding(TextBlock.TextProperty, binding_e_24_Text);
-            this.e_24.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
-            // e_25 element
-            this.e_25 = new Button();
-            this.e_22.Children.Add(this.e_25);
-            this.e_25.Name = "e_25";
-            this.e_25.Margin = new Thickness(10F, 10F, 10F, 10F);
-            this.e_25.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_25.Padding = new Thickness(10F, 0F, 10F, 0F);
+            this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
+            // ControlButton element
+            this.ControlButton = new Button();
+            this.e_22.Children.Add(this.ControlButton);
+            this.ControlButton.Name = "ControlButton";
+            this.ControlButton.Margin = new Thickness(10F, 10F, 10F, 10F);
+            this.ControlButton.HorizontalAlignment = HorizontalAlignment.Center;
+            this.ControlButton.Padding = new Thickness(10F, 0F, 10F, 0F);
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            Binding binding_e_25_Visibility = new Binding("ControlButtonVisibility");
-            this.e_25.SetBinding(Button.VisibilityProperty, binding_e_25_Visibility);
-            Binding binding_e_25_Content = new Binding("ControlButtonInfo");
-            this.e_25.SetBinding(Button.ContentProperty, binding_e_25_Content);
-            Binding binding_e_25_Command = new Binding("ControlButtonCommand");
-            this.e_25.SetBinding(Button.CommandProperty, binding_e_25_Command);
-            this.e_25.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            this.ControlButton.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }
         
         private static void InitializeElementResources(UIElement elem) {

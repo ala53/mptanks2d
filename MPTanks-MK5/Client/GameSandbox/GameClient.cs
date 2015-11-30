@@ -18,6 +18,7 @@ using MPTanks.Client.GameSandbox.UI;
 using MPTanks.Networking.Server;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using EmptyKeys.UserInterface.Controls;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -119,6 +120,25 @@ namespace MPTanks.Client.GameSandbox
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            ShowSetupPrompt();
+        }
+
+        private void ShowSetupPrompt()
+        {
+            _ui.GoToPage("settingupprompt", (p, b, c) =>
+            {
+                try { p.Element<TextBlock>("Header").Text = b.Header ?? ""; } catch { }
+                try { p.Element<TextBlock>("ContentT").Text = b.Content ?? ""; } catch { }
+
+                try { p.Element<Button>("controlbutton").Content = b.Button ?? "Leave server"; } catch { }
+                p.Element<Button>("controlbutton").Click += (d, e) => Exit();
+                bool visible = true;
+                try { visible = !b.Invisible; } catch { }
+                if (!visible)
+                    p.Element<Button>("controlbutton").Visibility =
+                    EmptyKeys.UserInterface.Visibility.Collapsed;
+            }, new { Header = "", Content = "", Button = (string)null, Invisible = false });
         }
 
         private void CreateGame()
@@ -145,7 +165,7 @@ namespace MPTanks.Client.GameSandbox
                 host ? (ushort)33132 : CrossDomainObject.Instance.ServerPort
                 , new NLogLogger(Logger.Instance), "password");
             if (CrossDomainObject.Instance.IsGameHost)
-                Server = new Networking.Server.Server(new Networking.Server.Configuration()
+                Server = new Server(new Configuration()
                 {
                     MaxPlayers = 32,
                     Password = "password",
@@ -260,6 +280,13 @@ namespace MPTanks.Client.GameSandbox
             }
             if (_modLoader.Running)
             {
+                _ui.UpdateState(new
+                {
+                    Header = "Loading mods...",
+                    Content = _modLoader.Status,
+                    Button = "Cancel",
+                    Invisible = false
+                });
                 return;
             }
             else if (!_hasExecutedPostModLoadTask)
@@ -280,9 +307,93 @@ namespace MPTanks.Client.GameSandbox
             //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
             Client.Update(gameTime);
 
-            if (Client.IsInCountdown)
+            if (Client.IsInGame && _ui.IsOnPage("settingupprompt"))
             {
-                return;
+                _ui.UnwindAndEmpty();
+            }
+            else if (Client.IsInGame) { }
+            else
+            {
+                if (!_ui.IsOnPage("settingupprompt"))
+                    ShowSetupPrompt();
+
+                if (Client.IsInCountdown)
+                    _ui.UpdateState(new
+                    {
+                        Header = "Counting down to start...",
+                        Content = $"{Client.RemainingCountdownTime.TotalSeconds.ToString("N0")} seconds remaining",
+                        Button = "Leave server",
+                        Invisible = false
+                    });
+                else
+                {
+                    switch (Client.Status)
+                    {
+                        case Networking.Client.Client.ClientStatus.Authenticating:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Logging in...",
+                                Content = "Authenticating with the ZSB servers",
+                                Button = "Cancel",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.Connected:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Connected...",
+                                Content = "Waiting for the server to respond",
+                                Button = "Leave server",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.Connecting:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Connecting to the server...",
+                                Content = Client.Message,
+                                Button = "Abort",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.Disconnected:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Connection to server lost",
+                                Content = "Check your internet settings and make sure the server is running",
+                                Button = "Close",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.DownloadingMods:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Downloading mods...",
+                                Content = "This may take a a while",
+                                Button = "Leave server",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.Errored:
+                            _ui.UpdateState(new
+                            {
+                                Header = "A fatal error has occured",
+                                Content = "",
+                                Button = "Set my hair on fire and leave",
+                                Invisible = false
+                            });
+                            break;
+                        case Networking.Client.Client.ClientStatus.NotStarted:
+                            _ui.UpdateState(new
+                            {
+                                Header = "Waiting to connect...",
+                                Content = "This shouldn't usually happen",
+                                Button = "Stare with contempt",
+                                Invisible = false
+                            });
+                            break;
+                    }
+                }
             }
 
             //Client.GameInstance.Game.Authoritative = true;

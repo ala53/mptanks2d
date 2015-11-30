@@ -72,6 +72,7 @@ namespace MPTanks.Networking.Client
         public ILogger Logger { get; set; }
 
         public bool GameRunning { get { return Connected && GameInstance != null; } }
+        public bool IsInGame => GameRunning && Game.HasStarted;
         public Client(string connection, ushort port, ILogger logger = null,
             string password = null, bool connectOnInit = true)
         {

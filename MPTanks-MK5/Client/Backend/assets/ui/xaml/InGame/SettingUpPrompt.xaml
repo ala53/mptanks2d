@@ -15,9 +15,9 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="{Binding Header}" HorizontalAlignment="Center" Style="{DynamicResource MenuHeader}"></TextBlock>
-            <TextBlock Text="{Binding Content}" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
-            <Button Margin="10" Padding="10,0,10,0" HorizontalAlignment="Center" Content="{Binding ControlButtonInfo}" Visibility="{Binding ControlButtonVisibility}" Style="{DynamicResource PrimaryButton}" Command="{Binding ControlButtonCommand}"></Button>
+            <TextBlock x:Name="Header" HorizontalAlignment="Center" Style="{DynamicResource MenuHeader}"></TextBlock>
+            <TextBlock x:Name="ContentT" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
+            <Button Margin="10" Padding="10,0,10,0" HorizontalAlignment="Center" x:Name="ControlButton" Style="{DynamicResource PrimaryButton}"></Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>
