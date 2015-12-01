@@ -76,8 +76,9 @@ namespace MPTanks.Client.Backend.UI
 
         public void UpdateState<T>(T newState) where T : class
         {
-            var currentPage = CurrentPage;
-            currentPage.Generator.DynamicInvoke(currentPage, newState, new OldPageObject { OldPage = currentPage });
+            var oldPg = CurrentPage;
+            var currentPage = CopyCurrentPage();
+            currentPage.Generator.DynamicInvoke(currentPage, newState, new OldPageObject { OldPage = oldPg });
         }
 
         private UserInterfacePage CopyCurrentPage()
@@ -87,7 +88,7 @@ namespace MPTanks.Client.Backend.UI
             pg.UserInterface = this;
             pg.Page.Resize(_currentWidth, _currentHeight);
             pg.Generator = oldPg.Generator;
-            pg.State = pg.State;
+            pg.State = oldPg.State;
             _pages.Push(pg);
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
@@ -103,7 +104,7 @@ namespace MPTanks.Client.Backend.UI
                 _pages.Pop();
                 var oldPg = CurrentPage;
                 var newPg = CopyCurrentPage();
-                newPg.Generator.DynamicInvoke(newPg, newPg.State, new OldPageObject { OldPage = oldPg });
+                newPg.Generator.DynamicInvoke(newPg, newPg.State, new OldPageObject { OldPage = newPg });
             }
             //otherwise
             else UnwindAndEmpty();

@@ -421,6 +421,7 @@ namespace MPTanks.Client.GameSandbox
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (!IsActive) return; //No need to draw if we are not in focus
             Diagnostics.BeginMeasurement("Rendering");
             GraphicsDevice.SetRenderTarget(null);
 
