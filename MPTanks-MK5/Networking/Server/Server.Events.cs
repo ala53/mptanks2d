@@ -44,14 +44,16 @@ namespace MPTanks.Networking.Server
                  HookPlayers(e.Game);
 
                  //And send out the game state
-                 MessageProcessor.SendMessage(new Common.Actions.ToClient.GameCreatedAction());
+                 MessageProcessor.SendMessage(MessagePool.Retrieve<Common.Actions.ToClient.GameCreatedAction>());
                  MessageProcessor.SendMessage(new Common.Actions.ToClient.FullGameStateSentAction(Game));
              };
         }
 
         private void Gamemode_StateChanged(object sender, byte[] e)
         {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.GamemodeStateChangedAction(e));
+            var msg = MessagePool.Retrieve <Common.Actions.ToClient.GamemodeStateChangedAction> ();
+            msg.NewState = e;
+            MessageProcessor.SendMessage(msg);
         }
 
         private void GameObject_Created(object sender, GameObject e)
@@ -61,12 +63,17 @@ namespace MPTanks.Networking.Server
 
         private void GameObject_BasicPropertyChanged(object sender, GameObject.BasicPropertyChangeArgs e)
         {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.ObjectBasicPropertyChangedAction(e.Type, e));
+            var msg = MessagePool.Retrieve<Common.Actions.ToClient.ObjectBasicPropertyChangedAction>();
+            msg.Set(e.Type, e);
+            MessageProcessor.SendMessage(msg);
         }
 
         private void GameObject_StateChanged(object sender, Engine.Core.Events.Types.GameObjects.StateChangedEventArgs e)
         {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.ObjectStateChangedAction(e.Object, e.State));
+            var msg = MessagePool.Retrieve<Common.Actions.ToClient.ObjectStateChangedAction>();
+            msg.PrivateData = e.State;
+            msg.ObjectId = e.Object.ObjectId;
+            MessageProcessor.SendMessage(msg);
         }
 
         private void Game_TimescaleChanged(object sender, Engine.GameCore.TimescaleValue e)
@@ -84,11 +91,15 @@ namespace MPTanks.Networking.Server
 
         private void GameObject_Destroyed(object sender, Engine.Core.Events.Types.GameObjects.DestroyedEventArgs e)
         {
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.GameObjectDestroyedAction(e.Destroyed));
+            var msg = MessagePool.Retrieve<Common.Actions.ToClient.GameObjectDestroyedAction>();
+            msg.ObjectId = e.Destroyed.ObjectId;
+            MessageProcessor.SendMessage(msg);
         }
 
         private void GameObject_DestructionEnded(object sender, GameObject e)
         {
+            var msg = MessagePool.Retrieve<Common.Actions.ToClient.GameObjectDestructionEndedAction>();
+            msg.ObjectId = e.ObjectId;
             MessageProcessor.SendMessage(new Common.Actions.ToClient.GameObjectDestructionEndedAction(e));
         }
 

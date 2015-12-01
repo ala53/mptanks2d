@@ -26,6 +26,8 @@ namespace MPTanks.Networking.Common
         private static Dictionary<byte, Type> _allTypes = new Dictionary<byte, Type>();
         private static Dictionary<Type, byte> _allTypesReverse = new Dictionary<Type, byte>();
 
+        private static Dictionary<byte, MessageBase> _singletonInstances = new Dictionary<byte, MessageBase>();
+
         public IReadOnlyDictionary<Type, byte> TypeIndexTable => _allTypesReverse;
 
         public static void RegisterToClientMessageType(Type messageType)
@@ -33,18 +35,21 @@ namespace MPTanks.Networking.Common
             _toClientMessageTypes.Add(++_currentMessageTypeId, messageType);
             _allTypes.Add(_currentMessageTypeId, messageType);
             _allTypesReverse.Add(messageType, _currentMessageTypeId);
+            _singletonInstances.Add(_currentMessageTypeId, (MessageBase)Activator.CreateInstance(messageType));
         }
         public static void RegisterToServerMessageType(Type messageType)
         {
             _toServerMessageTypes.Add(++_currentMessageTypeId, messageType);
             _allTypes.Add(_currentMessageTypeId, messageType);
             _allTypesReverse.Add(messageType, _currentMessageTypeId);
+            _singletonInstances.Add(_currentMessageTypeId, (MessageBase)Activator.CreateInstance(messageType));
         }
         public static void RegisterToClientActionType(Type actionType)
         {
             _toClientActionTypes.Add(++_currentMessageTypeId, actionType);
             _allTypes.Add(_currentMessageTypeId, actionType);
             _allTypesReverse.Add(actionType, _currentMessageTypeId);
+            _singletonInstances.Add(_currentMessageTypeId, (MessageBase)Activator.CreateInstance(actionType));
         }
 
         public static void RegisterToServerActionType(Type actionType)
@@ -52,6 +57,7 @@ namespace MPTanks.Networking.Common
             _toServerActionTypes.Add(++_currentMessageTypeId, actionType);
             _allTypes.Add(_currentMessageTypeId, actionType);
             _allTypesReverse.Add(actionType, _currentMessageTypeId);
+            _singletonInstances.Add(_currentMessageTypeId, (MessageBase)Activator.CreateInstance(actionType));
         }
 
         public void ProcessMessages(NetIncomingMessage messageBlock)
@@ -104,22 +110,26 @@ namespace MPTanks.Networking.Common
                 Diagnostics.AddMsg(_allTypes[id]);
             if (_toServerMessageTypes.ContainsKey(id))
             {
-                var obj = (MessageBase)Activator.CreateInstance(_toServerMessageTypes[id], message);
+                var obj = _singletonInstances[id];
+                obj.Deserialize(message);
                 ProcessToServerMessage(obj);
             }
             else if (_toClientMessageTypes.ContainsKey(id))
             {
-                var obj = (MessageBase)Activator.CreateInstance(_toClientMessageTypes[id], message);
+                var obj = _singletonInstances[id];
+                obj.Deserialize(message);
                 ProcessToClientMessage(message.SenderConnection, obj);
             }
             else if (_toServerActionTypes.ContainsKey(id))
             {
-                var obj = (ActionBase)Activator.CreateInstance(_toServerActionTypes[id], message);
+                var obj = (ActionBase)_singletonInstances[id];
+                obj.Deserialize(message);
                 ProcessToServerAction(obj);
             }
             else if (_toClientActionTypes.ContainsKey(id))
             {
-                var obj = (ActionBase)Activator.CreateInstance(_toClientActionTypes[id], message);
+                var obj = (ActionBase)_singletonInstances[id];
+                obj.Deserialize(message);
                 ProcessToClientAction(message.SenderConnection, obj);
             }
         }
@@ -152,6 +162,11 @@ namespace MPTanks.Networking.Common
 
         private List<MessageBase> _messages = new List<MessageBase>();
         public IReadOnlyList<MessageBase> MessageQueue => _messages;
+        public event EventHandler<MessageBase> OnMessageSentOrDiscarded = delegate { };
+        protected void RaiseMessageSentOrDiscarded(MessageBase msg)
+        {
+            OnMessageSentOrDiscarded(this, msg);
+        }
         public void SendMessage(MessageBase message)
         {
             _messages.Add(message);
@@ -165,11 +180,16 @@ namespace MPTanks.Networking.Common
             foreach (var msg in _messages)
             {
                 msg.Serialize(message);
+                OnMessageSentOrDiscarded(this, msg);
             }
             _messages.Clear();
         }
 
-        public void ClearQueue() => _messages.Clear();
+        public void ClearQueue()
+        {
+            _messages.ForEach(a => OnMessageSentOrDiscarded(this, a));
+            _messages.Clear();
+        }
     }
 
     public class NetworkProcessorDiagnostics

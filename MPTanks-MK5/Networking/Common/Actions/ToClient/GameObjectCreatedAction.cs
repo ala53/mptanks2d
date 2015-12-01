@@ -13,15 +13,19 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     /// </summary>
     public class GameObjectCreatedAction : ActionBase
     {
-        public Game.FullObjectState State { get; private set; }
-        public GameObjectCreatedAction(NetIncomingMessage message) : base(message)
+        public Game.FullObjectState State { get; set; }
+        public GameObjectCreatedAction()
         {
-            State = new Game.FullObjectState(message.ReadBytes(message.ReadUInt16()));
         }
 
         public GameObjectCreatedAction(GameObject obj)
         {
             State = new Game.FullObjectState(obj.FullState);
+        }
+
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            State = new Game.FullObjectState(message.ReadBytes(message.ReadUInt16()));
         }
 
         public override void Serialize(NetOutgoingMessage message)

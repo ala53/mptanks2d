@@ -11,14 +11,18 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class GameObjectDestroyedAction : ActionBase
     {
         public ushort ObjectId { get; set; }
-        public GameObjectDestroyedAction(NetIncomingMessage message) : base(message)
+        public GameObjectDestroyedAction()
         {
-            ObjectId = message.ReadUInt16();
         }
 
         public GameObjectDestroyedAction(GameObject obj)
         {
             ObjectId = obj.ObjectId;
+        }
+
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            ObjectId = message.ReadUInt16();
         }
 
         public override void Serialize(NetOutgoingMessage message)

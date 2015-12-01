@@ -52,6 +52,7 @@ namespace MPTanks.Networking.Server
         {
             if (configuration.Port == 0) configuration.Port = 33132;
             MessageProcessor = new ServerNetworkProcessor(this);
+            MessageProcessor.OnMessageSentOrDiscarded += (a, b) => MessagePool.Release(b);
             GameInstance = new NetworkedGame(FullGameState.Create(game), logger, game.Settings);
             HookEvents();
             SetGame(game);

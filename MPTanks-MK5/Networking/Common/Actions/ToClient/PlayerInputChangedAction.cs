@@ -15,7 +15,16 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public ushort PlayerId { get; set; }
         public InputState InputState { get; set; }
-        public PlayerInputChangedAction(NetIncomingMessage message) : base(message)
+        public PlayerInputChangedAction()
+        {
+        }
+        public PlayerInputChangedAction(NetworkPlayer player, InputState state)
+        {
+            PlayerId = player.Id;
+            InputState = state;
+        }
+
+        protected override void DeserializeInternal(NetIncomingMessage message)
         {
             PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             var iState = new InputState();
@@ -35,12 +44,6 @@ namespace MPTanks.Networking.Common.Actions.ToClient
 #endif
             InputState = iState;
         }
-        public PlayerInputChangedAction(NetworkPlayer player, InputState state)
-        {
-            PlayerId = player.Id;
-            InputState = state;
-        }
-
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(PlayerId, GameCore.PlayerIdNumberOfBits);

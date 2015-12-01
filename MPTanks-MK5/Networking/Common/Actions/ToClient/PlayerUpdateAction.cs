@@ -13,10 +13,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public byte[] GamemodeState { get; private set; }
         public FullStatePlayer Player { get; private set; }
-        public PlayerUpdateAction(NetIncomingMessage message) : base(message)
+        public PlayerUpdateAction()
         {
-            Player = FullStatePlayer.Read(message);
-            GamemodeState = message.ReadBytes(message.ReadUInt16());
         }
 
         public PlayerUpdateAction(NetworkPlayer player, GameCore game)
@@ -25,7 +23,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             GamemodeState = game.Gamemode.GetFullState();
             game.Gamemode.SetFullState(GamemodeState);
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            Player = FullStatePlayer.Read(message);
+            GamemodeState = message.ReadBytes(message.ReadUInt16());
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             Player.Write(message);

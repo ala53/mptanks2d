@@ -13,18 +13,20 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class PlayerAllowedTankTypesSentAction : ActionBase
     {
         public string[] AllowedTankTypeReflectionNames { get; private set; }
-        public PlayerAllowedTankTypesSentAction(NetIncomingMessage message) : base(message)
+        public PlayerAllowedTankTypesSentAction()
         {
-            var arr = new string[message.ReadInt32()];
-            for (var i = 0; i < arr.Length; i++)
-                arr[i] = message.ReadString();
         }
 
         public PlayerAllowedTankTypesSentAction(string[] allowedTypeReflectionNames)
         {
             AllowedTankTypeReflectionNames = allowedTypeReflectionNames;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            var arr = new string[message.ReadInt32()];
+            for (var i = 0; i < arr.Length; i++)
+                arr[i] = message.ReadString();
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(AllowedTankTypeReflectionNames.Length);

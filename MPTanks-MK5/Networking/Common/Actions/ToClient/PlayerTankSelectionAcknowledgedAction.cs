@@ -10,13 +10,16 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class PlayerTankSelectionAcknowledgedAction : ActionBase
     {
         public bool WasAccepted { get; private set; }
-        public PlayerTankSelectionAcknowledgedAction(NetIncomingMessage message ) : base(message)
+        public PlayerTankSelectionAcknowledgedAction()
         {
-            WasAccepted = message.ReadBoolean();
         }
         public PlayerTankSelectionAcknowledgedAction(bool wasAccepted)
         {
             WasAccepted = wasAccepted;
+        }
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            WasAccepted = message.ReadBoolean();
         }
         public override void Serialize(NetOutgoingMessage message)
         {

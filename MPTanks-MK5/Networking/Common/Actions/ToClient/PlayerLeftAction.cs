@@ -12,10 +12,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public ushort PlayerId { get; private set; }
         public byte[] GamemodeState { get; private set; }
-        public PlayerLeftAction(NetIncomingMessage message) : base(message)
+        public PlayerLeftAction()
         {
-            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
-            message.ReadBytes(message.PeekUInt16());
         }
 
         public PlayerLeftAction(NetworkPlayer player, GameCore game)
@@ -23,7 +21,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             GamemodeState = game.Gamemode.FullState;
             PlayerId = player.Id;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
+            message.ReadBytes(message.PeekUInt16());
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(PlayerId, GameCore.PlayerIdNumberOfBits);

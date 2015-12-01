@@ -84,7 +84,11 @@ namespace MPTanks.Networking.Server
                 if (allPlayersReady) GameStartRemainingTimeout = TimeSpan.Zero;
 
                 if (!GameStartTimeoutHasEnded)
-                    MessageProcessor.SendMessage(new Common.Actions.ToClient.CountdownStartedAction(GameStartRemainingTimeout));
+                {
+                    var msg = MessagePool.Retrieve<Common.Actions.ToClient.CountdownStartedAction>();
+                    msg.CountdownTime = GameStartRemainingTimeout;
+                    MessageProcessor.SendMessage(msg);
+                }
                 GameStartRemainingTimeout -= gameTime.ElapsedGameTime;
 
                 if (GameStartTimeoutHasEnded) StartGame();

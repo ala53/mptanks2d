@@ -10,16 +10,18 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     public class PlayerTankTypeSelectedAction : ActionBase
     {
         public string SelectedTypeReflectionName { get; private set; }
-        public PlayerTankTypeSelectedAction(NetIncomingMessage message) : base(message)
+        public PlayerTankTypeSelectedAction()
         {
-            SelectedTypeReflectionName = message.ReadString();
         }
 
         public PlayerTankTypeSelectedAction(string selectedTypeReflectionName)
         {
             SelectedTypeReflectionName = selectedTypeReflectionName;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            SelectedTypeReflectionName = message.ReadString();
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(SelectedTypeReflectionName);

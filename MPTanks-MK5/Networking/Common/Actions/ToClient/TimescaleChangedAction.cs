@@ -11,16 +11,17 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class TimescaleChangedAction : ActionBase
     {
         public GameCore.TimescaleValue Timescale { get; set; }
-        public TimescaleChangedAction(NetIncomingMessage message)
-            :base(message)
+        public TimescaleChangedAction()
         {
-            Timescale = new GameCore.TimescaleValue(message.ReadDouble(), message.ReadString());
         }
         public TimescaleChangedAction(GameCore game)
         {
             Timescale = game.Timescale;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            Timescale = new GameCore.TimescaleValue(message.ReadDouble(), message.ReadString());
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(Timescale.Fractional);

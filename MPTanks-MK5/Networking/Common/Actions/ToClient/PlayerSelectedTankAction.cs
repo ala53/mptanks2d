@@ -12,10 +12,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public ushort PlayerId { get; private set; }
         public string TankType { get; private set; }
-        public PlayerSelectedTankAction(NetIncomingMessage message) : base(message)
+        public PlayerSelectedTankAction()
         {
-            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
-            TankType = message.ReadString();
         }
 
         public PlayerSelectedTankAction(NetworkPlayer player, string tankType)
@@ -24,6 +22,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             TankType = tankType;
         }
 
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
+            TankType = message.ReadString();
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(PlayerId, GameCore.PlayerIdNumberOfBits);

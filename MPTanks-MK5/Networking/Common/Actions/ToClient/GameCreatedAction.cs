@@ -15,12 +15,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     /// </summary>
     public class GameCreatedAction : ActionBase
     {
-        public GameCreatedAction(NetIncomingMessage message) : base(message)
-        {
-
-        }
-
         public GameCreatedAction() { }
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+        }
 
         public override void Serialize(NetOutgoingMessage message)
         {

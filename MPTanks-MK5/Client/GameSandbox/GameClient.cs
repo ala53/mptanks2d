@@ -76,6 +76,10 @@ namespace MPTanks.Client.GameSandbox
             _ssaaRate = GameSettings.Instance.SSAARate;
 
             _graphicsDeviceIsDirty = true;
+
+            GraphicsDevice.DeviceLost += (a, b) => {
+                GraphicsDevice.Reset(GraphicsDevice.PresentationParameters.Clone());
+            };
         }
 
         /// <summary>

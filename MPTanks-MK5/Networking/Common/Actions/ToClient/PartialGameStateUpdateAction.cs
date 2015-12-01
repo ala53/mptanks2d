@@ -16,9 +16,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class PartialGameStateUpdateAction : ActionBase
     {
         public PseudoFullGameWorldState StatePartial { get; private set; }
-        public PartialGameStateUpdateAction(NetIncomingMessage message) : base(message)
+        public PartialGameStateUpdateAction()
         {
-            StatePartial = PseudoFullGameWorldState.Read(message);
         }
 
         public PartialGameStateUpdateAction(GameCore game, PseudoFullGameWorldState last = null)
@@ -26,6 +25,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             if (last != null)
                 StatePartial = PseudoFullGameWorldState.Create(game).MakeDelta(last);
             else StatePartial = PseudoFullGameWorldState.Create(game);
+        }
+
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            StatePartial = PseudoFullGameWorldState.Read(message);
         }
 
         public override void Serialize(NetOutgoingMessage message)

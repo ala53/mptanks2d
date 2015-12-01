@@ -11,16 +11,16 @@ namespace MPTanks.Networking.Common
     {
 
         public NetIncomingMessage MessageFrom { get; private set; }
-        public MessageBase(NetIncomingMessage message)
-        {
-            MessageFrom = message;
-        }
-
         public MessageBase()
         {
-
         }
 
+        protected abstract void DeserializeInternal(NetIncomingMessage message);
+        public void Deserialize(NetIncomingMessage message)
+        {
+            MessageFrom = message;
+            DeserializeInternal(message);
+        }
         public abstract void Serialize(NetOutgoingMessage message);
         
     }

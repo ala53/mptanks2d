@@ -15,13 +15,15 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     public class GameEndedAction : ActionBase
     {
         public short WinningTeamId { get; private set; }
-        public GameEndedAction(NetIncomingMessage message) : base(message)
+        public GameEndedAction()
         {
-            WinningTeamId = message.ReadInt16();
         }
 
         public GameEndedAction(Team winning) { WinningTeamId = winning.TeamId; }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            WinningTeamId = message.ReadInt16();
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(WinningTeamId);

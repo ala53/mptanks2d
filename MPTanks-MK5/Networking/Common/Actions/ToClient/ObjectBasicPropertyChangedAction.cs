@@ -20,7 +20,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public Vector2 VectorValue { get; set; }
         public float FloatValue { get; set; }
         public bool BoolValue { get; set; }
-        public ObjectBasicPropertyChangedAction(NetIncomingMessage message) : base(message)
+        public ObjectBasicPropertyChangedAction() { }
+        protected override void DeserializeInternal(NetIncomingMessage message)
         {
             ObjectId = message.ReadUInt16();
             EventType = (GameObject.BasicPropertyChangeEventType)message.ReadByte();
@@ -44,6 +45,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         }
         public ObjectBasicPropertyChangedAction(
             GameObject.BasicPropertyChangeEventType type, GameObject.BasicPropertyChangeArgs args)
+        {
+            Set(type, args);
+        }
+
+        public void Set(GameObject.BasicPropertyChangeEventType type, GameObject.BasicPropertyChangeArgs args)
         {
             ObjectId = args.Owner.ObjectId;
             EventType = type;

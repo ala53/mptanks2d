@@ -19,7 +19,15 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     {
         public InputState InputState { get; private set; }
         //public Vector2 PlayerPosition { get; private set; }
-        public InputChangedAction(NetIncomingMessage message) : base(message)
+        public InputChangedAction()
+        {        }
+
+        public InputChangedAction(Vector2 myPos, InputState state)
+        {
+            InputState = state;
+            //PlayerPosition = myPos;
+        }
+        protected override void DeserializeInternal(NetIncomingMessage message)
         {
             var iState = new InputState();
 #if DBG_FULL_SERIALIZE
@@ -38,13 +46,6 @@ namespace MPTanks.Networking.Common.Actions.ToServer
 #endif
             InputState = iState;
         }
-
-        public InputChangedAction(Vector2 myPos, InputState state)
-        {
-            InputState = state;
-            //PlayerPosition = myPos;
-        }
-
         public override void Serialize(NetOutgoingMessage message)
         {
 #if DBG_FULL_SERIALIZE

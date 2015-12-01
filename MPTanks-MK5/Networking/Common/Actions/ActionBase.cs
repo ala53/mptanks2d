@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Lidgren.Network;
 
 namespace MPTanks.Networking.Common.Actions
 {
@@ -24,9 +25,7 @@ namespace MPTanks.Networking.Common.Actions
         {
             return assembly.GetTypes().Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray();
         }
-
-        public ActionBase(Lidgren.Network.NetIncomingMessage message) : base(message) { }
-
+        
         public ActionBase() { }
 
         public static void RegisterToClientActionType(Type actionType)

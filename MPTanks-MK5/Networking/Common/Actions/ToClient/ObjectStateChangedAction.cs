@@ -13,18 +13,22 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     /// </summary>
     public class ObjectStateChangedAction : ActionBase
     {
-        public ushort ObjectId { get; private set; }
-        public byte[] PrivateData { get; private set; }
-        public ObjectStateChangedAction(NetIncomingMessage message):base(message)
+        public ushort ObjectId { get; set; }
+        public byte[] PrivateData { get; set; }
+        public ObjectStateChangedAction()
         {
-            ObjectId = message.ReadUInt16();
-            PrivateData = message.ReadBytes(message.ReadUInt16());
         }
 
         public ObjectStateChangedAction(GameObject obj, byte[] state)
         {
             ObjectId = obj.ObjectId;
             PrivateData = state;
+        }
+
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            ObjectId = message.ReadUInt16();
+            PrivateData = message.ReadBytes(message.ReadUInt16());
         }
 
         public override void Serialize(NetOutgoingMessage message)

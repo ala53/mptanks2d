@@ -12,10 +12,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public ushort PlayerId { get; private set; }
         public bool IsReadyToStart { get; private set; }
-        public PlayerReadyToStartChangedAction(NetIncomingMessage message) : base(message)
+        public PlayerReadyToStartChangedAction()
         {
-            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
-            IsReadyToStart = message.ReadBoolean();
         }
 
         public PlayerReadyToStartChangedAction(NetworkPlayer player, bool ready)
@@ -23,7 +21,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             PlayerId = player.Id;
             IsReadyToStart = ready;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
+            IsReadyToStart = message.ReadBoolean();
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(PlayerId, GameCore.PlayerIdNumberOfBits);

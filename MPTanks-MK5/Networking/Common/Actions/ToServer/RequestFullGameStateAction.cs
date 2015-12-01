@@ -10,12 +10,13 @@ namespace MPTanks.Networking.Common.Actions.ToServer
     public class RequestFullGameStateAction : ActionBase
     {
         //Nothing needs to go here because the message type speaks for itself
-        public RequestFullGameStateAction(NetIncomingMessage message) : base(message)
+        public RequestFullGameStateAction()
         {
 
         }
-
-        public RequestFullGameStateAction() { }
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
         }

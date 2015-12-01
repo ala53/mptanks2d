@@ -12,10 +12,8 @@ namespace MPTanks.Networking.Common.Actions.ToClient
     {
         public string Message { get; private set; }
         public ushort SenderId { get; private set; }
-        public ReceivedChatMessageAction(NetIncomingMessage message) : base(message)
+        public ReceivedChatMessageAction()
         {
-            Message = message.ReadString();
-            SenderId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
         }
 
         public ReceivedChatMessageAction(string message, ushort senderId)
@@ -23,7 +21,11 @@ namespace MPTanks.Networking.Common.Actions.ToClient
             Message = message;
             SenderId = senderId;
         }
-
+        protected override void DeserializeInternal(NetIncomingMessage message)
+        {
+            Message = message.ReadString();
+            SenderId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
+        }
         public override void Serialize(NetOutgoingMessage message)
         {
             message.Write(Message);
