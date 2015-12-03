@@ -47,6 +47,14 @@ namespace MPTanks.Client.GameSandbox.Input
         }
 
         public object this[string name] => _keyBindings[name];
+        /// <summary>
+        /// Aliased as B<typeparamref name="T"/> as well
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public T Binding<T>(string name) => (T)this[name];
+        public T B<T>(string name) => (T)this[name];
 
         public void Load(string saved)
         {

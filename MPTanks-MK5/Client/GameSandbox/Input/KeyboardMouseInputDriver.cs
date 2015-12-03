@@ -32,12 +32,19 @@ namespace MPTanks.Client.GameSandbox.Input
                 new KeyBindingCollection.KeyBinding("Open Targeting", MouseState.WheelUp)
                 ))
         { }
+
+        protected override void DriverActiveStateChanged(bool isNowActive)
+        {
+            if (!isNowActive) Client.IsMouseVisible = true;
+            else Client.IsMouseVisible = false;
+        }
+        
         private bool _lastTickNextWeaponKeyWasActive = false;
         private bool _lastTickPreviousWeaponKeyWasActive = false;
         private int _weaponNumber;
         public override InputState GetInputState()
         {
-            if (!Client.IsActive) return default(InputState);
+            if (!Activated) return default(InputState);
             var inputState = new InputState();
 
             var screenCenter = new Vector2(Client.GraphicsDevice.Viewport.Bounds.Width / 2, //vertex

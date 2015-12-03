@@ -145,6 +145,18 @@ namespace ZSB
             };
         }
 
+        public static void LogOut() => LogOutAsync().Wait();
+
+        public static Task LogOutAsync()
+        {
+            EnsureInitialized();
+            return Task.Run(() =>
+            {
+                if (SessionKey == null) return;
+                var resp = Rest.DoPost("Logout", new { SessionKey = SessionKey });
+            });
+        }
+
         /// <summary>
         /// Gets whether the user is currently logged in. 
         /// If allowOffline is set to true, this method first tries to contact the 

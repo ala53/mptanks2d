@@ -16,6 +16,7 @@ namespace MPTanks.Engine.Settings
         public Setting<bool> DebugMode { get; private set; }
         public Setting<bool> TraceMode { get; private set; }
         public Setting<string> LogLevel { get; private set; }
+        public Setting<string> StoredAccountInfo { get; private set; }
 
         public Setting<string> CurrentGameVersion { get; private set; }
 
@@ -36,6 +37,8 @@ namespace MPTanks.Engine.Settings
 
             CurrentGameVersion = Setting.Create(this, "Game version string", "The version number of MP Tanks. DO NOT CHANGE THIS.",
                 "MPTanks " + AssemblyProductVersion);
+
+            StoredAccountInfo = Setting.Create(this, "DRM Stored Data", "The stored data from the online authentication system.", (string)null);
         }
 
         private static string AssemblyProductVersion

@@ -1,0 +1,37 @@
+﻿<ek:UIRoot 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:ek="clr-namespace:EmptyKeys.UserInterface.Designer;assembly=EmptyKeys.UserInterface.Designer"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             Width="800" Height="480" Background="Transparent">
+    <ek:UIRoot.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://siteoforigin:,,,/assets/ui/xaml/UITemplateDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ek:UIRoot.Resources>
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="Karmatic Arcade" FontSize="18" Padding="10" Foreground="Gray" Margin="0,0,10,0">Username</TextBlock>
+                <TextBox Width="300" Background="Transparent" x:Name="UsernameBox" Foreground="White"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock FontFamily="Karmatic Arcade" FontSize="18" Padding="10" Foreground="Gray" Margin="0,0,10,0">Password</TextBlock>
+                <PasswordBox Width="300" Background="Transparent" x:Name="PasswordBox" Foreground="White"></PasswordBox>
+            </StackPanel>
+            <Button Content="Log in" FontFamily="Karmatic Arcade" Margin="0,10,0,0" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="LoginBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Center" Width="450" Command="{Binding HostGameCommand}"/>
+            <Button Content="Forgot your password?" FontFamily="Karmatic Arcade" Margin="0,10,0,0" FontSize="18" Padding="5"
+                        Background="Transparent" Foreground="Gray" x:Name="ForgotPasswordBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Center" Width="450"/>
+            <Button Content="No account?  Buy MP Tanks!" FontFamily="Karmatic Arcade" Margin="0,10,0,0" FontSize="18" Padding="5"
+                        Background="Transparent" Foreground="Gray" x:Name="NoAccountBtn" BorderBrush="Transparent"
+                        HorizontalAlignment="Center" Width="450"/>
+        </StackPanel>
+    </Grid>
+</ek:UIRoot>

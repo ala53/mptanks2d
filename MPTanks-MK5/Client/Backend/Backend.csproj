@@ -218,10 +218,6 @@
     <None Include="assets\ui\imgs\Segoe_UI_9_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\xaml\CreateAccountPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +252,10 @@
     <Page Include="assets\ui\xaml\EmptyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="assets\ui\xaml\LoginForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="assets\ui\xaml\MainMenuPlayerIsInGamePage.xaml">
       <SubType>Designer</SubType>

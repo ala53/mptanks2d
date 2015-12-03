@@ -23,13 +23,13 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class MainMenuPlayerIsInGamePage : UIRoot {
         
-        private Grid e_17;
+        private Grid e_20;
         
-        private StackPanel e_18;
+        private StackPanel e_21;
         
-        private TextBlock e_19;
+        private TextBlock e_22;
         
-        private TextBlock e_20;
+        private TextBlock e_23;
         
         private Button ForceCloseBtn;
         
@@ -45,40 +45,40 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 255));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_17 element
-            this.e_17 = new Grid();
-            this.Content = this.e_17;
-            this.e_17.Name = "e_17";
-            // e_18 element
-            this.e_18 = new StackPanel();
-            this.e_17.Children.Add(this.e_18);
-            this.e_18.Name = "e_18";
-            this.e_18.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_18.VerticalAlignment = VerticalAlignment.Center;
-            // e_19 element
-            this.e_19 = new TextBlock();
-            this.e_18.Children.Add(this.e_19);
-            this.e_19.Name = "e_19";
-            this.e_19.Margin = new Thickness(20F, 20F, 20F, 0F);
-            this.e_19.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_19.Text = "A game is currently active...";
-            this.e_19.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            this.e_19.FontSize = 48F;
             // e_20 element
-            this.e_20 = new TextBlock();
-            this.e_18.Children.Add(this.e_20);
+            this.e_20 = new Grid();
+            this.Content = this.e_20;
             this.e_20.Name = "e_20";
-            this.e_20.Margin = new Thickness(20F, 20F, 20F, 0F);
-            this.e_20.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_20.Text = "You\'re in game right now.\nClose the game to get back to the main menu.\nOr, if you" +
+            // e_21 element
+            this.e_21 = new StackPanel();
+            this.e_20.Children.Add(this.e_21);
+            this.e_21.Name = "e_21";
+            this.e_21.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_21.VerticalAlignment = VerticalAlignment.Center;
+            // e_22 element
+            this.e_22 = new TextBlock();
+            this.e_21.Children.Add(this.e_22);
+            this.e_22.Name = "e_22";
+            this.e_22.Margin = new Thickness(20F, 20F, 20F, 0F);
+            this.e_22.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_22.Text = "A game is currently active...";
+            this.e_22.TextAlignment = TextAlignment.Center;
+            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
+            this.e_22.FontSize = 48F;
+            // e_23 element
+            this.e_23 = new TextBlock();
+            this.e_21.Children.Add(this.e_23);
+            this.e_23.Name = "e_23";
+            this.e_23.Margin = new Thickness(20F, 20F, 20F, 0F);
+            this.e_23.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_23.Text = "You\'re in game right now.\nClose the game to get back to the main menu.\nOr, if you" +
                 "\'re absolutely sure:";
-            this.e_20.TextAlignment = TextAlignment.Center;
+            this.e_23.TextAlignment = TextAlignment.Center;
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            this.e_20.FontSize = 24F;
+            this.e_23.FontSize = 24F;
             // ForceCloseBtn element
             this.ForceCloseBtn = new Button();
-            this.e_18.Children.Add(this.ForceCloseBtn);
+            this.e_21.Children.Add(this.ForceCloseBtn);
             this.ForceCloseBtn.Name = "ForceCloseBtn";
             this.ForceCloseBtn.Margin = new Thickness(10F, 10F, 10F, 10F);
             FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");

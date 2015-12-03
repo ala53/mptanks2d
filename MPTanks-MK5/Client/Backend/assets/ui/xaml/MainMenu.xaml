@@ -45,8 +45,8 @@
                     <Button Content="Mods" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
                         Background="Transparent" Foreground="White" x:Name="ModsPageBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
-                    <Button Content="Credits" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
-                        Background="Transparent" Foreground="White" x:Name="CreditsBtn" BorderBrush="Transparent"
+                    <Button Content="Log out" FontFamily="Karmatic Arcade" FontSize="36" Padding="10"
+                        Background="Transparent" Foreground="White" x:Name="LogOutBtn" BorderBrush="Transparent"
                         HorizontalAlignment="Left" Width="350" Command="{Binding ExitCommand}"/>
                 </StackPanel>
             </StackPanel>

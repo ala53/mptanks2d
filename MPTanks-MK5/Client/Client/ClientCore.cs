@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.UI;
+using MPTanks.Engine.Settings;
 using System;
 using System.Diagnostics;
 
@@ -129,18 +130,96 @@ namespace MPTanks.Client
                     ClientSettings.Instance.WindowRectangle.Value.Height);
 
             ui = new UserInterface(this);
-            ui.GoToPage("mainmenu", a =>
+
+            //Init
+            ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo);
+            ZSB.DrmClient.OnPersistentStorageChanged +=
+                (a, b) => GlobalSettings.Instance.StoredAccountInfo.Value = ZSB.DrmClient.PersistentData;
+
+            if (ZSB.DrmClient.LoggedIn)
+                ShowMainMenu();
+            else ShowLoginPage();
+
+        }
+        private void ShowLoginPage()
+        {
+            ui.GoToPage("loginform", page =>
             {
-                a.Element<Button>("HostBtn").Click += (b, c) =>
+                page.Element<Button>("LoginBtn").Click += (a, b) =>
+                {
+                    var login = ZSB.DrmClient.LoginAsync(
+                        page.Element<TextBox>("UsernameBox").Text,
+                        page.Element<PasswordBox>("UsernameBox").Text)
+                        .ContinueWith(result =>
+                        {
+                            if (result.IsFaulted)
+                            {
+                                var ex = result.Exception.InnerException;
+                                if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
+                                    ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
+                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                                if (ex is ZSB.Drm.Client.Exceptions.AccountEmailNotConfirmedException)
+                                    ui.ShowMessageBox("Error",
+                                        "You must confirm the email address on the account before you can log in.",
+                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                                if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
+                                    ui.ShowMessageBox("Error",
+                                        "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                                if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
+                                    ui.ShowMessageBox("Error",
+                                        "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                                if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
+                                    ui.ShowMessageBox("You're offline",
+                                        "To log in, you must be connected to the internet. Please connect and try again.",
+                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                            }
+
+                            var res = result.Result;
+                            if (!res.FullUserInfo.Owns(Networking.Common.StaticSettings.MPTanksProductId))
+                                ui.ShowMessageBox("Oh no!", "You don't seem to own MP Tanks. " +
+                                    "Click OK to go to the ZSB Store page or click cancel to close the game.",
+                                    UserInterface.MessageBoxType.WarningMessageBox,
+                                    UserInterface.MessageBoxButtons.OkCancel, (cb) => {
+                                        switch (cb)
+                                        {
+                                            case UserInterface.MessageBoxResult.Ok:
+                                                Process.Start("https://mptanks.zsbgames.me/buy");
+                                                Exit();
+                                                break;
+                                            case UserInterface.MessageBoxResult.Cancel:
+                                                Exit();
+                                                break;
+                                        }
+                                    });
+                        });
+                };
+                page.Element<Button>("ForgotPasswordBtn").Click += (a, b) => { };
+                page.Element<Button>("NoAccountBtn").Click += 
+                (a, b) => Process.Start("https://mptanks.zsbgames.me/buy");
+            });
+        }
+        private void ShowMainMenu()
+        {
+            ui.GoToPage("mainmenu", page =>
+            {
+                if (ZSB.DrmClient.Offline)
+                {
+                    page.Element<TextBlock>("_subtitle").Text += " (Offline Mode)";
+                    page.Element<TextBlock>("_subtitle").Foreground = new SolidColorBrush(new ColorW(255, 255, 0)); //yellow
+                }
+
+                page.Element<Button>("HostBtn").Click += (b, c) =>
                 {
                     var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
                     {
                         IsHost = true
                     }, new string[] { });
                     game.RegisterExitCallback(d => ui.GoBack());
-                    ui.GoToPage("mainmenuplayerisingamepage", d =>
+                    ui.GoToPage("mainmenuplayerisingamepage", inGamePage =>
                     {
-                        d.Element<Button>("ForceCloseBtn").Click += (e, f) =>
+                        inGamePage.Element<Button>("ForceCloseBtn").Click += (e, f) =>
                         {
                             game.Close();
                             ui.GoBack();
@@ -148,14 +227,14 @@ namespace MPTanks.Client
                     });
                     game.Run();
                 };
-                a.Element<Button>("JoinBtn").Click += (b, c) =>
+                page.Element<Button>("JoinBtn").Click += (b, c) =>
                 {
-                    ui.GoToPage("connecttoserverpage", d =>
+                    ui.GoToPage("connecttoserverpage", connectPage =>
                     {
-                        d.Element<Button>("GoBackBtn").Click += (e, f) => ui.GoBack();
-                        d.Element<Button>("ConnectBtn").Click += (e, f) =>
+                        connectPage.Element<Button>("GoBackBtn").Click += (e, f) => ui.GoBack();
+                        connectPage.Element<Button>("ConnectBtn").Click += (e, f) =>
                         {
-                            var unparsedAddress = d.Element<TextBox>("ServerAddress").Text;
+                            var unparsedAddress = connectPage.Element<TextBox>("ServerAddress").Text;
                             ushort port = 33132;
                             string address = unparsedAddress.Split(':')[0];
                             try { port = ushort.Parse(unparsedAddress.Split(':')[1]); } catch { }
@@ -165,12 +244,13 @@ namespace MPTanks.Client
                                 IsHost = false,
                                 ServerAddress = address,
                                 ServerPort = port,
-                                Password = d.Element<TextBox>("ServerPassword").Text
+                                Password = connectPage.Element<TextBox>("ServerPassword").Text
                             }, new string[] { });
+
                             game.RegisterExitCallback((g) => ui.GoBack());
-                            ui.GoToPage("mainmenuplayerisingamepage", g =>
+                            ui.GoToPage("mainmenuplayerisingamepage", inGamePage =>
                             {
-                                g.Element<Button>("ForceCloseBtn").Click += (h, i) =>
+                                inGamePage.Element<Button>("ForceCloseBtn").Click += (h, i) =>
                                 {
                                     game.Close();
                                     ui.GoBack();
@@ -182,12 +262,13 @@ namespace MPTanks.Client
 
                 };
 
-                a.Element<Button>("MapMakerBtn").Click += (b, c) => {
+                page.Element<Button>("MapMakerBtn").Click += (b, c) =>
+                {
                     var prc = Process.Start("MPTanks.Clients.MapMaker.exe");
 
-                    ui.GoToPage("mainmenuplayerisingamepage", g =>
+                    ui.GoToPage("mainmenuplayerisingamepage", inGamePage =>
                     {
-                        g.Element<Button>("ForceCloseBtn").Click += (h, i) =>
+                        inGamePage.Element<Button>("ForceCloseBtn").Click += (h, i) =>
                         {
                             prc.Close();
                             ui.GoBack();
@@ -196,50 +277,24 @@ namespace MPTanks.Client
 
                     prc.Exited += (d, e) => { ui.GoBack(); };
                 };
-                a.Element<Button>("ExitBtn").Click += (b, c) =>
+                page.Element<Button>("ExitBtn").Click += (b, c) =>
                 {
                     ui.ShowMessageBox("Exit?", "Are you sure you wish to exit?",
                         UserInterface.MessageBoxType.WarningMessageBox,
                         UserInterface.MessageBoxButtons.YesNo, d =>
                         { if (d == UserInterface.MessageBoxResult.Yes) Exit(); });
                 };
+
+
+                //Col. 2
+                page.Element<Button>("LogOutBtn").Click += (b, c) =>
+                  {
+                      ZSB.DrmClient.LogOut();
+                      ui.UnwindAndEmpty();
+                      ShowLoginPage();
+                  };
             });
         }
-
-        //private void GoToMainMenuPage()
-        //{
-        //    ui.GoToPage("mainmenu");
-        //    ui.ActiveBinder.ExitAction = (Action)Exit;
-        //    ui.ActiveBinder.HostAction = (Action)(() =>
-        //    {
-        //        var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
-        //        {
-        //            IsHost = true
-        //        }, new string[] { });
-        //        game.RegisterExitCallback(a => ui.GoBack());
-        //        ui.GoToPage("mainmenuplayerisingamepage");
-        //        game.Run();
-        //    });
-        //    ui.ActiveBinder.JoinAction = (Action)(() =>
-        //    {
-        //        ui.GoToPage("connecttoserverpage");
-        //        ui.ActiveBinder.ConnectAction = (Action)(() =>
-        //        {
-        //            var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
-        //            {
-        //                IsHost = false,
-        //                ServerAddress = ui.ActiveBinder.Address,
-        //                ServerPort = ui.ActiveBinder.Port,
-        //                Password = ui.ActiveBinder.ServerPassword
-        //            }, new string[] { });
-        //            game.RegisterExitCallback((g) => ui.GoBack());
-        //            ui.GoToPage("mainmenuplayerisingamepage");
-        //            game.Run();
-        //        });
-        //        ui.ActiveBinder.GoBackAction = (Action)ui.GoBack;
-        //    });
-        //}
-
         private void ExitEvent(object parameter)
         {
             Exit();

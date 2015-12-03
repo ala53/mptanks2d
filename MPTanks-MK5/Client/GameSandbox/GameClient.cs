@@ -106,6 +106,7 @@ namespace MPTanks.Client.GameSandbox
             InputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
             if (GameSettings.Instance.InputKeyBindings.Value != null)
                 InputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
+            
             base.Initialize();
         }
 
@@ -296,6 +297,7 @@ namespace MPTanks.Client.GameSandbox
             else if (!_hasExecutedPostModLoadTask)
             {
                 _hasExecutedPostModLoadTask = true;
+                InputDriver.Activate();
                 CreateGame();
             }
 

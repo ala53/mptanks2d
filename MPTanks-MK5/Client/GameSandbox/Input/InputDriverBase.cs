@@ -11,6 +11,9 @@ namespace MPTanks.Client.GameSandbox.Input
     {
         public string DisplayName { get; private set; }
         public GameClient Client { get; private set; }
+        public bool Activated => Client.IsActive && _active;
+        private bool _active;
+
         public InputDriverBase(GameClient client, KeyBindingCollection bindings)
         {
             var name = GetType().GetProperty("Name");
@@ -25,7 +28,20 @@ namespace MPTanks.Client.GameSandbox.Input
         }
 
         public abstract Engine.Tanks.InputState GetInputState();
+        protected virtual void DriverActiveStateChanged(bool isNowActive)
+        {
 
+        }
+        public void Activate()
+        {
+            _active = true;
+            DriverActiveStateChanged(true);
+        }
+        public void Deactivate()
+        {
+            _active = false;
+            DriverActiveStateChanged(false);
+        }
         public virtual void Update(GameTime gameTime)
         {
 
