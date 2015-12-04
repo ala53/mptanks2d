@@ -66,6 +66,7 @@ namespace ZSB
             return Task.Run(() =>
             {
                 if (persistentData != null) PersistentData = persistentData;
+                _initialized = true;
                 //Try online login and token refresh -- if logged in
                 if (StoredData != null && StoredData.CachedInfo != null && StoredData.SessionKey != null)
                 {
@@ -91,7 +92,6 @@ namespace ZSB
                     }
                     catch (UnableToAccessAccountServerException) { } //we're in offline mode, I guess
                 }
-                _initialized = true;
             });
         }
 
@@ -154,6 +154,8 @@ namespace ZSB
             {
                 if (SessionKey == null) return;
                 var resp = Rest.DoPost("Logout", new { SessionKey = SessionKey });
+                StoredData = new PersistentStorageData();
+                RaiseStorageChanged();
             });
         }
 

@@ -21,22 +21,24 @@ namespace AssetCompileHelper
 
             var mono = args[0] == "mono";
             var mgcbPath = args[1];
-            var inDir = args[2];
+			var inDir = args[2];
+            Console.WriteLine(inDir);
 
             output += $"Searching folder {inDir}\n";
+            output += $"CWD: {Directory.GetCurrentDirectory()}";
 
             bool ok = true;
 
             List<string> files = new List<string>();
-            foreach (var file in System.IO.Directory.GetFiles(inDir))
+            foreach (var file in System.IO.Directory.GetFiles(inDir, "*", SearchOption.AllDirectories))
             {
                 FileInfo fi = new FileInfo(file);
 
-                if (fi.Extension.Contains("spritefont") || fi.Extension.Contains("png") ||
+                if (fi.Extension.Contains("spritefont") || /*fi.Extension.Contains("png") ||
                     fi.Extension.Contains("bmp") || fi.Extension.Contains("jpg") ||
                     fi.Extension.Contains("jpeg") || fi.Extension.Contains("tiff") ||
                     fi.Extension.Contains("tif") || fi.Extension.Contains("gif") ||
-                    fi.Extension.Contains("wav") || fi.Extension.Contains("ogg"))
+                    fi.Extension.Contains("wav") || fi.Extension.Contains("ogg") ||*/ fi.Extension.EndsWith("fx"))
                 {
                     output += $"File found: {file}\n";
                     files.Add(file);
@@ -58,7 +60,9 @@ namespace AssetCompileHelper
                 File.WriteAllText("asset_compile_helper_log.log", output);
                 return 0;
             }
-            cmdArgs += "/incremental ";
+			
+			Console.WriteLine($"{needingRecompile} files require recompile.");
+            cmdArgs += "/incremental /platform:WindowsGL ";
             foreach (var file in needingRecompile)
             {
                 output += $"Recompiling {file}\n";
@@ -66,6 +70,7 @@ namespace AssetCompileHelper
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
             }
 
+			Console.WriteLine("Executing mgcb.exe " + cmdArgs);
             Process prc;
 
             if (mono)

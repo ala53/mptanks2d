@@ -181,7 +181,7 @@ namespace MPTanks.Client.Backend.UI
             Action<MessageBoxResult> callback = null)
         {
             if (callback == null) callback = delegate { };
-            content = string.Join("\n", ChunksUpto(content, 30));
+            content = string.Join("\n", ChunksUpTo(content, 30));
             GoToPage(type.ToString(), (p) =>
             {
                 p.Element<TextBlock>("Header").Text = header;
@@ -231,10 +231,34 @@ namespace MPTanks.Client.Backend.UI
                 visible.ForEach(a => p.Element<Button>(a).Visibility = Visibility.Visible);
             });
         }
-        static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
+        IEnumerable<string> ChunksUpTo(string stringToSplit, int maximumLineLength)
         {
-            for (int i = 0; i < str.Length; i += maxChunkSize)
-                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
+            var words = stringToSplit.Split(' ').Concat(new[] { "" });
+            return
+                words
+                    .Skip(1)
+                    .Aggregate(
+                        words.Take(1).ToList(),
+                        (a, w) =>
+                        {
+                            var last = a.Last();
+                            while (last.Length > maximumLineLength)
+                            {
+                                a[a.Count() - 1] = last.Substring(0, maximumLineLength);
+                                last = last.Substring(maximumLineLength);
+                                a.Add(last);
+                            }
+                            var test = last + " " + w;
+                            if (test.Length > maximumLineLength)
+                            {
+                                a.Add(w);
+                            }
+                            else
+                            {
+                                a[a.Count() - 1] = test;
+                            }
+                            return a;
+                        });
         }
         #endregion
     }

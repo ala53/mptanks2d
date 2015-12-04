@@ -132,7 +132,10 @@ namespace MPTanks.Client
             ui = new UserInterface(this);
 
             //Init
-            ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo);
+            try
+            { ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo); }
+            catch
+            { ZSB.DrmClient.Initialize(); } //If an error occurs, clear info and restart
             ZSB.DrmClient.OnPersistentStorageChanged +=
                 (a, b) => GlobalSettings.Instance.StoredAccountInfo.Value = ZSB.DrmClient.PersistentData;
 
@@ -149,54 +152,57 @@ namespace MPTanks.Client
                 {
                     var login = ZSB.DrmClient.LoginAsync(
                         page.Element<TextBox>("UsernameBox").Text,
-                        page.Element<PasswordBox>("UsernameBox").Text)
-                        .ContinueWith(result =>
+                        page.Element<TextBox>("PasswordBox").Text);
+                    login.ContinueWith(result =>
+                    {
+                        if (result.IsFaulted)
                         {
-                            if (result.IsFaulted)
-                            {
-                                var ex = result.Exception.InnerException;
-                                if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
-                                    ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
-                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                                if (ex is ZSB.Drm.Client.Exceptions.AccountEmailNotConfirmedException)
-                                    ui.ShowMessageBox("Error",
-                                        "You must confirm the email address on the account before you can log in.",
-                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                                if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
-                                    ui.ShowMessageBox("Error",
-                                        "An internal error occurred. Try reinstalling the game or waiting a bit.",
-                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                                if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
-                                    ui.ShowMessageBox("Error",
-                                        "An internal error occurred. Try reinstalling the game or waiting a bit.",
-                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                                if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
-                                    ui.ShowMessageBox("You're offline",
-                                        "To log in, you must be connected to the internet. Please connect and try again.",
-                                        UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                            }
+                            var ex = result.Exception.InnerException;
+                            if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
+                                ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
+                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                            if (ex is ZSB.Drm.Client.Exceptions.AccountEmailNotConfirmedException)
+                                ui.ShowMessageBox("Error",
+                                    "You must confirm the email address on the account before you can log in.",
+                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                            if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
+                                ui.ShowMessageBox("Error",
+                                    "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                            if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
+                                ui.ShowMessageBox("Error",
+                                    "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                            if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
+                                ui.ShowMessageBox("You're offline",
+                                    "To log in, you must be connected to the internet. Please connect and try again.",
+                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                        }
 
-                            var res = result.Result;
-                            if (!res.FullUserInfo.Owns(Networking.Common.StaticSettings.MPTanksProductId))
-                                ui.ShowMessageBox("Oh no!", "You don't seem to own MP Tanks. " +
-                                    "Click OK to go to the ZSB Store page or click cancel to close the game.",
-                                    UserInterface.MessageBoxType.WarningMessageBox,
-                                    UserInterface.MessageBoxButtons.OkCancel, (cb) => {
-                                        switch (cb)
-                                        {
-                                            case UserInterface.MessageBoxResult.Ok:
-                                                Process.Start("https://mptanks.zsbgames.me/buy");
-                                                Exit();
-                                                break;
-                                            case UserInterface.MessageBoxResult.Cancel:
-                                                Exit();
-                                                break;
-                                        }
-                                    });
-                        });
+                        var res = result.Result;
+                        if (res.FullUserInfo.Owns(Networking.Common.StaticSettings.MPTanksProductId))
+                            ShowMainMenu();
+                        else
+                            ui.ShowMessageBox("Oh no!", "You don't seem to own MP Tanks. " +
+                                "Click OK to go to the ZSB Store page or click cancel to close the game.",
+                                UserInterface.MessageBoxType.WarningMessageBox,
+                                UserInterface.MessageBoxButtons.OkCancel, (cb) =>
+                                {
+                                    switch (cb)
+                                    {
+                                        case UserInterface.MessageBoxResult.Ok:
+                                            Process.Start("https://mptanks.zsbgames.me/buy");
+                                            Exit();
+                                            break;
+                                        case UserInterface.MessageBoxResult.Cancel:
+                                            Exit();
+                                            break;
+                                    }
+                                });
+                    });
                 };
                 page.Element<Button>("ForgotPasswordBtn").Click += (a, b) => { };
-                page.Element<Button>("NoAccountBtn").Click += 
+                page.Element<Button>("NoAccountBtn").Click +=
                 (a, b) => Process.Start("https://mptanks.zsbgames.me/buy");
             });
         }
@@ -206,7 +212,7 @@ namespace MPTanks.Client
             {
                 if (ZSB.DrmClient.Offline)
                 {
-                    page.Element<TextBlock>("_subtitle").Text += " (Offline Mode)";
+                    page.Element<TextBlock>("_subtitle").Text += " - Offline Mode";
                     page.Element<TextBlock>("_subtitle").Foreground = new SolidColorBrush(new ColorW(255, 255, 0)); //yellow
                 }
 

@@ -135,6 +135,7 @@
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
+    <Compile Include="UI\LoginForm.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
@@ -180,6 +181,9 @@
     </None>
     <None Include="assets\ui\imgs\Karmatic Arcade.ttf" />
     <None Include="assets\ui\imgs\Karmatic_Arcade_12_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_13.5_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_15_Regular.xnb">
@@ -294,11 +298,11 @@
 	</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
+    <PreBuildEvent>
+"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
 
-"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)assets\ui\imgs"
-
-"$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" /incremental /platform:WindowsGL /build:"$(ProjectDir)assets\mgcontent\shadowRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\componentRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\fxaa3.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskRenderer.fx" /build:"$(ProjectDir)assets\mgcontent\lightMaskPreCompositor.fx"</PreBuildEvent>
+"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)\"
+</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

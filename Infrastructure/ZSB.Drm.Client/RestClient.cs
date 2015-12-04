@@ -70,6 +70,20 @@ namespace ZSB.Drm.Client
 
                 return resp;
             }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.Timeout ||
+                    ex.Status == WebExceptionStatus.ConnectFailure ||
+                    ex.Status == WebExceptionStatus.ConnectionClosed ||
+                    ex.Status == WebExceptionStatus.NameResolutionFailure ||
+                    ex.Status == WebExceptionStatus.TrustFailure)
+                {
+                    DrmClient.Offline = true;
+                    throw new Exceptions.UnableToAccessAccountServerException();
+                }
+                else throw new Exceptions.AccountServerException(ex);
+
+            }
             catch (Exception ex)
             { throw new Exceptions.AccountServerException(ex); }
         }
