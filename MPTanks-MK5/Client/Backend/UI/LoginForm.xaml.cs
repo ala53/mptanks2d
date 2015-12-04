@@ -27,15 +27,19 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel e_9;
         
-        private StackPanel e_10;
+        private TextBlock e_10;
         
-        private TextBlock e_11;
-        
-        private TextBox UsernameBox;
+        private StackPanel e_11;
         
         private StackPanel e_12;
         
         private TextBlock e_13;
+        
+        private TextBox UsernameBox;
+        
+        private StackPanel e_14;
+        
+        private TextBlock e_15;
         
         private PasswordBox PasswordBox;
         
@@ -69,49 +73,69 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_9.VerticalAlignment = VerticalAlignment.Center;
             this.e_9.Orientation = Orientation.Vertical;
             // e_10 element
-            this.e_10 = new StackPanel();
+            this.e_10 = new TextBlock();
             this.e_9.Children.Add(this.e_10);
             this.e_10.Name = "e_10";
-            this.e_10.Orientation = Orientation.Horizontal;
+            this.e_10.Margin = new Thickness(10F, 10F, 10F, 30F);
+            this.e_10.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_10.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_10.Text = "MP Tanks 2D";
+            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
+            this.e_10.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_10.FontSize = 72F;
             // e_11 element
-            this.e_11 = new TextBlock();
-            this.e_10.Children.Add(this.e_11);
+            this.e_11 = new StackPanel();
+            this.e_9.Children.Add(this.e_11);
             this.e_11.Name = "e_11";
-            this.e_11.Margin = new Thickness(0F, 0F, 10F, 0F);
-            this.e_11.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.e_11.Text = "Username";
-            this.e_11.Padding = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            this.e_11.FontFamily = new FontFamily("Karmatic Arcade");
-            this.e_11.FontSize = 18F;
-            // UsernameBox element
-            this.UsernameBox = new TextBox();
-            this.e_10.Children.Add(this.UsernameBox);
-            this.UsernameBox.Name = "UsernameBox";
-            this.UsernameBox.Width = 300F;
-            this.UsernameBox.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this.UsernameBox.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
+            this.e_11.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_11.VerticalAlignment = VerticalAlignment.Center;
+            this.e_11.Orientation = Orientation.Vertical;
             // e_12 element
             this.e_12 = new StackPanel();
-            this.e_9.Children.Add(this.e_12);
+            this.e_11.Children.Add(this.e_12);
             this.e_12.Name = "e_12";
-            this.e_12.Margin = new Thickness(0F, 10F, 0F, 0F);
             this.e_12.Orientation = Orientation.Horizontal;
             // e_13 element
             this.e_13 = new TextBlock();
             this.e_12.Children.Add(this.e_13);
             this.e_13.Name = "e_13";
+            this.e_13.Width = 150F;
             this.e_13.Margin = new Thickness(0F, 0F, 10F, 0F);
             this.e_13.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.e_13.Text = "Password";
+            this.e_13.Text = "Email";
             this.e_13.Padding = new Thickness(10F, 10F, 10F, 10F);
             FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             this.e_13.FontFamily = new FontFamily("Karmatic Arcade");
             this.e_13.FontSize = 18F;
+            // UsernameBox element
+            this.UsernameBox = new TextBox();
+            this.e_12.Children.Add(this.UsernameBox);
+            this.UsernameBox.Name = "UsernameBox";
+            this.UsernameBox.Width = 300F;
+            this.UsernameBox.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.UsernameBox.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
+            // e_14 element
+            this.e_14 = new StackPanel();
+            this.e_11.Children.Add(this.e_14);
+            this.e_14.Name = "e_14";
+            this.e_14.Margin = new Thickness(0F, 10F, 0F, 0F);
+            this.e_14.Orientation = Orientation.Horizontal;
+            // e_15 element
+            this.e_15 = new TextBlock();
+            this.e_14.Children.Add(this.e_15);
+            this.e_15.Name = "e_15";
+            this.e_15.Width = 150F;
+            this.e_15.Margin = new Thickness(0F, 0F, 10F, 0F);
+            this.e_15.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_15.Text = "Password";
+            this.e_15.Padding = new Thickness(10F, 10F, 10F, 10F);
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            this.e_15.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_15.FontSize = 18F;
             // PasswordBox element
             this.PasswordBox = new PasswordBox();
-            this.e_12.Children.Add(this.PasswordBox);
+            this.e_14.Children.Add(this.PasswordBox);
             this.PasswordBox.Name = "PasswordBox";
             this.PasswordBox.Width = 300F;
             this.PasswordBox.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
@@ -119,7 +143,7 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             // LoginBtn element
             this.LoginBtn = new Button();
-            this.e_9.Children.Add(this.LoginBtn);
+            this.e_11.Children.Add(this.LoginBtn);
             this.LoginBtn.Name = "LoginBtn";
             this.LoginBtn.Width = 450F;
             this.LoginBtn.Margin = new Thickness(0F, 10F, 0F, 0F);
@@ -136,7 +160,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LoginBtn.SetBinding(Button.CommandProperty, binding_LoginBtn_Command);
             // ForgotPasswordBtn element
             this.ForgotPasswordBtn = new Button();
-            this.e_9.Children.Add(this.ForgotPasswordBtn);
+            this.e_11.Children.Add(this.ForgotPasswordBtn);
             this.ForgotPasswordBtn.Name = "ForgotPasswordBtn";
             this.ForgotPasswordBtn.Width = 450F;
             this.ForgotPasswordBtn.Margin = new Thickness(0F, 10F, 0F, 0F);
@@ -151,7 +175,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ForgotPasswordBtn.Content = "Forgot your password?";
             // NoAccountBtn element
             this.NoAccountBtn = new Button();
-            this.e_9.Children.Add(this.NoAccountBtn);
+            this.e_11.Children.Add(this.NoAccountBtn);
             this.NoAccountBtn.Name = "NoAccountBtn";
             this.NoAccountBtn.Width = 450F;
             this.NoAccountBtn.Margin = new Thickness(0F, 10F, 0F, 0F);

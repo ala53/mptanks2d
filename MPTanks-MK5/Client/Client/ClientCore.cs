@@ -146,15 +146,30 @@ namespace MPTanks.Client
         }
         private void ShowLoginPage()
         {
-            ui.GoToPage("loginform", page =>
+            ui.GoToPage("loginform", (page, state, old) =>
             {
+                if (old != null) // Copy the username
+                {
+                    page.Element<TextBox>("UsernameBox").Text = 
+                    old.OldPage.Element<TextBox>("UsernameBox").Text;
+                }
+
                 page.Element<Button>("LoginBtn").Click += (a, b) =>
                 {
-                    var login = ZSB.DrmClient.LoginAsync(
-                        page.Element<TextBox>("UsernameBox").Text,
-                        page.Element<TextBox>("PasswordBox").Text);
+                    string username = page.Element<TextBox>("UsernameBox").Text,
+                    password = page.Element<TextBox>("PasswordBox").Text;
+                    if (username.Length < 1 || password.Length < 1)
+                    {
+                        ui.ShowMessageBox("Error", "You must enter a username and a password!",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                        return;
+                    }
+                    var login = ZSB.DrmClient.LoginAsync(username, password);
+                    ui.ShowMessageBox("Processing", "We're logging you in now. This may take a few seconds.",
+                        buttons: UserInterface.MessageBoxButtons.None);
                     login.ContinueWith(result =>
                     {
+                        ui.GoBack();
                         if (result.IsFaulted)
                         {
                             var ex = result.Exception.InnerException;
@@ -201,7 +216,39 @@ namespace MPTanks.Client
                                 });
                     });
                 };
-                page.Element<Button>("ForgotPasswordBtn").Click += (a, b) => { };
+                page.Element<Button>("ForgotPasswordBtn").Click += (a, b) =>
+                {
+                    string username = page.Element<TextBox>("UsernameBox").Text;
+                    if (username.Length < 1)
+                    {
+                        ui.ShowMessageBox("Error", "You must enter your email address!",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                        return;
+                    }
+
+                    try
+                    {
+                        ZSB.DrmClient.Account.SendForgotPasswordEmail(username);
+                        ui.ShowMessageBox("Sent!", "An email with a link to reset your password has been sent. See you soon!");
+                    }
+                    catch (AggregateException exception)
+                    {
+                        var ex = exception.InnerException;
+                        if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
+                            ui.ShowMessageBox("Error", "There is no account with the email address you entered.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                        if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
+                            ui.ShowMessageBox("Error", "An internal error occurred. Try again later or reinstall the game.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                        if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
+                            ui.ShowMessageBox("Error", "An internal error occurred. Try again later or reinstall the game.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                        if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
+                            ui.ShowMessageBox("Offline",
+                                "We can't send you a validation email if you're not connected to the internet. Connect and try again.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                    }
+                };
                 page.Element<Button>("NoAccountBtn").Click +=
                 (a, b) => Process.Start("https://mptanks.zsbgames.me/buy");
             });

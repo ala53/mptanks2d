@@ -49,7 +49,7 @@ namespace MPTanks.Client.Backend.UI
         }
 
         public void GoToPage(string page, Action<UserInterfacePage> generator) =>
-            GoToPage<object>(page, (a, b, c) => generator(a));
+            GoToPage(page, (a, b, c) => generator(a));
         /// <summary>
         /// 
         /// </summary>
@@ -59,7 +59,7 @@ namespace MPTanks.Client.Backend.UI
         /// an object state, and (optionally) the last page, 
         /// which will be included when GoBack() is called or the state object is updated</param>
         /// <param name="state"></param>
-        public void GoToPage<T>(string page, Action<UserInterfacePage, dynamic, OldPageObject> generator, T state = null) where T : class
+        public void GoToPage(string page, Action<UserInterfacePage, dynamic, OldPageObject> generator, object state  = null)
         {
             var pg = new UserInterfacePage(page);
             pg.UserInterface = this;
@@ -164,7 +164,8 @@ namespace MPTanks.Client.Backend.UI
             YesNo,
             YesNoCancel,
             OkNo,
-            OkNoCancel
+            OkNoCancel,
+            None
         }
 
         public enum MessageBoxResult
@@ -225,6 +226,8 @@ namespace MPTanks.Client.Backend.UI
                         visible.Add("Yes");
                         visible.Add("No");
                         visible.Add("Cancel");
+                        break;
+                    case MessageBoxButtons.None:
                         break;
                 }
 

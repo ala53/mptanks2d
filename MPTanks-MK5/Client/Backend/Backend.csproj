@@ -192,6 +192,18 @@
     <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_54_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_60_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_63_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_66_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_72_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
