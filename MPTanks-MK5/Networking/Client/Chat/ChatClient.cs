@@ -12,9 +12,9 @@ namespace MPTanks.Networking.Client.Chat
 
         public ChatMessage[] Messages { get; private set; }
 
-        public Client Client { get; private set; }
+        public NetClient Client { get; private set; }
 
-        public ChatClient(Client client, int numMessagesToStore = 20)
+        public ChatClient(NetClient client, int numMessagesToStore = 20)
         {
             NumberOfMessagesToStore = numMessagesToStore;
             Messages = new ChatMessage[numMessagesToStore];

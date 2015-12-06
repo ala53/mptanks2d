@@ -23,7 +23,8 @@ namespace MPTanks.Client.Backend.UI
         public int Id { get; private set; }
         private static int _id;
         public event EventHandler<GameTime> OnUpdate = delegate { };
-        internal Delegate Generator { get; set; }
+        internal Action<UserInterfacePage> Generator { get; set; }
+        internal Action<UserInterfacePage, dynamic> StateChangeHandler { get; set; }
         public object State { get; set; }
 
         public UserInterfacePage(string pageName)

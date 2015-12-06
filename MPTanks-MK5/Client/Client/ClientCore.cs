@@ -10,6 +10,7 @@ using MPTanks.Client.Backend.UI;
 using MPTanks.Engine.Settings;
 using System;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace MPTanks.Client
 {
@@ -62,6 +63,8 @@ namespace MPTanks.Client
             graphics.DeviceCreated += graphics_DeviceCreated;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
             Window.AllowUserResizing = true;
+
+            Window.Title = "MP Tanks 2D: " + GameSandbox.TitleCard.Option();
 
         }
 
@@ -146,76 +149,14 @@ namespace MPTanks.Client
         }
         private void ShowLoginPage()
         {
-            ui.GoToPage("loginform", (page, state, old) =>
+            ui.GoToPage("loginform", (page) =>
             {
-                if (old != null) // Copy the username
-                {
-                    page.Element<TextBox>("UsernameBox").Text = 
-                    old.OldPage.Element<TextBox>("UsernameBox").Text;
-                }
+                page.Element<TextBox>("PasswordBox").KeyDown += (a, b) =>
+                { if (b.Key == KeyCode.Enter) DoLogin(page); };
+                page.Element<TextBox>("UsernameBox").KeyDown += (a, b) =>
+                { if (b.Key == KeyCode.Enter) DoLogin(page); };
 
-                page.Element<Button>("LoginBtn").Click += (a, b) =>
-                {
-                    string username = page.Element<TextBox>("UsernameBox").Text,
-                    password = page.Element<TextBox>("PasswordBox").Text;
-                    if (username.Length < 1 || password.Length < 1)
-                    {
-                        ui.ShowMessageBox("Error", "You must enter a username and a password!",
-                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                        return;
-                    }
-                    var login = ZSB.DrmClient.LoginAsync(username, password);
-                    ui.ShowMessageBox("Processing", "We're logging you in now. This may take a few seconds.",
-                        buttons: UserInterface.MessageBoxButtons.None);
-                    login.ContinueWith(result =>
-                    {
-                        ui.GoBack();
-                        if (result.IsFaulted)
-                        {
-                            var ex = result.Exception.InnerException;
-                            if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
-                                ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
-                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                            if (ex is ZSB.Drm.Client.Exceptions.AccountEmailNotConfirmedException)
-                                ui.ShowMessageBox("Error",
-                                    "You must confirm the email address on the account before you can log in.",
-                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                            if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
-                                ui.ShowMessageBox("Error",
-                                    "An internal error occurred. Try reinstalling the game or waiting a bit.",
-                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                            if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
-                                ui.ShowMessageBox("Error",
-                                    "An internal error occurred. Try reinstalling the game or waiting a bit.",
-                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                            if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
-                                ui.ShowMessageBox("You're offline",
-                                    "To log in, you must be connected to the internet. Please connect and try again.",
-                                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
-                        }
-
-                        var res = result.Result;
-                        if (res.FullUserInfo.Owns(Networking.Common.StaticSettings.MPTanksProductId))
-                            ShowMainMenu();
-                        else
-                            ui.ShowMessageBox("Oh no!", "You don't seem to own MP Tanks. " +
-                                "Click OK to go to the ZSB Store page or click cancel to close the game.",
-                                UserInterface.MessageBoxType.WarningMessageBox,
-                                UserInterface.MessageBoxButtons.OkCancel, (cb) =>
-                                {
-                                    switch (cb)
-                                    {
-                                        case UserInterface.MessageBoxResult.Ok:
-                                            Process.Start("https://mptanks.zsbgames.me/buy");
-                                            Exit();
-                                            break;
-                                        case UserInterface.MessageBoxResult.Cancel:
-                                            Exit();
-                                            break;
-                                    }
-                                });
-                    });
-                };
+                page.Element<Button>("LoginBtn").Click += (a, b) => DoLogin(page);
                 page.Element<Button>("ForgotPasswordBtn").Click += (a, b) =>
                 {
                     string username = page.Element<TextBox>("UsernameBox").Text;
@@ -251,6 +192,69 @@ namespace MPTanks.Client
                 };
                 page.Element<Button>("NoAccountBtn").Click +=
                 (a, b) => Process.Start("https://mptanks.zsbgames.me/buy");
+            });
+        }
+        private void DoLogin(UserInterfacePage page)
+        {
+            string username = page.Element<TextBox>("UsernameBox").Text,
+            password = page.Element<TextBox>("PasswordBox").Text;
+            if (username.Length < 1 || password.Length < 1)
+            {
+                ui.ShowMessageBox("Error", "You must enter a username and a password!",
+                    UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                return;
+            }
+            var login = ZSB.DrmClient.LoginAsync(username, password);
+            ui.ShowMessageBox("Processing", "We're logging you in now. This may take a few seconds.",
+                buttons: UserInterface.MessageBoxButtons.None);
+            login.ContinueWith(result =>
+            {
+                ui.GoBack();
+                if (result.IsFaulted)
+                {
+                    var ex = result.Exception.InnerException;
+                    if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
+                        ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                    if (ex is ZSB.Drm.Client.Exceptions.AccountEmailNotConfirmedException)
+                        ui.ShowMessageBox("Error",
+                            "You must confirm the email address on the account before you can log in.",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                    if (ex is ZSB.Drm.Client.Exceptions.AccountServerException)
+                        ui.ShowMessageBox("Error",
+                            "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                    if (ex is ZSB.Drm.Client.Exceptions.InvalidAccountServerResponseException)
+                        ui.ShowMessageBox("Error",
+                            "An internal error occurred. Try reinstalling the game or waiting a bit.",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                    if (ex is ZSB.Drm.Client.Exceptions.UnableToAccessAccountServerException)
+                        ui.ShowMessageBox("You're offline",
+                            "To log in, you must be connected to the internet. Please connect and try again.",
+                            UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);
+                }
+
+                var res = result.Result;
+                if (res.FullUserInfo.Owns(Networking.Common.StaticSettings.MPTanksProductId))
+                    ShowMainMenu();
+                else
+                    ui.ShowMessageBox("Oh no!", "You don't seem to own MP Tanks. " +
+                        "Click OK to go to the ZSB Store page or click cancel to close the game.",
+                        UserInterface.MessageBoxType.WarningMessageBox,
+                        UserInterface.MessageBoxButtons.OkCancel, (cb) =>
+                        {
+                            switch (cb)
+                            {
+                                case UserInterface.MessageBoxResult.Ok:
+                                    Process.Start("https://mptanks.zsbgames.me/buy");
+                                    Exit();
+                                    break;
+                                case UserInterface.MessageBoxResult.Cancel:
+                                    Exit();
+                                    break;
+                            }
+                        });
+
             });
         }
         private void ShowMainMenu()
@@ -361,8 +365,7 @@ namespace MPTanks.Client
         {
             // TODO: Unload any non ContentManager content here
         }
-
-        private float opacity = 1;
+        
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.

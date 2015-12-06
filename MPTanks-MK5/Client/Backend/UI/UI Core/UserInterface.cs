@@ -47,38 +47,30 @@ namespace MPTanks.Client.Backend.UI
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
             Empty();
         }
-
-        public void GoToPage(string page, Action<UserInterfacePage> generator) =>
-            GoToPage(page, (a, b, c) => generator(a));
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page"></param>
-        /// <param name="generator">A generator for the page which takes the page to draw to, 
-        /// an object state, and (optionally) the last page, 
-        /// which will be included when GoBack() is called or the state object is updated</param>
-        /// <param name="state"></param>
-        public void GoToPage(string page, Action<UserInterfacePage, dynamic, OldPageObject> generator, object state  = null)
+        public void GoToPage(string page, Action<UserInterfacePage> generator, Action<UserInterfacePage, dynamic> stateChangeHandler = null, dynamic state = null)
         {
             var pg = new UserInterfacePage(page);
+            if (stateChangeHandler == null)
+                stateChangeHandler = delegate { };
             pg.UserInterface = this;
             pg.Page.Resize(_currentWidth, _currentHeight);
             pg.Generator = generator;
+            pg.StateChangeHandler = stateChangeHandler;
             pg.State = state;
             _pages.Push(pg);
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
             SoundManager.Instance.LoadSounds(_content);
 
-            generator(pg, state, null);
+            generator(pg);
+            if (state != null)
+                stateChangeHandler(pg, state);
         }
 
         public void UpdateState<T>(T newState) where T : class
         {
             var oldPg = CurrentPage;
-            var currentPage = CopyCurrentPage();
-            currentPage.Generator.DynamicInvoke(currentPage, newState, new OldPageObject { OldPage = oldPg });
+            CurrentPage.StateChangeHandler(CurrentPage, newState);
         }
 
         private UserInterfacePage CopyCurrentPage()
@@ -88,8 +80,12 @@ namespace MPTanks.Client.Backend.UI
             pg.UserInterface = this;
             pg.Page.Resize(_currentWidth, _currentHeight);
             pg.Generator = oldPg.Generator;
+            pg.StateChangeHandler = oldPg.StateChangeHandler;
             pg.State = oldPg.State;
+            pg.Generator(pg);
+            pg.StateChangeHandler(pg, pg.State);
             _pages.Push(pg);
+
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
             SoundManager.Instance.LoadSounds(_content);
@@ -98,13 +94,10 @@ namespace MPTanks.Client.Backend.UI
 
         public void GoBack()
         {
-            //pop the stack
             if (_pages.Count > 1)
             {
                 _pages.Pop();
-                var oldPg = CurrentPage;
                 var newPg = CopyCurrentPage();
-                newPg.Generator.DynamicInvoke(newPg, newPg.State, new OldPageObject { OldPage = newPg });
             }
             //otherwise
             else UnwindAndEmpty();

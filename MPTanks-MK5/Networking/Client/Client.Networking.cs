@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Networking.Client
 {
-    public partial class Client
+    public partial class NetClient
     {
         private void SetupNetwork()
         {

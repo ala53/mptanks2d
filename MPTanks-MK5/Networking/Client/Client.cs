@@ -14,7 +14,7 @@ using ZSB.Drm.Client.Exceptions;
 
 namespace MPTanks.Networking.Client
 {
-    public partial class Client
+    public partial class NetClient
     {
         public enum ClientStatus
         {
@@ -72,8 +72,8 @@ namespace MPTanks.Networking.Client
         public ILogger Logger { get; set; }
 
         public bool GameRunning { get { return Connected && GameInstance != null; } }
-        public bool IsInGame => GameRunning && Game.HasStarted;
-        public Client(string connection, ushort port, ILogger logger = null,
+        public bool IsInGame => GameRunning && Game.HasStarted && Connected;
+        public NetClient(string connection, ushort port, ILogger logger = null,
             string password = null, bool connectOnInit = true)
         {
             if (logger != null)

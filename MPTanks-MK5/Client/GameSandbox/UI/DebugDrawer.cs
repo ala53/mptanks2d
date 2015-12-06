@@ -14,14 +14,14 @@ namespace MPTanks.Client.GameSandbox.UI
 {
     class DebugDrawer : IDisposable
     {
-        private Networking.Client.Client _netClient;
+        private Networking.Client.NetClient _netClient;
         private GameClient _client;
         private GameCore _game => _netClient.Game;
         private GamePlayer _player => _netClient.Player;
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
         private Texture2D _graphTexture;
-        public DebugDrawer(GameClient client, Networking.Client.Client netclient)
+        public DebugDrawer(GameClient client, Networking.Client.NetClient netclient)
         {
             _client = client;
             _netClient = netclient;

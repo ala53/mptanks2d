@@ -213,6 +213,7 @@ namespace MPTanks.Client.Backend.Sound
 
         public void Update(GameTime gameTime)
         {
+            if (Game == null) return;
             ActiveSounds.UpdateSounds(gameTime);
             MusicPlayer.Update();
             FMOD.Error.Check(_system.update());

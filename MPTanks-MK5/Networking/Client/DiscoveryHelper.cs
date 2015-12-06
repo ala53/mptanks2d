@@ -34,7 +34,7 @@ namespace MPTanks.Networking.Client
             {
                 var responses = new List<DiscoveryResponse>();
 
-                var client = new NetClient(new NetPeerConfiguration("MPTANKS"));
+                var client = new Lidgren.Network.NetClient(new NetPeerConfiguration("MPTANKS"));
                 client.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
                 client.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
 
@@ -62,7 +62,7 @@ namespace MPTanks.Networking.Client
         {
             return Task.Run(() =>
             {
-                var client = new NetClient(new NetPeerConfiguration("MPTANKS"));
+                var client = new Lidgren.Network.NetClient(new NetPeerConfiguration("MPTANKS"));
                 client.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
                 client.Configuration.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
 

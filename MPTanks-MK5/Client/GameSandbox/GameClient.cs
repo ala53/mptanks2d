@@ -16,9 +16,12 @@ using MPTanks.Client.Backend.Renderer;
 using MPTanks.Client.GameSandbox.Input;
 using MPTanks.Client.GameSandbox.UI;
 using MPTanks.Networking.Server;
+using MPTanks.Networking.Client;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using EmptyKeys.UserInterface.Controls;
+using MPTanks.Client.Backend.Sound;
+using MPTanks.Engine.Tanks;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -31,20 +34,28 @@ namespace MPTanks.Client.GameSandbox
         GraphicsDeviceManager _graphics;
         private bool _graphicsDeviceIsDirty = false;
         SpriteBatch _spriteBatch;
-        public MPTanks.Networking.Client.Client Client { get; private set; }
-        public MPTanks.Networking.Server.Server Server { get; private set; }
-        public Backend.Sound.SoundPlayer SoundPlayer { get; private set; }
+        public NetClient Client { get; private set; }
+        public Server Server { get; private set; }
+        public SoundPlayer SoundPlayer { get; private set; }
         public InputDriverBase InputDriver { get; private set; }
         public GameCoreRenderer GameRenderer { get; private set; }
+        public bool IsHost => AOTConfig.IsGameHost;
+        /// <summary>
+        /// The ahead of time configuration / Cross domain shared object
+        /// </summary>
+        public CrossDomainObject AOTConfig => CrossDomainObject.Instance;
         private UserInterface _ui;
         private AsyncModLoader _modLoader;
+        private Task _modLoaderSetupTask;
         internal DebugDrawer DebugDrawer { get; private set; }
+        public Tank CurrentViewedTank => Client?.Player?.Tank;
 
         const string _settingUpPageName = "SettingUpPrompt";
 
         private Diagnostics _tmpDiagnosticsInstance = new Diagnostics();
         public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics ?? _tmpDiagnosticsInstance;
 
+        #region Low level monogame and related initialization
         public GameClient()
             : base()
         {
@@ -58,8 +69,7 @@ namespace MPTanks.Client.GameSandbox
             Window.AllowUserResizing = true;
 
             IsFixedTimeStep = false;
-
-            _modLoader = AsyncModLoader.Create(GameSettings.Instance);
+            Window.Title = "MP Tanks 2D: " + TitleCard.Option();
         }
 
         void graphics_DeviceCreated(object sender, EventArgs e)
@@ -76,10 +86,6 @@ namespace MPTanks.Client.GameSandbox
             _ssaaRate = GameSettings.Instance.SSAARate;
 
             _graphicsDeviceIsDirty = true;
-
-            GraphicsDevice.DeviceLost += (a, b) => {
-                GraphicsDevice.Reset(GraphicsDevice.PresentationParameters.Clone());
-            };
         }
 
         /// <summary>
@@ -93,20 +99,13 @@ namespace MPTanks.Client.GameSandbox
             //Set up resize handler
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
-            //Initialize evented input
+            //Initialize evented input layer
             Components.Add(new Starbound.Input.KeyboardEvents(this));
             Components.Add(new Starbound.Input.MouseEvents(this));
             Components.Add(new Starbound.Input.GamePadEvents(PlayerIndex.One, this));
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
 
-            _ui = new UserInterface(this);
-
-            //initialize the game input driver
-            InputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
-            if (GameSettings.Instance.InputKeyBindings.Value != null)
-                InputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
-            
             base.Initialize();
         }
 
@@ -123,27 +122,74 @@ namespace MPTanks.Client.GameSandbox
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
+            // Create a new SpriteBatch to draw to the screen.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            InitializeGame();
+        }
+        #endregion
+        private bool _hasInitialized;
+        /// <summary>
+        /// Put init logic here. Will be called after LoadContent()
+        /// </summary>
+        private void InitializeGame()
+        {
+            //Log in to ZSB Servers
+            try
+            { ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo); }
+            catch
+            { ZSB.DrmClient.Initialize(); } //If an error occurs, clear info and restart
+            ZSB.DrmClient.OnPersistentStorageChanged +=
+                (a, b) => GlobalSettings.Instance.StoredAccountInfo.Value = ZSB.DrmClient.PersistentData;
+            //Handle fatal login errors
+            if (!ZSB.DrmClient.LoggedIn)
+            {
+                Logger.Fatal("Not logged in. Panicking at the disco. Did you launch the game executable by accident?");
+                Exit();
+                return;
+            }
+
+            //Create the user interface
+            _ui = new UserInterface(this);
+
+            //Initialize the input driver from the configuration
+            InputDriver = InputDriverBase.GetDriver(GameSettings.Instance.InputDriverName, this);
+            if (GameSettings.Instance.InputKeyBindings.Value != null)
+                InputDriver.SetKeyBindings(GameSettings.Instance.InputKeyBindings);
+
             ShowSetupPrompt();
+            //Initialize renderers
+            GameRenderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            SoundPlayer = new SoundPlayer();
+            //And, finally, Begin the async mod loading
+            _modLoader = AsyncModLoader.Create(GameSettings.Instance);
+            //And follow the mod loader
+            _modLoaderSetupTask = _modLoader.AsyncLoaderTask.ContinueWith((task) =>
+            {
+                InputDriver.Activate();
+                CreateGame();
+            });
+            _hasInitialized = true;
         }
 
         private void ShowSetupPrompt()
         {
-            _ui.GoToPage("settingupprompt", (p, b, c) =>
+            _ui.GoToPage("settingupprompt", p =>
             {
-                try { p.Element<TextBlock>("Header").Text = b.Header ?? ""; } catch { }
-                try { p.Element<TextBlock>("ContentT").Text = b.Content ?? ""; } catch { }
+                p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+            },
+            (p, b) =>
+            {
+                p.Element<TextBlock>("Header").Text = b.Header ?? "";
+                p.Element<TextBlock>("ContentT").Text = b.Content ?? "";
 
-                try { p.Element<Button>("controlbutton").Content = b.Button ?? "Leave server"; } catch { }
+                p.Element<Button>("controlbutton").Content = b.Button ?? "Leave server";
                 p.Element<Button>("controlbutton").Click += (d, e) => Exit();
-                bool visible = true;
-                try { visible = !b.Invisible; } catch { }
-                if (!visible)
-                    p.Element<Button>("controlbutton").Visibility =
-                    EmptyKeys.UserInterface.Visibility.Collapsed;
-            }, new { Header = "", Content = "", Button = (string)null, Invisible = false });
+                if (b.Button == null)
+                    p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                else
+                    p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+            }, new { Header = "XXX", Content = "XXX", Button = (string)null });
         }
 
         private void CreateGame()
@@ -157,51 +203,47 @@ namespace MPTanks.Client.GameSandbox
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
 
-            var host = CrossDomainObject.Instance.IsGameHost;
-
-            //Log in
-            ZSB.DrmClient.Initialize();
-            ZSB.DrmClient.Login("test@zsbgames.me", "drowssap");
-
-            //_ui.GoToPage(_settingUpPageName);
-            //TEMP
-            Client = new Networking.Client.Client(
-                host ? "localhost" : CrossDomainObject.Instance.ServerIp,
-                host ? (ushort)33132 : CrossDomainObject.Instance.ServerPort
-                , new NLogLogger(Logger.Instance), "password");
-            if (CrossDomainObject.Instance.IsGameHost)
+            if (IsHost)
+            {
+                Client = new NetClient(
+                    "localhost",
+                    33132,
+                    new NLogLogger(Logger.Instance),
+                    AOTConfig.Password);
+                //And set up server, default port
                 Server = new Server(new Configuration()
                 {
-                    MaxPlayers = 32,
-                    Password = "password",
+                    MaxPlayers = 32, //Non-configurable -- use dedicated server for more players
+                    Password = AOTConfig.Password,
                     Port = 33132,
                     StateSyncRate = TimeSpan.FromMilliseconds(1000)
                 }, game, true, new NLogLogger(Logger.Instance));
 
-            GameRenderer = new GameCoreRenderer(this, game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
-            SoundPlayer = new Backend.Sound.SoundPlayer();
+                Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
+                {
+                    Username = "RRRRR",
+                    UniqueId = Guid.NewGuid(),
+                }));
+            }
+            else
+            {
+                Client = new NetClient(
+                    AOTConfig.Ip,
+                    AOTConfig.Port,
+                    new NLogLogger(Logger.Instance),
+                    AOTConfig.Password);
+            }
+
             Client.GameInstance.GameChanged += delegate
             {
                 GameRenderer.Game = Client.GameInstance.Game;
                 SoundPlayer.Game = Client.GameInstance.Game;
-
             };
             GameRenderer.Game = Client.GameInstance.Game;
             SoundPlayer.Game = Client.GameInstance.Game;
+            //And initialize the debug system
             DebugDrawer?.Dispose();
             DebugDrawer = new DebugDrawer(this, Client);
-
-            if (CrossDomainObject.Instance.IsGameHost)
-                for (var i = 0; i < 5; i++)
-                {
-                    Server.AddPlayer(new ServerPlayer(Server,
-                                   new NetworkPlayer()
-                                   {
-                                   }));
-                }
-            //Client.GameInstance.FullGameState = FullGameState.Create(Server.GameInstance.Game);
-
-            Client.WaitForConnection();
         }
 
         /// <summary>
@@ -232,23 +274,22 @@ namespace MPTanks.Client.GameSandbox
                 _graphics.ToggleFullScreen();
                 GameSettings.Instance.Fullscreen.Value = _graphics.IsFullScreen;
             }
-            if (e.Key == Keys.F12)
-                DebugDrawer.DebugEnabled = !DebugDrawer.DebugEnabled;
-            if (e.Key == Keys.F10)
-                DebugDrawer.DrawGraphDebug = !DebugDrawer.DrawGraphDebug;
-            if (e.Key == Keys.F9)
-                DebugDrawer.DrawTextDebug = !DebugDrawer.DrawTextDebug;
-            if (e.Key == Keys.F8)
-                DebugDrawer.DebugOverlayGraphsVertical = !DebugDrawer.DebugOverlayGraphsVertical;
+            if (DebugDrawer != null)
+            {
+                if (e.Key == Keys.F12)
+                    DebugDrawer.DebugEnabled = !DebugDrawer.DebugEnabled;
+                if (e.Key == Keys.F10)
+                    DebugDrawer.DrawGraphDebug = !DebugDrawer.DrawGraphDebug;
+                if (e.Key == Keys.F9)
+                    DebugDrawer.DrawTextDebug = !DebugDrawer.DrawTextDebug;
+                if (e.Key == Keys.F8)
+                    DebugDrawer.DebugOverlayGraphsVertical = !DebugDrawer.DebugOverlayGraphsVertical;
+            }
             if (e.Key == Keys.F7)
                 if (Debugger.IsAttached) Debugger.Break();
-            if (e.Key == Keys.M)
-                Client.MessageProcessor.SendMessage(new Networking.Common.Actions.ToServer.RequestFullGameStateAction());
             if (e.Key == Keys.F6)
                 Client.MessageProcessor.Diagnostics.Reset();
         }
-
-        bool _hasExecutedPostModLoadTask = false;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -258,6 +299,8 @@ namespace MPTanks.Client.GameSandbox
 
         protected override void Update(GameTime gameTime)
         {
+            SoundPlayer.Update(gameTime);
+
             //Check for GD changes 
             //It's done here because applychanges can cause issues
             //when called repeatedly - Window Resize causes a stack overflow
@@ -266,6 +309,8 @@ namespace MPTanks.Client.GameSandbox
                 _graphics.ApplyChanges();
                 _graphicsDeviceIsDirty = false;
             }
+
+            if (!_hasInitialized) return;
 
             if (Client?.Player?.Tank != null && SoundPlayer != null)
             {
@@ -279,11 +324,7 @@ namespace MPTanks.Client.GameSandbox
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update() & UI Update");
 
-            if (Client != null && !Client.IsInCountdown)
-            {
-                _ui.UnwindAndEmpty();
-            }
-            if (_modLoader.Running)
+            if (!_modLoaderSetupTask.IsCompleted)
             {
                 _ui.UpdateState(new
                 {
@@ -294,16 +335,10 @@ namespace MPTanks.Client.GameSandbox
                 });
                 return;
             }
-            else if (!_hasExecutedPostModLoadTask)
-            {
-                _hasExecutedPostModLoadTask = true;
-                InputDriver.Activate();
-                CreateGame();
-            }
 
             InputDriver.Update(gameTime);
             var state = InputDriver.GetInputState();
-            if (state != Client.Input)
+            if (Client?.Input != null && state != Client.Input)
                 Client.Input = state;
 
 
@@ -335,7 +370,7 @@ namespace MPTanks.Client.GameSandbox
                 {
                     switch (Client.Status)
                     {
-                        case Networking.Client.Client.ClientStatus.Authenticating:
+                        case Networking.Client.NetClient.ClientStatus.Authenticating:
                             _ui.UpdateState(new
                             {
                                 Header = "Logging in...",
@@ -344,7 +379,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.Connected:
+                        case Networking.Client.NetClient.ClientStatus.Connected:
                             _ui.UpdateState(new
                             {
                                 Header = "Connected...",
@@ -353,7 +388,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.Connecting:
+                        case Networking.Client.NetClient.ClientStatus.Connecting:
                             _ui.UpdateState(new
                             {
                                 Header = "Connecting to the server...",
@@ -362,7 +397,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.Disconnected:
+                        case Networking.Client.NetClient.ClientStatus.Disconnected:
                             _ui.UpdateState(new
                             {
                                 Header = "Connection to server lost",
@@ -371,7 +406,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.DownloadingMods:
+                        case Networking.Client.NetClient.ClientStatus.DownloadingMods:
                             _ui.UpdateState(new
                             {
                                 Header = "Downloading mods...",
@@ -380,7 +415,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.Errored:
+                        case Networking.Client.NetClient.ClientStatus.Errored:
                             _ui.UpdateState(new
                             {
                                 Header = "A fatal error has occured",
@@ -389,7 +424,7 @@ namespace MPTanks.Client.GameSandbox
                                 Invisible = false
                             });
                             break;
-                        case Networking.Client.Client.ClientStatus.NotStarted:
+                        case Networking.Client.NetClient.ClientStatus.NotStarted:
                             _ui.UpdateState(new
                             {
                                 Header = "Waiting to connect...",
@@ -423,13 +458,62 @@ namespace MPTanks.Client.GameSandbox
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (!IsActive) return; //No need to draw if we are not in focus
+            if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
             Diagnostics.BeginMeasurement("Rendering");
+
+            EnsureRenderTargetSizing();
+
+            //set the render target
+            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+            GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
+
+            if (Client?.Game != null)
+            {
+                //Update the draw rectangle
+                RectangleF computedDrawRectangle = new RectangleF();
+                if (CurrentViewedTank != null)
+                {
+                    UpdateCameraSwingAndMotionZoom(CurrentViewedTank, gameTime);
+                    computedDrawRectangle = ComputeDrawRectangle(CurrentViewedTank);
+                }
+
+                Diagnostics.BeginMeasurement("World rendering", "Rendering");
+
+                //Tell the game world renderer what to do
+                GameRenderer.Game = Client.Game;
+                GameRenderer.View = computedDrawRectangle;
+                GameRenderer.Target = _worldRenderTarget;
+                GameRenderer.Draw(gameTime);
+
+                Diagnostics.EndMeasurement("World rendering", "Rendering");
+                //And draw to screen
+                Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
+
+                //Blit to screen
+                GraphicsDevice.SetRenderTarget(null);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
+                _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
+                _spriteBatch.End();
+
+                Diagnostics.EndMeasurement("Copy to screen", "Rendering");
+            }
+            //And draw to the screen
             GraphicsDevice.SetRenderTarget(null);
 
+            Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
+            DebugDrawer?.DrawDebugInfo(gameTime);
+            Diagnostics.EndMeasurement("Draw debug text", "Rendering");
+            //And render the draw
+            _ui.Draw(gameTime);
+
+            base.Draw(gameTime);
+            Diagnostics.EndMeasurement("Rendering");
+        }
+        private void EnsureRenderTargetSizing()
+        {
             var computedRenderSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height) * _ssaaRate;
-            //if we're in game
-            //check if we need to remake the rendertarget
+
             if (GraphicsDevice.Viewport.Width > 0 && GraphicsDevice.Viewport.Height > 0)
             {
                 if (_worldRenderTarget == null || _worldRenderTarget.Width != computedRenderSize.X ||
@@ -441,76 +525,43 @@ namespace MPTanks.Client.GameSandbox
                         GraphicsDevice, (int)computedRenderSize.X, (int)computedRenderSize.Y);
                 }
             }
-            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-            GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
+        }
+        private void UpdateCameraSwingAndMotionZoom(Tank tank, GameTime gameTime)
+        {
+            _currentCameraSwingOffset =
+                Vector2.Lerp(_currentCameraSwingOffset, Client.Player.Tank.LinearVelocity / 2,
+                2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-            //set the render target
+            if (_currentCameraSwingOffset.X > _quarterViewRectangleSize.X)
+                _currentCameraSwingOffset.X = _quarterViewRectangleSize.X;
+            else if (_currentCameraSwingOffset.X < -_quarterViewRectangleSize.X)
+                _currentCameraSwingOffset.X = -_quarterViewRectangleSize.X;
+            else if (_currentCameraSwingOffset.Y > _quarterViewRectangleSize.Y)
+                _currentCameraSwingOffset.Y = _quarterViewRectangleSize.Y;
+            else if (_currentCameraSwingOffset.Y < -_quarterViewRectangleSize.Y)
+                _currentCameraSwingOffset.Y = -_quarterViewRectangleSize.Y;
 
-            if (Client?.Game != null)
-            {
-                RectangleF computedDrawRectangle = new RectangleF(0, 0, 1, 1);
-                if (Client.Player?.Tank != null)
-                {
-                    _currentCameraSwingOffset =
-                        Vector2.Lerp(_currentCameraSwingOffset, Client.Player.Tank.LinearVelocity / 2,
-                        2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            var targetMotionZoomLevel = 0.75f;
+            targetMotionZoomLevel += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
+            targetMotionZoomLevel *= GameSettings.Instance.Zoom;
 
-                    if (_currentCameraSwingOffset.X > _quarterViewRectangleSize.X)
-                        _currentCameraSwingOffset.X = _quarterViewRectangleSize.X;
-                    else if (_currentCameraSwingOffset.X < -_quarterViewRectangleSize.X)
-                        _currentCameraSwingOffset.X = -_quarterViewRectangleSize.X;
-                    else if (_currentCameraSwingOffset.Y > _quarterViewRectangleSize.Y)
-                        _currentCameraSwingOffset.Y = _quarterViewRectangleSize.Y;
-                    else if (_currentCameraSwingOffset.Y < -_quarterViewRectangleSize.Y)
-                        _currentCameraSwingOffset.Y = -_quarterViewRectangleSize.Y;
+            _currentMotionZoomLevel = MathHelper.Lerp(_currentMotionZoomLevel, targetMotionZoomLevel,
+                2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
 
-                    var targetMotionZoomLevel = 0.75f;
-                    targetMotionZoomLevel += 1.25f * (Client.Player.Tank.LinearVelocity.Length() / 100f);
-                    targetMotionZoomLevel *= GameSettings.Instance.Zoom;
+        private RectangleF ComputeDrawRectangle(Tank tank)
+        {
+            var aspectRatio =
+                (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
+            var calculatedWorldOffsetCenter =
+                _currentCameraSwingOffset * _currentMotionZoomLevel + tank.Position;
 
-                    _currentMotionZoomLevel = MathHelper.Lerp(_currentMotionZoomLevel, targetMotionZoomLevel,
-                        2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-                    var calculatedWorldOffsetCenter = _currentCameraSwingOffset * _currentMotionZoomLevel + Client.Player.Tank.Position;
-
-                    var aspectRatio =
-                        (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height;
-
-                    computedDrawRectangle = new RectangleF(
-                        calculatedWorldOffsetCenter.X -
-                        ((_halfViewRectangleSize.X * aspectRatio) * _currentMotionZoomLevel),
-                        calculatedWorldOffsetCenter.Y - (_halfViewRectangleSize.Y * _currentMotionZoomLevel),
-                        (_viewRectangle.X * aspectRatio) * _currentMotionZoomLevel,
-                        _viewRectangle.Y * _currentMotionZoomLevel);
-                }
-                Diagnostics.BeginMeasurement("World rendering", "Rendering");
-
-                GameRenderer.Game = Client.Game;
-                GameRenderer.View = computedDrawRectangle;
-                GameRenderer.Target = _worldRenderTarget;
-                GameRenderer.Draw(gameTime);
-
-                Diagnostics.EndMeasurement("World rendering", "Rendering");
-                //And draw to screen
-                Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
-
-                GraphicsDevice.SetRenderTarget(null);
-                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                    SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
-                _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
-                _spriteBatch.End();
-
-                Diagnostics.EndMeasurement("Copy to screen", "Rendering");
-            }
-
-            Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
-            DebugDrawer?.DrawDebugInfo(gameTime);
-            Diagnostics.EndMeasurement("Draw debug text", "Rendering");
-            //And render the draw
-            _ui.Draw(gameTime);
-
-            base.Draw(gameTime);
-            Diagnostics.EndMeasurement("Rendering");
+            return new RectangleF(
+                calculatedWorldOffsetCenter.X -
+                ((_halfViewRectangleSize.X * aspectRatio) * _currentMotionZoomLevel),
+                calculatedWorldOffsetCenter.Y - (_halfViewRectangleSize.Y * _currentMotionZoomLevel),
+                (_viewRectangle.X * aspectRatio) * _currentMotionZoomLevel,
+                _viewRectangle.Y * _currentMotionZoomLevel);
         }
     }
 }

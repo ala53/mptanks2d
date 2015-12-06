@@ -57,7 +57,8 @@ namespace MPTanks.Clients.MapMaker
 
         protected override void LoadContent()
         {
-            _renderer = new GameCoreRenderer(this, _game, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            _renderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            _renderer.Game = _game;
             base.LoadContent();
         }
         protected override void Update(GameTime gameTime)

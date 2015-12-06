@@ -44,9 +44,9 @@ namespace MPTanks.Client.GameSandbox
         
         public string ConnectionFailureCause { get; set; }
 
-        public string ServerIp { get; set; }
-        public ushort ServerPort { get; set; }
-        public string ServerPassword { get; set; }
+        public string Ip { get; set; }
+        public ushort Port { get; set; }
+        public string Password { get; set; }
     }
 
 

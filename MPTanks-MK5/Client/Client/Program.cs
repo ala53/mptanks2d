@@ -2,6 +2,7 @@
 using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 #endregion
@@ -20,6 +21,13 @@ namespace MPTanks.Client
         [STAThread]
         public static void Main()
         {
+            //Prevent multiple instances from running
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                Logger.Fatal("Already open!");
+                return; //Close
+            }
+
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Logger.Info("Initialized.");
@@ -30,7 +38,7 @@ namespace MPTanks.Client
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine(e.ExceptionObject.ToString());
+            Console.WriteLine(e.ExceptionObject);
             Logger.Fatal("Unhandled fatal exception at AppDomain level.", (Exception)e.ExceptionObject);
         }
     }

@@ -15,8 +15,8 @@ namespace MPTanks.Networking.Client
 {
     public class ClientNetworkProcessor : NetworkProcessorBase
     {
-        public Client Client { get; private set; }
-        public ClientNetworkProcessor(Client client)
+        public NetClient Client { get; private set; }
+        public ClientNetworkProcessor(NetClient client)
         {
             Client = client;
         }

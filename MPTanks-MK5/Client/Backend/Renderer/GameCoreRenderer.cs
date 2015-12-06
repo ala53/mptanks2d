@@ -37,10 +37,9 @@ namespace MPTanks.Client.Backend.Renderer
         private GameWorldRenderer _gameRenderer;
         private FXAARenderer _fxaaRenderer;
 
-        public GameCoreRenderer(Game client, GameCore game, string[] assetPaths, int[] teamsToDisplayFor)
+        public GameCoreRenderer(Game client, string[] assetPaths, int[] teamsToDisplayFor)
         {
             Client = client;
-            Game = game;
             TeamsToDisplayLightsFor = teamsToDisplayFor;
 
             Finder = new AssetFinder(this, new AssetCache(client.GraphicsDevice,
@@ -64,6 +63,7 @@ namespace MPTanks.Client.Backend.Renderer
 
         public void Draw(GameTime gameTime)
         {
+            if (Game == null) return;
             _gameRenderer.SetShadowParameters(Game.Map.ShadowOffset, Game.Map.ShadowColor);
             foreach (var renderer in _renderers)
             {
