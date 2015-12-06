@@ -46,7 +46,7 @@ namespace MPTanks.DedicatedServer
             _server = new Server(new Configuration
             {
                 //StateSyncRate = TimeSpan.FromSeconds(2),
-                MaxPlayers = 350
+                MaxPlayers = 16
             },
                 new GameCore(new NullLogger(), _gamemode, _map,
                 EngineSettings.GetInstance()), true, _logger);
@@ -125,6 +125,7 @@ namespace MPTanks.DedicatedServer
                 _logger.Info("change-timescale {scale} - Change the timescale for the current game.");
                 _logger.Info("force-restart - Force an immediate restart of the game," +
                     " updating to the new gamemode and map");
+                _logger.Info("kick {username} - Kicks the specified user from the server");
                 _logger.Info("exit - Exits the game");
             }
             else if (info.StartsWith("change-timescale"))
@@ -141,6 +142,22 @@ namespace MPTanks.DedicatedServer
                     return;
                 }
                 _server.Game.Timescale = new GameCore.TimescaleValue(scale, scale.ToString());
+            }
+            else if (info.StartsWith("kick"))
+            {
+                if (info.Split(' ').Length < 2)
+                {
+                    _logger.Error("kick requires a username parameter.");
+                    return;
+                }
+                string name = info.Split(' ')[1];
+                var player = _server.Players.FirstOrDefault(a => a.Player.Username.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                if (player == null)
+                {
+                    _logger.Error("No player by that name is on the server.");
+                    return;
+                }
+                _server.RemovePlayer(player, "Kicked from server");
             }
             else if (info.StartsWith("exit"))
             {

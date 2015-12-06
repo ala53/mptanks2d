@@ -58,7 +58,7 @@ namespace MPTanks.Networking.Server
             return player;
         }
 
-        public void RemovePlayer(ServerPlayer player)
+        public void RemovePlayer(ServerPlayer player, string reason = "")
         {
             _players.Remove(player);
             Game.RemovePlayer(player.Player.Id);
@@ -66,6 +66,9 @@ namespace MPTanks.Networking.Server
             player.Player.OnPropertyChanged -= Player_PropertyChanged;
 
             ChatHandler.SendMessage($"Player {player.Player.Username} left.");
+
+            //Try to disconnect them
+            player?.Connection?.Disconnect(reason);
             
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player, Game));
         }
