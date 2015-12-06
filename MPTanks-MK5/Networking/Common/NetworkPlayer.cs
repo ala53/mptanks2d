@@ -24,7 +24,6 @@ namespace MPTanks.Networking.Common
             Username,
             SpawnPoint,
             HasCustomTankStyle,
-            ClanName,
             IsAdmin,
             IsPremium,
             IsSpectator,
@@ -171,17 +170,6 @@ namespace MPTanks.Networking.Common
                 base.Tank = value;
                 OnPropertyChanged(this, NetworkPlayerPropertyChanged.Tank);
                 ApplyTankStyles();
-            }
-        }
-
-        private string _clanName;
-        public string ClanName
-        {
-            get { return _clanName; }
-            set
-            {
-                _clanName = value;
-                OnPropertyChanged(this, NetworkPlayerPropertyChanged.ClanName);
             }
         }
 

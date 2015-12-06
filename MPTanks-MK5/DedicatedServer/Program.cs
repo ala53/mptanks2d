@@ -73,8 +73,7 @@ namespace MPTanks.DedicatedServer
                 _server.AddPlayer(new ServerPlayer(_server, new Networking.Common.NetworkPlayer()
                 {
                     Username = "Dummy Player #" + _server.Players.Count,
-                    UniqueId = Guid.NewGuid(),
-                    ClanName = ""
+                    UniqueId = Guid.NewGuid()
                 }));
 
             _logger.Info("For help, type \"help\".");

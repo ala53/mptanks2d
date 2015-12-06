@@ -17,8 +17,8 @@ namespace MPTanks.Networking.Client.Chat
         {
             get
             {
-                if (Sender != null) return "[" + Sender.ClanName + "] " + Sender.Username;
-                return "";
+                if (Sender != null) return Sender.Username;
+                return "[[[ERROR SENDER UNKNOWN]]]";
             }
         }
         public DateTime SentTime { get; set; }

@@ -21,7 +21,6 @@ namespace MPTanks.Networking.Common.Game
         public bool HasTank { get; set; }
         public bool HasSelectedTank { get; set; }
         public ushort TankObjectId { get; set; }
-        public string ClanName { get; set; }
         public string Username { get; set; }
         public ushort Id { get; set; }
         public Guid UniqueId { get; set; }
@@ -40,7 +39,6 @@ namespace MPTanks.Networking.Common.Game
         public FullStatePlayer(NetworkPlayer plr)
         {
             AllowedTankTypes = plr.AllowedTankTypes;
-            ClanName = plr.ClanName;
             HasSelectedTank = plr.HasSelectedTankYet;
             HasTank = plr.HasTank;
             Id = plr.Id;
@@ -70,7 +68,6 @@ namespace MPTanks.Networking.Common.Game
             fs.HasTank = msg.ReadBoolean();
             fs.HasSelectedTank = msg.ReadBoolean();
             if (fs.HasTank) fs.TankObjectId = msg.ReadUInt16();
-            fs.ClanName = msg.ReadString();
             fs.Username = msg.ReadString();
             fs.Id = (ushort)msg.ReadUInt32(GameCore.PlayerIdNumberOfBits);
             fs.UniqueId = new Guid(msg.ReadBytes(16));
@@ -99,7 +96,6 @@ namespace MPTanks.Networking.Common.Game
             player.IsPremium = IsPremium;
             player.IsReady = IsReady;
             player.HasCustomTankStyle = TankHasCustomStyle;
-            player.ClanName = ClanName;
             player.Username = Username;
             player.Id = Id;
             player.UniqueId = UniqueId;
@@ -145,7 +141,6 @@ namespace MPTanks.Networking.Common.Game
             msg.Write(HasSelectedTank);
             if (HasTank)
                 msg.Write(TankObjectId);
-            msg.Write(ClanName);
             msg.Write(Username);
             msg.Write(Id, GameCore.PlayerIdNumberOfBits);
             msg.Write(UniqueId.ToByteArray());
