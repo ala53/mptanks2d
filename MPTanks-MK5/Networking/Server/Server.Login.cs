@@ -57,6 +57,11 @@ namespace MPTanks.Networking.Server
                 }
                 else
                 {
+                    if (token == "OFFLINE")
+                    {
+                        DenyConnection(connection, "You're currently in offline mode.");
+                        return;
+                    }
                     //Defer and check
                     Task.Run(async () =>
                     {
@@ -88,11 +93,16 @@ namespace MPTanks.Networking.Server
                             DenyConnection(connection, "Auth token invalid");
                             return;
                         }
+                        catch (UnableToAccessAccountServerException)
+                        {
+                            Server.Logger.Info($"{name} kicked from game: unable to access ZSB account servers.");
+                            DenyConnection(connection, "Server is unable to access the ZSB account server");
+                        }
                         catch (Exception ex)
                         {
                             Server.Logger.Error("[SERVER] [LOGIN] Connection handling error", ex);
                             if (GlobalSettings.Trace) throw;
-                            DenyConnection(connection, "Unknown error");
+                            DenyConnection(connection, "Unknown server error");
                             return;
                         }
                     });
@@ -102,7 +112,7 @@ namespace MPTanks.Networking.Server
             {
                 if (GlobalSettings.Debug) throw;
                 DenyConnection(connection, "Invalid connection");
-                Server.Logger.Error("[SERVER] [LOGIN] Connection Approval", ex);
+                Server.Logger.Error("[SERVER] [LOGIN] Connection Approval Failure", ex);
                 return;
             }
         }

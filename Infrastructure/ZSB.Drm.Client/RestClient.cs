@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,17 +23,6 @@ namespace ZSB.Drm.Client
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static Model<T> DoPost<T>(string address, object data)
         {
-            //    var client = new RestClient(UrlBase);
-            //    var request = new RestRequest(address, Method.POST);
-            //    request.RequestFormat = DataFormat.Json;
-            //    request.AddBody(data);
-
-            //    var response = client.Execute(request);
-            //    var resp = JsonConvert.DeserializeObject<Model<T>>(response.Content);
-            //    if (resp.Message == "invalid_request" || resp.Message == "unknown_error")
-            //        throw new Exceptions.AccountServerException();
-
-            //    return resp;
             try
             {
                 address = UrlBase + address;
@@ -45,30 +33,32 @@ namespace ZSB.Drm.Client
                 var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
                 req.ContentLength = body.Length;
 
+                req.Timeout = 10000;
+
                 using (var stream = req.GetRequestStream())
                     stream.Write(body, 0, body.Length);
 
-                HttpWebResponse response = null;
-                var rtemp = req.GetResponse();
-                response = rtemp as HttpWebResponse;
-                if (response.StatusCode == HttpStatusCode.RequestTimeout)
+                using (var response = (HttpWebResponse)req.GetResponse())
                 {
-                    DrmClient.Offline = true;
-                    throw new Exceptions.UnableToAccessAccountServerException();
+                    if (response.StatusCode == HttpStatusCode.RequestTimeout)
+                    {
+                        DrmClient.Offline = true;
+                        throw new Exceptions.UnableToAccessAccountServerException();
+                    }
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        throw new Exceptions.AccountServerException();
+
+                    var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+                    DrmClient.Offline = false;
+
+                    var resp = JsonConvert.DeserializeObject<Model<T>>(responseString);
+                    if (resp.Message == "invalid_request" || resp.Message == "unknown_error")
+                        throw new Exceptions.AccountServerException();
+
+                    return resp;
                 }
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                    throw new Exceptions.AccountServerException();
-
-                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-                DrmClient.Offline = false;
-
-                var resp = JsonConvert.DeserializeObject<Model<T>>(responseString);
-                if (resp.Message == "invalid_request" || resp.Message == "unknown_error")
-                    throw new Exceptions.AccountServerException();
-
-                return resp;
             }
             catch (WebException ex)
             {
@@ -98,27 +88,28 @@ namespace ZSB.Drm.Client
                 var req = WebRequest.Create(address);
                 req.Method = "GET";
 
-                var response = (HttpWebResponse)req.GetResponse();
-
-                if (response.StatusCode == HttpStatusCode.RequestTimeout)
+                using (var response = (HttpWebResponse)req.GetResponse())
                 {
+                    if (response.StatusCode == HttpStatusCode.RequestTimeout)
+                    {
+                        DrmClient.EnsureInitialized();
+                        DrmClient.Offline = true;
+                        throw new Exceptions.UnableToAccessAccountServerException();
+                    }
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        throw new Exceptions.AccountServerException();
+
+                    var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
                     DrmClient.EnsureInitialized();
-                    DrmClient.Offline = true;
-                    throw new Exceptions.UnableToAccessAccountServerException();
+                    DrmClient.Offline = false;
+
+                    var resp = JsonConvert.DeserializeObject<Model<T>>(responseString);
+                    if (resp.Message == "invalid_request" || resp.Message == "unknown_error")
+                        throw new Exceptions.AccountServerException();
+
+                    return resp;
                 }
-                if (response.StatusCode != HttpStatusCode.OK)
-                    throw new Exceptions.AccountServerException();
-
-                var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-                DrmClient.EnsureInitialized();
-                DrmClient.Offline = false;
-
-                var resp = JsonConvert.DeserializeObject<Model<T>>(responseString);
-                if (resp.Message == "invalid_request" || resp.Message == "unknown_error")
-                    throw new Exceptions.AccountServerException();
-
-                return resp;
             }
             catch (Exception ex)
             { throw new Exceptions.AccountServerException(ex); }

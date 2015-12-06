@@ -35,6 +35,7 @@ namespace MPTanks.Client.GameSandbox
         private bool _graphicsDeviceIsDirty = false;
         private bool _closing;
         private bool _isInPauseMenu;
+        private bool _hasExecutedModLoaderInit;
         SpriteBatch _spriteBatch;
         public NetClient Client { get; private set; }
         public Server Server { get; private set; }
@@ -48,7 +49,6 @@ namespace MPTanks.Client.GameSandbox
         public CrossDomainObject AOTConfig => CrossDomainObject.Instance;
         private UserInterface _ui;
         private AsyncModLoader _modLoader;
-        private Task _modLoaderSetupTask;
         internal DebugDrawer DebugDrawer { get; private set; }
         public Tank CurrentViewedTank => Client?.Player?.Tank;
 
@@ -167,11 +167,6 @@ namespace MPTanks.Client.GameSandbox
             SoundPlayer = new SoundPlayer();
             //And, finally, Begin the async mod loading
             _modLoader = AsyncModLoader.Create(GameSettings.Instance);
-            //And follow the mod loader
-            _modLoaderSetupTask = _modLoader.AsyncLoaderTask.ContinueWith((task) =>
-            {
-                CreateGame();
-            });
             _hasInitialized = true;
         }
 
@@ -373,7 +368,7 @@ namespace MPTanks.Client.GameSandbox
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update() & UI Update");
 
-            if (!_modLoaderSetupTask.IsCompleted)
+            if (_modLoader.Running)
             {
                 _ui.UpdateState(new
                 {
@@ -381,6 +376,12 @@ namespace MPTanks.Client.GameSandbox
                     Content = _modLoader.Status,
                     Button = "Cancel"
                 });
+                return;
+            }
+            else if ( !_hasExecutedModLoaderInit)
+            {
+                _hasExecutedModLoaderInit = true;
+                CreateGame();
                 return;
             }
             if (!_isInPauseMenu)

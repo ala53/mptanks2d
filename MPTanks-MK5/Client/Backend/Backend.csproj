@@ -142,7 +142,6 @@
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />
-    <Compile Include="UI\OldPageObject.cs" />
     <Compile Include="UI\UI Core\BinderBase.cs" />
     <Compile Include="UI\UITemplateDictionary.xaml.cs" />
     <Compile Include="UI\UI Core\UserInterfacePage.cs" />

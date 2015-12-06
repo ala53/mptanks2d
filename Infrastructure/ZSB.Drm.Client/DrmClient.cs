@@ -98,8 +98,19 @@ namespace ZSB
         internal static void EnsureLoggedIn(bool allowOffline = true)
         {
             EnsureInitialized();
-            if (!IsLoggedIn(allowOffline))
-                throw new NotLoggedInException();
+            var loggedInAtAll = IsLoggedIn(true);
+            if (allowOffline)
+            {
+                if (!loggedInAtAll) throw new NotLoggedInException();
+            }
+            else
+            {
+                if (Offline && loggedInAtAll) //logged in offline but can't reach the login server
+                    throw new UnableToAccessAccountServerException();
+
+                if (!loggedInAtAll) //not logged in at all
+                    throw new NotLoggedInException();
+            }
         }
         internal static void EnsureInitialized()
         {
