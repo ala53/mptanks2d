@@ -23,7 +23,8 @@ namespace MPTanks.Client.GameSandbox
                 "Establishing connection to Skynet", //Casey
                 "Now featuring: the main menu!", //Morgan
                 "<?php ERROR: python.lang::ArithmeticException",
-                "Code causes retinal spasms in 3/5 programmers"
+                "Code causes retinal spasms in 3/5 leading programmers",
+                "It's not murder, it's science!", //Xander
         };
 
         public static string Option() => Options[new Random().Next(0, Options.Length)];
