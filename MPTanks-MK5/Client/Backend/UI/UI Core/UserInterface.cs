@@ -28,7 +28,7 @@ namespace MPTanks.Client.Backend.UI
         public UserInterfacePage CurrentPage => _pages.Count > 0 ? _pages.Peek() : null;
         public object State
         {
-            get { return CurrentPage.State; }
+            get { return CurrentPage.StateObject; }
             set { UpdateState(value); }
         }
         public bool IsActive { get; set; }
@@ -56,7 +56,7 @@ namespace MPTanks.Client.Backend.UI
             pg.Page.Resize(_currentWidth, _currentHeight);
             pg.Generator = generator;
             pg.StateChangeHandler = stateChangeHandler;
-            pg.State = state;
+            pg.StateObject = state;
             _pages.Push(pg);
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
@@ -69,7 +69,7 @@ namespace MPTanks.Client.Backend.UI
 
         public void UpdateState<T>(T newState) where T : class
         {
-            var oldPg = CurrentPage;
+            CurrentPage.StateObject = newState;
             CurrentPage.StateChangeHandler(CurrentPage, newState);
         }
 
@@ -81,9 +81,9 @@ namespace MPTanks.Client.Backend.UI
             pg.Page.Resize(_currentWidth, _currentHeight);
             pg.Generator = oldPg.Generator;
             pg.StateChangeHandler = oldPg.StateChangeHandler;
-            pg.State = oldPg.State;
+            pg.StateObject = oldPg.StateObject;
             pg.Generator(pg);
-            pg.StateChangeHandler(pg, pg.State);
+            pg.StateChangeHandler(pg, pg.StateObject);
             _pages.Push(pg);
 
             FontManager.Instance.LoadFonts(_content);

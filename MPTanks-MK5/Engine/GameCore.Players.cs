@@ -126,7 +126,7 @@ namespace MPTanks.Engine
                 if (player.Team != null && player.Team.Players.Contains(player))
                     player.Team.Players = player.Team.Players.Where(a => a != player).ToArray();
                 //And remove the team if no one is there
-                if (player.Team.Players.Length == 0)
+                if (player.Team?.Players.Length == 0)
                     Gamemode.Teams = Gamemode.Teams.Where(t => t != player.Team).ToArray();
                 //and remove them from the players list
                 _playersById.Remove(player.Id);

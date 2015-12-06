@@ -15,17 +15,17 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Connect to a server" Foreground="White" TextAlignment="Center" Margin="20,20,20,0" FontSize="48"></TextBlock>
+            <TextBlock Text="Connect to a server" Foreground="White" FontFamily="Karmatic Arcade" TextAlignment="Center" Margin="20,20,20,20" FontSize="36"></TextBlock>
             <DockPanel Margin="10,0,10,0" LastChildFill="True">
-                <TextBlock DockPanel.Dock="Left" Text="Server Address: " Foreground="White" TextAlignment="Center" FontSize="16"></TextBlock>
-                <TextBox x:Name="ServerAddress" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
+                <TextBlock DockPanel.Dock="Left" Text="Address" Padding="10" Foreground="Gray" FontFamily="Karmatic Arcade" Width="150" TextAlignment="Left" FontSize="18"></TextBlock>
+                <TextBox Background="Transparent" x:Name="ServerAddress" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
             </DockPanel>
             <DockPanel Margin="10,5,10,0" LastChildFill="True">
-                <TextBlock DockPanel.Dock="Left" Text="Password: " Foreground="White" TextAlignment="Center" FontSize="16"></TextBlock>
-                <TextBox x:Name="ServerPassword" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
+                <TextBlock DockPanel.Dock="Left" Text="Password" Padding="10" Foreground="Gray" FontFamily="Karmatic Arcade" Width="150" TextAlignment="Left" FontSize="18"></TextBlock>
+                <TextBox Background="Transparent" x:Name="ServerPassword" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="200"></TextBox>
             </DockPanel>
-            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" x:Name="ConnectBtn">Connect</Button>
-            <Button Margin="10,5,10,0" Style="{DynamicResource PrimaryButton}" x:Name="GoBackBtn">Go back</Button>
+            <Button Background="Transparent" Margin="10,10,10,0" Style="{DynamicResource PrimaryButton}" Foreground="White" FontFamily="Karmatic Arcade" FontSize="36" x:Name="ConnectBtn">Connect</Button>
+            <Button Background="Transparent" Margin="10,10,10,0" Style="{DynamicResource PrimaryButton}" Foreground="Gray" FontFamily="Karmatic Arcade" FontSize="36" x:Name="GoBackBtn">Go back</Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

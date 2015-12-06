@@ -71,12 +71,13 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2 = new TextBlock();
             this.e_1.Children.Add(this.e_2);
             this.e_2.Name = "e_2";
-            this.e_2.Margin = new Thickness(20F, 20F, 20F, 0F);
+            this.e_2.Margin = new Thickness(20F, 20F, 20F, 20F);
             this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_2.Text = "Connect to a server";
             this.e_2.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            this.e_2.FontSize = 48F;
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_2.FontSize = 36F;
             // e_3 element
             this.e_3 = new DockPanel();
             this.e_1.Children.Add(this.e_3);
@@ -87,11 +88,14 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_4 = new TextBlock();
             this.e_3.Children.Add(this.e_4);
             this.e_4.Name = "e_4";
-            this.e_4.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_4.Text = "Server Address: ";
-            this.e_4.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 16F, FontStyle.Regular, "Segoe_UI_12_Regular");
-            this.e_4.FontSize = 16F;
+            this.e_4.Width = 150F;
+            this.e_4.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_4.Text = "Address";
+            this.e_4.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_4.TextAlignment = TextAlignment.Left;
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            this.e_4.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_4.FontSize = 18F;
             DockPanel.SetDock(this.e_4, Dock.Left);
             // ServerAddress element
             this.ServerAddress = new TextBox();
@@ -99,6 +103,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ServerAddress.Name = "ServerAddress";
             this.ServerAddress.MinWidth = 200F;
             this.ServerAddress.Margin = new Thickness(10F, 0F, 0F, 0F);
+            this.ServerAddress.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             DockPanel.SetDock(this.ServerAddress, Dock.Right);
             // e_5 element
@@ -111,11 +116,14 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_6 = new TextBlock();
             this.e_5.Children.Add(this.e_6);
             this.e_6.Name = "e_6";
-            this.e_6.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_6.Text = "Password: ";
-            this.e_6.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 16F, FontStyle.Regular, "Segoe_UI_12_Regular");
-            this.e_6.FontSize = 16F;
+            this.e_6.Width = 150F;
+            this.e_6.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_6.Text = "Password";
+            this.e_6.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_6.TextAlignment = TextAlignment.Left;
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            this.e_6.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_6.FontSize = 18F;
             DockPanel.SetDock(this.e_6, Dock.Left);
             // ServerPassword element
             this.ServerPassword = new TextBox();
@@ -123,22 +131,31 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ServerPassword.Name = "ServerPassword";
             this.ServerPassword.MinWidth = 200F;
             this.ServerPassword.Margin = new Thickness(10F, 0F, 0F, 0F);
+            this.ServerPassword.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             DockPanel.SetDock(this.ServerPassword, Dock.Right);
             // ConnectBtn element
             this.ConnectBtn = new Button();
             this.e_1.Children.Add(this.ConnectBtn);
             this.ConnectBtn.Name = "ConnectBtn";
-            this.ConnectBtn.Margin = new Thickness(10F, 5F, 10F, 0F);
-            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.ConnectBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
+            this.ConnectBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ConnectBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.ConnectBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ConnectBtn.FontSize = 36F;
             this.ConnectBtn.Content = "Connect";
             this.ConnectBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
             // GoBackBtn element
             this.GoBackBtn = new Button();
             this.e_1.Children.Add(this.GoBackBtn);
             this.GoBackBtn.Name = "GoBackBtn";
-            this.GoBackBtn.Margin = new Thickness(10F, 5F, 10F, 0F);
-            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.GoBackBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
+            this.GoBackBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.GoBackBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            this.GoBackBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.GoBackBtn.FontSize = 36F;
             this.GoBackBtn.Content = "Go back";
             this.GoBackBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }

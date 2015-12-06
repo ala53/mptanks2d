@@ -23,9 +23,9 @@ namespace EmptyKeys.UserInterface.Generated {
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
     public partial class SettingUpPrompt : UIRoot {
         
-        private Grid e_26;
+        private Grid e_32;
         
-        private StackPanel e_27;
+        private StackPanel e_33;
         
         private TextBlock Header;
         
@@ -45,38 +45,50 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             this.SetResourceReference(UIRoot.BackgroundProperty, "MenuPageBGBrush");
             InitializeElementResources(this);
-            // e_26 element
-            this.e_26 = new Grid();
-            this.Content = this.e_26;
-            this.e_26.Name = "e_26";
-            // e_27 element
-            this.e_27 = new StackPanel();
-            this.e_26.Children.Add(this.e_27);
-            this.e_27.Name = "e_27";
-            this.e_27.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_27.VerticalAlignment = VerticalAlignment.Center;
+            // e_32 element
+            this.e_32 = new Grid();
+            this.Content = this.e_32;
+            this.e_32.Name = "e_32";
+            // e_33 element
+            this.e_33 = new StackPanel();
+            this.e_32.Children.Add(this.e_33);
+            this.e_33.Name = "e_33";
+            this.e_33.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_33.VerticalAlignment = VerticalAlignment.Center;
             // Header element
             this.Header = new TextBlock();
-            this.e_27.Children.Add(this.Header);
+            this.e_33.Children.Add(this.Header);
             this.Header.Name = "Header";
+            this.Header.Margin = new Thickness(20F, 20F, 20F, 20F);
             this.Header.HorizontalAlignment = HorizontalAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
-            this.Header.SetResourceReference(TextBlock.StyleProperty, "MenuHeader");
+            this.Header.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.Header.Text = "";
+            FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
+            this.Header.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Header.FontSize = 30F;
             // ContentT element
             this.ContentT = new TextBlock();
-            this.e_27.Children.Add(this.ContentT);
+            this.e_33.Children.Add(this.ContentT);
             this.ContentT.Name = "ContentT";
             this.ContentT.HorizontalAlignment = HorizontalAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 30F, FontStyle.Regular, "Segoe_UI_22.5_Regular");
+            this.ContentT.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.ContentT.Text = "";
+            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
+            this.ContentT.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ContentT.FontSize = 20F;
             this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
             // ControlButton element
             this.ControlButton = new Button();
-            this.e_27.Children.Add(this.ControlButton);
+            this.e_33.Children.Add(this.ControlButton);
             this.ControlButton.Name = "ControlButton";
-            this.ControlButton.Margin = new Thickness(10F, 10F, 10F, 10F);
+            this.ControlButton.Margin = new Thickness(20F, 20F, 20F, 20F);
             this.ControlButton.HorizontalAlignment = HorizontalAlignment.Center;
+            this.ControlButton.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ControlButton.Padding = new Thickness(10F, 0F, 10F, 0F);
-            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.ControlButton.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
+            this.ControlButton.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ControlButton.Content = "";
             this.ControlButton.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }
         

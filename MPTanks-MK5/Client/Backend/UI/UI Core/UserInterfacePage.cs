@@ -25,7 +25,7 @@ namespace MPTanks.Client.Backend.UI
         public event EventHandler<GameTime> OnUpdate = delegate { };
         internal Action<UserInterfacePage> Generator { get; set; }
         internal Action<UserInterfacePage, dynamic> StateChangeHandler { get; set; }
-        public object State { get; set; }
+        public object StateObject { get; set; }
 
         public UserInterfacePage(string pageName)
         {
@@ -51,11 +51,58 @@ namespace MPTanks.Client.Backend.UI
             Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
 
+        /// <summary>
+        /// Gets a field or property from the state in the specified fashion
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public T State<T>(string name)
+        {
+            if (StateObject == null) return default(T);
+
+            var prop = StateObject.GetType().GetProperty(name,
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.GetField |
+                System.Reflection.BindingFlags.GetProperty |
+                System.Reflection.BindingFlags.Default |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.IgnoreCase);
+            var field = StateObject.GetType().GetProperty(name,
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.GetField |
+                System.Reflection.BindingFlags.GetProperty |
+                System.Reflection.BindingFlags.Default |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.IgnoreCase);
+
+            if (prop == null && field == null) return default(T);
+
+            if (prop != null)
+            {
+                //Type check
+                if (typeof(T) != prop.PropertyType && !typeof(T).IsSubclassOf(prop.PropertyType))
+                    return default(T); // wrong type
+                return (T)prop.GetValue(StateObject);
+            }
+            else
+            {
+                //Type check
+                if (typeof(T) != field.PropertyType && !typeof(T).IsSubclassOf(field.PropertyType))
+                    return default(T); // wrong type
+
+                return (T)field.GetValue(StateObject);
+            }
+        }
+
+
         public virtual T Element<T>(string name) where T : Control
         {
-            var field = Page.GetType().GetField(name, 
-                System.Reflection.BindingFlags.NonPublic | 
-                System.Reflection.BindingFlags.Public | 
+            var field = Page.GetType().GetField(name,
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.Default |
                 System.Reflection.BindingFlags.Instance |

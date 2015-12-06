@@ -34,11 +34,13 @@ namespace MPTanks.Client.GameSandbox.Input
         }
         public void Activate()
         {
+            if (_active) return; //no state change
             _active = true;
             DriverActiveStateChanged(true);
         }
         public void Deactivate()
         {
+            if (!_active) return; //no state change
             _active = false;
             DriverActiveStateChanged(false);
         }

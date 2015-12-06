@@ -47,7 +47,7 @@ namespace MPTanks.Client.GameSandbox.Mods
                 bool hasError = false;
                 foreach (var modFile in settings.CoreMods.Value)
                 {
-                    ml.Status = $"Loading ({ml.CompletedCount} / {ml.TotalCount}): (Core) {new FileInfo(modFile).Name}";
+                    ml.Status = $"Loading mod {ml.CompletedCount} of {ml.TotalCount}\n Core mod {new FileInfo(modFile).Name}";
 
                     if (GlobalSettings.Debug)
                         LoadFullTrustModInternal(modFile, settings, ref errors, ref hasError);
@@ -58,14 +58,14 @@ namespace MPTanks.Client.GameSandbox.Mods
                     ml.CompletedCount++;
                 }
 
-                foreach (var modInfo in otherModNames)
+                foreach (var modFile in otherModNames)
                 {
-                    ml.Status = $"Loading ({ml.CompletedCount} / {ml.TotalCount}): {modInfo}";
+                    ml.Status = $"Loading mod {ml.CompletedCount} of {ml.TotalCount}\n {new FileInfo(modFile).Name}";
 
                     if (GlobalSettings.Debug)
-                        LoadFullTrustModInternal(modInfo, settings, ref errors, ref hasError);
+                        LoadFullTrustModInternal(modFile, settings, ref errors, ref hasError);
                     else
-                        try { LoadFullTrustModInternal(modInfo, settings, ref errors, ref hasError); }
+                        try { LoadFullTrustModInternal(modFile, settings, ref errors, ref hasError); }
                         catch (Exception ex) { Logger.Error("Mod loader (Core mods)", ex); }
 
                     ml.CompletedCount++;

@@ -35,8 +35,6 @@ namespace MPTanks.Client.GameSandbox.Input
 
         protected override void DriverActiveStateChanged(bool isNowActive)
         {
-            if (!isNowActive) Client.IsMouseVisible = true;
-            else Client.IsMouseVisible = false;
         }
         
         private bool _lastTickNextWeaponKeyWasActive = false;
@@ -56,20 +54,20 @@ namespace MPTanks.Client.GameSandbox.Input
             var ctr = screenCenter - mousePos;
             inputState.LookDirection = (float)-Math.Atan2(-ctr.X, -ctr.Y) + MathHelper.Pi;
 
-            if (IsActive(KeyBindings["Move Forward"]))
+            if (IsBindingActive(KeyBindings["Move Forward"]))
                 inputState.MovementSpeed = 1;
-            else if (IsActive(KeyBindings["Move Backward"]))
+            else if (IsBindingActive(KeyBindings["Move Backward"]))
                 inputState.MovementSpeed = -1;
 
-            if (IsActive(KeyBindings["Move Left"]))
+            if (IsBindingActive(KeyBindings["Move Left"]))
                 inputState.RotationSpeed = -1;
-            else if (IsActive(KeyBindings["Move Right"]))
+            else if (IsBindingActive(KeyBindings["Move Right"]))
                 inputState.RotationSpeed = 1;
 
-            if (IsActive(KeyBindings["Fire"]))
+            if (IsBindingActive(KeyBindings["Fire"]))
                 inputState.FirePressed = true;
 
-            if (IsActive(KeyBindings["Previous Weapon"]))
+            if (IsBindingActive(KeyBindings["Previous Weapon"]))
             {
                 if (!_lastTickPreviousWeaponKeyWasActive)
                     _weaponNumber--;
@@ -81,7 +79,7 @@ namespace MPTanks.Client.GameSandbox.Input
                 _lastTickPreviousWeaponKeyWasActive = false;
             }
 
-            if (IsActive(KeyBindings["Next Weapon"]))
+            if (IsBindingActive(KeyBindings["Next Weapon"]))
             {
                 if (!_lastTickNextWeaponKeyWasActive)
                     _weaponNumber++;
@@ -123,7 +121,7 @@ namespace MPTanks.Client.GameSandbox.Input
             return new KeyBindingConfigurationGetPressedKey(null, false);
         }
 
-        private bool IsActive(object binding)
+        private bool IsBindingActive(object binding)
         {
             if (binding.GetType() == typeof(MouseState))
             {
@@ -183,9 +181,7 @@ namespace MPTanks.Client.GameSandbox.Input
 
         private void LockCursor()
         {
-            if (!Client.IsActive) return; //Don't lock cursor when out of the window
-
-            Client.IsMouseVisible = false;
+            if (!Activated) return; //Don't lock cursor when out of the window
 
             const float outAmount = 100;
             var offset = new Vector2(Client.GraphicsDevice.Viewport.Width / 2,

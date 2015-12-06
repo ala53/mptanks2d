@@ -91,7 +91,7 @@ namespace MPTanks.Networking.Client
             NetworkClient = new Lidgren.Network.NetClient(
                 new Lidgren.Network.NetPeerConfiguration("MPTANKS")
                 {
-                    ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
+                    ConnectionTimeout = 15,
                     AutoFlushSendQueue = false
                 });
             SetupNetwork();
@@ -136,7 +136,7 @@ namespace MPTanks.Networking.Client
                     //And send connection message
 
                     Status = ClientStatus.Connecting;
-                    Message = $"Connecting to server (" + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode)...";
+                    Message = $"Connecting to server in " + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode...";
 
                     var msg = NetworkClient.CreateMessage();
                     msg.Write(ZSB.DrmClient.User.UniqueId.ToByteArray());

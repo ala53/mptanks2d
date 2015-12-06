@@ -74,9 +74,9 @@ namespace MPTanks.Networking.Client
                                 var reason = msg.ReadString();
                                 Status = ClientStatus.Disconnected;
                                 if (string.IsNullOrEmpty(reason))
-                                    Message = "Disconnected (Unknown Error)";
+                                    Message = "(Unknown Error)";
                                 else
-                                    Message = "Disconnected: " + reason;
+                                    Message = reason;
 
                                 break;
                         }

@@ -75,7 +75,7 @@ namespace MPTanks.Networking.Server
             NetworkServer = new Lidgren.Network.NetServer(
             SetupNetwork(new Lidgren.Network.NetPeerConfiguration("MPTANKS")
             {
-                ConnectionTimeout = GlobalSettings.Debug ? (float)Math.Pow(2, 16) : 15,
+                ConnectionTimeout = 15,
                 AutoFlushSendQueue = false,
                 Port = Configuration.Port,
                 MaximumConnections = Configuration.MaxPlayers + 4 //so we can gracefully disconnect

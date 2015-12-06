@@ -61,27 +61,32 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_24.Name = "e_24";
             this.e_24.Margin = new Thickness(20F, 20F, 20F, 0F);
             this.e_24.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_24.Text = "A game is currently active...";
+            this.e_24.Text = "A game is running";
             this.e_24.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 48F, FontStyle.Regular, "Segoe_UI_36_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
+            this.e_24.FontFamily = new FontFamily("Karmatic Arcade");
             this.e_24.FontSize = 48F;
             // e_25 element
             this.e_25 = new TextBlock();
             this.e_23.Children.Add(this.e_25);
             this.e_25.Name = "e_25";
             this.e_25.Margin = new Thickness(20F, 20F, 20F, 0F);
-            this.e_25.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_25.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
             this.e_25.Text = "You\'re in game right now.\nClose the game to get back to the main menu.\nOr, if you" +
                 "\'re absolutely sure:";
             this.e_25.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
-            this.e_25.FontSize = 24F;
+            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
+            this.e_25.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_25.FontSize = 20F;
             // ForceCloseBtn element
             this.ForceCloseBtn = new Button();
             this.e_23.Children.Add(this.ForceCloseBtn);
             this.ForceCloseBtn.Name = "ForceCloseBtn";
-            this.ForceCloseBtn.Margin = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("Segoe UI", 24F, FontStyle.Regular, "Segoe_UI_18_Regular");
+            this.ForceCloseBtn.Margin = new Thickness(20F, 20F, 20F, 20F);
+            this.ForceCloseBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
+            this.ForceCloseBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
+            this.ForceCloseBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.ForceCloseBtn.Content = "Click to forcibly close game";
             this.ForceCloseBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
         }

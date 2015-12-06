@@ -6,6 +6,7 @@ using MPTanks.Networking.Common.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,22 @@ namespace MPTanks.Networking.Common
         private static Dictionary<byte, MessageBase> _singletonInstances = new Dictionary<byte, MessageBase>();
 
         public IReadOnlyDictionary<Type, byte> TypeIndexTable => _allTypesReverse;
+
+        static NetworkProcessorBase()
+        {
+            foreach (var type in
+                GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToClient")
+                .OrderBy(a => a.Name))
+                RegisterToClientActionType(type);
+            foreach (var type in
+                GetTypesInNamespace(typeof(ActionBase).Assembly, "MPTanks.Networking.Common.Actions.ToServer")
+                .OrderBy(a => a.Name))
+                RegisterToServerActionType(type);
+        }
+        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        {
+            return assembly.GetTypes().Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray();
+        }
 
         public static void RegisterToClientMessageType(Type messageType)
         {
@@ -89,19 +106,23 @@ namespace MPTanks.Networking.Common
 
             foreach (var msgId in msgIds)
                 if (_allTypes.ContainsKey(msgId))
+                {
                     if (GlobalSettings.Debug)
                         ProcessMessage(msgId, messageBlock);
                     else
-                        try
-                        {
-                            ProcessMessage(msgId, messageBlock);
-                        }
+                        try { ProcessMessage(msgId, messageBlock); }
                         catch (Exception ex)
                         {
                             Logger.Error("Message parsing error!", ex);
                             Logger.Error($"Message type: {_allTypes[msgId].FullName}");
                             OnProcessingError(ex);
                         }
+                }
+                else
+                {
+                    Logger.Error($"Invalid message type {msgId} found, disregarding entire packed message set.");
+                    return;
+                }
         }
 
         public void ProcessMessage(byte id, NetIncomingMessage message)

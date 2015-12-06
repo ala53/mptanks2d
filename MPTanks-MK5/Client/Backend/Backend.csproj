@@ -134,6 +134,7 @@
     <Compile Include="UI\ConnectToServerPage.xaml.cs" />
     <Compile Include="UI\CreateAccountPage.xaml.cs" />
     <Compile Include="UI\EmptyPage.xaml.cs" />
+    <Compile Include="UI\InGame\PauseMenu.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
     <Compile Include="UI\LoginForm.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
@@ -189,7 +190,19 @@
     <None Include="assets\ui\imgs\Karmatic_Arcade_15_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_18_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_22.5_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_24_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_36_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_54_Regular.xnb">
@@ -258,6 +271,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="assets\ui\xaml\ConnectToServerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="assets\ui\xaml\InGame\PauseMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -108,7 +108,6 @@ namespace MPTanks.Client.Backend.Renderer.LayerRenderers
             _fxaaEffect = Content.Load<Effect>("fxaa3");
             _sb = new SpriteBatch(GraphicsDevice);
         }
-        int i = 0;
         public override void Draw(GameTime gameTime, RenderTarget2D target)
         {
             CheckTarget(target);

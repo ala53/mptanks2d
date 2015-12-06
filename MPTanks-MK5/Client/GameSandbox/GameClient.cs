@@ -33,6 +33,8 @@ namespace MPTanks.Client.GameSandbox
     {
         GraphicsDeviceManager _graphics;
         private bool _graphicsDeviceIsDirty = false;
+        private bool _closing;
+        private bool _isInPauseMenu;
         SpriteBatch _spriteBatch;
         public NetClient Client { get; private set; }
         public Server Server { get; private set; }
@@ -67,6 +69,8 @@ namespace MPTanks.Client.GameSandbox
             _graphics.DeviceCreated += graphics_DeviceCreated;
 
             Window.AllowUserResizing = true;
+
+            IsMouseVisible = true;
 
             IsFixedTimeStep = false;
             Window.Title = "MP Tanks 2D: " + TitleCard.Option();
@@ -166,7 +170,6 @@ namespace MPTanks.Client.GameSandbox
             //And follow the mod loader
             _modLoaderSetupTask = _modLoader.AsyncLoaderTask.ContinueWith((task) =>
             {
-                InputDriver.Activate();
                 CreateGame();
             });
             _hasInitialized = true;
@@ -180,16 +183,17 @@ namespace MPTanks.Client.GameSandbox
             },
             (p, b) =>
             {
-                p.Element<TextBlock>("Header").Text = b.Header ?? "";
-                p.Element<TextBlock>("ContentT").Text = b.Content ?? "";
+                p.Element<TextBlock>("Header").Text = p.State<string>("Header") ?? "";
+                p.Element<TextBlock>("ContentT").Text = p.State<string>("Content") ?? "";
 
-                p.Element<Button>("controlbutton").Content = b.Button ?? "Leave server";
+                p.Element<Button>("controlbutton").Content = p.State<string>("Button") ?? "";
                 p.Element<Button>("controlbutton").Click += (d, e) => Exit();
-                if (b.Button == null)
+                if (p.State<string>("Header") == null)
                     p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
-                else
+                else if (p.Element<Button>("controlbutton").Visibility
+                        != EmptyKeys.UserInterface.Visibility.Visible) //flicker fix
                     p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-            }, new { Header = "XXX", Content = "XXX", Button = (string)null });
+            }, new { Header = "Initializing", Content = "If you see this, it's probably bad.", Button = (string)null });
         }
 
         private void CreateGame()
@@ -289,6 +293,51 @@ namespace MPTanks.Client.GameSandbox
                 if (Debugger.IsAttached) Debugger.Break();
             if (e.Key == Keys.F6)
                 Client.MessageProcessor.Diagnostics.Reset();
+
+            if (e.Key == Keys.Escape)
+            {
+                if (_isInPauseMenu) HideMenu();
+                else
+                {
+                    DeactivateGameInput();
+                    ShowMenu();
+                }
+            }
+        }
+        
+        private void ShowMenu()
+        {
+            if (_isInPauseMenu) return;
+            _isInPauseMenu = true;
+
+            _ui.GoToPage("PauseMenu", p =>
+            {
+                p.Element<Button>("LeaveServerBtn").Click += (a, b) =>
+                {
+                    if (IsHost) Server.Close();
+                    Client.Disconnect();
+                    Exit();
+                };
+            });
+        }
+
+        private void HideMenu()
+        {
+            if (!_isInPauseMenu) return;
+            _isInPauseMenu = false;
+
+            _ui.GoBack();
+        }
+
+        private void DeactivateGameInput()
+        {
+            InputDriver?.Deactivate();
+            IsMouseVisible = true;
+        }
+        private void ActivateGameInput()
+        {
+            InputDriver?.Activate();
+            IsMouseVisible = false;
         }
 
         /// <summary>
@@ -299,6 +348,7 @@ namespace MPTanks.Client.GameSandbox
 
         protected override void Update(GameTime gameTime)
         {
+            _ui.Update(gameTime);
             SoundPlayer.Update(gameTime);
 
             //Check for GD changes 
@@ -310,7 +360,7 @@ namespace MPTanks.Client.GameSandbox
                 _graphicsDeviceIsDirty = false;
             }
 
-            if (!_hasInitialized) return;
+            if (!_hasInitialized || _closing) return;
 
             if (Client?.Player?.Tank != null && SoundPlayer != null)
             {
@@ -320,7 +370,6 @@ namespace MPTanks.Client.GameSandbox
             SoundPlayer?.Update(gameTime);
 
             Diagnostics.BeginMeasurement("Base.Update() & UI Update");
-            _ui.Update(gameTime);
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update() & UI Update");
 
@@ -330,114 +379,106 @@ namespace MPTanks.Client.GameSandbox
                 {
                     Header = "Loading mods...",
                     Content = _modLoader.Status,
-                    Button = "Cancel",
-                    Invisible = false
+                    Button = "Cancel"
                 });
                 return;
             }
-
-            InputDriver.Update(gameTime);
-            var state = InputDriver.GetInputState();
-            if (Client?.Input != null && state != Client.Input)
-                Client.Input = state;
-
+            if (!_isInPauseMenu)
+            {
+                InputDriver.Update(gameTime);
+                var state = InputDriver.GetInputState();
+                if (Client?.Input != null && state != Client.Input)
+                    Client.Input = state;
+            }
 
             if (CrossDomainObject.Instance.IsGameHost)
                 Server.Update(gameTime);
-            //     if (Keyboard.GetState().IsKeyDown(Keys.M))
-            //Server.GameInstance.FullGameState.Apply(Client.GameInstance.Game);
+
             Client.Update(gameTime);
+
+            if (_isInPauseMenu)
+                return; //Don't mess with the pause menu
 
             if (Client.IsInGame && _ui.IsOnPage("settingupprompt"))
             {
                 _ui.UnwindAndEmpty();
             }
-            else if (Client.IsInGame) { }
+            else if (Client.IsInGame) { ActivateGameInput(); }
             else
             {
+                DeactivateGameInput();
                 if (!_ui.IsOnPage("settingupprompt"))
                     ShowSetupPrompt();
 
                 if (Client.IsInCountdown)
+                {
                     _ui.UpdateState(new
                     {
                         Header = "Counting down to start...",
                         Content = $"{Client.RemainingCountdownTime.TotalSeconds.ToString("N0")} seconds remaining",
-                        Button = "Leave server",
-                        Invisible = false
+                        Button = "Leave server"
                     });
+                }
                 else
                 {
                     switch (Client.Status)
                     {
-                        case Networking.Client.NetClient.ClientStatus.Authenticating:
+                        case NetClient.ClientStatus.Authenticating:
                             _ui.UpdateState(new
                             {
                                 Header = "Logging in...",
                                 Content = "Authenticating with the ZSB servers",
-                                Button = "Cancel",
-                                Invisible = false
+                                Button = "Cancel"
                             });
                             break;
-                        case Networking.Client.NetClient.ClientStatus.Connected:
+                        case NetClient.ClientStatus.Connected:
                             _ui.UpdateState(new
                             {
                                 Header = "Connected...",
                                 Content = "Waiting for the server to respond",
-                                Button = "Leave server",
-                                Invisible = false
+                                Button = "Leave server"
                             });
                             break;
-                        case Networking.Client.NetClient.ClientStatus.Connecting:
+                        case NetClient.ClientStatus.Connecting:
                             _ui.UpdateState(new
                             {
                                 Header = "Connecting to the server...",
                                 Content = Client.Message,
-                                Button = "Abort",
-                                Invisible = false
+                                Button = "Abort"
                             });
                             break;
-                        case Networking.Client.NetClient.ClientStatus.Disconnected:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Connection to server lost",
-                                Content = "Check your internet settings and make sure the server is running",
-                                Button = "Close",
-                                Invisible = false
-                            });
+                        case NetClient.ClientStatus.Disconnected:
+                            _closing = true;
+                            _ui.ShowMessageBox("Disconnected", Client.Message, UserInterface.MessageBoxType.ErrorMessageBox,
+                                UserInterface.MessageBoxButtons.Ok, a => Exit());
                             break;
-                        case Networking.Client.NetClient.ClientStatus.DownloadingMods:
+                        case NetClient.ClientStatus.DownloadingMods:
                             _ui.UpdateState(new
                             {
                                 Header = "Downloading mods...",
                                 Content = "This may take a a while",
-                                Button = "Leave server",
-                                Invisible = false
+                                Button = "Leave server"
                             });
                             break;
-                        case Networking.Client.NetClient.ClientStatus.Errored:
+                        case NetClient.ClientStatus.Errored:
                             _ui.UpdateState(new
                             {
                                 Header = "A fatal error has occured",
                                 Content = "",
-                                Button = "Set my hair on fire and leave",
-                                Invisible = false
+                                Button = "Set my hair on fire and leave"
                             });
                             break;
-                        case Networking.Client.NetClient.ClientStatus.NotStarted:
+                        case NetClient.ClientStatus.NotStarted:
                             _ui.UpdateState(new
                             {
                                 Header = "Waiting to connect...",
                                 Content = "This shouldn't usually happen",
-                                Button = "Stare with contempt",
-                                Invisible = false
+                                Button = "Stare with contempt"
                             });
                             break;
                     }
                 }
             }
-
-            //Client.GameInstance.Game.Authoritative = true;
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
