@@ -25,6 +25,7 @@ namespace MPTanks.Client.GameSandbox
                 "<?php ERROR: python.lang::ArithmeticException",
                 "Code causes retinal spasms in 3/5 leading programmers",
                 "It's not murder, it's science!", //Xander
+                "I just wanna know if penguins have knees" //Xander
         };
 
         public static string Option() => Options[new Random().Next(0, Options.Length)];
