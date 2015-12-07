@@ -83,6 +83,13 @@ namespace MPTanks.CoreAssets.Gamemodes
 
         public override void Update(GameTime gameTime)
         {
+            if (Teams.Length < 2)
+            {
+                //Someone left, just mark no winner
+                GameEnded = true;
+                WinningTeam = Team.Indeterminate;
+                return;
+            }
             int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
             int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
 
