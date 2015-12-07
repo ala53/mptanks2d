@@ -18,6 +18,7 @@ namespace MPTanks.Client
         public Setting<string> ClientLogLocation { get; private set; }
 
         public Setting<bool> SandboxGames { get; private set; }
+        public Setting<string> StoredServerAddress { get; private set; }
 
         public Setting<Rectangle> WindowRectangle { get; private set; }
 
@@ -38,6 +39,8 @@ namespace MPTanks.Client
             SandboxGames = Setting.Create(this, "Sandbox servers and game instances",
                 "WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. " +
                 "This says whether to run game instances in an isolated appdomain.", true);
+
+            StoredServerAddress = Setting.Create(this, "\"Join server\" stored user address", "", "localhost:33132");
 
             WindowRectangle = Setting.Create(this, "Window Rectangle", "The location and size of the MPTanks window on screen",
                 new Rectangle(0, 0, 800, 600));

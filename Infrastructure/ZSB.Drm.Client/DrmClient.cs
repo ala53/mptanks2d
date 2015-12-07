@@ -54,7 +54,7 @@ namespace ZSB
             }
         }
         public static bool Offline { get; internal set; }
-        public static bool LoggedIn => User != null;
+        public static bool LoggedIn => IsLoggedIn();
         public static MultiplayerDrmClient Multiplayer { get; private set; } = new MultiplayerDrmClient();
         public static AccountDrmClient Account { get; private set; } = new AccountDrmClient();
         public static ProductDrmClient Products { get; private set; } = new ProductDrmClient();

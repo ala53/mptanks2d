@@ -5,6 +5,7 @@ using MPTanks.Client.GameSandbox;
 using MPTanks.Client.GameSandbox.Mods;
 using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace MPTanks.Clients.MapMaker
 
         protected override void LoadContent()
         {
-            _renderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            _renderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 }, new NullLogger());
             _renderer.Game = _game;
             base.LoadContent();
         }

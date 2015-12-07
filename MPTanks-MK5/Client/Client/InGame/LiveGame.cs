@@ -137,7 +137,7 @@ namespace MPTanks.Client
             if (_closed) return;
             _closed = true;
 
-            SetReturnWindowParams();
+            //SetReturnWindowParams();
             _clearedToRun = false;
 
             if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);

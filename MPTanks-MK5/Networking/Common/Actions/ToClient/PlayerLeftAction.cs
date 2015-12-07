@@ -24,7 +24,7 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         protected override void DeserializeInternal(NetIncomingMessage message)
         {
             PlayerId = (ushort)message.ReadUInt32(GameCore.PlayerIdNumberOfBits);
-            message.ReadBytes(message.PeekUInt16());
+            GamemodeState = message.ReadBytes(message.ReadUInt16());
         }
         public override void Serialize(NetOutgoingMessage message)
         {

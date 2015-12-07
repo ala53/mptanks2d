@@ -23,7 +23,7 @@ namespace MPTanks.Client.Backend.Renderer
             set { _game = value; }
         }
         public float PhysicsCompensation { get; set; } = 0.085f;
-        public ModuleLogger Logger => new ModuleLogger(Game.Logger, "Renderer");
+        public ModuleLogger Logger { get; private set; }
         internal AssetFinder Finder { get; private set; }
         public RenderTarget2D Target { get; set; }
         public RectangleF View { get; set; }
@@ -37,14 +37,16 @@ namespace MPTanks.Client.Backend.Renderer
         private GameWorldRenderer _gameRenderer;
         private FXAARenderer _fxaaRenderer;
 
-        public GameCoreRenderer(Game client, string[] assetPaths, int[] teamsToDisplayFor)
+        public GameCoreRenderer(Game client, string[] assetPaths, int[] teamsToDisplayFor, ILogger logger)
         {
             Client = client;
             TeamsToDisplayLightsFor = teamsToDisplayFor;
 
             Finder = new AssetFinder(this, new AssetCache(client.GraphicsDevice,
-                new AssetLoader(this, client.GraphicsDevice, new AssetResolver(assetPaths)
-                ), this));
+                new AssetLoader(this, client.GraphicsDevice, new AssetResolver(assetPaths, this)),
+                this));
+
+            Logger = new ModuleLogger(logger, "Renderer");
 
             _fxaaRenderer = new FXAARenderer(
                 this, client.GraphicsDevice, client.Content, Finder);

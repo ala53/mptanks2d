@@ -288,9 +288,14 @@ namespace MPTanks.Client
                 {
                     ui.GoToPage("connecttoserverpage", connectPage =>
                     {
+                        connectPage.Element<TextBox>("ServerAddress").Text = ClientSettings.Instance.StoredServerAddress.Value ?? "";
+
                         connectPage.Element<Button>("GoBackBtn").Click += (e, f) => ui.GoBack();
                         connectPage.Element<Button>("ConnectBtn").Click += (e, f) =>
                         {
+                            //Save server URL into settings
+                            ClientSettings.Instance.StoredServerAddress.Value = connectPage.Element<TextBox>("ServerAddress").Text;
+
                             var unparsedAddress = connectPage.Element<TextBox>("ServerAddress").Text;
                             ushort port = 33132;
                             string address = unparsedAddress.Split(':')[0];

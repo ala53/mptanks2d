@@ -24,6 +24,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         {
             Task.Run(() =>
             {
+                _renderer.Logger.Trace($"Begin load for {sheetName}");
                 SpriteSheet sheet = null;
                 if (GlobalSettings.Debug)
                     sheet = LoadSpriteSheet(sheetName, missingTextureSprite);
@@ -42,6 +43,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
         {
             //Find the file and fail if we can't
             var resolvedFilename = _resolver.ResolveAssetFile(sheetName);
+            _renderer.Logger.Trace($"Resolved {sheetName} as {resolvedFilename ?? "null"}");
             if (resolvedFilename == null)
             {
                 _renderer.Logger.Error("SpriteSheet does not exist: " + sheetName);
@@ -56,10 +58,14 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             }
 
             //Then load the texture
+            _renderer.Logger.Trace($"Loading texture data for {sheetName}");
             var texture = LoadTexture(resolvedFilename);
+            _renderer.Logger.Trace($"Loaded texture data for {sheetName}");
             //And metadata
             var metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONSpriteSheet>(
                     File.ReadAllText(resolvedFilename + ".json"));
+
+            _renderer.Logger.Trace($"Loaded metadata for {sheetName}");
 
             var sprites = new Dictionary<string, Sprite>();
             var animations = new Dictionary<string, Animation>();
@@ -71,6 +77,7 @@ namespace MPTanks.Client.Backend.Renderer.Assets
             if (metadata.Sprites != null)
                 foreach (var sprite in metadata.Sprites)
                     sprites.Add(sprite.Name, new Sprite(sprite.X, sprite.Y, sprite.Width, sprite.Height, sprite.Name));
+
             //And build the output sprite sheet
             return new SpriteSheet(animations, sprites, texture, metadata.Name, sheetName, missingTextureSprite);
         }

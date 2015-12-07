@@ -163,7 +163,7 @@ namespace MPTanks.Client.GameSandbox
 
             ShowSetupPrompt();
             //Initialize renderers
-            GameRenderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 });
+            GameRenderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 }, new NLogLogger(Logger.Instance));
             SoundPlayer = new SoundPlayer();
             //And, finally, Begin the async mod loading
             _modLoader = AsyncModLoader.Create(GameSettings.Instance);

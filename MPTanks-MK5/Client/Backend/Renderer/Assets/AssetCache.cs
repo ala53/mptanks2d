@@ -152,21 +152,25 @@ namespace MPTanks.Client.Backend.Renderer.Assets
 
         private void LoadSpriteSheet(string sheetName)
         {
+            _renderer.Logger.Trace($"AssetCache.LoadSpriteSheet() for {sheetName}");
             if (HasLoadStarted(sheetName))
             {
                 _renderer.Logger.Error("Spritesheet load called more than once for " + sheetName);
                 return;
             }
 
+            _renderer.Logger.Trace($"AssetCache.LoadSpriteSheet() for {sheetName}: added to loading table");
             _sheetsWhichHaveBeenLoaded.Add(sheetName);
             _sheetsThatAreCurrentlyLoading.Add(sheetName);
 
             _loader.DeferredLoadSpriteSheet(sheetName, (sheet) =>
             {
+                _renderer.Logger.Trace($"AssetCache.LoadSpriteSheet() for {sheetName} succeeded");
                 _spriteSheets.Add(sheetName, sheet);
                 _sheetsThatAreCurrentlyLoading.Remove(sheetName);
             }, () =>
             {
+                _renderer.Logger.Trace($"AssetCache.LoadSpriteSheet() for {sheetName} failed");
                 _sheetsThatAreCurrentlyLoading.Remove(sheetName);
             }, MissingTextureSprite);
         }
