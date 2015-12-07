@@ -11,5 +11,9 @@ namespace MPTanks.Networking.Common
         //Static stuff
         public static readonly Guid MPTanksProductId = new Guid("6de5dd93-2c13-4a28-b722-4a28b79c67b8");
         public static readonly Guid MPTanksPremiumProductId = new Guid("a8e46236-ce79-4480-aeed-28faec2bc0b8");
+
+        //Version 0.1
+        public static readonly int VersionMajor = 0;
+        public static readonly int VersionMinor = 1;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using MPTanks.Engine.Settings;
+using MPTanks.Networking.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,33 +28,46 @@ namespace MPTanks.Networking.Server
                 string name = incoming.ReadString();
                 string token = incoming.ReadString();
                 string pass = incoming.ReadString();
+                int verMajor = incoming.ReadInt32(), verMinor = incoming.ReadInt32();
+
+                if (StaticSettings.VersionMajor != verMajor ||
+                    (StaticSettings.VersionMajor == verMajor && StaticSettings.VersionMinor > verMinor))
+                {
+                    DenyConnection(connection, "Client version mismatch. Server version is " +
+                        $"{StaticSettings.VersionMajor}.{StaticSettings.VersionMinor}. Client is {verMajor}.{verMinor}.");
+                    return;
+                }
 
                 if (Server.Configuration.Password != null)
                 {
                     if (pass != Server.Configuration.Password)
                     {
-                        DenyConnection(connection, "Password incorrect");
+                        DenyConnection(connection, "The password you entered was incorrect.");
                         return;
                     }
                 }
                 //Check that they aren't on the server
                 if (Server.Players.FirstOrDefault(a => a.Player.UniqueId == id) != null)
                 {
-                    DenyConnection(connection, "Already connected to server");
+                    DenyConnection(connection, "You're already connected to the server.");
+                    return;
+                }
+
+                if (Server.Players.Count >= Server.Configuration.MaxPlayers)
+                {
+                    DenyConnection(connection, "There are too many players on the server.");
                     return;
                 }
 
                 if (Server.Configuration.Offline)
                 {
                     //Directly connect, regardless of whether they are who they say they are
-                    if (Server.Players.Count < Server.Configuration.MaxPlayers)
-                        ApproveConnection(connection, new WebInterface.WebPlayerInfoResponse
-                        {
-                            Id = id,
-                            Username = name,
-                            Premium = true
-                        });
-                    else DenyConnection(connection, "Too many players");
+                    ApproveConnection(connection, new WebInterface.WebPlayerInfoResponse
+                    {
+                        Id = id,
+                        Username = name,
+                        Premium = true
+                    });
                 }
                 else
                 {
@@ -71,13 +85,13 @@ namespace MPTanks.Networking.Server
                             //Check that they own the game
                             if (!info.Owns(Common.StaticSettings.MPTanksProductId))
                             {
-                                DenyConnection(connection, "Game not owned");
+                                DenyConnection(connection, "You don't own MP Tanks.");
                                 return;
                             }
                             //Validate the info
                             if (info.UniqueId != id || info.Username.ToLower().Trim() != name.ToLower().Trim())
                             {
-                                DenyConnection(connection, "Information mismatch. Log back in.");
+                                DenyConnection(connection, "Information mismatch. Please log back in.");
                                 return;
                             }
                             //Approve the connection
@@ -90,19 +104,20 @@ namespace MPTanks.Networking.Server
                         }
                         catch (MultiplayerAuthTokenInvalidException)
                         {
-                            DenyConnection(connection, "Auth token invalid");
+                            DenyConnection(connection, "The authentication token the client sent was invalid.");
                             return;
                         }
                         catch (UnableToAccessAccountServerException)
                         {
                             Server.Logger.Info($"{name} kicked from game: unable to access ZSB account servers.");
-                            DenyConnection(connection, "Server is unable to access the ZSB account server");
+                            DenyConnection(connection, "The server isn't able to access the ZSB account server.");
+                            return;
                         }
                         catch (Exception ex)
                         {
                             Server.Logger.Error("[SERVER] [LOGIN] Connection handling error", ex);
                             if (GlobalSettings.Trace) throw;
-                            DenyConnection(connection, "Unknown server error");
+                            DenyConnection(connection, "An unknown server error occurred.");
                             return;
                         }
                     });
@@ -118,6 +133,27 @@ namespace MPTanks.Networking.Server
         }
         private void ApproveConnection(NetConnection conn, WebInterface.WebPlayerInfoResponse playerInfo = null)
         {
+            //Send a mod listing
+            var modList = Modding.ModDatabase.LoadedModules.Select(a => new
+            {
+                Name = a.Name,
+                Major = a.Version.Major,
+                MinMinor = a.Version.Minor,
+                Whitelisted = a.UsesWhitelist
+            });
+
+            var msg = Server.NetworkServer.CreateMessage();
+            //Write mod list
+            msg.Write(modList.Count());
+            foreach (var mod in modList)
+            {
+                msg.Write(mod.Name);
+                msg.Write(mod.Major);
+                msg.Write(mod.MinMinor);
+                msg.Write(mod.Whitelisted);
+                msg.WritePadBits();
+            }
+
             conn.Approve();
             Server.Logger.Info($"[SERVER] [LOGIN] {playerInfo?.Username ?? ""} joined");
             //To be removed: we should defer until we check the login info
@@ -126,7 +162,7 @@ namespace MPTanks.Networking.Server
 
         private void DenyConnection(NetConnection conn, string reason = "Server terminated connection")
         {
-            conn.Deny(reason);
+            conn?.Deny(reason);
         }
 
         public void ProcessMessage(NetIncomingMessage message)

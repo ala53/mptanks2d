@@ -143,6 +143,8 @@ namespace MPTanks.Networking.Client
                     msg.Write(ZSB.DrmClient.User.Username);
                     msg.Write(token);
                     msg.Write(Password ?? ""); //Write an empty password just in case
+                    msg.Write(StaticSettings.VersionMajor);
+                    msg.Write(StaticSettings.VersionMinor);
                     NetworkClient.Start();
                     NetworkClient.Connect(Host, Port, msg);
                     Logger.Trace("Connection message sent");
