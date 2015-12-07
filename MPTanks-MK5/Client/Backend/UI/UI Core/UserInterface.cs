@@ -23,7 +23,7 @@ namespace MPTanks.Client.Backend.UI
         private Stack<UserInterfacePage> _pages = new Stack<UserInterfacePage>();
         private GraphicsDevice _gd => _game.GraphicsDevice;
         private Game _game;
-        private EmptyKeys.UserInterface.Engine _engine;
+        public EmptyKeys.UserInterface.Engine _engine;
         private ContentManager _content;
         public UserInterfacePage CurrentPage => _pages.Count > 0 ? _pages.Peek() : null;
         public object State
@@ -47,6 +47,7 @@ namespace MPTanks.Client.Backend.UI
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
             Empty();
         }
+        
         public void GoToPage(string page, Action<UserInterfacePage> generator, Action<UserInterfacePage, dynamic> stateChangeHandler = null, dynamic state = null)
         {
             var pg = new UserInterfacePage(page);
@@ -73,12 +74,19 @@ namespace MPTanks.Client.Backend.UI
             CurrentPage.StateChangeHandler(CurrentPage, newState);
         }
 
-        private UserInterfacePage CopyCurrentPage()
+        private bool _hasPendingCopy;
+        private void CopyCurrentPage()
         {
+            _hasPendingCopy = true;
+        }
+
+        private void __CopyPage()
+        {
+
             var oldPg = _pages.Pop();
             var pg = new UserInterfacePage(oldPg.Name);
             pg.UserInterface = this;
-            pg.Page.Resize(_currentWidth, _currentHeight);
+            pg.Page.Resize(_currentWidth, _currentHeight); //This dead locks when called from another thread
             pg.Generator = oldPg.Generator;
             pg.StateChangeHandler = oldPg.StateChangeHandler;
             pg.StateObject = oldPg.StateObject;
@@ -89,7 +97,6 @@ namespace MPTanks.Client.Backend.UI
             FontManager.Instance.LoadFonts(_content);
             ImageManager.Instance.LoadImages(_content);
             SoundManager.Instance.LoadSounds(_content);
-            return pg;
         }
 
         public void GoBack()
@@ -97,7 +104,7 @@ namespace MPTanks.Client.Backend.UI
             if (_pages.Count > 1)
             {
                 _pages.Pop();
-                var newPg = CopyCurrentPage();
+                CopyCurrentPage();
             }
             //otherwise
             else UnwindAndEmpty();
@@ -132,6 +139,13 @@ namespace MPTanks.Client.Backend.UI
             var vp = _game.GraphicsDevice.Viewport;
             if (vp.Width != _lastWidth || vp.Height != _lastHeight)
                 Resize(vp.Width, vp.Height);
+
+            if (_hasPendingCopy)
+            {
+                _hasPendingCopy = false;
+                __CopyPage();
+            }
+
             _lastWidth = vp.Width;
             _lastHeight = vp.Height;
 

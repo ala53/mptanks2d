@@ -62,7 +62,7 @@ namespace AssetCompileHelper
             }
 			
 			Console.WriteLine($"{needingRecompile} files require recompile.");
-            cmdArgs += "/incremental /platform:WindowsGL ";
+            cmdArgs += "/incremental /platform:Windows ";
             foreach (var file in needingRecompile)
             {
                 output += $"Recompiling {file}\n";

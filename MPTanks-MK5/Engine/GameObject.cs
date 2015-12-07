@@ -457,8 +457,8 @@ namespace MPTanks.Engine
             //experience as things explode when they should           
 
             UnsafeDisableEvents();
-            if (PostDeathExistenceTime == TimeSpan.Zero)
-                LinearVelocity = Vector2.Zero;
+            // if (PostDeathExistenceTime == TimeSpan.Zero)
+            //    LinearVelocity = Vector2.Zero;
             UnsafeEnableEvents();
 
             if (!_killedAlready && (Authoritative || authorized))

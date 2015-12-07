@@ -121,6 +121,7 @@ namespace MPTanks.Client
         }
 
         private bool _closed = false;
+        private bool _fullyClosed = false;
         public void Close()
         {
             if (_closed) return;
@@ -129,23 +130,25 @@ namespace MPTanks.Client
             if (ClientSettings.Instance.SandboxGames && _mtTask.IsAlive)
                 _mtTask.Abort();
 
-            Unload();
+            Unload(true);
         }
 
-        private void Unload()
+        private void Unload(bool force = false)
         {
-            if (_closed) return;
+            if (_closed && !force) return;
             _closed = true;
 
             //SetReturnWindowParams();
             _clearedToRun = false;
 
-            if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
+            //if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
 
-            _exitCallback(this);
             Connected = false;
             ConnectionFailed = true;
             FailureReason = Strings.ClientMenus.GameForciblyClosedByWatchDog;
+            _exitCallback(this);
+            _fullyClosed = true;
         }
+        
     }
 }

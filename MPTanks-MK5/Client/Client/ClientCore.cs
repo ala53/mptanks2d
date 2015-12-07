@@ -24,6 +24,7 @@ namespace MPTanks.Client
         private int nativeScreenWidth;
         private int nativeScreenHeight;
 
+        private LiveGame _activeGame;
 
         private bool sizeDirty = true;
         UserInterface ui;
@@ -269,20 +270,19 @@ namespace MPTanks.Client
 
                 page.Element<Button>("HostBtn").Click += (b, c) =>
                 {
-                    var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                    _activeGame = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
                     {
                         IsHost = true
                     }, new string[] { });
-                    game.RegisterExitCallback(d => ui.GoBack());
+                    _activeGame.RegisterExitCallback(d => ui.GoBack());
                     ui.GoToPage("mainmenuplayerisingamepage", inGamePage =>
                     {
                         inGamePage.Element<Button>("ForceCloseBtn").Click += (e, f) =>
                         {
-                            game.Close();
-                            ui.GoBack();
+                            _activeGame.Close();
                         };
                     });
-                    game.Run();
+                    _activeGame.Run();
                 };
                 page.Element<Button>("JoinBtn").Click += (b, c) =>
                 {
@@ -301,7 +301,7 @@ namespace MPTanks.Client
                             string address = unparsedAddress.Split(':')[0];
                             try { port = ushort.Parse(unparsedAddress.Split(':')[1]); } catch { }
 
-                            var game = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
+                            _activeGame = new LiveGame(this, new Networking.Common.Connection.ConnectionInfo
                             {
                                 IsHost = false,
                                 ServerAddress = address,
@@ -309,16 +309,18 @@ namespace MPTanks.Client
                                 Password = connectPage.Element<TextBox>("ServerPassword").Text
                             }, new string[] { });
 
-                            game.RegisterExitCallback((g) => ui.GoBack());
+                            _activeGame.RegisterExitCallback((g) =>
+                            {
+                                ui.GoBack();
+                            });
                             ui.GoToPage("mainmenuplayerisingamepage", inGamePage =>
                             {
                                 inGamePage.Element<Button>("ForceCloseBtn").Click += (h, i) =>
                                 {
-                                    game.Close();
-                                    ui.GoBack();
+                                    _activeGame.Close();
                                 };
                             });
-                            game.Run();
+                            _activeGame.Run();
                         };
                     });
 
@@ -370,7 +372,7 @@ namespace MPTanks.Client
         {
             // TODO: Unload any non ContentManager content here
         }
-        
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -401,6 +403,8 @@ namespace MPTanks.Client
                     Window.ClientBounds.Size);
 
             ui.Update(gameTime);
+            
+            Logger.Trace(Newtonsoft.Json.JsonConvert.SerializeObject(Microsoft.Xna.Framework.Input.Mouse.GetState()));
 
             base.Update(gameTime);
         }
