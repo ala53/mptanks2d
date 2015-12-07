@@ -57,7 +57,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_26 = new Grid();
             this.Content = this.e_26;
             this.e_26.Name = "e_26";
-            this.e_26.Background = new SolidColorBrush(new ColorW(128, 128, 128, 127));
+            this.e_26.Background = new SolidColorBrush(new ColorW(0, 0, 0, 159));
             // e_27 element
             this.e_27 = new StackPanel();
             this.e_26.Children.Add(this.e_27);

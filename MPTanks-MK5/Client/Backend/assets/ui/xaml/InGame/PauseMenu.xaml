@@ -13,7 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ek:UIRoot.Resources>
-    <Grid Background="#7F808080">
+    <Grid Background="#9F000000">
         <StackPanel Orientation="Horizontal">
             <StackPanel Width="300">
                 <TextBlock Foreground="White" FontFamily="Karmatic Arcade" FontSize="32" Margin="10" HorizontalAlignment="Center">MP Tanks 2D</TextBlock>
