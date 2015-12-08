@@ -22,24 +22,28 @@ namespace EmptyKeys.UserInterface.Generated {
     
     
     [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
-    public partial class SettingUpPrompt : UIRoot {
+    public partial class GameEndedPage : UIRoot {
         
         private Grid e_0;
         
         private StackPanel e_1;
         
+        private StackPanel e_2;
+        
+        private Image e_3;
+        
         private TextBlock Header;
         
-        private TextBlock ContentT;
+        private TextBlock Subscript;
         
-        private Button ControlButton;
+        private TextBlock PlayerList;
         
-        public SettingUpPrompt() : 
+        public GameEndedPage() : 
                 base() {
             this.Initialize();
         }
         
-        public SettingUpPrompt(int width, int height) : 
+        public GameEndedPage(int width, int height) : 
                 base(width, height) {
             this.Initialize();
         }
@@ -52,50 +56,63 @@ namespace EmptyKeys.UserInterface.Generated {
         }
         
         private void InitializeComponent() {
-            this.SetResourceReference(UIRoot.BackgroundProperty, "MenuPageBGBrush");
+            this.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             InitializeElementResources(this);
             // e_0 element
             this.e_0 = new Grid();
             this.Content = this.e_0;
             this.e_0.Name = "e_0";
+            this.e_0.Background = new SolidColorBrush(new ColorW(0, 0, 0, 159));
             // e_1 element
             this.e_1 = new StackPanel();
             this.e_0.Children.Add(this.e_1);
             this.e_1.Name = "e_1";
             this.e_1.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_1.VerticalAlignment = VerticalAlignment.Center;
+            // e_2 element
+            this.e_2 = new StackPanel();
+            this.e_1.Children.Add(this.e_2);
+            this.e_2.Name = "e_2";
+            this.e_2.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_2.Orientation = Orientation.Horizontal;
+            // e_3 element
+            this.e_3 = new Image();
+            this.e_2.Children.Add(this.e_3);
+            this.e_3.Name = "e_3";
+            this.e_3.Height = 70F;
+            this.e_3.Width = 70F;
+            BitmapImage e_3_bm = new BitmapImage();
+            e_3_bm.TextureAsset = "assets/ui/imgs/star";
+            this.e_3.Source = e_3_bm;
             // Header element
             this.Header = new TextBlock();
-            this.e_1.Children.Add(this.Header);
+            this.e_2.Children.Add(this.Header);
             this.Header.Name = "Header";
-            this.Header.Margin = new Thickness(20F, 20F, 20F, 20F);
             this.Header.HorizontalAlignment = HorizontalAlignment.Center;
             this.Header.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.Header.Text = "";
+            this.Header.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.Header.FontFamily = new FontFamily("Karmatic Arcade");
-            this.Header.FontSize = 30F;
-            // ContentT element
-            this.ContentT = new TextBlock();
-            this.e_1.Children.Add(this.ContentT);
-            this.ContentT.Name = "ContentT";
-            this.ContentT.HorizontalAlignment = HorizontalAlignment.Center;
-            this.ContentT.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.ContentT.Text = "";
-            this.ContentT.FontFamily = new FontFamily("Karmatic Arcade");
-            this.ContentT.FontSize = 20F;
-            this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuSubHeader");
-            // ControlButton element
-            this.ControlButton = new Button();
-            this.e_1.Children.Add(this.ControlButton);
-            this.ControlButton.Name = "ControlButton";
-            this.ControlButton.Margin = new Thickness(20F, 20F, 20F, 20F);
-            this.ControlButton.HorizontalAlignment = HorizontalAlignment.Center;
-            this.ControlButton.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this.ControlButton.Padding = new Thickness(10F, 0F, 10F, 0F);
-            this.ControlButton.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ControlButton.FontFamily = new FontFamily("Karmatic Arcade");
-            this.ControlButton.Content = "";
-            this.ControlButton.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            this.Header.FontSize = 48F;
+            // Subscript element
+            this.Subscript = new TextBlock();
+            this.e_1.Children.Add(this.Subscript);
+            this.Subscript.Name = "Subscript";
+            this.Subscript.HorizontalAlignment = HorizontalAlignment.Center;
+            this.Subscript.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.Subscript.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.Subscript.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Subscript.FontSize = 24F;
+            // PlayerList element
+            this.PlayerList = new TextBlock();
+            this.e_1.Children.Add(this.PlayerList);
+            this.PlayerList.Name = "PlayerList";
+            this.PlayerList.HorizontalAlignment = HorizontalAlignment.Center;
+            this.PlayerList.Foreground = new SolidColorBrush(new ColorW(0, 0, 255, 255));
+            this.PlayerList.Text = "Toupe_777\nWikipedia_Troller_8\nWaffles_r_dumb";
+            this.PlayerList.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.PlayerList.FontFamily = new FontFamily("Karmatic Arcade");
+            this.PlayerList.FontSize = 12F;
+            ImageManager.Instance.AddImage("assets/ui/imgs/star");
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
@@ -104,8 +121,6 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 12F, FontStyle.Regular, "Karmatic_Arcade_9_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

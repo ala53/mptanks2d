@@ -8,6 +8,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using EmptyKeys.UserInterface;
+    using EmptyKeys.UserInterface.Charts;
     using EmptyKeys.UserInterface.Data;
     using EmptyKeys.UserInterface.Controls;
     using EmptyKeys.UserInterface.Controls.Primitives;
@@ -20,13 +21,22 @@ namespace EmptyKeys.UserInterface.Generated {
     using EmptyKeys.UserInterface.Themes;
     
     
-    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
+    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
     public partial class EmptyPage : UIRoot {
         
-        private Grid e_7;
+        private Grid e_0;
+        
+        public EmptyPage() : 
+                base() {
+            this.Initialize();
+        }
         
         public EmptyPage(int width, int height) : 
                 base(width, height) {
+            this.Initialize();
+        }
+        
+        private void Initialize() {
             Style style = RootStyle.CreateRootStyle();
             style.TargetType = this.GetType();
             this.Style = style;
@@ -35,12 +45,13 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_7 element
-            this.e_7 = new Grid();
-            this.Content = this.e_7;
-            this.e_7.Name = "e_7";
+            // e_0 element
+            this.e_0 = new Grid();
+            this.Content = this.e_0;
+            this.e_0.Name = "e_0";
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

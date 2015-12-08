@@ -8,6 +8,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using EmptyKeys.UserInterface;
+    using EmptyKeys.UserInterface.Charts;
     using EmptyKeys.UserInterface.Data;
     using EmptyKeys.UserInterface.Controls;
     using EmptyKeys.UserInterface.Controls.Primitives;
@@ -20,26 +21,26 @@ namespace EmptyKeys.UserInterface.Generated {
     using EmptyKeys.UserInterface.Themes;
     
     
-    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
+    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
     public partial class LoginForm : UIRoot {
         
-        private Grid e_8;
+        private Grid e_0;
         
-        private StackPanel e_9;
+        private StackPanel e_1;
         
-        private TextBlock e_10;
+        private TextBlock e_2;
         
-        private StackPanel e_11;
+        private StackPanel e_3;
         
-        private StackPanel e_12;
+        private StackPanel e_4;
         
-        private TextBlock e_13;
+        private TextBlock e_5;
         
         private TextBox UsernameBox;
         
-        private StackPanel e_14;
+        private StackPanel e_6;
         
-        private TextBlock e_15;
+        private TextBlock e_7;
         
         private PasswordBox PasswordBox;
         
@@ -49,8 +50,17 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button NoAccountBtn;
         
+        public LoginForm() : 
+                base() {
+            this.Initialize();
+        }
+        
         public LoginForm(int width, int height) : 
                 base(width, height) {
+            this.Initialize();
+        }
+        
+        private void Initialize() {
             Style style = RootStyle.CreateRootStyle();
             style.TargetType = this.GetType();
             this.Style = style;
@@ -59,91 +69,85 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_8 element
-            this.e_8 = new Grid();
-            this.Content = this.e_8;
-            this.e_8.Name = "e_8";
-            // e_9 element
-            this.e_9 = new StackPanel();
-            this.e_8.Children.Add(this.e_9);
-            this.e_9.Name = "e_9";
-            this.e_9.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_9.VerticalAlignment = VerticalAlignment.Center;
-            this.e_9.Orientation = Orientation.Vertical;
-            // e_10 element
-            this.e_10 = new TextBlock();
-            this.e_9.Children.Add(this.e_10);
-            this.e_10.Name = "e_10";
-            this.e_10.Margin = new Thickness(10F, 10F, 10F, 30F);
-            this.e_10.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_10.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_10.Text = "MP Tanks 2D";
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            this.e_10.FontFamily = new FontFamily("Karmatic Arcade");
-            this.e_10.FontSize = 72F;
-            // e_11 element
-            this.e_11 = new StackPanel();
-            this.e_9.Children.Add(this.e_11);
-            this.e_11.Name = "e_11";
-            this.e_11.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_11.VerticalAlignment = VerticalAlignment.Center;
-            this.e_11.Orientation = Orientation.Vertical;
-            // e_12 element
-            this.e_12 = new StackPanel();
-            this.e_11.Children.Add(this.e_12);
-            this.e_12.Name = "e_12";
-            this.e_12.Orientation = Orientation.Horizontal;
-            // e_13 element
-            this.e_13 = new TextBlock();
-            this.e_12.Children.Add(this.e_13);
-            this.e_13.Name = "e_13";
-            this.e_13.Width = 150F;
-            this.e_13.Margin = new Thickness(0F, 0F, 10F, 0F);
-            this.e_13.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.e_13.Text = "Email";
-            this.e_13.Padding = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            this.e_13.FontFamily = new FontFamily("Karmatic Arcade");
-            this.e_13.FontSize = 18F;
+            // e_0 element
+            this.e_0 = new Grid();
+            this.Content = this.e_0;
+            this.e_0.Name = "e_0";
+            // e_1 element
+            this.e_1 = new StackPanel();
+            this.e_0.Children.Add(this.e_1);
+            this.e_1.Name = "e_1";
+            this.e_1.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_1.VerticalAlignment = VerticalAlignment.Center;
+            this.e_1.Orientation = Orientation.Vertical;
+            // e_2 element
+            this.e_2 = new TextBlock();
+            this.e_1.Children.Add(this.e_2);
+            this.e_2.Name = "e_2";
+            this.e_2.Margin = new Thickness(10F, 10F, 10F, 30F);
+            this.e_2.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_2.Text = "MP Tanks 2D";
+            this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_2.FontSize = 72F;
+            // e_3 element
+            this.e_3 = new StackPanel();
+            this.e_1.Children.Add(this.e_3);
+            this.e_3.Name = "e_3";
+            this.e_3.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_3.VerticalAlignment = VerticalAlignment.Center;
+            this.e_3.Orientation = Orientation.Vertical;
+            // e_4 element
+            this.e_4 = new StackPanel();
+            this.e_3.Children.Add(this.e_4);
+            this.e_4.Name = "e_4";
+            this.e_4.Orientation = Orientation.Horizontal;
+            // e_5 element
+            this.e_5 = new TextBlock();
+            this.e_4.Children.Add(this.e_5);
+            this.e_5.Name = "e_5";
+            this.e_5.Width = 150F;
+            this.e_5.Margin = new Thickness(0F, 0F, 10F, 0F);
+            this.e_5.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_5.Text = "Email";
+            this.e_5.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_5.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_5.FontSize = 18F;
             // UsernameBox element
             this.UsernameBox = new TextBox();
-            this.e_12.Children.Add(this.UsernameBox);
+            this.e_4.Children.Add(this.UsernameBox);
             this.UsernameBox.Name = "UsernameBox";
             this.UsernameBox.Width = 300F;
             this.UsernameBox.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.UsernameBox.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
-            // e_14 element
-            this.e_14 = new StackPanel();
-            this.e_11.Children.Add(this.e_14);
-            this.e_14.Name = "e_14";
-            this.e_14.Margin = new Thickness(0F, 10F, 0F, 0F);
-            this.e_14.Orientation = Orientation.Horizontal;
-            // e_15 element
-            this.e_15 = new TextBlock();
-            this.e_14.Children.Add(this.e_15);
-            this.e_15.Name = "e_15";
-            this.e_15.Width = 150F;
-            this.e_15.Margin = new Thickness(0F, 0F, 10F, 0F);
-            this.e_15.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.e_15.Text = "Password";
-            this.e_15.Padding = new Thickness(10F, 10F, 10F, 10F);
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            this.e_15.FontFamily = new FontFamily("Karmatic Arcade");
-            this.e_15.FontSize = 18F;
+            // e_6 element
+            this.e_6 = new StackPanel();
+            this.e_3.Children.Add(this.e_6);
+            this.e_6.Name = "e_6";
+            this.e_6.Margin = new Thickness(0F, 10F, 0F, 0F);
+            this.e_6.Orientation = Orientation.Horizontal;
+            // e_7 element
+            this.e_7 = new TextBlock();
+            this.e_6.Children.Add(this.e_7);
+            this.e_7.Name = "e_7";
+            this.e_7.Width = 150F;
+            this.e_7.Margin = new Thickness(0F, 0F, 10F, 0F);
+            this.e_7.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_7.Text = "Password";
+            this.e_7.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_7.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_7.FontSize = 18F;
             // PasswordBox element
             this.PasswordBox = new PasswordBox();
-            this.e_14.Children.Add(this.PasswordBox);
+            this.e_6.Children.Add(this.PasswordBox);
             this.PasswordBox.Name = "PasswordBox";
             this.PasswordBox.Width = 300F;
             this.PasswordBox.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.PasswordBox.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             // LoginBtn element
             this.LoginBtn = new Button();
-            this.e_11.Children.Add(this.LoginBtn);
+            this.e_3.Children.Add(this.LoginBtn);
             this.LoginBtn.Name = "LoginBtn";
             this.LoginBtn.Width = 450F;
             this.LoginBtn.Margin = new Thickness(0F, 10F, 0F, 0F);
@@ -152,7 +156,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LoginBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.LoginBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.LoginBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this.LoginBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.LoginBtn.FontSize = 36F;
             this.LoginBtn.Content = "Log in";
@@ -160,7 +163,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LoginBtn.SetBinding(Button.CommandProperty, binding_LoginBtn_Command);
             // ForgotPasswordBtn element
             this.ForgotPasswordBtn = new Button();
-            this.e_11.Children.Add(this.ForgotPasswordBtn);
+            this.e_3.Children.Add(this.ForgotPasswordBtn);
             this.ForgotPasswordBtn.Name = "ForgotPasswordBtn";
             this.ForgotPasswordBtn.Width = 450F;
             this.ForgotPasswordBtn.Margin = new Thickness(0F, 10F, 0F, 0F);
@@ -169,13 +172,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ForgotPasswordBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ForgotPasswordBtn.Padding = new Thickness(5F, 5F, 5F, 5F);
             this.ForgotPasswordBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             this.ForgotPasswordBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.ForgotPasswordBtn.FontSize = 18F;
             this.ForgotPasswordBtn.Content = "Forgot your password?";
             // NoAccountBtn element
             this.NoAccountBtn = new Button();
-            this.e_11.Children.Add(this.NoAccountBtn);
+            this.e_3.Children.Add(this.NoAccountBtn);
             this.NoAccountBtn.Name = "NoAccountBtn";
             this.NoAccountBtn.Width = 450F;
             this.NoAccountBtn.Margin = new Thickness(0F, 10F, 0F, 0F);
@@ -184,10 +186,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.NoAccountBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.NoAccountBtn.Padding = new Thickness(5F, 5F, 5F, 5F);
             this.NoAccountBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             this.NoAccountBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.NoAccountBtn.FontSize = 18F;
             this.NoAccountBtn.Content = "No account?  Buy MP Tanks!";
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

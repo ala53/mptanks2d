@@ -8,6 +8,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using EmptyKeys.UserInterface;
+    using EmptyKeys.UserInterface.Charts;
     using EmptyKeys.UserInterface.Data;
     using EmptyKeys.UserInterface.Controls;
     using EmptyKeys.UserInterface.Controls.Primitives;
@@ -20,24 +21,24 @@ namespace EmptyKeys.UserInterface.Generated {
     using EmptyKeys.UserInterface.Themes;
     
     
-    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
+    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
     public partial class OKMessageBox : UIRoot {
         
-        private Grid e_40;
+        private Grid e_0;
         
-        private Border e_41;
+        private Border e_1;
         
-        private StackPanel e_42;
+        private StackPanel e_2;
         
-        private Border e_43;
+        private Border e_3;
         
         private TextBlock Header;
         
         private TextBlock ContentT;
         
-        private Border e_44;
+        private Border e_4;
         
-        private StackPanel e_45;
+        private StackPanel e_5;
         
         private Button Cancel;
         
@@ -47,8 +48,17 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button Ok;
         
+        public OKMessageBox() : 
+                base() {
+            this.Initialize();
+        }
+        
         public OKMessageBox(int width, int height) : 
                 base(width, height) {
+            this.Initialize();
+        }
+        
+        private void Initialize() {
             Style style = RootStyle.CreateRootStyle();
             style.TargetType = this.GetType();
             this.Style = style;
@@ -57,75 +67,71 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 51));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_40 element
-            this.e_40 = new Grid();
-            this.Content = this.e_40;
-            this.e_40.Name = "e_40";
-            // e_41 element
-            this.e_41 = new Border();
-            this.e_40.Children.Add(this.e_41);
-            this.e_41.Name = "e_41";
-            this.e_41.MaxWidth = 600F;
-            this.e_41.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_41.VerticalAlignment = VerticalAlignment.Center;
-            this.e_41.BorderThickness = new Thickness(2F, 2F, 2F, 2F);
-            this.e_41.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
-            // e_42 element
-            this.e_42 = new StackPanel();
-            this.e_41.Child = this.e_42;
-            this.e_42.Name = "e_42";
-            this.e_42.Background = new SolidColorBrush(new ColorW(0, 0, 0, 204));
-            // e_43 element
-            this.e_43 = new Border();
-            this.e_42.Children.Add(this.e_43);
-            this.e_43.Name = "e_43";
-            this.e_43.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
-            this.e_43.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
+            // e_0 element
+            this.e_0 = new Grid();
+            this.Content = this.e_0;
+            this.e_0.Name = "e_0";
+            // e_1 element
+            this.e_1 = new Border();
+            this.e_0.Children.Add(this.e_1);
+            this.e_1.Name = "e_1";
+            this.e_1.MaxWidth = 600F;
+            this.e_1.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_1.VerticalAlignment = VerticalAlignment.Center;
+            this.e_1.BorderThickness = new Thickness(2F, 2F, 2F, 2F);
+            this.e_1.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
+            // e_2 element
+            this.e_2 = new StackPanel();
+            this.e_1.Child = this.e_2;
+            this.e_2.Name = "e_2";
+            this.e_2.Background = new SolidColorBrush(new ColorW(0, 0, 0, 204));
+            // e_3 element
+            this.e_3 = new Border();
+            this.e_2.Children.Add(this.e_3);
+            this.e_3.Name = "e_3";
+            this.e_3.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
+            this.e_3.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
             // Header element
             this.Header = new TextBlock();
-            this.e_43.Child = this.Header;
+            this.e_3.Child = this.Header;
             this.Header.Name = "Header";
             this.Header.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.Header.HorizontalAlignment = HorizontalAlignment.Center;
             this.Header.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this.Header.FontFamily = new FontFamily("Karmatic Arcade");
             this.Header.FontSize = 36F;
             this.Header.SetResourceReference(TextBlock.ForegroundProperty, "SuccessTextColor");
             // ContentT element
             this.ContentT = new TextBlock();
-            this.e_42.Children.Add(this.ContentT);
+            this.e_2.Children.Add(this.ContentT);
             this.ContentT.Name = "ContentT";
             this.ContentT.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.ContentT.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ContentT.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             this.ContentT.FontFamily = new FontFamily("Karmatic Arcade");
             this.ContentT.FontSize = 20F;
             this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuContent");
-            // e_44 element
-            this.e_44 = new Border();
-            this.e_42.Children.Add(this.e_44);
-            this.e_44.Name = "e_44";
-            this.e_44.BorderThickness = new Thickness(0F, 2F, 0F, 0F);
-            this.e_44.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
-            // e_45 element
-            this.e_45 = new StackPanel();
-            this.e_44.Child = this.e_45;
-            this.e_45.Name = "e_45";
-            this.e_45.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_45.Orientation = Orientation.Horizontal;
+            // e_4 element
+            this.e_4 = new Border();
+            this.e_2.Children.Add(this.e_4);
+            this.e_4.Name = "e_4";
+            this.e_4.BorderThickness = new Thickness(0F, 2F, 0F, 0F);
+            this.e_4.SetResourceReference(Border.BorderBrushProperty, "SuccessTextColor");
+            // e_5 element
+            this.e_5 = new StackPanel();
+            this.e_4.Child = this.e_5;
+            this.e_5.Name = "e_5";
+            this.e_5.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_5.Orientation = Orientation.Horizontal;
             // Cancel element
             this.Cancel = new Button();
-            this.e_45.Children.Add(this.Cancel);
+            this.e_5.Children.Add(this.Cancel);
             this.Cancel.Name = "Cancel";
             this.Cancel.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Cancel.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Cancel.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Cancel.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             this.Cancel.FontFamily = new FontFamily("Karmatic Arcade");
             this.Cancel.FontSize = 20F;
             this.Cancel.Content = "Cancel";
@@ -133,13 +139,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Cancel.SetBinding(Button.VisibilityProperty, binding_Cancel_Visibility);
             // No element
             this.No = new Button();
-            this.e_45.Children.Add(this.No);
+            this.e_5.Children.Add(this.No);
             this.No.Name = "No";
             this.No.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.No.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.No.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.No.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             this.No.FontFamily = new FontFamily("Karmatic Arcade");
             this.No.FontSize = 20F;
             this.No.Content = "No";
@@ -147,13 +152,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.No.SetBinding(Button.VisibilityProperty, binding_No_Visibility);
             // Yes element
             this.Yes = new Button();
-            this.e_45.Children.Add(this.Yes);
+            this.e_5.Children.Add(this.Yes);
             this.Yes.Name = "Yes";
             this.Yes.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Yes.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Yes.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Yes.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             this.Yes.FontFamily = new FontFamily("Karmatic Arcade");
             this.Yes.FontSize = 20F;
             this.Yes.Content = "Yes";
@@ -161,18 +165,27 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Yes.SetBinding(Button.VisibilityProperty, binding_Yes_Visibility);
             // Ok element
             this.Ok = new Button();
-            this.e_45.Children.Add(this.Ok);
+            this.e_5.Children.Add(this.Ok);
             this.Ok.Name = "Ok";
             this.Ok.Margin = new Thickness(5F, 5F, 5F, 5F);
             this.Ok.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Ok.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Ok.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             this.Ok.FontFamily = new FontFamily("Karmatic Arcade");
             this.Ok.FontSize = 20F;
             this.Ok.Content = "Ok";
             Binding binding_Ok_Visibility = new Binding("OkButtonVisibility");
             this.Ok.SetBinding(Button.VisibilityProperty, binding_Ok_Visibility);
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 12F, FontStyle.Regular, "Karmatic_Arcade_9_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

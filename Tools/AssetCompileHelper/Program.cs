@@ -34,11 +34,11 @@ namespace AssetCompileHelper
             {
                 FileInfo fi = new FileInfo(file);
 
-                if (fi.Extension.Contains("spritefont") || /*fi.Extension.Contains("png") ||
+                if (fi.Extension.Contains("spritefont") || fi.Extension.Contains("png") ||
                     fi.Extension.Contains("bmp") || fi.Extension.Contains("jpg") ||
                     fi.Extension.Contains("jpeg") || fi.Extension.Contains("tiff") ||
                     fi.Extension.Contains("tif") || fi.Extension.Contains("gif") ||
-                    fi.Extension.Contains("wav") || fi.Extension.Contains("ogg") ||*/ fi.Extension.EndsWith("fx"))
+                    fi.Extension.Contains("wav") || fi.Extension.Contains("ogg") || fi.Extension.EndsWith("fx"))
                 {
                     output += $"File found: {file}\n";
                     files.Add(file);

@@ -8,6 +8,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using EmptyKeys.UserInterface;
+    using EmptyKeys.UserInterface.Charts;
     using EmptyKeys.UserInterface.Data;
     using EmptyKeys.UserInterface.Controls;
     using EmptyKeys.UserInterface.Controls.Primitives;
@@ -20,18 +21,18 @@ namespace EmptyKeys.UserInterface.Generated {
     using EmptyKeys.UserInterface.Themes;
     
     
-    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
+    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
     public partial class PauseMenu : UIRoot {
         
-        private Grid e_26;
+        private Grid e_0;
         
-        private StackPanel e_27;
+        private StackPanel e_1;
         
-        private StackPanel e_28;
+        private StackPanel e_2;
         
-        private TextBlock e_29;
+        private TextBlock e_3;
         
-        private Border e_30;
+        private Border e_4;
         
         private Button ServerInfoBtn;
         
@@ -39,10 +40,19 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button LeaveServerBtn;
         
-        private StackPanel e_31;
+        private StackPanel e_5;
+        
+        public PauseMenu() : 
+                base() {
+            this.Initialize();
+        }
         
         public PauseMenu(int width, int height) : 
                 base(width, height) {
+            this.Initialize();
+        }
+        
+        private void Initialize() {
             Style style = RootStyle.CreateRootStyle();
             style.TargetType = this.GetType();
             this.Style = style;
@@ -51,78 +61,82 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
-            // e_26 element
-            this.e_26 = new Grid();
-            this.Content = this.e_26;
-            this.e_26.Name = "e_26";
-            this.e_26.Background = new SolidColorBrush(new ColorW(0, 0, 0, 159));
-            // e_27 element
-            this.e_27 = new StackPanel();
-            this.e_26.Children.Add(this.e_27);
-            this.e_27.Name = "e_27";
-            this.e_27.Orientation = Orientation.Horizontal;
-            // e_28 element
-            this.e_28 = new StackPanel();
-            this.e_27.Children.Add(this.e_28);
-            this.e_28.Name = "e_28";
-            this.e_28.Width = 300F;
-            // e_29 element
-            this.e_29 = new TextBlock();
-            this.e_28.Children.Add(this.e_29);
-            this.e_29.Name = "e_29";
-            this.e_29.Margin = new Thickness(10F, 10F, 10F, 10F);
-            this.e_29.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_29.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_29.Text = "MP Tanks 2D";
-            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
-            this.e_29.FontFamily = new FontFamily("Karmatic Arcade");
-            this.e_29.FontSize = 32F;
-            // e_30 element
-            this.e_30 = new Border();
-            this.e_28.Children.Add(this.e_30);
-            this.e_30.Name = "e_30";
-            this.e_30.Margin = new Thickness(10F, 0F, 10F, 10F);
-            this.e_30.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_30.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
+            // e_0 element
+            this.e_0 = new Grid();
+            this.Content = this.e_0;
+            this.e_0.Name = "e_0";
+            this.e_0.Background = new SolidColorBrush(new ColorW(0, 0, 0, 159));
+            // e_1 element
+            this.e_1 = new StackPanel();
+            this.e_0.Children.Add(this.e_1);
+            this.e_1.Name = "e_1";
+            this.e_1.Orientation = Orientation.Horizontal;
+            // e_2 element
+            this.e_2 = new StackPanel();
+            this.e_1.Children.Add(this.e_2);
+            this.e_2.Name = "e_2";
+            this.e_2.Width = 300F;
+            // e_3 element
+            this.e_3 = new TextBlock();
+            this.e_2.Children.Add(this.e_3);
+            this.e_3.Name = "e_3";
+            this.e_3.Margin = new Thickness(10F, 10F, 10F, 10F);
+            this.e_3.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_3.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_3.Text = "MP Tanks 2D";
+            this.e_3.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_3.FontSize = 32F;
+            // e_4 element
+            this.e_4 = new Border();
+            this.e_2.Children.Add(this.e_4);
+            this.e_4.Name = "e_4";
+            this.e_4.Margin = new Thickness(10F, 0F, 10F, 10F);
+            this.e_4.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_4.BorderThickness = new Thickness(0F, 0F, 0F, 2F);
             // ServerInfoBtn element
             this.ServerInfoBtn = new Button();
-            this.e_28.Children.Add(this.ServerInfoBtn);
+            this.e_2.Children.Add(this.ServerInfoBtn);
             this.ServerInfoBtn.Name = "ServerInfoBtn";
             this.ServerInfoBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.ServerInfoBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ServerInfoBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
             this.ServerInfoBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.ServerInfoBtn.FontSize = 24F;
             this.ServerInfoBtn.Content = "Server Info";
             // SettingsBtn element
             this.SettingsBtn = new Button();
-            this.e_28.Children.Add(this.SettingsBtn);
+            this.e_2.Children.Add(this.SettingsBtn);
             this.SettingsBtn.Name = "SettingsBtn";
             this.SettingsBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.SettingsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.SettingsBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
             this.SettingsBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.SettingsBtn.FontSize = 24F;
             this.SettingsBtn.Content = "Settings";
             // LeaveServerBtn element
             this.LeaveServerBtn = new Button();
-            this.e_28.Children.Add(this.LeaveServerBtn);
+            this.e_2.Children.Add(this.LeaveServerBtn);
             this.LeaveServerBtn.Name = "LeaveServerBtn";
             this.LeaveServerBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.LeaveServerBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.LeaveServerBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
             this.LeaveServerBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.LeaveServerBtn.FontSize = 24F;
             this.LeaveServerBtn.Content = "Leave Server";
-            // e_31 element
-            this.e_31 = new StackPanel();
-            this.e_27.Children.Add(this.e_31);
-            this.e_31.Name = "e_31";
+            // e_5 element
+            this.e_5 = new StackPanel();
+            this.e_1.Children.Add(this.e_5);
+            this.e_5.Name = "e_5";
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 12F, FontStyle.Regular, "Karmatic_Arcade_9_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

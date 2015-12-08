@@ -8,6 +8,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using EmptyKeys.UserInterface;
+    using EmptyKeys.UserInterface.Charts;
     using EmptyKeys.UserInterface.Data;
     using EmptyKeys.UserInterface.Controls;
     using EmptyKeys.UserInterface.Controls.Primitives;
@@ -20,7 +21,7 @@ namespace EmptyKeys.UserInterface.Generated {
     using EmptyKeys.UserInterface.Themes;
     
     
-    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.6.7.0")]
+    [GeneratedCodeAttribute("Empty Keys UI Generator", "1.11.0.0")]
     public partial class ConnectToServerPage : UIRoot {
         
         private Grid e_0;
@@ -45,8 +46,17 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button GoBackBtn;
         
+        public ConnectToServerPage() : 
+                base() {
+            this.Initialize();
+        }
+        
         public ConnectToServerPage(int width, int height) : 
                 base(width, height) {
+            this.Initialize();
+        }
+        
+        private void Initialize() {
             Style style = RootStyle.CreateRootStyle();
             style.TargetType = this.GetType();
             this.Style = style;
@@ -55,7 +65,6 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private void InitializeComponent() {
             this.Background = new SolidColorBrush(new ColorW(0, 0, 0, 255));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             InitializeElementResources(this);
             // e_0 element
             this.e_0 = new Grid();
@@ -75,7 +84,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_2.Text = "Connect to a server";
             this.e_2.TextAlignment = TextAlignment.Center;
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
             this.e_2.FontSize = 36F;
             // e_3 element
@@ -93,7 +101,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_4.Text = "Address";
             this.e_4.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.e_4.TextAlignment = TextAlignment.Left;
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             this.e_4.FontFamily = new FontFamily("Karmatic Arcade");
             this.e_4.FontSize = 18F;
             DockPanel.SetDock(this.e_4, Dock.Left);
@@ -104,7 +111,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ServerAddress.MinWidth = 200F;
             this.ServerAddress.Margin = new Thickness(10F, 0F, 0F, 0F);
             this.ServerAddress.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             DockPanel.SetDock(this.ServerAddress, Dock.Right);
             // e_5 element
             this.e_5 = new DockPanel();
@@ -121,7 +127,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_6.Text = "Password";
             this.e_6.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.e_6.TextAlignment = TextAlignment.Left;
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
             this.e_6.FontFamily = new FontFamily("Karmatic Arcade");
             this.e_6.FontSize = 18F;
             DockPanel.SetDock(this.e_6, Dock.Left);
@@ -132,7 +137,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ServerPassword.MinWidth = 200F;
             this.ServerPassword.Margin = new Thickness(10F, 0F, 0F, 0F);
             this.ServerPassword.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            FontManager.Instance.AddFont("Segoe UI", 12F, FontStyle.Regular, "Segoe_UI_9_Regular");
             DockPanel.SetDock(this.ServerPassword, Dock.Right);
             // ConnectBtn element
             this.ConnectBtn = new Button();
@@ -141,7 +145,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ConnectBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
             this.ConnectBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ConnectBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this.ConnectBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.ConnectBtn.FontSize = 36F;
             this.ConnectBtn.Content = "Connect";
@@ -153,11 +156,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.GoBackBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
             this.GoBackBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.GoBackBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             this.GoBackBtn.FontFamily = new FontFamily("Karmatic Arcade");
             this.GoBackBtn.FontSize = 36F;
             this.GoBackBtn.Content = "Go back";
             this.GoBackBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {
