@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using EmptyKeys.UserInterface.Controls;
 using MPTanks.Client.Backend.Sound;
 using MPTanks.Engine.Tanks;
+using System.Linq;
 #endregion
 
 namespace MPTanks.Client.GameSandbox
@@ -183,7 +184,7 @@ namespace MPTanks.Client.GameSandbox
 
                 p.Element<Button>("controlbutton").Content = p.State<string>("Button") ?? "";
                 p.Element<Button>("controlbutton").Click += (d, e) => Exit();
-                if (p.State<string>("Header") == null)
+                if (p.State<string>("Button") == null)
                     p.Element<Button>("controlbutton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
                 else if (p.Element<Button>("controlbutton").Visibility
                         != EmptyKeys.UserInterface.Visibility.Visible) //flicker fix
@@ -299,7 +300,7 @@ namespace MPTanks.Client.GameSandbox
                 }
             }
         }
-        
+
         private void ShowMenu()
         {
             if (_isInPauseMenu) return;
@@ -378,7 +379,7 @@ namespace MPTanks.Client.GameSandbox
                 });
                 return;
             }
-            else if ( !_hasExecutedModLoaderInit)
+            else if (!_hasExecutedModLoaderInit)
             {
                 _hasExecutedModLoaderInit = true;
                 CreateGame();
@@ -400,11 +401,38 @@ namespace MPTanks.Client.GameSandbox
             if (_isInPauseMenu)
                 return; //Don't mess with the pause menu
 
-            if (Client.IsInGame && _ui.IsOnPage("settingupprompt"))
+            if (Client.IsInGame &&!Client.Game.Ended && !_ui.IsOnEmpty())
             {
                 _ui.UnwindAndEmpty();
             }
-            else if (Client.IsInGame) { ActivateGameInput(); }
+            else if (Client.IsInGame)
+            {
+                ActivateGameInput();
+                if (Client.Game.Ended)
+                {
+                    _ui.GoToPageIfNotThere("gameendedpage", page => { }, (page, state) =>
+                    {
+                        var winningTeam = Client.Game.Gamemode.WinningTeam;
+                        bool winner = (Client.Player?.Tank.Team == winningTeam);
+
+                        page.Element<TextBlock>("Header").Text = winner ? "You're Winner" : "You Tried";
+                        if (winningTeam == Engine.Gamemodes.Team.Indeterminate)
+                            page.Element<TextBlock>("Subscript").Text = "It's a draw";
+                        else if (winningTeam == Engine.Gamemodes.Team.Null)
+                            page.Element<TextBlock>("Subscript").Text = "This gamemode has a bug...";
+                        else
+                            page.Element<TextBlock>("Subscript").Text = winningTeam.TeamName + " won";
+
+                        page.Element<Image>("Star").Visibility =
+                            winner ? EmptyKeys.UserInterface.Visibility.Collapsed :
+                            EmptyKeys.UserInterface.Visibility.Visible;
+
+                        if (winningTeam?.Players != null)
+                            page.Element<TextBlock>("PlayerList").Text = string.Join("\n", winningTeam.Players.Select(a => a.Username));
+                    }, new { });
+                    _ui.UpdateState(new object());
+                }
+            }
             else
             {
                 DeactivateGameInput();
@@ -417,7 +445,7 @@ namespace MPTanks.Client.GameSandbox
                     {
                         Header = "Counting down to start...",
                         Content = $"{Client.RemainingCountdownTime.TotalSeconds.ToString("N0")} seconds remaining",
-                        Button = "Leave server"
+                        Button = (string)null
                     });
                 }
                 else

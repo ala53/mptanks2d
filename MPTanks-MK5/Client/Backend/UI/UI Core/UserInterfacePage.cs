@@ -1,4 +1,5 @@
 ﻿
+using EmptyKeys.UserInterface;
 using EmptyKeys.UserInterface.Controls;
 using EmptyKeys.UserInterface.Mvvm;
 using Microsoft.Xna.Framework;
@@ -98,7 +99,7 @@ namespace MPTanks.Client.Backend.UI
         }
 
 
-        public virtual T Element<T>(string name) where T : Control
+        public virtual T Element<T>(string name) where T : UIElement
         {
             var field = Page.GetType().GetField(name,
                 System.Reflection.BindingFlags.NonPublic |

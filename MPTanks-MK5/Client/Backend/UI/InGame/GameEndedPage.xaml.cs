@@ -30,7 +30,7 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel e_2;
         
-        private Image e_3;
+        private Image Star;
         
         private TextBlock Header;
         
@@ -75,15 +75,15 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.Name = "e_2";
             this.e_2.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_2.Orientation = Orientation.Horizontal;
-            // e_3 element
-            this.e_3 = new Image();
-            this.e_2.Children.Add(this.e_3);
-            this.e_3.Name = "e_3";
-            this.e_3.Height = 70F;
-            this.e_3.Width = 70F;
-            BitmapImage e_3_bm = new BitmapImage();
-            e_3_bm.TextureAsset = "assets/ui/imgs/star";
-            this.e_3.Source = e_3_bm;
+            // Star element
+            this.Star = new Image();
+            this.e_2.Children.Add(this.Star);
+            this.Star.Name = "Star";
+            this.Star.Height = 90F;
+            this.Star.Width = 90F;
+            BitmapImage Star_bm = new BitmapImage();
+            Star_bm.TextureAsset = "assets/ui/imgs/star";
+            this.Star.Source = Star_bm;
             // Header element
             this.Header = new TextBlock();
             this.e_2.Children.Add(this.Header);
@@ -92,26 +92,25 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Header.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.Header.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.Header.FontFamily = new FontFamily("Karmatic Arcade");
-            this.Header.FontSize = 48F;
+            this.Header.FontSize = 72F;
             // Subscript element
             this.Subscript = new TextBlock();
             this.e_1.Children.Add(this.Subscript);
             this.Subscript.Name = "Subscript";
             this.Subscript.HorizontalAlignment = HorizontalAlignment.Center;
-            this.Subscript.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.Subscript.Foreground = new SolidColorBrush(new ColorW(211, 211, 211, 255));
             this.Subscript.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.Subscript.FontFamily = new FontFamily("Karmatic Arcade");
-            this.Subscript.FontSize = 24F;
+            this.Subscript.FontSize = 40F;
             // PlayerList element
             this.PlayerList = new TextBlock();
             this.e_1.Children.Add(this.PlayerList);
             this.PlayerList.Name = "PlayerList";
             this.PlayerList.HorizontalAlignment = HorizontalAlignment.Center;
             this.PlayerList.Foreground = new SolidColorBrush(new ColorW(0, 0, 255, 255));
-            this.PlayerList.Text = "Toupe_777\nWikipedia_Troller_8\nWaffles_r_dumb";
             this.PlayerList.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.PlayerList.FontFamily = new FontFamily("Karmatic Arcade");
-            this.PlayerList.FontSize = 12F;
+            this.PlayerList.FontSize = 18F;
             ImageManager.Instance.AddImage("assets/ui/imgs/star");
             FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
@@ -120,7 +119,7 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 12F, FontStyle.Regular, "Karmatic_Arcade_9_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 40F, FontStyle.Regular, "Karmatic_Arcade_30_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

@@ -24,7 +24,7 @@ namespace MPTanks.Client.Backend.UI
         private GraphicsDevice _gd => _game.GraphicsDevice;
         private Game _game;
         public EmptyKeys.UserInterface.Engine _engine;
-        private ContentManager _content;
+        private ContentManager _fontContentManager, _soundAndImagesContentManager;
         public UserInterfacePage CurrentPage => _pages.Count > 0 ? _pages.Peek() : null;
         public object State
         {
@@ -41,13 +41,19 @@ namespace MPTanks.Client.Backend.UI
         {
             _game = game;
             _engine = new MonoGameEngine(_gd, 0, 0);
-            _content = new ContentManager(_game.Content.ServiceProvider, "assets/ui/imgs");
-            SpriteFont font = _content.Load<SpriteFont>("Segoe_UI_12_Regular");
+            _fontContentManager = new ContentManager(_game.Content.ServiceProvider, "assets/ui/imgs");
+            _soundAndImagesContentManager = new ContentManager(_game.Content.ServiceProvider, "");
+            SpriteFont font = _fontContentManager.Load<SpriteFont>("Segoe_UI_12_Regular");
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
             Empty();
         }
-        
+        public void GoToPageIfNotThere(string page, Action<UserInterfacePage> generator, Action<UserInterfacePage, dynamic> stateChangeHandler = null, dynamic state = null)
+        {
+            if (!IsOnPage(page))
+                GoToPage(page, generator, stateChangeHandler, null);
+        }
+
         public void GoToPage(string page, Action<UserInterfacePage> generator, Action<UserInterfacePage, dynamic> stateChangeHandler = null, dynamic state = null)
         {
             var pg = new UserInterfacePage(page);
@@ -59,9 +65,12 @@ namespace MPTanks.Client.Backend.UI
             pg.StateChangeHandler = stateChangeHandler;
             pg.StateObject = state;
             _pages.Push(pg);
-            FontManager.Instance.LoadFonts(_content);
-            ImageManager.Instance.LoadImages(_content);
-            SoundManager.Instance.LoadSounds(_content);
+            FontManager.Instance.LoadFonts(_fontContentManager);
+            //Hack: EmptyKeys stores the names for fonts as <FontName>
+            //while it stores images and sounds as <folderName>/<fileName>.
+            //So, we have to load from a different base directory.
+            ImageManager.Instance.LoadImages(_soundAndImagesContentManager);
+            SoundManager.Instance.LoadSounds(_soundAndImagesContentManager);
 
             generator(pg);
             if (state != null)
@@ -94,9 +103,9 @@ namespace MPTanks.Client.Backend.UI
             pg.StateChangeHandler(pg, pg.StateObject);
             _pages.Push(pg);
 
-            FontManager.Instance.LoadFonts(_content);
-            ImageManager.Instance.LoadImages(_content);
-            SoundManager.Instance.LoadSounds(_content);
+            FontManager.Instance.LoadFonts(_fontContentManager);
+            ImageManager.Instance.LoadImages(_fontContentManager);
+            SoundManager.Instance.LoadSounds(_fontContentManager);
         }
 
         public void GoBack()
@@ -118,6 +127,8 @@ namespace MPTanks.Client.Backend.UI
 
         public bool IsOnPage(string name) => CurrentPage == null ?
             false : CurrentPage.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase);
+        public bool IsOnEmpty() => CurrentPage == null ?
+            false : CurrentPage.Name.Equals("emptypage", StringComparison.InvariantCultureIgnoreCase);
 
         public void Empty()
         {

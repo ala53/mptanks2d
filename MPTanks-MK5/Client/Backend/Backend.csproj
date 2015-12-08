@@ -202,6 +202,9 @@
     <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\Karmatic_Arcade_30_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\ui\imgs\Karmatic_Arcade_36_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -247,7 +250,9 @@
     <None Include="assets\ui\imgs\Segoe_UI_9_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\star.xnb" />
+    <None Include="assets\ui\imgs\star.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
