@@ -33,6 +33,7 @@ namespace MPTanks.Client.GameSandbox
     public class GameClient : Game
     {
         GraphicsDeviceManager _graphics;
+        private BasicEffect _fx;
         private bool _graphicsDeviceIsDirty = false;
         private bool _closing;
         private bool _isInPauseMenu;
@@ -153,6 +154,8 @@ namespace MPTanks.Client.GameSandbox
                 Exit();
                 return;
             }
+
+            _fx = new BasicEffect(GraphicsDevice);
 
             //Create the user interface
             _ui = new UserInterface(this);
@@ -567,6 +570,7 @@ namespace MPTanks.Client.GameSandbox
                 _spriteBatch.End();
 
                 Diagnostics.EndMeasurement("Copy to screen", "Rendering");
+                DrawPointingDirectionTriangle();
             }
             //And draw to the screen
             GraphicsDevice.SetRenderTarget(null);
@@ -632,6 +636,69 @@ namespace MPTanks.Client.GameSandbox
                 calculatedWorldOffsetCenter.Y - (_halfViewRectangleSize.Y * _currentMotionZoomLevel),
                 (_viewRectangle.X * aspectRatio) * _currentMotionZoomLevel,
                 _viewRectangle.Y * _currentMotionZoomLevel);
+        }
+
+        private void DrawPointingDirectionTriangle()
+        {
+            if (CurrentViewedTank == null) return; 
+            //This code does exactly what it sounds like.
+            //It draws an arrow to show which direction the cursor is pointing.
+            //It's here because turning has a delayed rection (intentional) so we wanna
+            //show where the turret is going to end up.
+
+            //First, get the view rectangle
+            var viewRect = ComputeDrawRectangle(CurrentViewedTank);
+
+            //Begin drawing in that area
+            //_spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
+             //   Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, 1));
+
+            var tankPos = CurrentViewedTank.Position;
+            var lookPoint = InputDriver.GetInputState().LookDirection -MathHelper.PiOver2;
+            //Radius of circle = 5
+            //And solve the triangle
+            var cursorPos = new Vector2(
+                5f * (float)Math.Cos(lookPoint),
+                5f * (float)Math.Sin(lookPoint)
+                ) + tankPos;
+
+            //
+            //     0,.5
+            // 
+            //-0.5,-.5|0,-0.5|.5,-.5
+            //Triangle points
+            var pts = new[] {
+                new Vector2(0,0.5f ),
+                new Vector2(-0.5f),
+                new Vector2(.5f, -.5f)
+            };
+
+            pts = pts.Select(a => RotatePoint(a, lookPoint - MathHelper.PiOver2, Vector2.Zero) + cursorPos).ToArray();
+
+            _fx.Alpha = 0.33f;
+            _fx.VertexColorEnabled = true;
+            _fx.World = Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, 1);
+            foreach (var pass in _fx.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                var vpc = pts.Select(a => new VertexPositionColor(new Vector3(a, 0), Color.Red)).ToArray();
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, vpc, 0, 1);
+            }
+        }
+
+        private Vector2 RotatePoint(Vector2 point, float amount, Vector2 center)
+        {
+            point -= center;
+            float sin = (float)Math.Sin(amount), cos = (float)Math.Cos(amount);
+            var rotatedX = point.X * cos - point.Y * sin;
+            var rotatedY = point.X * sin + point.Y * cos;
+            var centered = new Vector2(rotatedX, rotatedY);
+            var transformed = centered + center;
+            return transformed;
+            //return new Vector2(
+            //    (float)(center.X + (pt.X - center.X) * Math.Cos(amount) - (pt.Y - center.Y) * Math.Sin(amount)),
+            //    (float)(center.Y + (pt.Y - center.Y) * Math.Sin(amount) + (pt.X - center.X) * Math.Cos(amount))
+            //    );
         }
     }
 }
