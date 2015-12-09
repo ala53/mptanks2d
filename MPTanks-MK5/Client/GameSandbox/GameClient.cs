@@ -64,10 +64,12 @@ namespace MPTanks.Client.GameSandbox
             : base()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.HardwareModeSwitch = false;
             Content.RootDirectory = "assets/mgcontent";
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
             _graphics.PreferMultiSampling = true;
+            _graphics.IsFullScreen = GameSettings.Instance.Fullscreen;
             _graphics.DeviceCreated += graphics_DeviceCreated;
 
             Window.AllowUserResizing = true;
@@ -88,7 +90,6 @@ namespace MPTanks.Client.GameSandbox
                 CrossDomainObject.Instance.WindowPositionY);
 
             _graphics.SynchronizeWithVerticalRetrace = GameSettings.Instance.VSync;
-            _graphics.IsFullScreen = GameSettings.Instance.Fullscreen;
             _ssaaRate = GameSettings.Instance.SSAARate;
 
             _graphicsDeviceIsDirty = true;
@@ -272,10 +273,11 @@ namespace MPTanks.Client.GameSandbox
 
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
-            if (e.Key == Keys.F11)
+            if ((e.Key == Keys.Enter && e.Modifiers.HasFlag(Starbound.Input.Modifiers.Alt)) || e.Key == Keys.F11)
             {
-                _graphics.ToggleFullScreen();
+                _graphics.IsFullScreen = !_graphics.IsFullScreen;
                 GameSettings.Instance.Fullscreen.Value = _graphics.IsFullScreen;
+                _graphicsDeviceIsDirty = true;
             }
             if (DebugDrawer != null)
             {
@@ -290,8 +292,6 @@ namespace MPTanks.Client.GameSandbox
             }
             if (e.Key == Keys.F7)
                 if (Debugger.IsAttached) Debugger.Break();
-            if (e.Key == Keys.F6)
-                Client.MessageProcessor.Diagnostics.Reset();
 
             if (e.Key == Keys.Escape)
             {
@@ -640,7 +640,7 @@ namespace MPTanks.Client.GameSandbox
 
         private void DrawPointingDirectionTriangle()
         {
-            if (CurrentViewedTank == null) return; 
+            if (CurrentViewedTank == null) return;
             //This code does exactly what it sounds like.
             //It draws an arrow to show which direction the cursor is pointing.
             //It's here because turning has a delayed rection (intentional) so we wanna
@@ -651,10 +651,10 @@ namespace MPTanks.Client.GameSandbox
 
             //Begin drawing in that area
             //_spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
-             //   Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, 1));
+            //   Matrix.CreateOrthographicOffCenter(viewRect.Left, viewRect.Right, viewRect.Bottom, viewRect.Top, -1, 1));
 
             var tankPos = CurrentViewedTank.Position;
-            var lookPoint = InputDriver.GetInputState().LookDirection -MathHelper.PiOver2;
+            var lookPoint = InputDriver.GetInputState().LookDirection - MathHelper.PiOver2;
             //Radius of circle = 5
             //And solve the triangle
             var cursorPos = new Vector2(
