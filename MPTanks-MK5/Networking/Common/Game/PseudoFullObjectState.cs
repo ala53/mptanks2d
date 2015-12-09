@@ -80,8 +80,11 @@ namespace MPTanks.Networking.Common.Game
             //Check if position changed
             if (MathHelper.Distance(lastState.Position.X, newState.Position.X) > _positionThreshold ||
                 MathHelper.Distance(lastState.Position.Y, newState.Position.Y) > _positionThreshold)
+            { 
                 PositionChanged = true;
-
+                VelocityChanged = true; //Position + Velocity must be updated together to fix some
+                //simulation bugs that occur
+            }
             //Check if restitution changed
             if (MathHelper.Distance(lastState.Restitution, newState.Restitution) > _restitutionThreshold)
                 RestitutionChanged = true;

@@ -531,58 +531,65 @@ namespace MPTanks.Client.GameSandbox
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
-            Diagnostics.BeginMeasurement("Rendering");
-
-            EnsureRenderTargetSizing();
-
-            //set the render target
-            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-            GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
-
-            if (Client?.Game != null)
+            try
             {
-                //Update the draw rectangle
-                RectangleF computedDrawRectangle = new RectangleF();
-                if (CurrentViewedTank != null)
+                if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
+                Diagnostics.BeginMeasurement("Rendering");
+
+                EnsureRenderTargetSizing();
+
+                //set the render target
+                GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+                GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
+
+                if (Client?.Game != null)
                 {
-                    UpdateCameraSwingAndMotionZoom(CurrentViewedTank, gameTime);
-                    computedDrawRectangle = ComputeDrawRectangle(CurrentViewedTank);
+                    //Update the draw rectangle
+                    RectangleF computedDrawRectangle = new RectangleF();
+                    if (CurrentViewedTank != null)
+                    {
+                        UpdateCameraSwingAndMotionZoom(CurrentViewedTank, gameTime);
+                        computedDrawRectangle = ComputeDrawRectangle(CurrentViewedTank);
+                    }
+
+                    Diagnostics.BeginMeasurement("World rendering", "Rendering");
+
+                    //Tell the game world renderer what to do
+                    GameRenderer.Game = Client.Game;
+                    GameRenderer.View = computedDrawRectangle;
+                    GameRenderer.Target = _worldRenderTarget;
+                    GameRenderer.Draw(gameTime);
+
+                    Diagnostics.EndMeasurement("World rendering", "Rendering");
+                    //And draw to screen
+                    Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
+
+                    //Blit to screen
+                    GraphicsDevice.SetRenderTarget(null);
+                    _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                        SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
+                    _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
+                    _spriteBatch.End();
+
+                    Diagnostics.EndMeasurement("Copy to screen", "Rendering");
+                    DrawPointingDirectionTriangle();
                 }
-
-                Diagnostics.BeginMeasurement("World rendering", "Rendering");
-
-                //Tell the game world renderer what to do
-                GameRenderer.Game = Client.Game;
-                GameRenderer.View = computedDrawRectangle;
-                GameRenderer.Target = _worldRenderTarget;
-                GameRenderer.Draw(gameTime);
-
-                Diagnostics.EndMeasurement("World rendering", "Rendering");
-                //And draw to screen
-                Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
-
-                //Blit to screen
+                //And draw to the screen
                 GraphicsDevice.SetRenderTarget(null);
-                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                    SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
-                _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
-                _spriteBatch.End();
 
-                Diagnostics.EndMeasurement("Copy to screen", "Rendering");
-                DrawPointingDirectionTriangle();
+                Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
+                DebugDrawer?.DrawDebugInfo(gameTime);
+                Diagnostics.EndMeasurement("Draw debug text", "Rendering");
+                //And render the draw
+                _ui.Draw(gameTime);
+
+                base.Draw(gameTime);
+                Diagnostics.EndMeasurement("Rendering");
             }
-            //And draw to the screen
-            GraphicsDevice.SetRenderTarget(null);
-
-            Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
-            DebugDrawer?.DrawDebugInfo(gameTime);
-            Diagnostics.EndMeasurement("Draw debug text", "Rendering");
-            //And render the draw
-            _ui.Draw(gameTime);
-
-            base.Draw(gameTime);
-            Diagnostics.EndMeasurement("Rendering");
+            catch
+            {
+                _graphics.CreateDevice();
+            }
         }
         private void EnsureRenderTargetSizing()
         {
