@@ -1,0 +1,20 @@
+﻿<ek:UIRoot   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:ek="clr-namespace:EmptyKeys.UserInterface.Designer;assembly=EmptyKeys.UserInterface.Designer"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="800" Background="{DynamicResource MenuPageBGBrush}">
+
+    <ek:UIRoot.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://siteoforigin:,,,/assets/ui/xaml/UITemplateDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ek:UIRoot.Resources>
+    <Grid>
+        <TextBlock x:Name="SpectatingHeader" Margin="20" Text="Spectating" FontFamily="Karmatic Arcade" FontSize="48" HorizontalAlignment="Center" Foreground="Gray" VerticalAlignment="Top"></TextBlock>
+
+    </Grid>
+</ek:UIRoot>

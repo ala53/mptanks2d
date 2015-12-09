@@ -104,8 +104,8 @@ namespace MPTanks.Client.Backend.UI
             _pages.Push(pg);
 
             FontManager.Instance.LoadFonts(_fontContentManager);
-            ImageManager.Instance.LoadImages(_fontContentManager);
-            SoundManager.Instance.LoadSounds(_fontContentManager);
+            ImageManager.Instance.LoadImages(_soundAndImagesContentManager);
+            SoundManager.Instance.LoadSounds(_soundAndImagesContentManager);
         }
 
         public void GoBack()

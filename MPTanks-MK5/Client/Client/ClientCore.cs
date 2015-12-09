@@ -403,8 +403,6 @@ namespace MPTanks.Client
                     Window.ClientBounds.Size);
 
             ui.Update(gameTime);
-            
-            Logger.Trace(Newtonsoft.Json.JsonConvert.SerializeObject(Microsoft.Xna.Framework.Input.Mouse.GetState()));
 
             base.Update(gameTime);
         }

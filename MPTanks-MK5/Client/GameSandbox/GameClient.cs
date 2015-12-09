@@ -401,7 +401,7 @@ namespace MPTanks.Client.GameSandbox
             if (_isInPauseMenu)
                 return; //Don't mess with the pause menu
 
-            if (Client.IsInGame &&!Client.Game.Ended && !_ui.IsOnEmpty())
+            if (Client.IsInGame && !Client.Game.Ended && !_ui.IsOnEmpty())
             {
                 _ui.UnwindAndEmpty();
             }
@@ -519,7 +519,7 @@ namespace MPTanks.Client.GameSandbox
         private float _currentMotionZoomLevel = 1;
         private Vector2 _currentCameraSwingOffset;
         public float _ssaaRate = 1.25f;
-        private static readonly Vector2 _viewRectangle = new Vector2(40, 40);
+        private static readonly Vector2 _viewRectangle = new Vector2(70, 70);
         private static readonly Vector2 _halfViewRectangleSize = _viewRectangle / 2f;
         private static readonly Vector2 _quarterViewRectangleSize = _viewRectangle / 4f;
         /// <summary>
