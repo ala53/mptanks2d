@@ -49,6 +49,8 @@ namespace MPTanks.Client.Backend.UI
 
         public virtual void Draw(GameTime gameTime)
         {
+            //There's some weird deadlock going on here (everything just freezes)
+            //So: we should investigate it 
             Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
 

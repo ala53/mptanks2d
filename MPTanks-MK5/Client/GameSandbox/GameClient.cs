@@ -227,6 +227,7 @@ namespace MPTanks.Client.GameSandbox
                 {
                     Username = "RRRRR",
                     UniqueId = Guid.NewGuid(),
+                    IsReady = true
                 }));
             }
             else
@@ -586,8 +587,17 @@ namespace MPTanks.Client.GameSandbox
                 base.Draw(gameTime);
                 Diagnostics.EndMeasurement("Rendering");
             }
-            catch
+            catch (Exception ex)
             {
+                //Done via reflection so as to avoid adding more dependencies to the game
+                //If we switch to open gl, then the Type.GetType call will return null and
+                //exception will be thrown. But, if it is a low level SharpDX device removed exception,
+                //we can catch, log, and continue with it
+                if (ex.GetType() != Type.GetType("SharpDX.SharpDXException"))
+                    throw;
+
+                Logger.Error("Rendering error (SharpDX.SharpDXException)", ex);
+
                 _graphics.CreateDevice();
             }
         }

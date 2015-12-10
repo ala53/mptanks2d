@@ -61,7 +61,8 @@ namespace MPTanks.Networking.Server
 
             if (action is PlayerReadyChangedAction)
             {
-
+                var act = action as PlayerReadyChangedAction;
+                player.Player.IsReady = act.IsReady;
             }
         }
 

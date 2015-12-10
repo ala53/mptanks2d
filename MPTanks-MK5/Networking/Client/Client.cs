@@ -136,7 +136,12 @@ namespace MPTanks.Networking.Client
                     //And send connection message
 
                     Status = ClientStatus.Connecting;
-                    Message = $"Connecting to server in " + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode...";
+
+                    Logger.Info($"Connecting to {Host}:{Port} (DRM Status: (" + (ZSB.DrmClient.Offline ? "Offline" : "Online") + ")");
+                    Logger.Info($"Client version {StaticSettings.VersionMajor}.{StaticSettings.VersionMinor}");
+                    Logger.Info($"Name: {ZSB.DrmClient.User.Username}, Owns premium: {ZSB.DrmClient.User.Owns(StaticSettings.MPTanksPremiumProductId)}.");
+
+                    Message = $"Connecting to {Host}:{Port} in " + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode...";
 
                     var msg = NetworkClient.CreateMessage();
                     msg.Write(ZSB.DrmClient.User.UniqueId.ToByteArray());
@@ -173,7 +178,9 @@ namespace MPTanks.Networking.Client
         public void Update(GameTime gameTime)
         {
             if (RemainingCountdownTime > TimeSpan.Zero)
+            {
                 RemainingCountdownTime -= gameTime.ElapsedGameTime;
+            }
             ProcessMessages();
             _interpolator.Apply(gameTime);
             TickCountdown(gameTime);
