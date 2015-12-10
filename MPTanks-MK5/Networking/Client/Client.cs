@@ -174,6 +174,11 @@ namespace MPTanks.Networking.Client
             return NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected;
         }
 
+        public void SetIsReady(bool ready = true)
+        {
+            MessageProcessor.SendMessage(new Common.Actions.ToServer.PlayerReadyChangedAction(ready));
+        }
+
         internal PseudoStateInterpolator _interpolator = new PseudoStateInterpolator();
         public void Update(GameTime gameTime)
         {
