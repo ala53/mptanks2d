@@ -62,6 +62,7 @@
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />
     <Compile Include="Projectiles\BasicTank\SecondaryGunProjectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tanks\BasicTankCopy.cs" />
     <Compile Include="Tanks\BasicTank.cs" />
     <None Include="assets\components\basictankmainprojectile.json" />
     <None Include="assets\components\largehouse.json" />

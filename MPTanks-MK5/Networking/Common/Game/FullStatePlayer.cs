@@ -13,7 +13,8 @@ namespace MPTanks.Networking.Common.Game
 {
     public class FullStatePlayer
     {
-        public bool IsSpectator { get; set; }
+        public bool PlayerWantsToBeSpectator { get; set; }
+        public bool GameSpectatorFlagSet { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsPremium { get; set; }
         public bool IsReady { get; set; }
@@ -44,7 +45,8 @@ namespace MPTanks.Networking.Common.Game
             Id = plr.Id;
             IsAdmin = plr.IsAdmin;
             IsPremium = plr.IsPremium;
-            IsSpectator = plr.IsSpectator;
+            GameSpectatorFlagSet = plr.IsSpectatorFlagSet;
+            PlayerWantsToBeSpectator = plr.PlayerWantsToBeSpectator;
             SpawnPoint = plr.SpawnPoint;
             TankHasCustomStyle = plr.HasCustomTankStyle;
             TankObjectId = (HasTank) ? plr.Tank.ObjectId : (ushort)0;
@@ -60,7 +62,8 @@ namespace MPTanks.Networking.Common.Game
         public static FullStatePlayer Read(NetIncomingMessage msg)
         {
             var fs = new FullStatePlayer();
-            fs.IsSpectator = msg.ReadBoolean();
+            fs.GameSpectatorFlagSet = msg.ReadBoolean();
+            fs.PlayerWantsToBeSpectator = msg.ReadBoolean();
             fs.IsAdmin = msg.ReadBoolean();
             fs.IsPremium = msg.ReadBoolean();
             fs.IsReady = msg.ReadBoolean();
@@ -91,7 +94,8 @@ namespace MPTanks.Networking.Common.Game
 
         public void Apply(NetworkPlayer player)
         {
-            player.IsSpectator = IsSpectator;
+            player.IsSpectatorFlagSet = GameSpectatorFlagSet;
+            player.PlayerWantsToBeSpectator = PlayerWantsToBeSpectator;
             player.IsAdmin = IsAdmin;
             player.IsPremium = IsPremium;
             player.IsReady = IsReady;
@@ -132,7 +136,8 @@ namespace MPTanks.Networking.Common.Game
 
         public void Write(NetOutgoingMessage msg)
         {
-            msg.Write(IsSpectator);
+            msg.Write(GameSpectatorFlagSet);
+            msg.Write(PlayerWantsToBeSpectator);
             msg.Write(IsAdmin);
             msg.Write(IsPremium);
             msg.Write(IsReady);

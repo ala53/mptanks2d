@@ -227,6 +227,7 @@ namespace MPTanks.Client.GameSandbox
                 {
                     Username = "RRRRR",
                     UniqueId = Guid.NewGuid(),
+                    SelectedTankReflectionName = "BasicTankMPCopy",
                     IsReady = true
                 }));
             }
@@ -398,7 +399,9 @@ namespace MPTanks.Client.GameSandbox
             }
 
             if (CrossDomainObject.Instance.IsGameHost)
+            {
                 Server.Update(gameTime);
+            }
 
             Client.Update(gameTime);
 

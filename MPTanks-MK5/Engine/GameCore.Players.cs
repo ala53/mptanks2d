@@ -45,16 +45,21 @@ namespace MPTanks.Engine
             new List<GamePlayer>();
         public GamePlayer AddPlayer<GamePlayer>(GamePlayer player) where GamePlayer : Engine.GamePlayer
         {
-            if (!_playerIds.Contains(player.Id))
-            {
-                _playerIds.Add(player.Id);
-                player.Game = this;
-                _playersById.Add(player.Id, player);
-            }
+                if (!_playerIds.Contains(player.Id))
+                {
+                    _playerIds.Add(player.Id);
+                    player.IsSpectator = false; //Default them to being in game except in exigent circumstances (e.g. they chose to spectate)
+                    player.Game = this;
+                    _playersById.Add(player.Id, player);
+                }
 
             if (Authoritative)
             {
-                if (Running && !Gamemode.HotJoinEnabled)
+                if (!Running)
+                {
+                    player.AllowedTankTypes = Gamemode.GetPlayerAllowedTankTypes(player);
+                }
+                else if (Running && !Gamemode.HotJoinEnabled)
                     player.IsSpectator = true; //Force spectator
                 else if (Running && Gamemode.HotJoinCanPlayerJoin(player))
                 {
@@ -75,8 +80,7 @@ namespace MPTanks.Engine
                         if (player.HasTank || player.HasSelectedTankYet) return;
                         _hotJoinPlayersWaitingForTankSelection.Remove(player);
                         SetupPlayer(player);
-                    },
-                        TimeSpan.FromMilliseconds(Settings.HotJoinTankSelectionTime));
+                    }, TimeSpan.FromMilliseconds(Settings.HotJoinTankSelectionTime));
 
                     _hotJoinPlayersWaitingForTankSelection.Add(player);
                 }
@@ -169,7 +173,7 @@ namespace MPTanks.Engine
 
         private void SetupPlayer(GamePlayer player)
         {
-            if (!player.TankSelectionIsValid) //Do the selection for them
+            if (!player.TankSelectionIsValid) //Do the selection for them if their selection is invalid
                 player.SelectedTankReflectionName = Gamemode.DefaultTankTypeReflectionName;
 
             var tank = Tank.ReflectiveInitialize(player.SelectedTankReflectionName, player, this, false);

@@ -11,8 +11,24 @@ namespace MPTanks.Engine
 {
     public class GamePlayer
     {
-        public virtual bool IsSpectator { get; set; }
-        public virtual string SelectedTankReflectionName { get; set; }
+        /// <summary>
+        /// Whether the player wants to be a spectator
+        /// </summary>
+        public virtual bool PlayerWantsToBeSpectator { get; set; }
+        /// <summary>
+        /// Whether the game wishes for them to be a spectator
+        /// </summary>
+        public bool IsSpectatorFlagSet { get; set; }
+        /// <summary>
+        /// Whether the player is in the current game
+        /// </summary>
+        public virtual bool IsSpectator { get { return IsSpectatorFlagSet || PlayerWantsToBeSpectator; } set { IsSpectatorFlagSet = value; } }
+        private string _selectedTankReflectionNameBacking;
+        public virtual string SelectedTankReflectionName
+        {
+            get { return _selectedTankReflectionNameBacking; }
+            set { _selectedTankReflectionNameBacking = value?.ToLower(); }
+        }
         public virtual bool HasSelectedTankYet => SelectedTankReflectionName != null;
         public virtual ushort Id { get; set; }
         public virtual string[] AllowedTankTypes { get; set; }
@@ -61,7 +77,7 @@ namespace MPTanks.Engine
             {
                 if (SelectedTankReflectionName == null) return false;
                 if (!HasSelectedTankYet) return false;
-                if (AllowedTankTypes == null)
+                if (AllowedTankTypes == null || AllowedTankTypes.Length == 0)
                     if (Tanks.Tank.GetAllTankTypes().Contains(SelectedTankReflectionName) &&
                         Game.Gamemode.CheckPlayerTankSelectionValid(this, SelectedTankReflectionName))
                         return true;

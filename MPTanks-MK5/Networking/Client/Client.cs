@@ -70,9 +70,27 @@ namespace MPTanks.Networking.Client
         public string Password { get; private set; }
 
         public ILogger Logger { get; set; }
-
-        public bool GameRunning { get { return Connected && GameInstance != null; } }
-        public bool IsInGame => GameRunning && Game.HasStarted && Connected;
+        
+        /// <summary>
+        /// Whether the player has chosen their tank and is ready to play the game
+        /// </summary>
+        public bool PlayerIsReady
+        {
+            get
+            {
+                if (Player as NetworkPlayer == null)
+                    return false;
+                return (Player as NetworkPlayer).IsReady;    
+            }
+            set
+            {
+                if (Player as NetworkPlayer == null)
+                    return ;
+                (Player as NetworkPlayer).IsReady = value;
+                MessageProcessor.SendMessage(new Common.Actions.ToServer.PlayerReadyChangedAction(value));
+            }
+        }
+        public bool IsInGame => GameInstance != null && Game.HasStarted && Connected;
         public NetClient(string connection, ushort port, ILogger logger = null,
             string password = null, bool connectOnInit = true)
         {
@@ -172,11 +190,6 @@ namespace MPTanks.Networking.Client
                 ProcessMessages();
 
             return NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected;
-        }
-
-        public void SetIsReady(bool ready = true)
-        {
-            MessageProcessor.SendMessage(new Common.Actions.ToServer.PlayerReadyChangedAction(ready));
         }
 
         internal PseudoStateInterpolator _interpolator = new PseudoStateInterpolator();

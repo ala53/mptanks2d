@@ -20,7 +20,7 @@ namespace MPTanks.Networking.Server
             Game.AddPlayer(player.Player);
             _players.Add(player);
 
-            //Queue the game state for them, delaying 1sec
+            //Queue the game state for them, delaying 1sec for connect messages to be processed fully
             Timers.CreateTimer(a =>
             {
                 MessageProcessor.SendPrivateMessage(player,

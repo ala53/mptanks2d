@@ -55,6 +55,7 @@ namespace MPTanks.Networking.Common.Actions.ToServer
             message.Write(InputState.MovementSpeed);
             message.Write(InputState.RotationSpeed);
 #else
+            //4 byte encoding / 32 bits
             message.Write(InputState.FirePressed);
             message.Write((byte)InputState.WeaponNumber, 2);
             message.WriteRangedSingle(InputState.LookDirection, -MathHelper.TwoPi, MathHelper.TwoPi, 10);
