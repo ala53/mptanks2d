@@ -276,8 +276,8 @@ namespace MPTanks.Client.GameSandbox
         {
             if ((e.Key == Keys.Enter && e.Modifiers.HasFlag(Starbound.Input.Modifiers.Alt)) || e.Key == Keys.F11)
             {
+                GameSettings.Instance.Fullscreen.Value = !_graphics.IsFullScreen;
                 _graphics.IsFullScreen = !_graphics.IsFullScreen;
-                GameSettings.Instance.Fullscreen.Value = _graphics.IsFullScreen;
                 _graphicsDeviceIsDirty = true;
             }
             if (DebugDrawer != null)
