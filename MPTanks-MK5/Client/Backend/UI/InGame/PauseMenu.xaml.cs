@@ -85,7 +85,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_3.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_3.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_3.Text = "MP Tanks 2D";
-            this.e_3.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_3.FontFamily = new FontFamily("JHUF");
             this.e_3.FontSize = 32F;
             // e_4 element
             this.e_4 = new Border();
@@ -101,7 +101,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ServerInfoBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.ServerInfoBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ServerInfoBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.ServerInfoBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ServerInfoBtn.FontFamily = new FontFamily("JHUF");
             this.ServerInfoBtn.FontSize = 24F;
             this.ServerInfoBtn.Content = "Server Info";
             // SettingsBtn element
@@ -111,7 +111,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.SettingsBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.SettingsBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.SettingsBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.SettingsBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.SettingsBtn.FontFamily = new FontFamily("JHUF");
             this.SettingsBtn.FontSize = 24F;
             this.SettingsBtn.Content = "Settings";
             // LeaveServerBtn element
@@ -121,22 +121,22 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LeaveServerBtn.Margin = new Thickness(10F, 0F, 10F, 10F);
             this.LeaveServerBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.LeaveServerBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.LeaveServerBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.LeaveServerBtn.FontFamily = new FontFamily("JHUF");
             this.LeaveServerBtn.FontSize = 24F;
             this.LeaveServerBtn.Content = "Leave Server";
             // e_5 element
             this.e_5 = new StackPanel();
             this.e_1.Children.Add(this.e_5);
             this.e_5.Name = "e_5";
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 40F, FontStyle.Regular, "Karmatic_Arcade_30_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 96F, FontStyle.Regular, "JHUF_72_Regular");
+            FontManager.Instance.AddFont("JHUF", 48F, FontStyle.Regular, "JHUF_36_Regular");
+            FontManager.Instance.AddFont("JHUF", 20F, FontStyle.Regular, "JHUF_15_Regular");
+            FontManager.Instance.AddFont("JHUF", 24F, FontStyle.Regular, "JHUF_18_Regular");
+            FontManager.Instance.AddFont("JHUF", 40F, FontStyle.Regular, "JHUF_30_Regular");
+            FontManager.Instance.AddFont("JHUF", 32F, FontStyle.Regular, "JHUF_24_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

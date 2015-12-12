@@ -89,7 +89,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_2.Text = "MP Tanks 2D";
-            this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_2.FontFamily = new FontFamily("JHUF");
             this.e_2.FontSize = 72F;
             // e_3 element
             this.e_3 = new StackPanel();
@@ -112,7 +112,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_5.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
             this.e_5.Text = "Email";
             this.e_5.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.e_5.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_5.FontFamily = new FontFamily("JHUF");
             this.e_5.FontSize = 18F;
             // UsernameBox element
             this.UsernameBox = new TextBox();
@@ -136,7 +136,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_7.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
             this.e_7.Text = "Password";
             this.e_7.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.e_7.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_7.FontFamily = new FontFamily("JHUF");
             this.e_7.FontSize = 18F;
             // PasswordBox element
             this.PasswordBox = new PasswordBox();
@@ -156,7 +156,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LoginBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.LoginBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.LoginBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.LoginBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.LoginBtn.FontFamily = new FontFamily("JHUF");
             this.LoginBtn.FontSize = 36F;
             this.LoginBtn.Content = "Log in";
             Binding binding_LoginBtn_Command = new Binding("HostGameCommand");
@@ -172,7 +172,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ForgotPasswordBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ForgotPasswordBtn.Padding = new Thickness(5F, 5F, 5F, 5F);
             this.ForgotPasswordBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.ForgotPasswordBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ForgotPasswordBtn.FontFamily = new FontFamily("JHUF");
             this.ForgotPasswordBtn.FontSize = 18F;
             this.ForgotPasswordBtn.Content = "Forgot your password?";
             // NoAccountBtn element
@@ -186,12 +186,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.NoAccountBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.NoAccountBtn.Padding = new Thickness(5F, 5F, 5F, 5F);
             this.NoAccountBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.NoAccountBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.NoAccountBtn.FontFamily = new FontFamily("JHUF");
             this.NoAccountBtn.FontSize = 18F;
             this.NoAccountBtn.Content = "No account?  Buy MP Tanks!";
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

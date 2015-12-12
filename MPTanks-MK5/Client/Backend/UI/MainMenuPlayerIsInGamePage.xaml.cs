@@ -72,7 +72,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_2.Text = "A game is running";
             this.e_2.TextAlignment = TextAlignment.Center;
-            this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_2.FontFamily = new FontFamily("JHUF");
             this.e_2.FontSize = 48F;
             // e_3 element
             this.e_3 = new TextBlock();
@@ -83,7 +83,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_3.Text = "You\'re in game right now.\nClose the game to get back to the main menu.\nOr, if you" +
                 "\'re absolutely sure:";
             this.e_3.TextAlignment = TextAlignment.Center;
-            this.e_3.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_3.FontFamily = new FontFamily("JHUF");
             this.e_3.FontSize = 20F;
             // ForceCloseBtn element
             this.ForceCloseBtn = new Button();
@@ -92,16 +92,16 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ForceCloseBtn.Margin = new Thickness(20F, 20F, 20F, 20F);
             this.ForceCloseBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ForceCloseBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ForceCloseBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ForceCloseBtn.FontFamily = new FontFamily("JHUF");
             this.ForceCloseBtn.Content = "Click to forcibly close game";
             this.ForceCloseBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 96F, FontStyle.Regular, "JHUF_72_Regular");
+            FontManager.Instance.AddFont("JHUF", 48F, FontStyle.Regular, "JHUF_36_Regular");
+            FontManager.Instance.AddFont("JHUF", 20F, FontStyle.Regular, "JHUF_15_Regular");
+            FontManager.Instance.AddFont("JHUF", 24F, FontStyle.Regular, "JHUF_18_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

@@ -99,7 +99,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Header.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.Header.HorizontalAlignment = HorizontalAlignment.Center;
             this.Header.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
-            this.Header.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Header.FontFamily = new FontFamily("JHUF");
             this.Header.FontSize = 36F;
             this.Header.SetResourceReference(TextBlock.ForegroundProperty, "WarningTextColor");
             // ContentT element
@@ -109,7 +109,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ContentT.Margin = new Thickness(10F, 10F, 10F, 10F);
             this.ContentT.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ContentT.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ContentT.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ContentT.FontFamily = new FontFamily("JHUF");
             this.ContentT.FontSize = 20F;
             this.ContentT.SetResourceReference(TextBlock.StyleProperty, "MenuContent");
             // e_4 element
@@ -132,7 +132,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Cancel.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Cancel.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Cancel.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.Cancel.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Cancel.FontFamily = new FontFamily("JHUF");
             this.Cancel.FontSize = 20F;
             this.Cancel.Content = "Cancel";
             Binding binding_Cancel_Visibility = new Binding("CancelButtonVisibility");
@@ -145,7 +145,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.No.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.No.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.No.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.No.FontFamily = new FontFamily("Karmatic Arcade");
+            this.No.FontFamily = new FontFamily("JHUF");
             this.No.FontSize = 20F;
             this.No.Content = "No";
             Binding binding_No_Visibility = new Binding("NoButtonVisibility");
@@ -158,7 +158,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Yes.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Yes.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Yes.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.Yes.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Yes.FontFamily = new FontFamily("JHUF");
             this.Yes.FontSize = 20F;
             this.Yes.Content = "Yes";
             Binding binding_Yes_Visibility = new Binding("YesButtonVisibility");
@@ -171,22 +171,22 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Ok.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.Ok.Padding = new Thickness(10F, 0F, 10F, 0F);
             this.Ok.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.Ok.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Ok.FontFamily = new FontFamily("JHUF");
             this.Ok.FontSize = 20F;
             this.Ok.Content = "Ok";
             Binding binding_Ok_Visibility = new Binding("OkButtonVisibility");
             this.Ok.SetBinding(Button.VisibilityProperty, binding_Ok_Visibility);
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 40F, FontStyle.Regular, "Karmatic_Arcade_30_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 16F, FontStyle.Regular, "Karmatic_Arcade_12_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 96F, FontStyle.Regular, "JHUF_72_Regular");
+            FontManager.Instance.AddFont("JHUF", 48F, FontStyle.Regular, "JHUF_36_Regular");
+            FontManager.Instance.AddFont("JHUF", 20F, FontStyle.Regular, "JHUF_15_Regular");
+            FontManager.Instance.AddFont("JHUF", 24F, FontStyle.Regular, "JHUF_18_Regular");
+            FontManager.Instance.AddFont("JHUF", 40F, FontStyle.Regular, "JHUF_30_Regular");
+            FontManager.Instance.AddFont("JHUF", 32F, FontStyle.Regular, "JHUF_24_Regular");
+            FontManager.Instance.AddFont("JHUF", 30F, FontStyle.Regular, "JHUF_22.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 16F, FontStyle.Regular, "JHUF_12_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

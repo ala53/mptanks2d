@@ -84,7 +84,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_2.Text = "Connect to a server";
             this.e_2.TextAlignment = TextAlignment.Center;
-            this.e_2.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_2.FontFamily = new FontFamily("JHUF");
             this.e_2.FontSize = 36F;
             // e_3 element
             this.e_3 = new DockPanel();
@@ -101,7 +101,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_4.Text = "Address";
             this.e_4.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.e_4.TextAlignment = TextAlignment.Left;
-            this.e_4.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_4.FontFamily = new FontFamily("JHUF");
             this.e_4.FontSize = 18F;
             DockPanel.SetDock(this.e_4, Dock.Left);
             // ServerAddress element
@@ -127,7 +127,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_6.Text = "Password";
             this.e_6.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.e_6.TextAlignment = TextAlignment.Left;
-            this.e_6.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_6.FontFamily = new FontFamily("JHUF");
             this.e_6.FontSize = 18F;
             DockPanel.SetDock(this.e_6, Dock.Left);
             // ServerPassword element
@@ -145,7 +145,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ConnectBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
             this.ConnectBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ConnectBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ConnectBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ConnectBtn.FontFamily = new FontFamily("JHUF");
             this.ConnectBtn.FontSize = 36F;
             this.ConnectBtn.Content = "Connect";
             this.ConnectBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
@@ -156,12 +156,12 @@ namespace EmptyKeys.UserInterface.Generated {
             this.GoBackBtn.Margin = new Thickness(10F, 10F, 10F, 0F);
             this.GoBackBtn.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.GoBackBtn.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.GoBackBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.GoBackBtn.FontFamily = new FontFamily("JHUF");
             this.GoBackBtn.FontSize = 36F;
             this.GoBackBtn.Content = "Go back";
             this.GoBackBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

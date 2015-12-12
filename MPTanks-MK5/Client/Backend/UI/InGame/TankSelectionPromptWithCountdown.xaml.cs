@@ -93,7 +93,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Subscript.Foreground = new SolidColorBrush(new ColorW(211, 211, 211, 255));
             this.Subscript.Text = "-0 seconds remaining to choose";
             this.Subscript.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.Subscript.FontFamily = new FontFamily("Karmatic Arcade");
+            this.Subscript.FontFamily = new FontFamily("JHUF");
             this.Subscript.FontSize = 24F;
             // e_2 element
             this.e_2 = new StackPanel();
@@ -116,7 +116,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_3.Foreground = new SolidColorBrush(new ColorW(211, 211, 211, 255));
             this.e_3.Text = "Select a tank";
             this.e_3.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.e_3.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_3.FontFamily = new FontFamily("JHUF");
             this.e_3.FontSize = 24F;
             // e_4 element
             this.e_4 = new ScrollViewer();
@@ -138,7 +138,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ConfirmButton.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ConfirmButton.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.ConfirmButton.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ConfirmButton.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ConfirmButton.FontFamily = new FontFamily("JHUF");
             this.ConfirmButton.FontSize = 24F;
             this.ConfirmButton.Content = "Confirm Selection";
             // e_5 element
@@ -151,9 +151,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.DescriptionArea.Name = "DescriptionArea";
             this.DescriptionArea.MaxWidth = 420F;
             this.DescriptionArea.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.DescriptionArea.Text = "Description:";
+            this.DescriptionArea.Text = "Description";
             this.DescriptionArea.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.DescriptionArea.FontFamily = new FontFamily("Karmatic Arcade");
+            this.DescriptionArea.FontFamily = new FontFamily("JHUF");
             this.DescriptionArea.FontSize = 16F;
             // ReadyArea element
             this.ReadyArea = new StackPanel();
@@ -167,7 +167,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_6.HorizontalAlignment = HorizontalAlignment.Center;
             this.e_6.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.e_6.Text = "You\'re ready to go!";
-            this.e_6.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_6.FontFamily = new FontFamily("JHUF");
             this.e_6.FontSize = 48F;
             // e_7 element
             this.e_7 = new TextBlock();
@@ -177,7 +177,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_7.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
             this.e_7.Text = "We\'re just waiting for some other players...";
             this.e_7.Padding = new Thickness(20F, 20F, 20F, 20F);
-            this.e_7.FontFamily = new FontFamily("Karmatic Arcade");
+            this.e_7.FontFamily = new FontFamily("JHUF");
             this.e_7.FontSize = 24F;
             // UnReadyButton element
             this.UnReadyButton = new Button();
@@ -187,20 +187,20 @@ namespace EmptyKeys.UserInterface.Generated {
             this.UnReadyButton.Background = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.UnReadyButton.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.UnReadyButton.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.UnReadyButton.FontFamily = new FontFamily("Karmatic Arcade");
+            this.UnReadyButton.FontFamily = new FontFamily("JHUF");
             this.UnReadyButton.FontSize = 24F;
             this.UnReadyButton.Content = "I lied. I\'m not ready.";
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 48F, FontStyle.Regular, "Karmatic_Arcade_36_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 20F, FontStyle.Regular, "Karmatic_Arcade_15_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 24F, FontStyle.Regular, "Karmatic_Arcade_18_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 40F, FontStyle.Regular, "Karmatic_Arcade_30_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 16F, FontStyle.Regular, "Karmatic_Arcade_12_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 96F, FontStyle.Regular, "JHUF_72_Regular");
+            FontManager.Instance.AddFont("JHUF", 48F, FontStyle.Regular, "JHUF_36_Regular");
+            FontManager.Instance.AddFont("JHUF", 20F, FontStyle.Regular, "JHUF_15_Regular");
+            FontManager.Instance.AddFont("JHUF", 24F, FontStyle.Regular, "JHUF_18_Regular");
+            FontManager.Instance.AddFont("JHUF", 40F, FontStyle.Regular, "JHUF_30_Regular");
+            FontManager.Instance.AddFont("JHUF", 32F, FontStyle.Regular, "JHUF_24_Regular");
+            FontManager.Instance.AddFont("JHUF", 30F, FontStyle.Regular, "JHUF_22.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 16F, FontStyle.Regular, "JHUF_12_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

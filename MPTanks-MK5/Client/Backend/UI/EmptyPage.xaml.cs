@@ -50,8 +50,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_0 = new Grid();
             this.Content = this.e_0;
             this.e_0.Name = "e_0";
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

@@ -182,74 +182,38 @@
     <None Include="assets\mgcontent\shadowRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic Arcade.ttf" />
-    <None Include="assets\ui\imgs\Karmatic_Arcade_12_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF.ttf" />
+    <None Include="assets\ui\imgs\JHUF_12_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_13.5_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_13.5_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_15_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_15_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_18_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_18_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_22.5_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_22.5_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_24_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_24_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_27_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_27_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_30_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_30_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_36_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_36_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_54_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_54_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_60_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_63_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_66_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_72_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Karmatic_Arcade_9_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_12_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_13.5_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_15_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_18_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_22.5_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_27_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_36_Regular.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\ui\imgs\Segoe_UI_9_Regular.xnb">
+    <None Include="assets\ui\imgs\JHUF_72_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\ui\imgs\star.xnb">
@@ -325,6 +289,8 @@
     <Content Include="assets\mgcontent\lightMaskPreCompositor.fx" />
     <Content Include="assets\mgcontent\lightMaskRenderer.fx" />
     <Content Include="assets\mgcontent\shadowRenderer.fx" />
+    <Content Include="assets\ui\imgs\JHUF-ReadMe.TXT" />
+    <Content Include="assets\ui\imgs\star.png" />
     <Content Include="fmod.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

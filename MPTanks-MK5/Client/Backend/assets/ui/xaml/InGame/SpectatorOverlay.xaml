@@ -14,7 +14,7 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
-        <TextBlock x:Name="SpectatingHeader" Margin="20" Text="Spectating" FontFamily="Karmatic Arcade" FontSize="48" HorizontalAlignment="Center" Foreground="Gray" VerticalAlignment="Top"></TextBlock>
+        <TextBlock x:Name="SpectatingHeader" Margin="20" Text="Spectating" FontFamily="JHUF" FontSize="48" HorizontalAlignment="Center" Foreground="Gray" VerticalAlignment="Top"></TextBlock>
 
     </Grid>
 </ek:UIRoot>

@@ -15,9 +15,9 @@
     </ek:UIRoot.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock x:Name="Header" Margin="20" Text="" FontFamily="Karmatic Arcade" FontSize="30" HorizontalAlignment="Center" Foreground="White"></TextBlock>
-            <TextBlock x:Name="ContentT" Foreground="Gray" Text="" FontFamily="Karmatic Arcade" FontSize="20" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
-            <Button Margin="20" Padding="10,0,10,0" Foreground="White" Background="Transparent" HorizontalAlignment="Center" FontFamily="Karmatic Arcade" x:Name="ControlButton" Style="{DynamicResource PrimaryButton}" Content=""></Button>
+            <TextBlock x:Name="Header" Margin="20" Text="" FontFamily="JHUF" FontSize="30" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+            <TextBlock x:Name="ContentT" Foreground="Gray" Text="" FontFamily="JHUF" FontSize="20" HorizontalAlignment="Center" Style="{DynamicResource MenuSubHeader}"></TextBlock>
+            <Button Margin="20" Padding="10,0,10,0" Foreground="White" Background="Transparent" HorizontalAlignment="Center" FontFamily="JHUF" x:Name="ControlButton" Style="{DynamicResource PrimaryButton}" Content=""></Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

@@ -96,7 +96,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._title.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this._title.Text = "MP Tanks 2D";
             this._title.TextAlignment = TextAlignment.Center;
-            this._title.FontFamily = new FontFamily("Karmatic Arcade");
+            this._title.FontFamily = new FontFamily("JHUF");
             this._title.FontSize = 96F;
             // _subtitle element
             this._subtitle = new TextBlock();
@@ -106,7 +106,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this._subtitle.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this._subtitle.Text = "Pre-Alpha Version";
             this._subtitle.TextAlignment = TextAlignment.Center;
-            this._subtitle.FontFamily = new FontFamily("Karmatic Arcade");
+            this._subtitle.FontFamily = new FontFamily("JHUF");
             this._subtitle.FontSize = 36F;
             // e_3 element
             this.e_3 = new StackPanel();
@@ -129,7 +129,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.HostBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.HostBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.HostBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.HostBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.HostBtn.FontFamily = new FontFamily("JHUF");
             this.HostBtn.FontSize = 36F;
             this.HostBtn.Content = "Host game";
             Binding binding_HostBtn_Command = new Binding("HostGameCommand");
@@ -144,7 +144,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.JoinBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.JoinBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.JoinBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.JoinBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.JoinBtn.FontFamily = new FontFamily("JHUF");
             this.JoinBtn.FontSize = 36F;
             this.JoinBtn.Content = "Join game";
             Binding binding_JoinBtn_Command = new Binding("JoinGameCommand");
@@ -159,7 +159,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.SettingsBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.SettingsBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.SettingsBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.SettingsBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.SettingsBtn.FontFamily = new FontFamily("JHUF");
             this.SettingsBtn.FontSize = 36F;
             this.SettingsBtn.Content = "Settings";
             Binding binding_SettingsBtn_Command = new Binding("SettingsCommand");
@@ -174,7 +174,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ExitBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ExitBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.ExitBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ExitBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ExitBtn.FontFamily = new FontFamily("JHUF");
             this.ExitBtn.FontSize = 36F;
             this.ExitBtn.Content = "Exit";
             Binding binding_ExitBtn_Command = new Binding("ExitCommand");
@@ -195,7 +195,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.MapMakerBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.MapMakerBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.MapMakerBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.MapMakerBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.MapMakerBtn.FontFamily = new FontFamily("JHUF");
             this.MapMakerBtn.FontSize = 36F;
             this.MapMakerBtn.Content = "Map Maker";
             Binding binding_MapMakerBtn_Command = new Binding("ExitCommand");
@@ -210,7 +210,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ModsPageBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.ModsPageBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.ModsPageBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.ModsPageBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.ModsPageBtn.FontFamily = new FontFamily("JHUF");
             this.ModsPageBtn.FontSize = 36F;
             this.ModsPageBtn.Content = "Mods";
             Binding binding_ModsPageBtn_Command = new Binding("ExitCommand");
@@ -225,15 +225,15 @@ namespace EmptyKeys.UserInterface.Generated {
             this.LogOutBtn.BorderBrush = new SolidColorBrush(new ColorW(255, 255, 255, 0));
             this.LogOutBtn.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.LogOutBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.LogOutBtn.FontFamily = new FontFamily("Karmatic Arcade");
+            this.LogOutBtn.FontFamily = new FontFamily("JHUF");
             this.LogOutBtn.FontSize = 36F;
             this.LogOutBtn.Content = "Log out";
             Binding binding_LogOutBtn_Command = new Binding("ExitCommand");
             this.LogOutBtn.SetBinding(Button.CommandProperty, binding_LogOutBtn_Command);
-            FontManager.Instance.AddFont("Karmatic Arcade", 36F, FontStyle.Regular, "Karmatic_Arcade_27_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 18F, FontStyle.Regular, "Karmatic_Arcade_13.5_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 72F, FontStyle.Regular, "Karmatic_Arcade_54_Regular");
-            FontManager.Instance.AddFont("Karmatic Arcade", 96F, FontStyle.Regular, "Karmatic_Arcade_72_Regular");
+            FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
+            FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
+            FontManager.Instance.AddFont("JHUF", 96F, FontStyle.Regular, "JHUF_72_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

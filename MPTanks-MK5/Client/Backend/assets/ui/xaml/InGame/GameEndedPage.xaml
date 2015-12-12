@@ -21,10 +21,10 @@
                         <BitmapImage UriSource="pack://siteoforigin:,,,/assets/ui/imgs/star.png" />
                     </Image.Source>
                 </Image>
-                <TextBlock x:Name="Header" Padding="10" FontSize="72" FontFamily="Karmatic Arcade" Foreground="White" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock x:Name="Header" Padding="10" FontSize="72" FontFamily="JHUF" Foreground="White" HorizontalAlignment="Center"></TextBlock>
             </StackPanel>
-            <TextBlock x:Name="Subscript" Padding="10" FontSize="40" FontFamily="Karmatic Arcade" Foreground="LightGray" HorizontalAlignment="Center"></TextBlock>
-            <TextBlock x:Name="PlayerList" Padding="10" FontSize="18" FontFamily="Karmatic Arcade" Foreground="Blue" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="Subscript" Padding="10" FontSize="40" FontFamily="JHUF" Foreground="LightGray" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock x:Name="PlayerList" Padding="10" FontSize="18" FontFamily="JHUF" Foreground="Blue" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

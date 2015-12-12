@@ -505,7 +505,7 @@ namespace MPTanks.Client.GameSandbox
                                     if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
                                     //not in there, so make it
                                     var btn = new Button();
-                                    btn.FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("Karmatic Arcade");
+                                    btn.FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF");
                                     btn.FontSize = 18;
                                     btn.Background = EmptyKeys.UserInterface.Media.Brushes.Transparent;
                                     btn.Foreground = EmptyKeys.UserInterface.Media.Brushes.White;
