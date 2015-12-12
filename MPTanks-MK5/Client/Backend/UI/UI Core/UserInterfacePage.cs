@@ -34,6 +34,7 @@ namespace MPTanks.Client.Backend.UI
             Name = pageName;
             //Generate an instance of the page
             Page = (UIRoot)Activator.CreateInstance(Type.GetType("EmptyKeys.UserInterface.Generated." + pageName, true, true), 0, 0);
+            Page.EnabledMultiThreadLocking = true;
         }
 
         private UserInterfacePage() { }
@@ -42,7 +43,6 @@ namespace MPTanks.Client.Backend.UI
         {
             if (isActiveWindow)
                 Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
-            Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
 
             OnUpdate(this, gameTime);
         }
@@ -51,6 +51,7 @@ namespace MPTanks.Client.Backend.UI
         {
             //There's some weird deadlock going on here (everything just freezes)
             //So: we should investigate it 
+            Page.UpdateLayout(gameTime.ElapsedGameTime.TotalMilliseconds);
             Page.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
         }
 
