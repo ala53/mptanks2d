@@ -95,6 +95,7 @@
     <Compile Include="GameObject.Events.cs" />
     <Compile Include="GameObject.Reflection.cs" />
     <Compile Include="GamePlayer.cs" />
+    <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ModuleLogger.cs" />
     <Compile Include="Logging\MultiLogger.cs" />

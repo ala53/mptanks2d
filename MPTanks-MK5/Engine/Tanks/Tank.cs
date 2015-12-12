@@ -139,7 +139,9 @@ namespace MPTanks.Engine.Tanks
 
         #region Static initialization
         private static Dictionary<string, Type> _tankTypes =
-            new Dictionary<string, Type>();
+            new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+
+        public static new IReadOnlyDictionary<string, Type> AvailableTypes => _tankTypes;
 
         public static Tank ReflectiveInitialize(string tankName, GamePlayer player, GameCore game, bool authorized, byte[] state = null)
         {

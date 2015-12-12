@@ -403,7 +403,8 @@ namespace MPTanks.Engine.Gamemodes
 
         #region Static initialization
         private static Dictionary<string, Type> _gamemodeTypes =
-            new Dictionary<string, Type>();
+            new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+        public static IReadOnlyDictionary<string, Type> AvailableTypes => _gamemodeTypes;
 
         public static Gamemode ReflectiveInitialize(string gamemodeName, GameCore game = null, byte[] state = null)
         {

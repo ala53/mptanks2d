@@ -200,7 +200,7 @@ namespace MPTanks.Client.Backend.UI
             Action<MessageBoxResult> callback = null)
         {
             if (callback == null) callback = delegate { };
-            content = string.Join("\n", ChunksUpTo(content, 30));
+            content = string.Join("\n", SplitString(content, 30));
             GoToPage(type.ToString(), (p) =>
             {
                 p.Element<TextBlock>("Header").Text = header;
@@ -252,7 +252,11 @@ namespace MPTanks.Client.Backend.UI
                 visible.ForEach(a => p.Element<Button>(a).Visibility = Visibility.Visible);
             });
         }
-        IEnumerable<string> ChunksUpTo(string stringToSplit, int maximumLineLength)
+        public static string SplitStringIntoLines(string stringToSplit, int maximumLineLength)
+        {
+            return string.Join("\n", SplitString(stringToSplit, maximumLineLength));
+        }
+        public static IEnumerable<string> SplitString(string stringToSplit, int maximumLineLength)
         {
             var words = stringToSplit.Split(' ').Concat(new[] { "" });
             return

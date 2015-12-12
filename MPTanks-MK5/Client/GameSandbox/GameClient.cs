@@ -222,12 +222,32 @@ namespace MPTanks.Client.GameSandbox
                     Port = 33132,
                     StateSyncRate = TimeSpan.FromMilliseconds(1000)
                 }, game, true, new NLogLogger(Logger.Instance));
+                //TODO: Remove this DUMMY PLAYER
+
+                /*
+
+
+
+
+
+
+                Whitespace is here to make this super obvious
+                We auto add a dummy player, but we NEED to remove it before shipping.
+
+
+
+
+
+
+
+
+                */
                 Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
                 {
                     Username = "RRRRR",
                     UniqueId = Guid.NewGuid(),
                     SelectedTankReflectionName = "BasicTankMPCopy",
-                    IsReady = true
+                    IsReady = false
                 }));
             }
             else
@@ -425,7 +445,7 @@ namespace MPTanks.Client.GameSandbox
                         if (winningTeam == Engine.Gamemodes.Team.Indeterminate)
                             page.Element<TextBlock>("Subscript").Text = "It's a draw";
                         else if (winningTeam == Engine.Gamemodes.Team.Null)
-                            page.Element<TextBlock>("Subscript").Text = "This gamemode has a bug...";
+                            page.Element<TextBlock>("Subscript").Text = "This gamemode has a bug..."; //Wow, so much faith in the game's implementation
                         else
                             page.Element<TextBlock>("Subscript").Text = winningTeam.TeamName + " won";
 
@@ -447,17 +467,26 @@ namespace MPTanks.Client.GameSandbox
                 {
                     _ui.GoToPageIfNotThere("tankselectionpromptwithcountdown", page =>
                     {
+                        page.Element<Button>("UnReadyButton").Click += (a, b) =>
+                        {
+                            page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                            page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                            page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                            Client.PlayerIsReady = false;
+                        };
                         page.Element<Button>("ConfirmButton").Click += (a, b) =>
                         {
                             page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
-                            page.Element<StackPanel>("tankoptions").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                            page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                            page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
 
                             Client.PlayerIsReady = true;
                         };
                     }, (page, state) =>
                     {
                         page.Element<TextBlock>("Subscript").Text =
-                            page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining";
+                            page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining " +
+                            (Client.PlayerIsReady ? "until start" : "to choose");
 
                         //And update tank options
                         var options = page.Element<StackPanel>("tankoptions");
@@ -471,21 +500,31 @@ namespace MPTanks.Client.GameSandbox
                                 }
                                 else
                                 {
+                                    string reflectionName = opt; //Copy to avoid problems with closures
+                                    var info = Engine.Helpers.ReflectionHelper.GetTankInfo(reflectionName);
+                                    if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
                                     //not in there, so make it
                                     var btn = new Button();
                                     btn.FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("Karmatic Arcade");
-                                    btn.FontSize = 24;
+                                    btn.FontSize = 18;
                                     btn.Background = EmptyKeys.UserInterface.Media.Brushes.Transparent;
                                     btn.Foreground = EmptyKeys.UserInterface.Media.Brushes.White;
-                                    btn.Content = opt;
-                                    btn.Name = "opt_" + opt;
-                                    btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
-                                    string str = opt;
+                                    btn.Content = info.DisplayName;
+                                    btn.Name = "opt_" + reflectionName;
+                                    btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
+                                    btn.Width = 400;
                                     btn.Click += (a, b) =>
                                     {
                                         options.Children.Select(c => (c as Button).Background = EmptyKeys.UserInterface.Media.Brushes.Transparent);
                                         btn.Background = EmptyKeys.UserInterface.Media.Brushes.Green;
-                                        Client.SelectTank(str);
+
+                                        Client.SelectTank(reflectionName);
+
+                                        if (info.DisplayDescription.Length > 0)
+                                            page.Element<TextBlock>("DescriptionArea").Text = UserInterface.SplitStringIntoLines(
+                                                "Description: " + info.DisplayDescription, 40);
+                                        else
+                                            page.Element<TextBlock>("DescriptionArea").Text = "";
                                     };
                                     options.Children.Add(btn);
                                 }

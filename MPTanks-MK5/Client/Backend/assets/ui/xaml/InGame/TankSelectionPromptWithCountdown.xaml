@@ -13,21 +13,28 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ek:UIRoot.Resources>
-    <Grid Background="#9F000000">
+    <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock x:Name="Header" Padding="10" FontSize="36" FontFamily="Karmatic Arcade" Foreground="White" HorizontalAlignment="Center">Counting down...</TextBlock>
-            </StackPanel>
-            <TextBlock x:Name="Subscript" Padding="10" FontSize="24" FontFamily="Karmatic Arcade" Foreground="LightGray" HorizontalAlignment="Center">-0 seconds remaining</TextBlock>
+            <TextBlock x:Name="Subscript" Padding="10" FontSize="24" FontFamily="Karmatic Arcade" Foreground="LightGray" HorizontalAlignment="Center">-0 seconds remaining to choose</TextBlock>
         </StackPanel>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,70,0,0">
-            <TextBlock Padding="10" FontFamily="Karmatic Arcade" Foreground="LightGray" FontSize="24" HorizontalAlignment="Center">Select a tank</TextBlock>
-            <ScrollViewer Height="200" MinWidth="400">
-                <StackPanel x:Name="TankOptions">
-                    <!--<Button FontFamily="Karmatic Arcade" FontSize="24" Foreground="Gray">Basic Tank</Button>-->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,70,0,0" x:Name="TankSelectionArea">
+                <TextBlock Padding="10" FontFamily="Karmatic Arcade" Foreground="LightGray" FontSize="24" HorizontalAlignment="Center">Select a tank</TextBlock>
+                <ScrollViewer Height="200" Width="420" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="TankOptions">
+                        <!--<Button FontFamily="Karmatic Arcade" FontSize="24" Foreground="Gray">Basic Tank</Button>-->
+                    </StackPanel>
+                </ScrollViewer>
+                <Button Padding="10" FontFamily="Karmatic Arcade" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Stretch" x:Name="ConfirmButton">Confirm Selection</Button>
+                <StackPanel>
+                    <TextBlock MaxWidth="420" Padding="10"  FontFamily="Karmatic Arcade" FontSize="16" Foreground="Gray" x:Name="DescriptionArea">Description:</TextBlock>
                 </StackPanel>
-            </ScrollViewer>
-            <Button Padding="10" FontFamily="Karmatic Arcade" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Center" x:Name="ConfirmButton">Confirm Selection</Button>
+            </StackPanel>
+            <StackPanel Visibility="Collapsed" x:Name="ReadyArea">
+                <TextBlock FontFamily="Karmatic Arcade" FontSize="48" Foreground="White" HorizontalAlignment="Center">You're ready to go!</TextBlock>
+                <TextBlock FontFamily="Karmatic Arcade" FontSize="24" Foreground="Gray" Padding="20" HorizontalAlignment="Center">We're just waiting for some other players...</TextBlock>
+                <Button Padding="10" FontFamily="Karmatic Arcade" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Center" x:Name="UnReadyButton">I lied. I'm not ready.</Button>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

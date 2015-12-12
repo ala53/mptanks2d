@@ -68,6 +68,7 @@ namespace MPTanks.Engine
         #endregion
 
         private static Dictionary<string, Type> _types = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+        public static IReadOnlyDictionary<string, Type> AvailableTypes => _types;
         private static void RegisterType<T>() where T : GameObject
         {
             //get the name

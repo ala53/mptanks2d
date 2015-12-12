@@ -186,6 +186,7 @@ namespace EmptyKeys.UserInterface.Generated {
             FontManager.Instance.AddFont("Karmatic Arcade", 40F, FontStyle.Regular, "Karmatic_Arcade_30_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 32F, FontStyle.Regular, "Karmatic_Arcade_24_Regular");
             FontManager.Instance.AddFont("Karmatic Arcade", 30F, FontStyle.Regular, "Karmatic_Arcade_22.5_Regular");
+            FontManager.Instance.AddFont("Karmatic Arcade", 16F, FontStyle.Regular, "Karmatic_Arcade_12_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

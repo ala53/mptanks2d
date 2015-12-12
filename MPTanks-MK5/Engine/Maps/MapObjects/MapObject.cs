@@ -72,7 +72,8 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         #region Static initialization
         private static Dictionary<string, Type> _objTypes =
-            new Dictionary<string, Type>();
+            new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+        public static new IReadOnlyDictionary<string, Type> AvailableTypes => _objTypes;
 
         public static MapObject ReflectiveInitialize(string objName, GameCore game, bool authorized, Vector2 position = default(Vector2), float rotation = 0, byte[] state = null)
         {
