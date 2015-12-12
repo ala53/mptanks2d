@@ -222,7 +222,6 @@ namespace MPTanks.Client.GameSandbox
                     Port = 33132,
                     StateSyncRate = TimeSpan.FromMilliseconds(1000)
                 }, game, true, new NLogLogger(Logger.Instance));
-
                 Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
                 {
                     Username = "RRRRR",
@@ -443,20 +442,65 @@ namespace MPTanks.Client.GameSandbox
             else
             {
                 DeactivateGameInput();
-                if (!_ui.IsOnPage("settingupprompt"))
-                    ShowSetupPrompt();
 
                 if (Client.IsInCountdown)
                 {
+                    _ui.GoToPageIfNotThere("tankselectionpromptwithcountdown", page =>
+                    {
+                        page.Element<Button>("ConfirmButton").Click += (a, b) =>
+                        {
+                            page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                            page.Element<StackPanel>("tankoptions").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+
+                            Client.PlayerIsReady = true;
+                        };
+                    }, (page, state) =>
+                    {
+                        page.Element<TextBlock>("Subscript").Text =
+                            page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining";
+
+                        //And update tank options
+                        var options = page.Element<StackPanel>("tankoptions");
+                        if (page.State<string[]>("TankOptions") != null)
+                            foreach (var opt in page.State<string[]>("TankOptions"))
+                            {
+                                if (options.Children.FirstOrDefault(a => a.Name == "opt_" + opt) != null)
+                                {
+                                    //already in there
+                                    //so we do nothing
+                                }
+                                else
+                                {
+                                    //not in there, so make it
+                                    var btn = new Button();
+                                    btn.FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("Karmatic Arcade");
+                                    btn.FontSize = 24;
+                                    btn.Background = EmptyKeys.UserInterface.Media.Brushes.Transparent;
+                                    btn.Foreground = EmptyKeys.UserInterface.Media.Brushes.White;
+                                    btn.Content = opt;
+                                    btn.Name = "opt_" + opt;
+                                    btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
+                                    string str = opt;
+                                    btn.Click += (a, b) =>
+                                    {
+                                        options.Children.Select(c => (c as Button).Background = EmptyKeys.UserInterface.Media.Brushes.Transparent);
+                                        btn.Background = EmptyKeys.UserInterface.Media.Brushes.Green;
+                                        Client.SelectTank(str);
+                                    };
+                                    options.Children.Add(btn);
+                                }
+                            }
+                    });
                     _ui.UpdateState(new
                     {
-                        Header = "Counting down to start...",
-                        Content = $"{Client.RemainingCountdownTime.TotalSeconds.ToString("N0")} seconds remaining",
-                        Button = (string)null
+                        TankOptions = Client.Player.AllowedTankTypes,
+                        RemainingCountdown = Client.RemainingCountdownTime.TotalSeconds
                     });
                 }
                 else
                 {
+                    if (!_ui.IsOnPage("settingupprompt"))
+                        ShowSetupPrompt();
                     switch (Client.Status)
                     {
                         case NetClient.ClientStatus.Authenticating:

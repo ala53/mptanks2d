@@ -92,5 +92,11 @@ namespace MPTanks.Networking.Client
                 }
             }
         }
+
+        public void SelectTank(string str)
+        {
+            Player.SelectedTankReflectionName = str;
+            MessageProcessor.SendMessage(new Common.Actions.ToServer.PlayerTankTypeSelectedAction(str));
+        }
     }
 }

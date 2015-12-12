@@ -14,17 +14,20 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid Background="#9F000000">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Image x:Name="Star" Width="90" Height="90">
-                    <Image.Source>
-                        <BitmapImage UriSource="pack://siteoforigin:,,,/assets/ui/imgs/star.png" />
-                    </Image.Source>
-                </Image>
-                <TextBlock x:Name="Header" Padding="10" FontSize="72" FontFamily="Karmatic Arcade" Foreground="White" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock x:Name="Header" Padding="10" FontSize="36" FontFamily="Karmatic Arcade" Foreground="White" HorizontalAlignment="Center">Counting down...</TextBlock>
             </StackPanel>
-            <TextBlock x:Name="Subscript" Padding="10" FontSize="40" FontFamily="Karmatic Arcade" Foreground="LightGray" HorizontalAlignment="Center"></TextBlock>
-            <TextBlock x:Name="PlayerList" Padding="10" FontSize="18" FontFamily="Karmatic Arcade" Foreground="Blue" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="Subscript" Padding="10" FontSize="24" FontFamily="Karmatic Arcade" Foreground="LightGray" HorizontalAlignment="Center">-0 seconds remaining</TextBlock>
+        </StackPanel>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,70,0,0">
+            <TextBlock Padding="10" FontFamily="Karmatic Arcade" Foreground="LightGray" FontSize="24" HorizontalAlignment="Center">Select a tank</TextBlock>
+            <ScrollViewer Height="200" MinWidth="400">
+                <StackPanel x:Name="TankOptions">
+                    <!--<Button FontFamily="Karmatic Arcade" FontSize="24" Foreground="Gray">Basic Tank</Button>-->
+                </StackPanel>
+            </ScrollViewer>
+            <Button Padding="10" FontFamily="Karmatic Arcade" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Center" x:Name="ConfirmButton">Confirm Selection</Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

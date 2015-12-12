@@ -137,6 +137,8 @@
     <Compile Include="UI\InGame\GameEndedPage.xaml.cs" />
     <Compile Include="UI\InGame\PauseMenu.xaml.cs" />
     <Compile Include="UI\InGame\SettingUpPrompt.xaml.cs" />
+    <Compile Include="UI\InGame\SpectatorOverlay.xaml.cs" />
+    <Compile Include="UI\InGame\TankSelectionPromptWithCountdown.xaml.cs" />
     <Compile Include="UI\LoginForm.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />

@@ -51,7 +51,7 @@ namespace MPTanks.Networking.Server
 
         private void Gamemode_StateChanged(object sender, byte[] e)
         {
-            var msg = MessagePool.Retrieve <Common.Actions.ToClient.GamemodeStateChangedAction> ();
+            var msg = MessagePool.Retrieve<Common.Actions.ToClient.GamemodeStateChangedAction>();
             msg.NewState = e;
             MessageProcessor.SendMessage(msg);
         }
