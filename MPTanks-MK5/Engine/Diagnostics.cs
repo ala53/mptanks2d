@@ -179,9 +179,6 @@ namespace MPTanks.Engine
 
         private void BeginMonitor(Measurement measurement)
         {
-            if (measurement.Stopwatch.IsRunning)
-                throw new Exception("Already monitoring");
-
             measurement.Stopwatch.Restart();
 
         }
