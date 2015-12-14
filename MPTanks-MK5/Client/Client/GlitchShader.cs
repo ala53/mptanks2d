@@ -37,6 +37,7 @@ namespace MPTanks.Client
         private TimeSpan _switchTime, _nextGlitchDirectionSwitch;
         private mode _mode;
         private Random _rng = new Random();
+        public bool Enabled { get; set; } = false;
         enum mode
         {
             disabled, glitch, breakApart
@@ -107,7 +108,7 @@ namespace MPTanks.Client
             _game.GraphicsDevice.SetRenderTarget(null);
             _sb.Begin(effect: _fx);
             _fx.Parameters["rendering"].SetValue(_rt);
-            if (_mode == mode.disabled)
+            if (_mode == mode.disabled || !Enabled)
             {
                 _fx.CurrentTechnique = _fx.Techniques["Sin"];
                 _fx.Parameters["sec"].SetValue((float)gameTime.TotalGameTime.TotalSeconds);

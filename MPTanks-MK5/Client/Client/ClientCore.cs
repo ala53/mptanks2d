@@ -152,6 +152,7 @@ namespace MPTanks.Client
         }
         private void ShowLoginPage()
         {
+            _glitch.Enabled = false;
             ui.GoToPage("loginform", (page) =>
             {
                 page.Element<TextBox>("PasswordBox").KeyDown += (a, b) =>
@@ -262,6 +263,7 @@ namespace MPTanks.Client
         }
         private void ShowMainMenu()
         {
+            _glitch.Enabled = true;
             ui.GoToPage("mainmenu", page =>
             {
                 if (ZSB.DrmClient.Offline)
