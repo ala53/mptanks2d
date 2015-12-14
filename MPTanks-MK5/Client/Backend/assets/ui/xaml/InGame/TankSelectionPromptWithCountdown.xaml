@@ -13,21 +13,23 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ek:UIRoot.Resources>
-    <Grid>
+    <Grid Background="#7F000000">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
-            <TextBlock x:Name="Subscript" Padding="10" FontSize="24" FontFamily="JHUF" Foreground="LightGray" HorizontalAlignment="Center">-0 seconds remaining to choose</TextBlock>
+            <TextBlock x:Name="Subscript" Padding="10" FontSize="48" FontFamily="JHUF" Foreground="LightGray" HorizontalAlignment="Center">0 seconds remaining to choose</TextBlock>
         </StackPanel>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,70,0,0" x:Name="TankSelectionArea">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="TankSelectionArea">
                 <TextBlock Padding="10" FontFamily="JHUF" Foreground="LightGray" FontSize="24" HorizontalAlignment="Center">Select a tank</TextBlock>
                 <ScrollViewer Height="200" Width="420" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel x:Name="TankOptions">
                         <!--<Button FontFamily="JHUF" FontSize="24" Foreground="Gray">Basic Tank</Button>-->
                     </StackPanel>
                 </ScrollViewer>
-                <Button Padding="10" FontFamily="JHUF" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Stretch" x:Name="ConfirmButton">Confirm Selection</Button>
-                <StackPanel>
-                    <TextBlock MaxWidth="420" Padding="10"  FontFamily="JHUF" FontSize="16" Foreground="Gray" x:Name="DescriptionArea">Description</TextBlock>
+                <Button Padding="10" FontFamily="JHUF" Foreground="White" Background="Transparent" FontSize="24" HorizontalAlignment="Stretch" x:Name="ConfirmButton">I'm ready</Button>
+                <StackPanel Visibility="Collapsed">
+                    <!--Added so that we don't have to worry about font issues when dynamically generating elements-->
+                    <TextBlock MaxWidth="420" Padding="10" FontFamily="JHUF" FontSize="20" Foreground="Gray"></TextBlock>
+                    <TextBlock MaxWidth="420" Padding="10" FontFamily="JHUF" FontSize="16" Foreground="Gray"></TextBlock>
                 </StackPanel>
             </StackPanel>
             <StackPanel Visibility="Collapsed" x:Name="ReadyArea">

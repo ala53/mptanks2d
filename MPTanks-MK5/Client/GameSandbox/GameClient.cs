@@ -371,15 +371,6 @@ namespace MPTanks.Client.GameSandbox
             _ui.Update(gameTime);
             SoundPlayer.Update(gameTime);
 
-            //Check for GD changes 
-            //It's done here because applychanges can cause issues
-            //when called repeatedly - Window Resize causes a stack overflow
-            if (_graphicsDeviceIsDirty)
-            {
-                _graphics.ApplyChanges();
-                _graphicsDeviceIsDirty = false;
-            }
-
             if (!_hasInitialized || _closing) return;
 
             if (Client?.Player?.Tank != null && SoundPlayer != null)
@@ -505,11 +496,32 @@ namespace MPTanks.Client.GameSandbox
                                     if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
                                     //not in there, so make it
                                     var btn = new Button();
-                                    btn.FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF");
-                                    btn.FontSize = 18;
-                                    btn.Background = EmptyKeys.UserInterface.Media.Brushes.Transparent;
-                                    btn.Foreground = EmptyKeys.UserInterface.Media.Brushes.White;
-                                    btn.Content = info.DisplayName;
+                                    //Content is a stack panel
+                                    var stackPnl = new StackPanel();
+                                    stackPnl.Orientation = EmptyKeys.UserInterface.Orientation.Vertical;
+                                    stackPnl.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
+                                    stackPnl.Children.Add(new TextBlock
+                                    {
+                                        FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
+                                        FontSize = 20,
+                                        Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
+                                        Text = info.DisplayName,
+                                        Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 0),
+                                        Width = 350,
+                                        HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch
+                                    });
+                                    stackPnl.Children.Add(new TextBlock
+                                    {
+                                        FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
+                                        FontSize = 16,
+                                        Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
+                                        Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 5),
+                                        Text = UserInterface.SplitStringIntoLines(info.DisplayDescription, 40),
+                                        HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center
+                                    });
+
+                                    btn.Background = EmptyKeys.UserInterface.Media.Brushes.Gray;
+                                    btn.Content = stackPnl;
                                     btn.Name = "opt_" + reflectionName;
                                     btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
                                     btn.Width = 400;
@@ -519,12 +531,6 @@ namespace MPTanks.Client.GameSandbox
                                         btn.Background = EmptyKeys.UserInterface.Media.Brushes.Green;
 
                                         Client.SelectTank(reflectionName);
-
-                                        if (info.DisplayDescription.Length > 0)
-                                            page.Element<TextBlock>("DescriptionArea").Text = UserInterface.SplitStringIntoLines(
-                                                "Description: " + info.DisplayDescription, 40);
-                                        else
-                                            page.Element<TextBlock>("DescriptionArea").Text = "";
                                     };
                                     options.Children.Add(btn);
                                 }
@@ -620,6 +626,16 @@ namespace MPTanks.Client.GameSandbox
         {
             try
             {
+
+                //Check for GD changes 
+                //It's done here because applychanges can cause issues
+                //when called repeatedly - Window Resize causes a stack overflow
+                if (_graphicsDeviceIsDirty)
+                {
+                    _graphics.ApplyChanges();
+                    _graphicsDeviceIsDirty = false;
+                }
+
                 if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
                 Diagnostics.BeginMeasurement("Rendering");
 
@@ -685,7 +701,7 @@ namespace MPTanks.Client.GameSandbox
                 //This should work. IDK why it doesn't
                 //_graphics.CreateDevice();
                 //So, we error out
-                System.Windows.Forms.MessageBox.Show("FATAL ERROR!", "Windows suspended the GPU and we were unable to restore the context for you.",
+                System.Windows.Forms.MessageBox.Show("Windows suspended the GPU and we were unable to recover.", "FATAL ERROR!",
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
 
                 Exit();

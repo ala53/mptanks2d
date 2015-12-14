@@ -15,7 +15,7 @@ using MPTanks.Modding;
 namespace MPTanks.CoreAssets.Tanks
 {
     [Tank("BasicTankMP", "basictank.json",
-        DisplayName = "Basic Tank", Description = "Basic Tank")]
+        DisplayName = "Basic Tank", Description = "The ephermeral \"Basic Tank\". Well rounded, but nothing special. A jack of all trades, but a master of none.")]
     public class BasicTank : Tank
     {
         private string[] _explosions = { "explosion1", "explosion2", "explosion3" };

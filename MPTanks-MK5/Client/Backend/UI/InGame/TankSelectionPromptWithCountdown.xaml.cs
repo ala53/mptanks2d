@@ -44,13 +44,15 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel e_5;
         
-        private TextBlock DescriptionArea;
-        
-        private StackPanel ReadyArea;
-        
         private TextBlock e_6;
         
         private TextBlock e_7;
+        
+        private StackPanel ReadyArea;
+        
+        private TextBlock e_8;
+        
+        private TextBlock e_9;
         
         private Button UnReadyButton;
         
@@ -78,6 +80,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_0 = new Grid();
             this.Content = this.e_0;
             this.e_0.Name = "e_0";
+            this.e_0.Background = new SolidColorBrush(new ColorW(0, 0, 0, 127));
             // e_1 element
             this.e_1 = new StackPanel();
             this.e_0.Children.Add(this.e_1);
@@ -91,10 +94,10 @@ namespace EmptyKeys.UserInterface.Generated {
             this.Subscript.Name = "Subscript";
             this.Subscript.HorizontalAlignment = HorizontalAlignment.Center;
             this.Subscript.Foreground = new SolidColorBrush(new ColorW(211, 211, 211, 255));
-            this.Subscript.Text = "-0 seconds remaining to choose";
+            this.Subscript.Text = "0 seconds remaining to choose";
             this.Subscript.Padding = new Thickness(10F, 10F, 10F, 10F);
             this.Subscript.FontFamily = new FontFamily("JHUF");
-            this.Subscript.FontSize = 24F;
+            this.Subscript.FontSize = 48F;
             // e_2 element
             this.e_2 = new StackPanel();
             this.e_0.Children.Add(this.e_2);
@@ -105,7 +108,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.TankSelectionArea = new StackPanel();
             this.e_2.Children.Add(this.TankSelectionArea);
             this.TankSelectionArea.Name = "TankSelectionArea";
-            this.TankSelectionArea.Margin = new Thickness(0F, 70F, 0F, 0F);
+            this.TankSelectionArea.Margin = new Thickness(0F, 0F, 0F, 0F);
             this.TankSelectionArea.HorizontalAlignment = HorizontalAlignment.Center;
             this.TankSelectionArea.VerticalAlignment = VerticalAlignment.Center;
             // e_3 element
@@ -140,45 +143,54 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ConfirmButton.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.ConfirmButton.FontFamily = new FontFamily("JHUF");
             this.ConfirmButton.FontSize = 24F;
-            this.ConfirmButton.Content = "Confirm Selection";
+            this.ConfirmButton.Content = "I\'m ready";
             // e_5 element
             this.e_5 = new StackPanel();
             this.TankSelectionArea.Children.Add(this.e_5);
             this.e_5.Name = "e_5";
-            // DescriptionArea element
-            this.DescriptionArea = new TextBlock();
-            this.e_5.Children.Add(this.DescriptionArea);
-            this.DescriptionArea.Name = "DescriptionArea";
-            this.DescriptionArea.MaxWidth = 420F;
-            this.DescriptionArea.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.DescriptionArea.Text = "Description";
-            this.DescriptionArea.Padding = new Thickness(10F, 10F, 10F, 10F);
-            this.DescriptionArea.FontFamily = new FontFamily("JHUF");
-            this.DescriptionArea.FontSize = 16F;
+            this.e_5.Visibility = Visibility.Collapsed;
+            // e_6 element
+            this.e_6 = new TextBlock();
+            this.e_5.Children.Add(this.e_6);
+            this.e_6.Name = "e_6";
+            this.e_6.MaxWidth = 420F;
+            this.e_6.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_6.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_6.FontFamily = new FontFamily("JHUF");
+            this.e_6.FontSize = 20F;
+            // e_7 element
+            this.e_7 = new TextBlock();
+            this.e_5.Children.Add(this.e_7);
+            this.e_7.Name = "e_7";
+            this.e_7.MaxWidth = 420F;
+            this.e_7.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_7.Padding = new Thickness(10F, 10F, 10F, 10F);
+            this.e_7.FontFamily = new FontFamily("JHUF");
+            this.e_7.FontSize = 16F;
             // ReadyArea element
             this.ReadyArea = new StackPanel();
             this.e_2.Children.Add(this.ReadyArea);
             this.ReadyArea.Name = "ReadyArea";
             this.ReadyArea.Visibility = Visibility.Collapsed;
-            // e_6 element
-            this.e_6 = new TextBlock();
-            this.ReadyArea.Children.Add(this.e_6);
-            this.e_6.Name = "e_6";
-            this.e_6.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_6.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.e_6.Text = "You\'re ready to go!";
-            this.e_6.FontFamily = new FontFamily("JHUF");
-            this.e_6.FontSize = 48F;
-            // e_7 element
-            this.e_7 = new TextBlock();
-            this.ReadyArea.Children.Add(this.e_7);
-            this.e_7.Name = "e_7";
-            this.e_7.HorizontalAlignment = HorizontalAlignment.Center;
-            this.e_7.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
-            this.e_7.Text = "We\'re just waiting for some other players...";
-            this.e_7.Padding = new Thickness(20F, 20F, 20F, 20F);
-            this.e_7.FontFamily = new FontFamily("JHUF");
-            this.e_7.FontSize = 24F;
+            // e_8 element
+            this.e_8 = new TextBlock();
+            this.ReadyArea.Children.Add(this.e_8);
+            this.e_8.Name = "e_8";
+            this.e_8.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_8.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.e_8.Text = "You\'re ready to go!";
+            this.e_8.FontFamily = new FontFamily("JHUF");
+            this.e_8.FontSize = 48F;
+            // e_9 element
+            this.e_9 = new TextBlock();
+            this.ReadyArea.Children.Add(this.e_9);
+            this.e_9.Name = "e_9";
+            this.e_9.HorizontalAlignment = HorizontalAlignment.Center;
+            this.e_9.Foreground = new SolidColorBrush(new ColorW(128, 128, 128, 255));
+            this.e_9.Text = "We\'re just waiting for some other players...";
+            this.e_9.Padding = new Thickness(20F, 20F, 20F, 20F);
+            this.e_9.FontFamily = new FontFamily("JHUF");
+            this.e_9.FontSize = 24F;
             // UnReadyButton element
             this.UnReadyButton = new Button();
             this.ReadyArea.Children.Add(this.UnReadyButton);
