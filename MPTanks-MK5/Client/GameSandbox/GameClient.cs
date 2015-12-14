@@ -607,8 +607,6 @@ namespace MPTanks.Client.GameSandbox
 
             if (GameSettings.Instance.ForceFullGCEveryFrame)
                 GC.Collect(2, GCCollectionMode.Forced, true);
-            if (GameSettings.Instance.ForceGen0GCEveryFrame)
-                GC.Collect(0, GCCollectionMode.Forced, true);
         }
 
         RenderTarget2D _worldRenderTarget;

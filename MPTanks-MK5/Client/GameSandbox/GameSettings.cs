@@ -28,7 +28,6 @@ namespace MPTanks.Client.GameSandbox
         /// framerate.
         /// </summary>
         public Setting<bool> ForceFullGCEveryFrame { get; private set; }
-        public Setting<bool> ForceGen0GCEveryFrame { get; private set; }
 
         //Where to look for assets
         public Setting<string[]> AssetSearchPaths { get; private set; }
@@ -74,42 +73,41 @@ namespace MPTanks.Client.GameSandbox
         { }
         protected override void SetDefaults()
         {
-            GameLogLocation = Setting.Create(this, "Log storage location",
-                   "Where to store runtime logs for the game. This uses NLog storage conventions." +
-                   " So, ${basedir} is the program's installation directory.",
-                   Path.Combine(ConfigDir, "gamelogs", "game.log"));
+            GameLogLocation = Setting.Path(this, "Log storage location")
+            .SetDescription("Where to store runtime logs for the game.")
+            .SetDefault(Path.Combine(ConfigDir, "gamelogs", "game.log"));
 
-            ForceFullGCEveryFrame = Setting.Create(this, "Force Full GC every frame",
-            "Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance.", false);
+            ForceFullGCEveryFrame = Setting.Bool(this, "Force Full GC every frame")
+            .SetDescription("Whether to force a full GC every frame. Useful for detecting memory leaks, terrible for performance." +
+            " (If you don't know what this is: DON'T USE IT)")
+            .SetDefault(false);
 
-            ForceGen0GCEveryFrame = Setting.Create(this, "Force Gen 0 GC every frame",
-            "Whether to force a fast GC every frame. This is rarely a significant performance problem so" +
-            " it's useful for debugging purposes. Recommended to be off but it's ok to have it on.", false);
+            ModUnpackPath = Setting.Hidden<string>(this, "Mod temp directory")
+            .SetDescription("The place to store mods that are used at runtime. In other words, this is the directory" +
+            " that *.mod files are unpacked into.")
+            .SetDefault(Path.Combine(ConfigDir, "tempmodunpack"));
 
-            ModUnpackPath = Setting.Create(this, "Mod temp directory",
-            "The place to store mods that are used at runtime. In other words, this is the directory" +
-            " that *.mod files are unpacked into.",
-            Path.Combine(ConfigDir, "tempmodunpack"));
+            ModAssetPath = Setting.Hidden<string>(this, "Mod temp directory for assets")
+            .SetDescription("The place to store mods assets that are used at runtime. In other words, this is the directory" +
+            " that *.mod files are unpacked into (but not the code).")
+            .SetDefault(Path.Combine(ConfigDir, "tempmodunpack", "assets"));
 
-            ModAssetPath = Setting.Create(this, "Mod temp directory for assets",
-                "The place to store mods assets that are used at runtime. In other words, this is the directory" +
-                " that *.mod files are unpacked into (but not the code).",
-                Path.Combine(ConfigDir, "tempmodunpack", "assets"));
+            ModMapPath = Setting.Hidden<string>(this, "Mod temp directory for maps")
+            .SetDescription("The place where maps from *.mod files are unpacked to.")
+            .SetDefault(Path.Combine(ConfigDir, "tempmodunpack", "maps"));
 
-            ModMapPath = Setting.Create(this, "Mod temp directory for maps",
-                "The place where maps from *.mod files are unpacked to.", Path.Combine(ConfigDir, "tempmodunpack", "maps"));
-
-            ModDownloadPath = Setting.Create(this, "Mod download directory",
-                "The directory to store mods downloaded from servers in.",
-                Path.Combine(ConfigDir, "mods"));
+            ModDownloadPath = Setting.Path(this, "Mod download directory")
+            .SetDescription("The directory to store mods downloaded from servers in.")
+            .SetDefault(Path.Combine(ConfigDir, "mods"));
 
 
-            CoreMods = Setting.Create(this, "Core Mods",
-                "The core mods that will be autoinjected into every game without verification." +
-                "They must be DLL files.", DefaultTrustedMods);
+            CoreMods = Setting.Hidden<string[]>(this, "Core Mods")
+            .SetDescription("The core mods that will be autoinjected into every game without verification.")
+            .SetDefault(DefaultTrustedMods);
 
-            AssetSearchPaths = Setting.Create(this, "Asset search paths", "The paths in which to look for assets assets.",
-                new[] {
+            AssetSearchPaths = Setting.Hidden<string[]>(this, "Asset search paths")
+            .SetDescription("The paths in which to look for assets assets.")
+            .SetDefault(new[] {
                     Directory.GetCurrentDirectory(), //current directory
                     Path.Combine(Directory.GetCurrentDirectory(), "assets"),
                     Path.Combine(Directory.GetCurrentDirectory(), "assets", "animations"),
@@ -121,32 +119,39 @@ namespace MPTanks.Client.GameSandbox
                     ConfigDir
                 });
 
-            PhysicsCompensationForRendering = Setting.Create(this, "Physics Skin Compensation",
-                "The amount in blocks to compensate for Farseer Physics's skin on bodies.", 0.085f);
+            PhysicsCompensationForRendering = Setting.Hidden<float>(this, "Physics Skin Compensation")
+            .SetDescription("The amount in blocks to compensate for Farseer Physics's skin on bodies.")
+            .SetDefault(0.085f);
 
-            Fullscreen = Setting.Create(this, "Fullscreen mode",
-                "Whether to render the game in fullscreen mode", false);
+            Fullscreen = Setting.Bool(this, "Fullscreen mode")
+            .SetDescription("Whether to render the game in fullscreen mode")
+            .SetDefault(false);
 
-            VSync = Setting.Create(this, "Enable vertical blank sync",
-                "Whether v-blank-sync should be enabled.", true);
+            VSync = Setting.Bool(this, "Enable vertical blank sync")
+            .SetDescription("Whether v-blank-sync should be enabled.")
+            .SetDefault(true);
 
-            Zoom = Setting.Create(this, "Game world zoom",
-                "The zoom level of the game world, relative to default.",
-                1f);
+            Zoom = Setting.Hidden<float>(this, "Game world zoom")
+            .SetDescription("The zoom level of the game world, relative to default.")
+            .SetDefault(1f);
 
-            SSAARate = Setting.Create(this, "SSAA Rate", "The amount of supersampling to do for the game images; " +
-                "higher values are better, lower values are faster.", 1.25f,
-                    1, 1.25f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 2.75f, 3f, 3.5f, 4f, 4.5f, 5f, 5.5f, 6f);
+            SSAARate = Setting.Number(this, "SSAA Rate")
+            .SetDescription("The amount of supersampling to do for the game images; " +
+            "higher values are (slightly) better, lower values are (much) faster.")
+            .SetDefault(1.25f)
+            .SetAllowedValues(1, 1.25f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 2.75f, 3f, 3.5f, 4f, 4.5f, 5f, 5.5f, 6f);
 
-            UserTankImageDownloadCache = Setting.Create(this, "Custom Tank Image Download Path",
-                "The path in which to download custom images that users make for their tanks",
-                Path.Combine(ConfigDir, "tankimages"));
+            UserTankImageDownloadCache = Setting.Path(this, "Custom Tank Image Download Path")
+            .SetDescription("The path in which to download custom images that users make for their tanks")
+            .SetDefault(Path.Combine(ConfigDir, "tankimages"));
 
-            InputDriverName = Setting.Create(this, "Input driver name",
-                "The name of the driver to use for in game input.", KeyboardMouseInputDriver.Name);
+            InputDriverName = Setting.String(this, "Input driver name")
+            .SetDescription("The name of the driver to use for in game input.")
+            .SetDefault(KeyboardMouseInputDriver.Name)
+            .SetAllowedValues(() => InputDriverBase.Drivers.Keys);
 
-            InputKeyBindings = Setting.Create<string>(this, "Input Key Bindings",
-                "The stored key bindings for the current input driver", null);
+            InputKeyBindings = Setting.Hidden<string>(this, "Input Key Bindings")
+            .SetDescription("The stored key bindings for the current input driver");
         }
     }
 }

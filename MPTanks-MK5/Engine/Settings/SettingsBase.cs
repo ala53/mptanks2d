@@ -113,6 +113,7 @@ namespace MPTanks.Engine.Settings
 
         public class Setting
         {
+            public bool IsHidden { get; protected set; }
             private string _name;
             public string Name
             {
@@ -139,12 +140,26 @@ namespace MPTanks.Engine.Settings
                     SettingsInstance.OnSettingChanged(this);
                 }
             }
-            [JsonIgnore]
-            public virtual bool HasWhitelistOfAllowedValues { get; protected set; }
-            [JsonIgnore]
-            public virtual IEnumerable<dynamic> ObjectAllowedValues { get; protected set; }
-            [JsonIgnore]
-            public virtual SettingDisplayType DisplayType { get; protected set; }
+
+            private object _default;
+
+            public virtual dynamic DefaultObjectValue
+            {
+                get
+                {
+                    return _default;
+                }
+                set
+                {
+                    _default = value;
+                }
+            }
+
+            public virtual IEnumerable<dynamic> AllowedObjectValues
+            {
+                get { return null; } //No whitelist
+            }
+
             [JsonIgnore]
             public SettingsBase SettingsInstance { get; protected set; }
 
@@ -152,69 +167,115 @@ namespace MPTanks.Engine.Settings
             {
             }
 
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, params T[] allowedValues)
-           => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType, params T[] allowedValues)
-            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, displayType);
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues)
-            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, DetectType(typeof(T)));
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
-            => Setting<T>.Create(settings, name, description, defaultValue, allowedValues, displayType);
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider)
-            => Setting<T>.Create(settings, name, description, defaultValue, valueProvider, DetectType(typeof(T)));
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider, SettingDisplayType displayType)
-            => Setting<T>.Create(settings, name, description, defaultValue, valueProvider, displayType);
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue)
-            => Setting<T>.Create(settings, name, description, defaultValue, DetectType(typeof(T)));
-
-            public static Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType)
-            => Setting<T>.Create(settings, name, description, defaultValue, displayType);
-
-            private static SettingDisplayType DetectType(Type t)
+            public static Setting<T> Create<T>(SettingsBase settings, string name) => Setting<T>.CreateInternal(settings, name);
+            /// <summary>
+            /// Creates a setting as hidden from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<TArg> Hidden<TArg>(SettingsBase provider, string name)
             {
-                if (t == typeof(int) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) ||
-                    t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong))
-                    return SettingDisplayType.Integer;
-
-                if (t == typeof(float) || t == typeof(double))
-                    return SettingDisplayType.FloatingPointNumber;
-
-                if (t == typeof(string))
-                    return SettingDisplayType.String;
-
-                if (t == typeof(string[]))
-                    return SettingDisplayType.StringArray;
-
-                if (t == typeof(bool))
-                    return SettingDisplayType.Boolean;
-
-                return SettingDisplayType.Object;
+                var st = Create<TArg>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => st.DefaultValue;
+                st._stringifier = (a) => "";
+                return st;
             }
-
-            public enum SettingDisplayType
+            /// <summary>
+            /// Creates a setting as a number from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<float> Number(SettingsBase provider, string name)
             {
-                Integer,
-                FloatingPointNumber,
-                Percentage,
-                TimeMS,
-                TimeS,
-                Path,
-                Boolean,
-                String,
-                /// <summary>
-                /// An array of strings is accepted as the value
-                /// </summary>
-                StringArray,
-                /// <summary>
-                /// ToString() is called.
-                /// </summary>
-                Object
+                var st = Create<float>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => float.Parse(a);
+                st._stringifier = (a) => a.ToString();
+                return st;
+            }
+            /// <summary>
+            /// Creates a setting as a number from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public Setting<double> NumberDouble(SettingsBase provider, string name)
+            {
+                var st = Create<double>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => double.Parse(a);
+                st._stringifier = (a) => a.ToString();
+                return st;
+            }
+            /// <summary>
+            /// Creates a setting as a number (int) from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<int> Int(SettingsBase provider, string name)
+            {
+                var st = Create<int>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => int.Parse(a);
+                st._stringifier = (a) => a.ToString();
+                return st;
+            }
+            /// <summary>
+            /// Creates a setting as a timespan from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<TimeSpan> Time(SettingsBase provider, string name)
+            {
+                var st = Create<TimeSpan>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => TimeSpan.Parse(a);
+                st._stringifier = (a) => a.ToString();
+                return st;
+            }
+            /// <summary>
+            /// Creates a setting as a bool from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<bool> Bool(SettingsBase provider, string name)
+            {
+                var st = Create<bool>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => bool.Parse(a);
+                st._stringifier = (a) => a.ToString();
+                return st;
+            }
+            /// <summary>
+            /// Marks a setting as a filesystem path from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<string> Path(SettingsBase provider, string name)
+            {
+                var st = Create<string>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => a;
+                st._stringifier = (a) => a;
+                st.SetValueVerifier(a => Directory.Exists(a) || File.Exists(a));
+                return st;
+            }
+            /// <summary>
+            /// Marks a setting as a string from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<string> String(SettingsBase provider, string name)
+            {
+                var st = Create<string>(provider, name);
+                st.IsHidden = true;
+                st._parser = (a) => a; //passthrough
+                st._stringifier = (a) => a;
+                return st;
+            }
+            /// <summary>
+            /// Marks a setting as a generic object from settings menus
+            /// </summary>
+            /// <returns></returns>
+            public static Setting<TArg> Object<TArg>(SettingsBase provider, string name, Func<string, TArg> parser, Func<TArg, string> stringifier)
+            {
+                var st = Create<TArg>(provider, name);
+                st.IsHidden = true;
+                st._parser = parser;
+                st._stringifier = stringifier;
+                return st;
             }
 
             public override string ToString()
@@ -243,74 +304,111 @@ namespace MPTanks.Engine.Settings
                 get { return _value; }
                 set
                 {
+                    if (_verifier != null && !_verifier(value))
+                    {
+                        //If the current value is allowed, leave it
+                        if (_verifier(Value)) return;
+                        //Otherwise, remove it
+                        _value = DefaultValue;
+                        return; //Disallowed
+                    }
                     _value = value;
                     SettingsInstance.OnSettingChanged(this);
                 }
             }
-            [JsonIgnore]
-            public IEnumerable<TArg> AllowedValues
+
+            public override dynamic DefaultObjectValue
+            {
+                get { return DefaultValue; }
+                set { DefaultValue = (TArg)value; }
+            }
+            public TArg DefaultValue { get; set; }
+
+            public override IEnumerable<dynamic> AllowedObjectValues
             {
                 get
                 {
-                    if (_allowedValueProvider != null) return _allowedValueProvider(this);
-                    return _allowedValues;
+                    if (_valueProvider == null) return null;
+                    return _valueProvider().Select(a => (dynamic)a);
                 }
             }
 
-            public override IEnumerable<object> ObjectAllowedValues
+            private Func<TArg, bool> _verifier;
+            private Func<IEnumerable<TArg>> _valueProvider;
+
+            public bool CheckValue(string value)
             {
-                get
-                {
-                    return AllowedValues.Select((a) => (object)a);
-                }
-                protected set
-                {
-                    _allowedValues = value
-                        .Where(a => a.GetType() == typeof(TArg) ||
-                        a.GetType().IsSubclassOf(typeof(TArg)))
-                        .Select(a => (TArg)a);
-                }
+                if (_verifier == null) return true;
+                return _verifier(_parser(value));
             }
-
-            private IEnumerable<TArg> _allowedValues;
-            private Func<Setting<TArg>, IEnumerable<TArg>> _allowedValueProvider;
-
 
             private Setting() { }
 
-            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, IEnumerable<T> allowedValues, SettingDisplayType displayType)
+            internal Func<TArg, string> _stringifier;
+            internal Func<string, TArg> _parser;
+            public string AsString()
             {
-                var setting = new Setting<T>();
-                setting.SettingsInstance = settings;
-                setting.Name = name;
-                setting.Description = description;
-                setting.Value = defaultValue;
-                setting._allowedValues = allowedValues;
-                setting.DisplayType = displayType;
-                return setting;
+                if (_stringifier == null) throw new Exception("Must set a type (Hidden(), String(), Number())");
+                return _stringifier(Value);
+            }
+            internal static Setting<TArg> CreateInternal(SettingsBase settings, string name) =>
+                new Setting<TArg>() { SettingsInstance = settings, Name = name };
+
+            public Setting<TArg> SetDescription(string desc)
+            {
+                Description = desc;
+                return this;
             }
 
-            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, Func<Setting<T>, IEnumerable<T>> valueProvider, SettingDisplayType displayType)
+            public Setting<TArg> SetName(string name)
             {
-                var setting = new Setting<T>();
-                setting.SettingsInstance = settings;
-                setting.Name = name;
-                setting.Description = description;
-                setting.Value = defaultValue;
-                setting._allowedValueProvider = valueProvider;
-                setting.DisplayType = displayType;
-                return setting;
+                Name = name;
+                return this;
             }
 
-            public static new Setting<T> Create<T>(SettingsBase settings, string name, string description, T defaultValue, SettingDisplayType displayType)
+            public Setting<TArg> SetDefault(TArg value)
             {
-                var setting = new Setting<T>();
-                setting.SettingsInstance = settings;
-                setting.Name = name;
-                setting.Description = description;
-                setting.Value = defaultValue;
-                setting.DisplayType = displayType;
-                return setting;
+                DefaultValue = value;
+                if (Equals(Value, default(TArg))) Value = value;
+                return this;
+            }
+
+            public Setting<TArg> SetAllowedValues(Func<TArg> provider)
+            {
+                SetAllowedValues(() => new[] { provider() });
+                return this;
+            }
+            public Setting<TArg> SetAllowedValues(Func<IEnumerable<TArg>> provider)
+            {
+                _valueProvider = provider;
+                if (_verifier != null)
+                    _verifier = (a) => provider().Contains(a);
+                return this;
+            }
+
+            public Setting<TArg> SetAllowedValues(IEnumerable<TArg> whitelistedValues)
+            {
+                _valueProvider = () => whitelistedValues;
+                if (_verifier != null)
+                    _verifier = (a) => whitelistedValues.Contains(a);
+                return this;
+            }
+            public Setting<TArg> SetAllowedValues(params TArg[] whitelistedValues)
+            {
+                _valueProvider = () => whitelistedValues;
+                if (_verifier != null)
+                    _verifier = (a) => whitelistedValues.Contains(a);
+                return this;
+            }
+            /// <summary>
+            /// Allows Just-in-time checking for whether an entered value is allowed
+            /// </summary>
+            /// <param name="verifier"></param>
+            /// <returns></returns>
+            public Setting<TArg> SetValueVerifier(Func<TArg, bool> verifier)
+            {
+                _verifier = verifier;
+                return this;
             }
 
             public static implicit operator TArg(Setting<TArg> my)

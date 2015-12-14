@@ -12,7 +12,7 @@ namespace MPTanks.Networking.Server
         public static ServerSettings Instance { get; private set; } =
             new ServerSettings("serversettings.json");
 
-        public Setting<float> TimeToWaitForPlayersReady { get; private set; }
+        public Setting<TimeSpan> TimeToWaitForPlayersReady { get; private set; }
 
         private ServerSettings(string file) : base(file)
         {
@@ -20,9 +20,10 @@ namespace MPTanks.Networking.Server
 
         protected override void SetDefaults()
         {
-            TimeToWaitForPlayersReady = Setting.Create(this, "Player ready wait time",
-                "Amount of time to wait for players to be ready before " +
-                "starting the game regardless of their status (give default tank).", 15000f);
+            TimeToWaitForPlayersReady = Setting.Time(this, "Player ready wait time")
+            .SetDescription("Amount of time to wait for players to be ready before " +
+                "starting the game regardless of their status (give default tank).")
+            .SetDefault(TimeSpan.FromMilliseconds(15000));
         }
     }
 }

@@ -17,28 +17,31 @@ namespace MPTanks.Engine.Settings
         public Setting<bool> TraceMode { get; private set; }
         public Setting<string> LogLevel { get; private set; }
         public Setting<string> StoredAccountInfo { get; private set; }
-
-        public Setting<string> CurrentGameVersion { get; private set; }
-
+        
         private GlobalSettings(string file) : base(file)
         {
         }
 
         protected override void SetDefaults()
         {
-            TraceMode = Setting.Create(this, "Trace mode", "Whether to run with unchained exceptions.", false);
+            TraceMode = Setting.Hidden<bool>(this, "Trace mode")
+            .SetDescription("Whether to run with unchained exceptions.")
+            .SetDefault(false);
+
+            DebugMode = Setting.Bool(this, "Debug mode")
+            .SetDescription("Whether to run the game in a debugging mode. The equivalent of #if DEBUG.")
 #if DEBUG
-            DebugMode = Setting.Create(this, "Debug mode", "Whether to run the game in a debugging mode. The equivalent of #if DEBUG.", true);
+            .SetDefault(true);
 #else
-            DebugMode = Setting.Create(this, "Debug mode", "Whether to run the game in a debugging mode. The equivalent of #if DEBUG.", false);
+            .SetDefault(false);
 #endif
-            LogLevel = Setting.Create(this, "Log Level", "The NLog Log level to run the game at (Fatal, Error, Warn, Info, Debug, Trace).",
-                DebugMode ? "Trace" : "Info");
+            LogLevel = Setting.String(this, "Log Level")
+            .SetDescription("The NLog Log level to run the game at (Fatal, Error, Warn, Info, Debug, Trace).")
+            .SetDefault(DebugMode ? "Trace" : "Info");
 
-            CurrentGameVersion = Setting.Create(this, "Game version string", "The version number of MP Tanks. DO NOT CHANGE THIS.",
-                "MPTanks " + AssemblyProductVersion);
-
-            StoredAccountInfo = Setting.Create(this, "DRM Stored Data", "The stored data from the online authentication system.", (string)null);
+            StoredAccountInfo = Setting.Hidden<string>(this, "DRM Stored Data")
+            .SetDescription("The stored data from the online authentication system.")
+            .SetDefault(null);
         }
 
         private static string AssemblyProductVersion

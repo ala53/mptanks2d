@@ -19,7 +19,7 @@ namespace MPTanks.Engine
         {
             if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
                 || newStateData.Length > Game.Settings.MaxStateChangeSize ||
-                (TimeAlive - _lastStateChange) < TimeSpan.FromMilliseconds(Game.Settings.MaxStateChangeFrequency) ||
+                (TimeAlive - _lastStateChange) < Game.Settings.MaxStateChangeFrequency ||
                 !_eventsEnabled)
                 return false;
 

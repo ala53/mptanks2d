@@ -314,7 +314,7 @@ namespace MPTanks.Engine
             deltaMs *= (float)Timescale.Fractional;
             while (deltaMs > 0)
             {
-                var tickTime = Math.Min(deltaMs, Settings.MaxDeltaTimeGameTick);
+                var tickTime = (float)Math.Min(deltaMs, Settings.MaxDeltaTimeGameTick.Value.TotalMilliseconds);
                 World.Step(tickTime / 1000);
                 deltaMs -= tickTime;
             }
@@ -322,31 +322,31 @@ namespace MPTanks.Engine
 
         private bool _hasDoneCleanup;
         private GameTime _internalGameTime = new GameTime();
-        private double _deficitGameTime;
+        private TimeSpan _timeDeficit;
         public void Update(GameTime gameTime)
         {
-            _deficitGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * Timescale.Fractional;
-            if (_deficitGameTime <= 0) return;
+            _timeDeficit += TimeSpan.FromMilliseconds(gameTime.ElapsedGameTime.TotalMilliseconds * Timescale.Fractional);
+            if (_timeDeficit <= TimeSpan.Zero) return;
             //
-            var totalGameTime = gameTime.TotalGameTime - TimeSpan.FromMilliseconds(_deficitGameTime);
+            var totalGameTime = gameTime.TotalGameTime - _timeDeficit;
             //Loop until we have fulfilled the game time deficit
-            while (_deficitGameTime > 0)
+            while (_timeDeficit > TimeSpan.Zero)
             {
                 //Figure out how big the step is
-                var tickMs = _deficitGameTime;
-                if (tickMs < Settings.MinDeltaTimeGameTick) tickMs = Settings.MinDeltaTimeGameTick;
-                if (tickMs > Settings.MaxDeltaTimeGameTick) tickMs = Settings.MaxDeltaTimeGameTick;
+                var tickTime = _timeDeficit;
+                if (tickTime < Settings.MinDeltaTimeGameTick) tickTime = Settings.MinDeltaTimeGameTick;
+                if (tickTime > Settings.MaxDeltaTimeGameTick) tickTime = Settings.MaxDeltaTimeGameTick;
                 //Build the gametime instance
-                _internalGameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(tickMs);
+                _internalGameTime.ElapsedGameTime = tickTime;
                 _internalGameTime.TotalGameTime = totalGameTime;
                 //Do the tick
                 DoUpdate(_internalGameTime);
 
                 //And correct the total game time
-                totalGameTime += TimeSpan.FromMilliseconds(tickMs);
+                totalGameTime += tickTime;
 
                 //Subtract from the deficit
-                _deficitGameTime -= tickMs;
+                _timeDeficit -= tickTime;
                 //...and repeat
             }
         }
@@ -399,7 +399,7 @@ namespace MPTanks.Engine
         private bool IsStillInPostGamePhysicsPhase()
         {
             return (Time - _gameEndedTime)
-                < TimeSpan.FromMilliseconds(Settings.TimePostGameToContinueRunning);
+                < Settings.TimePostGameToContinueRunning;
         }
 
         /// <summary>

@@ -30,6 +30,7 @@ namespace MPTanks.Client
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            ClientSettings.Instance.GetAllSettings();
             Logger.Info("Initialized.");
 
             using (var gm = new ClientCore())

@@ -77,7 +77,7 @@ namespace MPTanks.Engine
                         if (player.HasTank || player.HasSelectedTankYet) return;
                         _hotJoinPlayersWaitingForTankSelection.Remove(player);
                         SetupPlayer(player);
-                    }, TimeSpan.FromMilliseconds(Settings.HotJoinTankSelectionTime));
+                    }, Settings.HotJoinTankSelectionTime);
 
                     _hotJoinPlayersWaitingForTankSelection.Add(player);
                 }

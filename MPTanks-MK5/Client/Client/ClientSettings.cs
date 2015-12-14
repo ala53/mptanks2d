@@ -26,24 +26,25 @@ namespace MPTanks.Client
 
         protected override void SetDefaults()
         {
-            ModSearchPaths = Setting.Create(this, "Mod search paths", "The paths in which to search for packed *.mod files.",
-                new[] {
+            ModSearchPaths = Setting.Hidden<string[]>(this, "Mod search paths")
+            .SetDescription("The paths in which to search for packed *.mod files.")
+            .SetDefault(new[] {
                     Path.Combine(Directory.GetCurrentDirectory(), "mods"),
                     Path.Combine(ConfigDir, "mods")
                 });
 
-            ClientLogLocation = Setting.Create(this, "Client log directory",
-                "The directory where the client (menus and watchdog) logs are stored.",
-                Path.Combine(ConfigDir, "clientlogs", "client.log"));
+            ClientLogLocation = Setting.Path(this, "Client log directory")
+            .SetDescription("The directory where the client (menus and watchdog) logs are stored.")
+            .SetDefault(Path.Combine(ConfigDir, "clientlogs", "client.log"));
 
-            SandboxGames = Setting.Create(this, "Sandbox servers and game instances",
-                "WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. " +
-                "This says whether to run game instances in an isolated appdomain.", true);
+            SandboxGames = Setting.Bool(this, "Sandbox servers and game instances")
+            .SetDescription("WARNING! SIGNIFICANT USABILITY IMPLICATIONS! Disabling this will crash the game when you leave a server. ")
+            .SetDefault(true);
 
-            StoredServerAddress = Setting.Create(this, "\"Join server\" stored user address", "", "localhost:33132");
+            StoredServerAddress = Setting.Hidden<string>(this, "\"Join server\" stored user address").SetDefault("");
 
-            WindowRectangle = Setting.Create(this, "Window Rectangle", "The location and size of the MPTanks window on screen",
-                new Rectangle(0, 0, 800, 600));
+            WindowRectangle = Setting.Hidden<Rectangle>(this, "Window Rectangle")
+            .SetDefault(new Rectangle(100, 100, 800, 480));
         }
 
     }

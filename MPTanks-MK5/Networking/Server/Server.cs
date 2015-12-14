@@ -130,8 +130,7 @@ namespace MPTanks.Networking.Server
         }
         public void SetGame(GameCore game)
         {
-            GameStartRemainingTimeout = TimeSpan.FromMilliseconds(
-                ServerSettings.Instance.TimeToWaitForPlayersReady);
+            GameStartRemainingTimeout = ServerSettings.Instance.TimeToWaitForPlayersReady;
             _disablePropertyNotifications = true;
             foreach (var player in Players)
             {

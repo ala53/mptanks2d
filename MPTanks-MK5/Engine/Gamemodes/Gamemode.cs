@@ -192,7 +192,7 @@ namespace MPTanks.Engine.Gamemodes
         {
             if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
                 || newStateData.Length > Game.Settings.MaxStateChangeSize ||
-                (Game.Time - _lastStateChange).TotalMilliseconds < Game.Settings.MaxStateChangeFrequency)
+                (Game.Time - _lastStateChange) < Game.Settings.MaxStateChangeFrequency)
                 return false;
 
             _args.Gamemode = this;

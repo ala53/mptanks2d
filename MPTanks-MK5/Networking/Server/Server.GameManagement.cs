@@ -10,8 +10,7 @@ namespace MPTanks.Networking.Server
     public partial class Server
     {
         public bool GameStartTimeoutHasEnded => GameStartRemainingTimeout <= TimeSpan.Zero;
-        public TimeSpan GameStartRemainingTimeout { get; private set; }
-            = TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady);
+        public TimeSpan GameStartRemainingTimeout { get; private set; } = ServerSettings.Instance.TimeToWaitForPlayersReady;
         public event EventHandler<TimeSpan> OnCountdownStarted = delegate { };
         public event EventHandler<TimeSpan> OnCountdownStopped = delegate { };
 
@@ -63,7 +62,7 @@ namespace MPTanks.Networking.Server
         {
             if (!Game.HasEnoughPlayersToStart)
             {
-                var ttw = TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady);
+                var ttw = ServerSettings.Instance.TimeToWaitForPlayersReady;
                 if (GameStartRemainingTimeout != ttw)
                 {
                     //Send a countdown notification
@@ -74,8 +73,7 @@ namespace MPTanks.Networking.Server
             }
             else
             {
-                if (GameStartRemainingTimeout ==
-                    TimeSpan.FromMilliseconds(ServerSettings.Instance.TimeToWaitForPlayersReady))
+                if (GameStartRemainingTimeout == ServerSettings.Instance.TimeToWaitForPlayersReady)
                     OnCountdownStarted(this, GameStartRemainingTimeout);
 
                 bool allPlayersReady = true;

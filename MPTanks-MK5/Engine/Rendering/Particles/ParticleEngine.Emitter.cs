@@ -249,34 +249,34 @@ namespace MPTanks.Engine.Rendering.Particles
         }
 
         private volatile bool _updating = false;
-        private double _deficitMs = 0;
+        private TimeSpan _timeDeficit;
         private GameTime _internalGameTime = new GameTime();
 
         private void ProcessEmitters(GameTime gameTime)
         {
             //Track the deficit in milliseconds so we can do multiple steps for 1 frame if necessary
-            _deficitMs += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (_deficitMs <= 0) return; //if we are over on frame time, just do nothing
+            _timeDeficit += gameTime.ElapsedGameTime;
+            if (_timeDeficit <= TimeSpan.Zero) return; //if we are over on frame time, just do nothing
             //And then do the update loop
             _updating = true;
 
             //Keep track of the "totalGameTime"
-            var totalTime = gameTime.TotalGameTime - TimeSpan.FromMilliseconds(_deficitMs);
+            var totalTime = gameTime.TotalGameTime - _timeDeficit;
 
-            while (_deficitMs > 0) //otherwise, loop and do all the ticks
+            while (_timeDeficit > TimeSpan.Zero) //otherwise, loop and do all the ticks
             {
-                double tickMs = _deficitMs;
-                if (tickMs >= Game.Settings.ParticleEmitterMaxDeltaTime) //handle a disproportionately large tick time
-                    tickMs = Game.Settings.ParticleEmitterMaxDeltaTime; //and do multiple steps if necessary
+                var tickTime = _timeDeficit;
+                if (tickTime >= Game.Settings.ParticleEmitterMaxDeltaTime) //handle a disproportionately large tick time
+                    tickTime = Game.Settings.ParticleEmitterMaxDeltaTime; //and do multiple steps if necessary
                 //Set the internal gametime instance so we can pass the correct tick time
-                _internalGameTime.ElapsedGameTime = TimeSpan.FromMilliseconds(tickMs);
+                _internalGameTime.ElapsedGameTime =tickTime;
                 _internalGameTime.TotalGameTime = totalTime;
                 //And do the tick 
                 ProcessEmittersTicked(_internalGameTime);
                 //And subtract the tick time so we have an accurate clock
-                _deficitMs -= tickMs;
+                _timeDeficit -= tickTime;
                 //And the total time
-                totalTime += TimeSpan.FromMilliseconds(tickMs);
+                totalTime += tickTime;
             }
 
             _updating = false;
