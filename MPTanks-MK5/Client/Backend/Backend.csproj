@@ -166,6 +166,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="assets\mgcontent\chromaticaberration.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\mgcontent\componentRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -284,6 +287,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\mgcontent\chromaticaberration.fx" />
     <Content Include="assets\mgcontent\componentRenderer.fx" />
     <Content Include="assets\mgcontent\fxaa3.fx" />
     <Content Include="assets\mgcontent\lightMaskPreCompositor.fx" />

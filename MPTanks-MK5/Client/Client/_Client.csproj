@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="ClientSettings.cs" />
     <Compile Include="ClientCore.cs" />
+    <Compile Include="GlitchShader.cs" />
     <Compile Include="InGame\LiveGame.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />

@@ -72,12 +72,16 @@ namespace AssetCompileHelper
 
 			Console.WriteLine("Executing mgcb.exe " + cmdArgs);
             Process prc;
+            ProcessStartInfo inf;
 
             if (mono)
-                prc = Process.Start("mono", $"\"{mgcbPath}\" {cmdArgs}");
+                inf =new  ProcessStartInfo ("mono", $"\"{mgcbPath}\" {cmdArgs}");
             else
-                prc = Process.Start(mgcbPath,
+                inf = new ProcessStartInfo(mgcbPath,
                    cmdArgs);
+            inf.UseShellExecute = false;
+            prc = new Process { StartInfo = inf };
+            prc.Start();
             prc.WaitForExit();
 
             if (prc.ExitCode != 0) ok = false;
@@ -85,6 +89,8 @@ namespace AssetCompileHelper
 
             output += $"Finished (ok: {ok})";
             File.WriteAllText("asset_compile_helper_log.log", output);
+            if (!ok)
+                File.Delete("asset_md5s.json");
             return ok ? 0 : -2;
         }
 

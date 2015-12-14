@@ -27,6 +27,7 @@ namespace MPTanks.Client
         private LiveGame _activeGame;
 
         private bool sizeDirty = true;
+        private GlitchShader _glitch;
         UserInterface ui;
 
         public Point WindowSize
@@ -59,7 +60,7 @@ namespace MPTanks.Client
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "mgcontent";
+            Content.RootDirectory = "assets/mgcontent";
             graphics.PreparingDeviceSettings += graphics_PreparingDeviceSettings;
             graphics.DeviceCreated += graphics_DeviceCreated;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
@@ -135,6 +136,7 @@ namespace MPTanks.Client
 
             ui = new UserInterface(this);
 
+            _glitch = new GlitchShader(this);
             //Init
             try
             { ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo); }
@@ -407,16 +409,45 @@ namespace MPTanks.Client
             base.Update(gameTime);
         }
 
+        private Color[] _possibleBackgroundColors = {
+            Color.DarkSlateGray, Color.Blue,
+            Color.MonoGameOrange, Color.Black,
+            Color.DeepSkyBlue, Color.Aquamarine,
+            Color.Red, Color.RosyBrown };
+        private Color _beginBackgroundColor, _endBackgroundColor;
+        private TimeSpan _backgroundTransitionStart = TimeSpan.FromSeconds(-100);
+        private Random _backgroundColorRng = new Random();
+        private void BlendBackgroundColor(GameTime gameTime)
+        {
+            var transitionLength = TimeSpan.FromSeconds(5);
+            var amountTransitioned =
+                (gameTime.TotalGameTime - _backgroundTransitionStart).TotalSeconds / transitionLength.TotalSeconds;
+            if (amountTransitioned > 1)
+            {
+                _backgroundTransitionStart = gameTime.TotalGameTime;
+                amountTransitioned = 0;
+                _beginBackgroundColor = _endBackgroundColor;
+                _endBackgroundColor = 
+                    _possibleBackgroundColors[_backgroundColorRng.Next(0, _possibleBackgroundColors.Length)];
+            }
+
+            var lerped = Color.Lerp(_beginBackgroundColor, _endBackgroundColor, (float)amountTransitioned);
+            ui.CurrentPage.Page.Background = new SolidColorBrush(new ColorW(lerped.R, lerped.G, lerped.B));
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            BlendBackgroundColor(gameTime);
+            _glitch.BeginDraw();
             GraphicsDevice.Clear(new Color(15, 15, 15, 255));
 
             ui.Draw(gameTime);
 
+            _glitch.Draw(gameTime);
             base.Draw(gameTime);
         }
     }
