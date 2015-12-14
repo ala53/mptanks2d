@@ -10,7 +10,13 @@ sampler samp = sampler_state {
 	AddressV = WRAP;
 };
 
-float4 PixelShaderFunction(float2 texCoord: TEXCOORD0) : SV_Target0
+float4 GlitchOutFuncPS(float2 texCoord: TEXCOORD0) : SV_Target0
+{
+	return float4(tex2D(samp, texCoord + offsetR).r,
+	tex2D(samp, texCoord + offsetG).g,
+		tex2D(samp, texCoord + offsetB).b, 1);
+}
+float4 AberrateFuncPS(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 texCoord: TEXCOORD0) : SV_Target0
 {
 	return float4(tex2D(samp, texCoord + offsetR).r,
 	tex2D(samp, texCoord + offsetG).g,
@@ -23,14 +29,25 @@ float4 SinFuncPS(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 texCoo
 	return tex2D(samp, texCoord);
 }
 
+technique GlitchOut
+{
+	pass Pass1
+	{
+#if SM4
+		PixelShader = compile ps_4_0_level_9_1 GlitchOutFuncPS();
+#else
+		PixelShader = compile ps_2_0 GlitchOutFuncPS();
+#endif
+	}
+}
 technique Aberrate
 {
 	pass Pass1
 	{
 #if SM4
-		PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+		PixelShader = compile ps_4_0_level_9_1 AberrateFuncPS();
 #else
-		PixelShader = compile ps_2_0 PixelShaderFunction();
+		PixelShader = compile ps_2_0 AberrateFuncPS();
 #endif
 	}
 }
