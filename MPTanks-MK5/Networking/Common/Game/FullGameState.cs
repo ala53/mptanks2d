@@ -159,7 +159,16 @@ namespace MPTanks.Networking.Common.Game
         {
             var state = new FullGameState();
 
-            state.SetPlayers(game.Players.Select(x => x as NetworkPlayer).Where(a => a != null).ToList());
+            //Be extra careful: this may cause a race condition: players are added from another thread and may be added while in the enumeration
+            //which crashes the enumerator. If so, just start again
+            try
+            { state.SetPlayers(game.Players.Select(x => x as NetworkPlayer).Where(a => a != null).ToList()); }
+            catch (InvalidOperationException)
+            {
+                //Start over, a player was added
+                game.Logger.Error("[FullGameState.Create()] Recovering from player addition");
+                return Create(game);
+            }
             state.SetObjects(game);
 
             foreach (var mod in ModDatabase.LoadedModules)
@@ -199,8 +208,18 @@ namespace MPTanks.Networking.Common.Game
 
         private void SetObjects(GameCore game)
         {
-            foreach (var obj in game.GameObjects)
-                ObjectStates.Add(new FullObjectState(obj.FullState));
+            //If an object is added, we need to recover by restarting the method 
+            //(collection will have been modified)
+            try
+            {
+                foreach (var obj in game.GameObjects)
+                    ObjectStates.Add(new FullObjectState(obj.FullState));
+            } 
+            catch (InvalidOperationException)
+            {
+                ObjectStates.Clear();
+                SetObjects(game);
+            }
         }
 
 

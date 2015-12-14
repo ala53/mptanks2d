@@ -67,6 +67,7 @@ namespace MPTanks.Client
                         _mode = mode.glitch;
                         break;
                 }
+
                 if (_mode == mode.glitch)
                     _switchTime = gameTime.TotalGameTime + TimeSpan.FromSeconds(_rng.NextDouble() / 2f); //max .5sec of glitch
 
@@ -76,33 +77,33 @@ namespace MPTanks.Client
                     _shiftR = Vector2.Zero;
                     _shiftG = Vector2.Zero;
                     _shiftB = Vector2.Zero;
-                    _switchTime = gameTime.TotalGameTime + TimeSpan.FromMilliseconds(_rng.NextDouble() * 2.5);
+                    _switchTime = gameTime.TotalGameTime + TimeSpan.FromSeconds(_rng.NextDouble() * 1.5);
                 }
             }
             if (gameTime.TotalGameTime > _nextGlitchDirectionSwitch && _mode == mode.glitch)
             {
 
-                _shiftR = new Vector2((float)_rng.NextDouble() / 4, (float)_rng.NextDouble() / 4);
-                _shiftG = new Vector2((float)_rng.NextDouble() / 4, (float)_rng.NextDouble() / 4);
-                _shiftB = new Vector2((float)_rng.NextDouble() / 4, (float)_rng.NextDouble() / 4);
+                _shiftR = new Vector2((float)_rng.NextDouble() / 2, (float)_rng.NextDouble() / 2);
+                _shiftG = new Vector2((float)_rng.NextDouble() / 2, (float)_rng.NextDouble() / 2);
+                _shiftB = new Vector2((float)_rng.NextDouble() / 2, (float)_rng.NextDouble() / 2);
                 _nextGlitchDirectionSwitch = gameTime.TotalGameTime + TimeSpan.FromMilliseconds(_rng.NextDouble() * 100);
             }
 
 
             if (gameTime.TotalGameTime > _nextGlitchDirectionSwitch && _mode == mode.breakApart)
             {
-                var amount = (float)(_rng.NextDouble() - 0.5) / 5;
+                var amount = (float)(_rng.NextDouble() - 0.5) / 70;
                 _targetShiftR = Vector2.Zero;
-                _targetShiftG = new Vector2((float)_rng.NextDouble() / 20, amount);
-                _targetShiftB = new Vector2((float)-_rng.NextDouble() / 20, amount * 2);
-                _nextGlitchDirectionSwitch = gameTime.TotalGameTime + TimeSpan.FromMilliseconds(_rng.NextDouble() * 1250);
+                _targetShiftG = new Vector2((float)_rng.NextDouble() / 70, (float)(_rng.NextDouble() - 0.5) / 70);
+                _targetShiftB = new Vector2((float)-_rng.NextDouble() / 70, (float)(_rng.NextDouble() - 0.5) / 70);
+                _nextGlitchDirectionSwitch = gameTime.TotalGameTime + TimeSpan.FromMilliseconds(_rng.NextDouble() * 500);
             }
 
             if (_mode == mode.breakApart)
             {
-                _shiftR = Vector2.Lerp(_shiftR, _targetShiftR, (float)_rng.NextDouble() / 10);
-                _shiftG = Vector2.Lerp(_shiftG, _targetShiftG, (float)_rng.NextDouble() / 10);
-                _shiftB = Vector2.Lerp(_shiftB, _targetShiftB, (float)_rng.NextDouble() / 10);
+                _shiftR = Vector2.Lerp(_shiftR, _targetShiftR, (float)_rng.NextDouble() / 5);
+                _shiftG = Vector2.Lerp(_shiftG, _targetShiftG, (float)_rng.NextDouble() / 5);
+                _shiftB = Vector2.Lerp(_shiftB, _targetShiftB, (float)_rng.NextDouble() / 5);
             }
 
             _game.GraphicsDevice.SetRenderTarget(null);
