@@ -386,6 +386,10 @@ namespace MPTanks.Client
             {
                 graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
                 graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+                if (Window.ClientBounds.Width < 800)
+                    graphics.PreferredBackBufferWidth = 800;
+                if (Window.ClientBounds.Height < 480)
+                    graphics.PreferredBackBufferHeight = 480;
                 graphics.ApplyChanges();
                 sizeDirty = false;
             }

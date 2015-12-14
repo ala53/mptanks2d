@@ -630,6 +630,10 @@ namespace MPTanks.Client.GameSandbox
                 //when called repeatedly - Window Resize causes a stack overflow
                 if (_graphicsDeviceIsDirty)
                 {
+                    if (Window.ClientBounds.Width < 800)
+                        _graphics.PreferredBackBufferWidth = 800;
+                    if (Window.ClientBounds.Height < 480)
+                        _graphics.PreferredBackBufferHeight = 480;
                     _graphics.ApplyChanges();
                     _graphicsDeviceIsDirty = false;
                 }

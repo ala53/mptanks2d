@@ -23,6 +23,7 @@ namespace MPTanks.Client
 
         public void BeginDraw()
         {
+            if (_game.GraphicsDevice.Viewport.Height < 1 || _game.GraphicsDevice.Viewport.Width < 1) return;
             if (_rt == null || _rt.Width != _game.GraphicsDevice.Viewport.Width || _rt.Height != _game.GraphicsDevice.Viewport.Height)
             {
                 _rt?.Dispose();
@@ -38,6 +39,7 @@ namespace MPTanks.Client
         private Random _rng = new Random();
         public void Draw(GameTime gameTime)
         {
+            if (_game.GraphicsDevice.Viewport.Height < 1 || _game.GraphicsDevice.Viewport.Width < 1) return;
             if (gameTime.TotalGameTime > _switchTime)
             {
                 _enabled = _rng.Next(0, 10) > 7;
