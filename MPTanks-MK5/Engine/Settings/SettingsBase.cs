@@ -113,6 +113,7 @@ namespace MPTanks.Engine.Settings
 
         public class Setting
         {
+            [JsonIgnore]
             public bool IsHidden { get; protected set; }
             private string _name;
             public string Name
@@ -143,6 +144,7 @@ namespace MPTanks.Engine.Settings
 
             private object _default;
 
+            [JsonIgnore]
             public virtual dynamic DefaultObjectValue
             {
                 get
@@ -155,6 +157,7 @@ namespace MPTanks.Engine.Settings
                 }
             }
 
+            [JsonIgnore]
             public virtual IEnumerable<dynamic> AllowedObjectValues
             {
                 get { return null; } //No whitelist
@@ -317,13 +320,16 @@ namespace MPTanks.Engine.Settings
                 }
             }
 
+            [JsonIgnore]
             public override dynamic DefaultObjectValue
             {
                 get { return DefaultValue; }
                 set { DefaultValue = (TArg)value; }
             }
+            [JsonIgnore]
             public TArg DefaultValue { get; set; }
 
+            [JsonIgnore]
             public override IEnumerable<dynamic> AllowedObjectValues
             {
                 get
