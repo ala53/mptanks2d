@@ -77,7 +77,7 @@ namespace MPTanks.Client
                     _shiftR = Vector2.Zero;
                     _shiftG = Vector2.Zero;
                     _shiftB = Vector2.Zero;
-                    _switchTime = gameTime.TotalGameTime + TimeSpan.FromSeconds(_rng.NextDouble() * 1.5);
+                    _switchTime = gameTime.TotalGameTime + TimeSpan.FromSeconds(_rng.NextDouble() / 1.5);
                 }
             }
             if (gameTime.TotalGameTime > _nextGlitchDirectionSwitch && _mode == mode.glitch)

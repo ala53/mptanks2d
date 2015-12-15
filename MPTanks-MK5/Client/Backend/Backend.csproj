@@ -320,7 +320,7 @@
     <PreBuildEvent>
 "$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
 
-"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)\"
+"$(SolutionDir)\..\Build\AssetCompileHelper\Release\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)\" "Windows"
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

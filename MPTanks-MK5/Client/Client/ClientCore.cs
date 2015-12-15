@@ -411,7 +411,7 @@ namespace MPTanks.Client
                     Window.ClientBounds.Size);
 
             ui.Update(gameTime);
-
+            
             base.Update(gameTime);
         }
 

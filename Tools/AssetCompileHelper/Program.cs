@@ -22,6 +22,7 @@ namespace AssetCompileHelper
             var mono = args[0] == "mono";
             var mgcbPath = args[1];
 			var inDir = args[2];
+            var platform = (args.Length >= 4) ? args[3] : "Windows";
             Console.WriteLine(inDir);
 
             output += $"Searching folder {inDir}\n";
@@ -53,7 +54,7 @@ namespace AssetCompileHelper
             }
 
             string cmdArgs = "";
-            var needingRecompile = GetAssetsNeedingRecompile(files);
+            var needingRecompile = GetAssetsNeedingRecompile(files, platform);
             if (needingRecompile.Length == 0)
             {
                 output += "No files need recompile.\n";
@@ -62,7 +63,7 @@ namespace AssetCompileHelper
             }
 			
 			Console.WriteLine($"{needingRecompile} files require recompile.");
-            cmdArgs += "/incremental /platform:Windows ";
+            cmdArgs += $"/incremental /platform:{platform} ";
             foreach (var file in needingRecompile)
             {
                 output += $"Recompiling {file}\n";
@@ -85,7 +86,7 @@ namespace AssetCompileHelper
             prc.WaitForExit();
 
             if (prc.ExitCode != 0) ok = false;
-            WriteDictionary();
+            WriteDictionary(platform);
 
             output += $"Finished (ok: {ok})";
             File.WriteAllText("asset_compile_helper_log.log", output);
@@ -94,7 +95,7 @@ namespace AssetCompileHelper
             return ok ? 0 : -2;
         }
 
-        private static string[] GetAssetsNeedingRecompile(IEnumerable<string> inputFiles)
+        private static string[] GetAssetsNeedingRecompile(IEnumerable<string> inputFiles, string platform)
         {
             if (System.IO.File.Exists("asset_md5s.json"))
                 _filesAndMD5s = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
@@ -112,11 +113,17 @@ namespace AssetCompileHelper
                     _outFiles.Add(file);
             }
 
+            if (!_filesAndMD5s.ContainsKey("__internalPlatformID") || _filesAndMD5s["__internalPlatformID"] != platform)
+            {
+                _filesAndMD5s.Clear();
+                return inputFiles.ToArray();
+            }
             return _outFiles.ToArray();
         }
 
-        private static void WriteDictionary()
+        private static void WriteDictionary( string platform)
         {
+            _filesAndMD5s["__internalPlatformID"] = platform;
             System.IO.File.WriteAllText("asset_md5s.json", Newtonsoft.Json.JsonConvert.SerializeObject(_filesAndMD5s));
         }
         private static string CalculateMD5Hash(string input)
