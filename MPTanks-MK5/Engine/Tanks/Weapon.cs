@@ -22,7 +22,7 @@ namespace MPTanks.Engine.Tanks
             ProjectileReflectionName = "NULL",
             TargetingType = WeaponTargetingType.Directional,
             WeaponName = "NO WEAPONS AVAILABLE",
-            WeaponRechargeTimeMs = float.PositiveInfinity,
+            WeaponRechargeTime = TimeSpan.FromSeconds(9999999),
             _isNullWeapon = true
         };
 
@@ -90,13 +90,13 @@ namespace MPTanks.Engine.Tanks
         /// <summary>
         /// The number of milliseconds needed to recharge the weapon.
         /// </summary>
-        public float WeaponRechargeTimeMs { get; set; } = 1000;
+        public TimeSpan WeaponRechargeTime { get; set; } = TimeSpan.FromSeconds(1);
         /// <summary>
         /// The recharge percentage from 0-1 inclusive of the weapon.
         /// </summary>
         public float CurrentRechargePercentage
         {
-            get { return MathHelper.Clamp(TimeRechargedMs / WeaponRechargeTimeMs, 0, 1); }
+            get { return MathHelper.Clamp((float)TimeRecharged.TotalMilliseconds / (float)WeaponRechargeTime.TotalMilliseconds, 0, 1); }
         }
         /// <summary>
         /// The picture of the sprite to display on screen. (recommended 256x256 image or animation)
@@ -126,7 +126,15 @@ namespace MPTanks.Engine.Tanks
 
         public Action<Weapon, Projectiles.Projectile> FireCallback = delegate { };
 
-        public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
+        public byte[] FullState
+        {
+            get { return GetFullState(); }
+            set
+            {
+                var rdr = ByteArrayReader.Get(value); SetFullState(rdr);
+                rdr.Release();
+            }
+        }
 
         public class TargetingUIArgs : EventArgs
         {
@@ -135,7 +143,7 @@ namespace MPTanks.Engine.Tanks
             public Action<Vector2> CompletionCallback { get; set; } = delegate { };
             public Action CancelCallback { get; set; } = delegate { };
         }
-        private float TimeRechargedMs;
+        private TimeSpan TimeRecharged;
 
         private bool _isNullWeapon;
 
@@ -155,65 +163,77 @@ namespace MPTanks.Engine.Tanks
 
         public byte[] GetFullState()
         {
+            var wr = ByteArrayWriter.Get();
+            GetFullState(wr);
+            wr.Release();
+            return wr.Data;
+        }
+        public void GetFullState(ByteArrayWriter writer)
+        {
             if (_isNullWeapon)
-                return new[] { SerializationHelpers.FalseByte };
+            {
+                writer.Write(false);
+                return;
+            }
             else
-                return SerializationHelpers.AllocateArray(true,
-                      _isNullWeapon,
-                      (byte)TargetingType,
-                      MaxDistance,
-                      ProjectileReflectionName,
-                      new HalfVector2(ProjectileVelocity),
-                      new HalfVector2(ProjectileOffset),
-                      (Half)ProjectileRotation,
-                      (Half)ProjectileRotationVelocity,
-                      MaxActiveProjectileCount,
-                      FireRotationIsRelativeToTankRotation,
-                      FireRotationIsRelativeToTankLookDirection,
-                      (Half)AddedRotation,
-                      TransformPositionAndVelocityByRotation,
-                      WeaponRechargeTimeMs,
-                      WeaponName,
-                      TimeRechargedMs,
-                      SerializationHelpers.AllocateArray(true, _projectiles.Select(p => (object)p.ObjectId).ToArray())
-                      );
+            {
+                writer.Write(true);
+                writer.Write((byte)TargetingType);
+                writer.Write(MaxDistance);
+                writer.Write(ProjectileReflectionName);
+                writer.Write(new HalfVector2(ProjectileVelocity));
+                writer.Write(new HalfVector2(ProjectileOffset));
+                writer.Write((Half)ProjectileRotation);
+                writer.Write((Half)ProjectileRotationVelocity);
+                writer.Write(MaxActiveProjectileCount);
+                writer.Write(FireRotationIsRelativeToTankRotation);
+                writer.Write(FireRotationIsRelativeToTankLookDirection);
+                writer.Write((Half)AddedRotation);
+                writer.Write(TransformPositionAndVelocityByRotation);
+                writer.Write(WeaponRechargeTime);
+                writer.Write(WeaponName);
+                writer.Write(TimeRecharged);
+                writer.Write(_projectiles.Select(p => p.ObjectId).Select(BitConverter.GetBytes).SelectMany(a => a).ToArray());
+            }
         }
 
         private byte[] _projectileArray;
-        public void SetFullState(byte[] state)
+        public void SetFullState(ByteArrayReader reader)
         {
-            int offset = 0;
-            var isNull = state.GetBool(offset); offset++;
+            var isNull = reader.ReadBool();
             if (isNull)
             {
                 _isNullWeapon = true;
                 return;
             }
             else _isNullWeapon = false;
-            TargetingType = (WeaponTargetingType)state[offset]; offset++;
-            MaxDistance = state.GetFloat(offset); offset += 4;
-            ProjectileReflectionName = state.GetString(offset); offset += state.GetUShort(offset); offset += 2;
-            ProjectileVelocity = state.GetHalfVector(offset).ToVector2(); offset += 4;
-            ProjectileOffset = state.GetHalfVector(offset).ToVector2(); offset += 4;
-            ProjectileRotation = state.GetHalf(offset); offset += 2;
-            ProjectileRotationVelocity = state.GetHalf(offset); offset += 2;
-            MaxActiveProjectileCount = state.GetUShort(offset); offset += 2;
-            FireRotationIsRelativeToTankRotation = state.GetBool(offset); offset++;
-            FireRotationIsRelativeToTankLookDirection = state.GetBool(offset); offset++;
-            AddedRotation = state.GetHalf(offset); offset += 2;
-            TransformPositionAndVelocityByRotation = state.GetBool(offset); offset++;
-            WeaponRechargeTimeMs = state.GetFloat(offset); offset += 4;
-            WeaponName = state.GetString(offset); offset += state.GetUShort(offset); offset += 2;
-            TimeRechargedMs = state.GetFloat(offset); offset += 4;
+            TargetingType = (WeaponTargetingType)reader.ReadByte();
+            MaxDistance = reader.ReadFloat();
+            ProjectileReflectionName = reader.ReadString();
+            ProjectileVelocity = reader.ReadHalfVector();
+            ProjectileOffset = reader.ReadHalfVector();
+            ProjectileRotation = reader.ReadHalf();
+            ProjectileRotationVelocity = reader.ReadHalf();
+            MaxActiveProjectileCount = reader.ReadUShort();
+            FireRotationIsRelativeToTankRotation = reader.ReadBool();
+            FireRotationIsRelativeToTankLookDirection = reader.ReadBool();
+            AddedRotation = reader.ReadHalf();
+            TransformPositionAndVelocityByRotation = reader.ReadBool();
+            WeaponRechargeTime = TimeSpan.FromMilliseconds(reader.ReadFloat());
+            WeaponName = reader.ReadString();
+            TimeRecharged = TimeSpan.FromMilliseconds(reader.ReadFloat());
 
-            _projectileArray = state.GetByteArray(offset); offset += state.GetUShort(offset); offset += 2;
+            _projectileArray = reader.ReadBytes();
         }
 
         public void DeferredSetFullState()
         {
             _projectiles.Clear();
+            var rdr = ByteArrayReader.Get(_projectileArray);
             for (var i = 0; i < _projectileArray.Length; i += 2)
-                _projectiles.Add((Projectiles.Projectile)Game.GameObjectsById[_projectileArray.GetUShort(i)]);
+                _projectiles.Add((Projectiles.Projectile)Game.GameObjectsById[rdr.ReadUShort()]);
+
+            rdr.Release();
         }
 
         private bool _isWaitingForTarget = false;
@@ -278,14 +298,14 @@ namespace MPTanks.Engine.Tanks
 
             FireCallback(this, prj);
 
-            TimeRechargedMs = 0;
+            TimeRecharged = TimeSpan.Zero;
         }
 
         private List<Projectiles.Projectile> _removeQueue = new List<Projectiles.Projectile>();
         public virtual void Update(GameTime time)
         {
             if (_isNullWeapon) return;
-            TimeRechargedMs += (float)(time.ElapsedGameTime.TotalMilliseconds);
+            TimeRecharged += time.ElapsedGameTime;
 
             foreach (var prj in Projectiles)
                 if (!prj.Alive) _removeQueue.Add(prj);

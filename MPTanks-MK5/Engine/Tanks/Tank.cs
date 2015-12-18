@@ -117,19 +117,32 @@ namespace MPTanks.Engine.Tanks
             if (ActiveWeapon.Recharged && InputState.FirePressed) ActiveWeapon.Fire();
         }
 
-        protected sealed override byte[] GetTypeStateHeader()
+        protected override void GetTypeStateHeader(ByteArrayWriter writer)
         {
-            return SerializationHelpers.AllocateArray(true,
-                PrimaryWeapon != null,
-                SecondaryWeapon != null,
-                TertiaryWeapon != null,
-                PrimaryWeapon.FullState,
-                SecondaryWeapon.FullState,
-                TertiaryWeapon.FullState);
+            if (PrimaryWeapon != null)
+            {
+                writer.Write(PrimaryWeapon != null);
+                PrimaryWeapon.GetFullState(writer);
+            }
+            if (SecondaryWeapon != null)
+            {
+                writer.Write(SecondaryWeapon != null);
+                SecondaryWeapon.GetFullState(writer);
+            }
+            if (SecondaryWeapon != null)
+            {
+                writer.Write(SecondaryWeapon != null);
+                SecondaryWeapon.GetFullState(writer);
+            }
         }
-        protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
+        protected override void SetTypeStateHeader(ByteArrayReader reader)
         {
-            base.SetTypeStateHeader(header, ref offset);
+            if (reader.ReadBool() && PrimaryWeapon != null)
+                PrimaryWeapon.SetFullState(reader);
+            if (reader.ReadBool() && SecondaryWeapon != null)
+                SecondaryWeapon.SetFullState(reader);
+            if (reader.ReadBool() && TertiaryWeapon != null)
+                TertiaryWeapon.SetFullState(reader);
         }
 
         public override string ToString()

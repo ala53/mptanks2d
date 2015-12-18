@@ -20,6 +20,7 @@ namespace MPTanks.Engine.Helpers
         public static readonly byte[] StringSerializationBytes = BitConverter.GetBytes(stringSerializedMagicNumber);
 
         public static readonly byte[] EmptyByteArray = new byte[0];
+        
         public static readonly byte TrueByte = 1;
         public static readonly byte FalseByte = 0;
 
@@ -516,5 +517,6 @@ namespace MPTanks.Engine.Helpers
         }
 
         public static byte[] Slice(this byte[] src, int offset, int count) => GetBytes(src, offset, count);
+        
     }
 }

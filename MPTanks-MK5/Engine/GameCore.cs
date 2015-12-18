@@ -256,7 +256,7 @@ namespace MPTanks.Engine
             Gamemode = gamemode;
             Gamemode.SetGame(this);
 
-            Map = Maps.Map.LoadMap(map, this);
+            Map = Maps.Map.Load(map, this);
 
             InitializeGame();
         }

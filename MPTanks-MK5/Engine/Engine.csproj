@@ -71,6 +71,7 @@
     <Compile Include="Gamemodes\NullGamemode.cs" />
     <Compile Include="GameObject.Serialization.cs" />
     <Compile Include="GameCore.Timescale.cs" />
+    <Compile Include="Helpers\ByteArrayWriter.cs" />
     <Compile Include="Helpers\ByteArrayReader.cs" />
     <Compile Include="Helpers\HalfFloat.cs" />
     <Compile Include="Helpers\Helpers.cs" />

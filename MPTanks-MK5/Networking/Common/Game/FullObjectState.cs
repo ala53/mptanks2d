@@ -17,8 +17,9 @@ namespace MPTanks.Networking.Common.Game
         public FullObjectState(byte[] data)
         {
             Data = data;
-            ObjectId = data.GetValue<ushort>(0);
-            ReflectionName = data.GetString(2);
+            var reader = ByteArrayReader.Get(data);
+            ObjectId = reader.ReadUShort();
+            ReflectionName = reader.ReadString();
         }
     }
 }

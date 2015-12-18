@@ -48,7 +48,7 @@ namespace MPTanks.Engine.Maps
         }
 
 
-        public static Map LoadMap(string map, GameCore game)
+        public static Map Load(string map, GameCore game)
         {
 
             var m = new Map(game, MapJSON.Load(map), map);
@@ -101,7 +101,9 @@ namespace MPTanks.Engine.Maps
         {
             foreach (var mapObj in _deserialized.Objects)
             {
-                MapObject obj = MapObject.ReflectiveInitialize(mapObj.TypeName, _game, true, mapObj.Position, mapObj.Rotation);
+                MapObject obj = MapObject.ReflectiveInitialize(mapObj.ReflectionName, _game, true, mapObj.Position, mapObj.Rotation);
+                if (mapObj.ConfiguredSettings != null)
+                    obj.ProcessInstanceSettings(mapObj.ConfiguredSettings);
                 obj.ColorMask = mapObj.Mask;
                 obj.Size = mapObj.DesiredSize;
 

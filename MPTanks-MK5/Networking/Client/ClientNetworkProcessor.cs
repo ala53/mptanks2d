@@ -10,6 +10,7 @@ using MPTanks.Networking.Common.Actions.ToClient;
 using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Tanks;
+using MPTanks.Engine.Helpers;
 
 namespace MPTanks.Networking.Client
 {
@@ -71,8 +72,10 @@ namespace MPTanks.Networking.Client
             }
             else if (action is GameObjectCreatedAction)
             {
+                var reader = ByteArrayReader.Get(((GameObjectCreatedAction)action).State.Data);
                 GameObject.CreateAndAddFromSerializationInformation(
-                    Client.Game, ((GameObjectCreatedAction)action).State.Data);
+                    Client.Game, reader);
+                reader.Release();
             }
             else if (action is GameObjectDestroyedAction)
             {

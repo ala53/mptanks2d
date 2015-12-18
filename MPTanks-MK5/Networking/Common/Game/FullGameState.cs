@@ -102,7 +102,11 @@ namespace MPTanks.Networking.Common.Game
             foreach (var fullState in ObjectStates)
             {
                 if (!game.GameObjectsById.ContainsKey(fullState.ObjectId))
-                    GameObject.CreateAndAddFromSerializationInformation(game, fullState.Data, true);
+                {
+                    var rdr = ByteArrayReader.Get(fullState.Data);
+                    GameObject.CreateAndAddFromSerializationInformation(game, rdr, true);
+                    rdr.Release();
+                }
                 else game.GameObjectsById[fullState.ObjectId].FullState = fullState.Data;
             }
 
@@ -214,7 +218,7 @@ namespace MPTanks.Networking.Common.Game
             {
                 foreach (var obj in game.GameObjects)
                     ObjectStates.Add(new FullObjectState(obj.FullState));
-            } 
+            }
             catch (InvalidOperationException)
             {
                 ObjectStates.Clear();

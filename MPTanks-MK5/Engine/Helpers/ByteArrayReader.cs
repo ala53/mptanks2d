@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,18 +17,29 @@ namespace MPTanks.Engine.Helpers
         private ByteArrayReader()
         {
         }
-
+        public TimeSpan ReadTimeSpan()
+        {
+            return TimeSpan.FromTicks(ReadLong());
+        }
+        public Half ReadHalf()
+        {
+            return new Half { InternalValue = ReadUShort() };
+        }
         public byte ReadByte()
         {
             return Data[Offset++];
         }
         public byte[] ReadBytes()
         {
-            return Data.GetByteArray(Offset);
+            var count = ReadUShort();
+            return ReadBytes(count);
         }
         public byte[] ReadBytes(int count)
         {
-            return Data.GetByteArray(Offset, count);
+            var arr = new byte[count];
+            Array.Copy(Data, Offset, arr, 0, count);
+            Offset += count;
+            return arr;
         }
         public ushort ReadUShort()
         {
@@ -107,11 +119,27 @@ namespace MPTanks.Engine.Helpers
         public T ReadGeneric<T>()
         {
             //Validate header
-            if (ReadBytes(SerializationHelpers.JSONSerializationBytes.Length) != 
+            if (ReadBytes(SerializationHelpers.JSONSerializationBytes.Length) !=
                 SerializationHelpers.JSONSerializationBytes)
                 throw new Exception("Unexpected token! JSON serialization preamble not found");
             var str = ReadString();
             return JsonConvert.DeserializeObject<T>(str);
+        }
+
+        public T ReadStruct<T>() where T : struct
+        {
+            T str = new T();
+
+            int size = Marshal.SizeOf(str);
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+
+            Marshal.Copy(Data, Offset, ptr, size);
+
+            str = (T)Marshal.PtrToStructure(ptr, typeof(T));
+            Marshal.FreeHGlobal(ptr);
+            Offset += size;
+
+            return str;
         }
 
         private static Stack<ByteArrayReader> _cache = new Stack<ByteArrayReader>();
@@ -123,12 +151,13 @@ namespace MPTanks.Engine.Helpers
                 r = _cache.Pop();
             else r = new ByteArrayReader();
             r.Data = bytes;
+            r.Offset = 0;
             return r;
         }
 
         public static void Release(ByteArrayReader reader)
         {
-            if (!_cache.Contains(reader))
+            if (!_cache.Contains(reader) && _cache.Count < 64)
                 _cache.Push(reader);
         }
         public void Release() =>

@@ -11,7 +11,16 @@ namespace MPTanks.Engine
 {
     public partial class GameObject
     {
-        public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
+        public byte[] FullState
+        {
+            get
+            {
+                var data = GetFullState();
+                data.Release();
+                return data.Data;
+            }
+            set { var reader = ByteArrayReader.Get(value); SetFullState(reader); reader.Release(); }
+        }
         private enum __SerializationGameObjectType : byte
         {
             GameObject,
@@ -19,34 +28,33 @@ namespace MPTanks.Engine
             Projectile,
             MapObject
         }
-        public static GameObject CreateAndAddFromSerializationInformation(GameCore game, byte[] serializationData, bool authorized = true)
+        public static GameObject CreateAndAddFromSerializationInformation(GameCore game, ByteArrayReader reader, bool authorized = true)
         {
-            int offset = 0;
-            var id = serializationData.GetUShort(offset); offset += 2;
-            var name = serializationData.GetString(offset); offset += serializationData.GetUShort(offset); offset += 2;
-            var type = (__SerializationGameObjectType)serializationData[offset]; offset++;
-            var uid = serializationData.GetUShort(offset); offset += 2;
+            var objectId = reader.ReadUShort();
+            var reflectionName = reader.ReadString();
+            var type = (__SerializationGameObjectType)reader.ReadByte();
+            var playerUid = reader.ReadUShort();
 
             GameObject obj = null;
             if (type == __SerializationGameObjectType.Tank)
             {
-                if (game.PlayersById.ContainsKey(uid))
-                    obj = game.AddTank(name, game.PlayersById[uid], authorized, id);
+                if (game.PlayersById.ContainsKey(playerUid))
+                    obj = game.AddTank(reflectionName, game.PlayersById[playerUid], authorized, objectId);
             }
             else if (type == __SerializationGameObjectType.Projectile)
             {
-                if (game.PlayersById.ContainsKey(uid))
-                    obj = game.AddProjectile(name, game.PlayersById[uid].Tank, authorized, id);
+                if (game.PlayersById.ContainsKey(playerUid))
+                    obj = game.AddProjectile(reflectionName, game.PlayersById[playerUid].Tank, authorized, objectId);
             }
             else if (type == __SerializationGameObjectType.MapObject)
-                obj = game.AddMapObject(name, authorized, id);
+                obj = game.AddMapObject(reflectionName, authorized, objectId);
             else
-                obj = game.AddGameObject(name, authorized, id);
+                obj = game.AddGameObject(reflectionName, authorized, objectId);
 
             if (obj == null) return null;
 
             obj.UnsafeDisableEvents();
-            obj.SetFullState(serializationData);
+            obj.SetFullState(reader);
             obj.UnsafeEnableEvents();
             return obj;
         }
@@ -54,59 +62,41 @@ namespace MPTanks.Engine
         /// Gets the full state of the object, ergo.
         /// </summary>
         /// <returns></returns>
-        public byte[] GetFullState()
+        public ByteArrayWriter GetFullState()
         {
-            //Layout:
-            //variable string reflection name
-            //1 byte GameObjectType
-            //[used in all, only useful for tanks and projectiles]: player GUID
-            //      If projectile, its the tank that spawned it
-            //      If tank, the player that ids it
-            //1 byte is sensor
-            //1 byte is static
-            //4 byte object id
-            //4 byte color mask
-            //4 byte time alive in ms
-            //8 byte size
-            //8 byte pos
-            //8 byte lin velocity
-            //4 byte rotation
-            //4 byte rot velocity
-            //4 byte restitution
-            /////Then, there's the data from the instance
-            //variable Private state data bytes
-            byte[] privateState = SerializationHelpers.Serialize(GetPrivateStateData());
-
             //And figure out which guid to print
-            ushort uidToWrite = 0;
+            ushort playerUid = 0;
 
             if (GetType().IsSubclassOf(typeof(Tanks.Tank)))
-                uidToWrite = ((Tanks.Tank)this).Player.Id;
+                playerUid = ((Tanks.Tank)this).Player.Id;
             else if (GetType().IsSubclassOf(typeof(Projectiles.Projectile)))
-                uidToWrite = ((Projectiles.Projectile)this).Owner.Player.Id;
+                playerUid = ((Projectiles.Projectile)this).Owner.Player.Id;
 
-            return SerializationHelpers.AllocateArray(true,
-            ObjectId,
-            ReflectionName,
-            (byte)GetSerializationType(),
-            uidToWrite,
-            IsSensor,
-            IsStatic,
-            ColorMask,
-            TimeAlive.TotalMilliseconds,
-            Size,
-            Position,
-            LinearVelocity,
-            Rotation,
-            AngularVelocity,
-            Restitution,
-            Health,
-            GetTypeStateHeader(),
-            privateState
-            );
+            var writer = ByteArrayWriter.Get();
+            writer.Write(ObjectId);
+            writer.Write(ReflectionName);
+            writer.Write((byte)GetSerializationType());
+            writer.Write(playerUid);
+            writer.Write(IsSensor);
+            writer.Write(IsStatic);
+            writer.Write(ColorMask);
+            writer.Write(TimeAlive.TotalMilliseconds);
+            writer.Write(Size);
+            writer.Write(Position);
+            writer.Write(LinearVelocity);
+            writer.Write(Rotation);
+            writer.Write(AngularVelocity);
+            writer.Write(Restitution);
+            writer.Write(Health);
+
+            GetTypeStateHeader(writer);
+
+            GetFullStateInternal(writer);
+            writer.Release();
+            return writer;
         }
 
-        protected virtual byte[] GetTypeStateHeader() => SerializationHelpers.EmptyByteArray;
+        protected virtual void GetTypeStateHeader(ByteArrayWriter writer) { }
 
         private __SerializationGameObjectType GetSerializationType()
         {
@@ -124,64 +114,41 @@ namespace MPTanks.Engine
         /// Return a byte array for optimal performance, or either a string or other random object for ease of use.
         /// </summary>
         /// <returns></returns>
-        protected virtual object GetPrivateStateData() => SerializationHelpers.EmptyByteArray;
+        protected virtual void GetFullStateInternal(ByteArrayWriter writer) { }
 
-        public void SetFullState(byte[] state)
+        public void SetFullState(ByteArrayReader reader)
         {
-            var reflectionNameLength = state.GetValue<ushort>(0);
-            int offset = 0;
-            SetStateHeader(state, ref offset);
-
-
-            var privateState = state.GetByteArray(offset);
+            SetStateHeader(reader);
 
             if (GlobalSettings.Debug)
-                SerializationHelpers.ResolveDeserialize(privateState,
-                    SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                SetFullStateInternal(reader);
             else
                 try
                 {
-                    SerializationHelpers.ResolveDeserialize(privateState,
-                        SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                    SetFullStateInternal(reader);
                 }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"GameObject full state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
-                    SetFullStateInternal(privateState);
+                    SetFullStateInternal(reader);
                 }
         }
 
-        private void SetStateHeader(byte[] header, ref int offset)
+        private void SetStateHeader(ByteArrayReader reader)
         {
-            var id = header.GetUShort(offset); offset += 2;
-            var name = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
-            var type = (__SerializationGameObjectType)header[offset++];
-            var uid = header.GetUShort(offset); offset += 2;
-            var isSensor = header[offset++] == 1;
-            var isStatic = header[offset++] == 1;
-            var color = header.GetColor(offset); offset += 4;
-            var timeAlive = header.GetDouble(offset); offset += 8;
-            var size = header.GetVector(offset); offset += 8;
-            var position = header.GetVector(offset); offset += 8;
-            var linVel = header.GetVector(offset); offset += 8;
-            var rot = header.GetFloat(offset); offset += 4;
-            var rotVel = header.GetFloat(offset); offset += 4;
-            var restitution = header.GetFloat(offset); offset += 4;
-            var health = header.GetInt(offset); offset += 4;
+            IsSensor = reader.ReadBool();
+            IsStatic = reader.ReadBool();
+            ColorMask = reader.ReadColor();
+            TimeAlive = TimeSpan.FromMilliseconds(reader.ReadDouble());
+            Size = reader.ReadVector();
+            Position = reader.ReadVector();
+            LinearVelocity = reader.ReadVector();
+            Rotation = reader.ReadFloat();
+            AngularVelocity = reader.ReadFloat();
+            Restitution = reader.ReadFloat();
+            Health = reader.ReadFloat();
 
-            SetTypeStateHeader(header, ref offset);
-
-            IsSensor = isSensor;
-            IsStatic = isStatic;
-            ObjectId = id;
-            ColorMask = color;
-            TimeAlive = TimeSpan.FromMilliseconds(timeAlive);
-            Size = size;
-            Position = position;
-            LinearVelocity = linVel;
-            Rotation = rot;
-            AngularVelocity = rotVel;
-            Health = health;
+            SetTypeStateHeader(reader);
         }
 
         /// <summary>
@@ -190,18 +157,12 @@ namespace MPTanks.Engine
         /// </summary>
         /// <param name="header"></param>
         /// <param name="offset"></param>
-        protected virtual void SetTypeStateHeader(byte[] header, ref int offset)
+        protected virtual void SetTypeStateHeader(ByteArrayReader reader)
         {
 
         }
 
-        protected virtual void SetFullStateInternal(byte[] stateData) { }
-
-        protected virtual void SetFullStateInternal(string state) { }
-
-        protected virtual void SetFullStateInternal(dynamic state)
-        {
-        }
+        protected virtual void SetFullStateInternal(ByteArrayReader reader) { }
         /// <summary>
         /// Allows you to do deferred state initialization, as <see cref="SetFullStateInternal"/>
         /// is called before the world is fully initialized. This is usually only necessary when

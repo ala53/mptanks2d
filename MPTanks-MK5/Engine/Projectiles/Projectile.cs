@@ -41,16 +41,7 @@ namespace MPTanks.Engine.Projectiles
         {
             return true;
         }
-
-        protected sealed override byte[] GetTypeStateHeader()
-        {
-            return base.GetTypeStateHeader();
-        }
-
-        protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
-        {
-            base.SetTypeStateHeader(header, ref offset);
-        }
+        
         public virtual void CollidedWithMapObject(Maps.MapObjects.MapObject mapObject)
         {
             if (DamagesMapObjects ||

@@ -55,11 +55,13 @@ namespace MPTanks.Engine.Maps.Serialization
 
     public class MapObjectJSON
     {
-        public string TypeName { get; set; }
+        [JsonProperty("reflectionName")]
+        public string ReflectionName { get; set; }
         public float Rotation { get; set; }
         public JSONVector Position { get; set; }
         [JsonProperty("size")]
         public JSONVector DesiredSize { get; set; }
+        [JsonProperty("settings")]
         public Dictionary<string, string> ConfiguredSettings { get; set; }
         public Color Mask { get; set; }
         public int DrawLayer { get; set; }

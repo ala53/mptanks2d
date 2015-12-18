@@ -15,57 +15,48 @@ namespace MPTanks.Engine
             new Core.Events.Types.GameObjects.StateChangedEventArgs();
 
         private TimeSpan _lastStateChange = TimeSpan.Zero;
-        protected bool RaiseStateChangeEvent(byte[] newStateData)
+        protected bool RaiseStateChangeEvent(Action<ByteArrayWriter> eventWriter)
         {
-            if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
-                || newStateData.Length > Game.Settings.MaxStateChangeSize ||
+            if (eventWriter == null)
+                return false;
+            var writer = ByteArrayWriter.Get();
+
+            eventWriter(writer);
+
+            if (!Game.Authoritative || writer == null || writer.Size == 0
+                || writer.Size > Game.Settings.MaxStateChangeSize ||
                 (TimeAlive - _lastStateChange) < Game.Settings.MaxStateChangeFrequency ||
                 !_eventsEnabled)
                 return false;
 
             _stateArgs.Object = this;
-            _stateArgs.State = newStateData;
+            _stateArgs.State = writer.Data;
             Game.EventEngine.RaiseGameObjectStateChanged(_stateArgs);
+
+            writer.Release();
 
             return true;
         }
 
-        protected bool RaiseStateChangeEvent(string state)
-        {
-            return RaiseStateChangeEvent(SerializationHelpers.Serialize(state));
-        }
-        /// <summary>
-        /// Serializes the object to JSON before sending it.
-        /// </summary>
-        /// <param name="obj"></param>
-        protected bool RaiseStateChangeEvent(object obj)
-        {
-            return RaiseStateChangeEvent(SerializationHelpers.Serialize(obj));
-        }
-
         public void ReceiveStateData(byte[] stateData)
         {
+            var rdr = ByteArrayReader.Get(stateData);
             if (GlobalSettings.Debug)
-                SerializationHelpers.ResolveDeserialize(stateData,
-                    ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                ReceiveStateDataInternal(rdr);
             else
                 try
                 {
-                    SerializationHelpers.ResolveDeserialize(stateData,
-                        ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                    ReceiveStateDataInternal(rdr);
                 }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"GameObject partial state parsing failed! {ReflectionName}[ID {ObjectId}]", ex);
-                    ReceiveStateDataInternal(stateData);
                 }
+
+            rdr.Release();
         }
 
-        protected virtual void ReceiveStateDataInternal(byte[] stateData) { }
-
-        protected virtual void ReceiveStateDataInternal(dynamic obj) { }
-
-        protected virtual void ReceiveStateDataInternal(string state) { }
+        protected virtual void ReceiveStateDataInternal(ByteArrayReader reader) { }
 
         protected void UnsafeDisableEvents()
         {

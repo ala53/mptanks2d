@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Gamemodes;
+using MPTanks.Engine.Helpers;
 using MPTanks.Engine.Settings;
 using MPTanks.Modding;
 using System;
@@ -17,12 +18,20 @@ namespace MPTanks.Engine.Maps.MapObjects
             : base(game, authorized, density, restitution, position, rotation)
         {
         }
-        
+
+        private static Dictionary<string, string> _staticSettingsDictionary = new Dictionary<string, string>();
+        public IReadOnlyDictionary<string, string> InstanceSettings { get; private set; } = _staticSettingsDictionary;
+
+        internal void ProcessInstanceSettings(IDictionary<string, string> settings)
+        {
+            SetInstanceSettings(settings);
+        }
+
         /// <summary>
         /// Allows you to handle design time instance settings (configured via the [GameObjectAttribute])
         /// </summary>
         /// <param name="settings"></param>
-        internal virtual void ProcessInstanceSettings(IDictionary<string, string> settings)
+        protected virtual void SetInstanceSettings(IDictionary<string, string> settings)
         {
 
         }
@@ -61,13 +70,32 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         protected virtual bool CanBeDamaged(Team team) => true;
 
-        protected sealed override byte[] GetTypeStateHeader()
+        protected override void GetTypeStateHeader(ByteArrayWriter writer)
         {
-            return base.GetTypeStateHeader();
+            //Fast case
+            if (InstanceSettings.Count == 0)
+            {
+                writer.Write((ushort)0);
+                return;
+            }
+            //Otherwise
+            //Encode the instance settings dictionary
+            writer.Write((ushort)InstanceSettings.Count);
+            foreach (var set in InstanceSettings)
+            {
+                writer.Write(set.Key);
+                writer.Write(set.Value);
+            }
         }
-        protected sealed override void SetTypeStateHeader(byte[] header, ref int offset)
+        protected override void SetTypeStateHeader(ByteArrayReader reader)
         {
-            base.SetTypeStateHeader(header, ref offset);
+            var settings = new Dictionary<string, string>();
+            InstanceSettings = settings;
+
+            var ct = reader.ReadUShort();
+            if (ct == 0) return;
+            for (var i = 0; i < ct; i++)
+                settings.Add(reader.ReadString(), reader.ReadString());
         }
 
         #region Static initialization
