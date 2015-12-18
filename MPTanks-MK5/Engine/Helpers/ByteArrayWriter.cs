@@ -179,5 +179,12 @@ namespace MPTanks.Engine.Helpers
         }
         public void Release() =>
             Release(this);
+
+        public byte[] ReleaseAndReturnData()
+        {
+            var data = Data;
+            Release();
+            return data;
+        }
     }
 }

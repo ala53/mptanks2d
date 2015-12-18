@@ -165,8 +165,7 @@ namespace MPTanks.Engine.Tanks
         {
             var wr = ByteArrayWriter.Get();
             GetFullState(wr);
-            wr.Release();
-            return wr.Data;
+            return wr.ReleaseAndReturnData();
         }
         public void GetFullState(ByteArrayWriter writer)
         {

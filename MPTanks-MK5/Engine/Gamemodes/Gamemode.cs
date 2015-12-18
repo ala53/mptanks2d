@@ -20,9 +20,18 @@ namespace MPTanks.Engine.Gamemodes
         public virtual Team WinningTeam { get; protected set; } = Team.Null;
         public virtual Team[] Teams { get; set; } = new Team[0];
         public bool AllowRespawn { get; protected set; }
-        public float RespawnTimeMs { get; protected set; }
+        public TimeSpan RespawnTime { get; protected set; }
 
-        public byte[] FullState { get { return GetFullState(); } set { SetFullState(value); } }
+        public byte[] FullState
+        {
+            get { return GetFullState(); }
+            set
+            {
+                var rdr = ByteArrayReader.Get(value);
+                SetFullState(rdr);
+                rdr.Release();
+            }
+        }
 
         #region Reflection helper
         //We cache the info for performance. Multiple calls only create one instance
@@ -188,165 +197,115 @@ namespace MPTanks.Engine.Gamemodes
             new Core.Events.Types.Gamemodes.StateChangedEventArgs();
 
         private TimeSpan _lastStateChange = TimeSpan.Zero;
-        protected bool RaiseStateChangeEvent(byte[] newStateData)
+        protected bool RaiseStateChangeEvent(Action<ByteArrayWriter> eventWriter)
         {
-            if (!Game.Authoritative || newStateData == null || newStateData.Length == 0
-                || newStateData.Length > Game.Settings.MaxStateChangeSize ||
+            if (eventWriter == null) return false;
+
+            var writer = ByteArrayWriter.Get();
+            eventWriter(writer);
+
+            if (!Game.Authoritative || writer.Size == 0
+                || writer.Size > Game.Settings.MaxStateChangeSize ||
                 (Game.Time - _lastStateChange) < Game.Settings.MaxStateChangeFrequency)
                 return false;
 
             _args.Gamemode = this;
-            _args.State = newStateData;
+            _args.State = writer.Data;
             OnGamemodeStateChanged(this, _args);
 
+            writer.Release();
             return true;
         }
 
-        protected bool RaiseStateChangeEvent(string state)
+        public void ReceiveStateData(byte[] state)
         {
-            var count = Encoding.UTF8.GetByteCount(state);
-            return RaiseStateChangeEvent(SerializationHelpers.Serialize(state));
+            var rdr = ByteArrayReader.Get(state);
+            ReceiveStateData(rdr);
+            rdr.Release();
         }
-
-        /// <summary>
-        /// Serializes the object to JSON before sending it.
-        /// </summary>
-        /// <param name="obj"></param>
-        protected bool RaiseStateChangeEvent(object obj)
-        {
-            return RaiseStateChangeEvent(SerializationHelpers.Serialize(obj));
-        }
-
-        public void ReceiveStateData(byte[] stateData)
+        public void ReceiveStateData(ByteArrayReader reader)
         {
             if (GlobalSettings.Debug)
-                SerializationHelpers.ResolveDeserialize(stateData,
-                     ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                ReceiveStateDataInternal(reader);
             else
                 try
                 {
-                    SerializationHelpers.ResolveDeserialize(stateData,
-                         ReceiveStateDataInternal, ReceiveStateDataInternal, ReceiveStateDataInternal);
+                    ReceiveStateDataInternal(reader);
                 }
                 catch (Exception ex)
                 {
-                    Game.Logger.Error($"Gamemode state parsing failed! Gamemode name: {ReflectionName}", ex);
-                    ReceiveStateDataInternal(stateData);
+                    Game.Logger.Error($"Gamemode state processing failed! Gamemode name: {ReflectionName}", ex);
                 }
         }
-        protected virtual void ReceiveStateDataInternal(byte[] stateData) { }
-
-        protected virtual void ReceiveStateDataInternal(dynamic obj) { }
-
-        protected virtual void ReceiveStateDataInternal(string state) { }
+        protected virtual void ReceiveStateDataInternal(ByteArrayReader reader) { }
         #endregion
 
         public byte[] GetFullState()
         {
-            //Header:
-            // 2 byte reflection name length
-            // variable reflection name string
-            // 1 byte game ended
-            // 1 byte allow respawn
-            // 4 byte respawn time milliseconds
-            // 1 bytes winning team id
-            // 1 byte teams count
-            //        for each team
-            //          2 byte team object size
-            //          1 byte team id
-            //          4 byte team color 
-            //          2 byte player count
-            //          2 byte team name length
-            //          variable team name string
-            //          2 byte team objective length
-            //          variable team objective string
-            // 2 byte private size
-            // variable private data
-
-            byte[] privateStateBytes = SerializationHelpers.Serialize(GetPrivateStateData());
-
-            //then encode the header
-
-            var header = SerializationHelpers.AllocateArray(true,
-                ReflectionName,
-                GameEnded,
-                AllowRespawn,
-                RespawnTimeMs,
-                WinningTeam.TeamId,
-                (ushort)Teams.Length);
-
+            var writer = ByteArrayWriter.Get();
+            GetFullState(writer);
+            return writer.ReleaseAndReturnData();
+        }
+        public void GetFullState(ByteArrayWriter writer)
+        {
+            writer.Write(ReflectionName);
+            writer.Write(GameEnded);
+            writer.Write(AllowRespawn);
+            writer.Write(RespawnTime);
+            writer.Write(WinningTeam.TeamId);
+            writer.Write((ushort)Teams.Length);
             foreach (var team in Teams)
-                header = SerializationHelpers.MergeArrays(header, EncodeTeam(team));
+            {
+                writer.Write(team.TeamId);
+                writer.Write(team.TeamColor);
+                writer.Write((ushort)team.Players.Length);
+                writer.Write(team.TeamName);
+                writer.Write(team.Objective);
+            }
 
-            //And then the contents
-            return SerializationHelpers.MergeArrays(header, privateStateBytes, true);
+            GetPrivateStateData(writer);
         }
 
-        private byte[] EncodeTeam(Team team)
-        {
-            return SerializationHelpers.AllocateArray(true,
-                team.TeamId,
-                team.TeamColor,
-                (ushort)team.Players.Length,
-                team.TeamName,
-                team.Objective);
-        }
+        protected virtual void GetPrivateStateData(ByteArrayWriter writer)
+        { }
 
-        /// <summary>
-        /// Return a byte array for optimal performance, or either a string or other random object for ease of use.
-        /// </summary>
-        /// <returns></returns>
-        protected virtual object GetPrivateStateData()
+        public void SetFullState(ByteArrayReader reader)
         {
-            return SerializationHelpers.EmptyByteArray;
-        }
-
-        public void SetFullState(byte[] stateData)
-        {
-            int offset = 0;
-            SetFullStateHeader(stateData, ref offset);
-
-            var privateState = stateData.GetByteArray(offset);
+            SetFullStateHeader(reader);
 
             if (GlobalSettings.Debug)
-                SerializationHelpers.ResolveDeserialize(stateData,
-                    SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                SetFullStateInternal(reader);
             else
                 try
                 {
-                    SerializationHelpers.ResolveDeserialize(stateData,
-                        SetFullStateInternal, SetFullStateInternal, SetFullStateInternal);
+                    SetFullStateInternal(reader);
                 }
                 catch (Exception ex)
                 {
                     Game.Logger.Error($"Gamemode full state parsing failed! Gamemode name: {ReflectionName}", ex);
-                    SetFullStateInternal(privateState);
                 }
         }
 
-        private void SetFullStateHeader(byte[] header, ref int offset)
+        private void SetFullStateHeader(ByteArrayReader reader)
         {
-            var reflectionName = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
-            var ended = header.GetBool(offset); offset++;
-            var allowRespawn = header.GetBool(offset); offset++;
-            var respawnTime = header.GetFloat(offset); offset += 4;
-            var winningTeamId = header.GetShort(offset); offset += 2;
-            var teamCount = header.GetUShort(offset); offset += 2;
+            var reflectionName = reader.ReadString();
+            GameEnded = reader.ReadBool();
+            AllowRespawn = reader.ReadBool();
+            RespawnTime = reader.ReadTimeSpan();
+            var winningTeamId = reader.ReadShort();
+            var teamCount = reader.ReadUShort();
 
             var teams = new List<Team>();
             if (Teams != null) teams.AddRange(Teams);
             for (var i = 0; i < teamCount; i++)
             {
-                var t = MakeFullStateTeam(header, ref offset);
+                var t = MakeFullStateTeam(reader);
                 bool teamIdExists = false;
                 foreach (var team in Teams)
                     if (team.TeamId == t.TeamId)
                         teamIdExists = true;
                 if (!teamIdExists) teams.Add(t);
             }
-            GameEnded = ended;
-            AllowRespawn = allowRespawn;
-            RespawnTimeMs = respawnTime;
 
             if (winningTeamId == Team.Indeterminate.TeamId)
                 WinningTeam = Team.Indeterminate;
@@ -360,13 +319,13 @@ namespace MPTanks.Engine.Gamemodes
             Teams = teams.ToArray();
         }
 
-        private Team MakeFullStateTeam(byte[] header, ref int offset)
+        private Team MakeFullStateTeam(ByteArrayReader reader)
         {
-            short id = header.GetShort(offset); offset += 2;
-            var color = header.GetColor(offset); offset += 4;
-            var playerCount = header.GetUShort(offset); offset += 2;
-            var teamName = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
-            var objective = header.GetString(offset); offset += header.GetUShort(offset); offset += 2;
+            short id = reader.ReadShort();
+            var color = reader.ReadColor();
+            var playerCount = reader.ReadUShort();
+            var teamName = reader.ReadString();
+            var objective = reader.ReadString();
             return new Team()
             {
                 TeamId = id,
@@ -377,11 +336,7 @@ namespace MPTanks.Engine.Gamemodes
             };
         }
 
-        protected virtual void SetFullStateInternal(byte[] stateData) { }
-
-        protected virtual void SetFullStateInternal(string state) { }
-
-        protected virtual void SetFullStateInternal(dynamic state) { }
+        protected virtual void SetFullStateInternal(ByteArrayReader reader) { }
 
         public virtual void DeferredSetFullState() { }
 
@@ -409,7 +364,7 @@ namespace MPTanks.Engine.Gamemodes
         public static Gamemode ReflectiveInitialize(string gamemodeName, GameCore game = null, byte[] state = null)
         {
             if (!_gamemodeTypes.ContainsKey(gamemodeName.ToLower())) throw new Exception("Gamemode type does not exist.");
-            
+
             var inst = (Gamemode)Activator.CreateInstance(_gamemodeTypes[gamemodeName.ToLower()]);
             if (game != null) inst.SetGame(game);
             if (state != null) inst.ReceiveStateData(state);

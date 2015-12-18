@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine.Settings;
+﻿using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Settings;
 using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
@@ -93,10 +94,11 @@ namespace MPTanks.Engine
             if (_infos.ContainsKey(GetInfo(module)))
                 offset = _offsetTable[GetInfo(module)];
 
-            var serialized = Helpers.SerializationHelpers.AllocateArray(true,
-                 module.ModInfo.ModName,
-                 module.ModInfo.ModMajor,
-                 data);
+            var writer = ByteArrayWriter.Get();
+            writer.Write(module.ModInfo.ModMajor);
+            writer.Write(module.ModInfo.ModMinor);
+            writer.Write(data);
+            var serialized = writer.ReleaseAndReturnData();
 
             if (serialized.Length > 4096)
                 throw new Exception("Data length is greater than 4KB");

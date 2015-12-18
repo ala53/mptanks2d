@@ -21,7 +21,6 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         {
             Player = new FullStatePlayer(player);
             GamemodeState = game.Gamemode.GetFullState();
-            game.Gamemode.SetFullState(GamemodeState);
         }
         protected override void DeserializeInternal(NetIncomingMessage message)
         {

@@ -169,12 +169,12 @@ namespace MPTanks.Networking.Client
                 if (Client.Game.FindPlayer(act.Player.Id) != null)
                 {
                     act.Player.Apply(Client.Game.FindPlayer<NetworkPlayer>(act.Player.Id));
-                    Client.Game.Gamemode.SetFullState(act.GamemodeState);
+                    Client.Game.Gamemode.FullState = act.GamemodeState;
                     act.Player.ApplySecondPass(Client.Game.FindPlayer<NetworkPlayer>(act.Player.Id), Client.Game);
                     return; //update: already exists
                 }
                 Client.Game.AddPlayer(act.Player.ToNetworkPlayer());
-                Client.Game.Gamemode.SetFullState(act.GamemodeState);
+                Client.Game.Gamemode.FullState = act.GamemodeState;
                 act.Player.ApplySecondPass(
                     (NetworkPlayer)Client.Game.PlayersById[act.Player.Id], Client.Game);
             }
@@ -183,7 +183,7 @@ namespace MPTanks.Networking.Client
                 var act = action as PlayerLeftAction;
                 if (Client.Game.FindPlayer(act.PlayerId) == null) return;
 
-                Client.Game.Gamemode.SetFullState(act.GamemodeState);
+                Client.Game.Gamemode.FullState = act.GamemodeState;
                 Client.Game.RemovePlayer(Client.Game.FindPlayer(act.PlayerId));
             }
             else if (action is PlayerReadyToStartChangedAction)

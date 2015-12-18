@@ -16,8 +16,7 @@ namespace MPTanks.Engine
             get
             {
                 var data = GetFullState();
-                data.Release();
-                return data.Data;
+                return data.ReleaseAndReturnData();
             }
             set { var reader = ByteArrayReader.Get(value); SetFullState(reader); reader.Release(); }
         }
@@ -92,7 +91,6 @@ namespace MPTanks.Engine
             GetTypeStateHeader(writer);
 
             GetFullStateInternal(writer);
-            writer.Release();
             return writer;
         }
 

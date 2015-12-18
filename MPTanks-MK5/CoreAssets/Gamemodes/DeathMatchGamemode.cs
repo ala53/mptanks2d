@@ -20,7 +20,7 @@ namespace MPTanks.CoreAssets.Gamemodes
             : base()
         {
             AllowRespawn = false;
-            RespawnTimeMs = 0;
+            RespawnTime = TimeSpan.Zero;
         }
 
         public override void Create()
