@@ -89,13 +89,9 @@
   <ItemGroup>
     <Compile Include="BackgroundTiles\BackgroundTile.cs" />
     <Compile Include="BackgroundTiles\BackgroundTileHelper.cs" />
+    <Compile Include="GameBuilder.GridLines.cs" />
+    <Compile Include="GameBuilder.Menus.cs" />
     <Compile Include="MapData\MapData.cs" />
-    <Compile Include="MenuForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MenuForm.Designer.cs">
-      <DependentUpon>MenuForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="GameBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

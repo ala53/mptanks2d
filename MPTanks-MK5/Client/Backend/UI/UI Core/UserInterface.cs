@@ -37,6 +37,8 @@ namespace MPTanks.Client.Backend.UI
         /// </summary>
         public TimeSpan PageTransitionTime { get; set; }
 
+        public SpriteFont DefaultFont { get; private set; }
+
         public UserInterface(Game game)
         {
             _game = game;
@@ -44,6 +46,7 @@ namespace MPTanks.Client.Backend.UI
             _fontContentManager = new ContentManager(_game.Content.ServiceProvider, "assets/ui/imgs");
             _soundAndImagesContentManager = new ContentManager(_game.Content.ServiceProvider, "");
             SpriteFont font = _fontContentManager.Load<SpriteFont>("JHUF_12_Regular");
+            DefaultFont = font;
             FontManager.DefaultFont = EmptyKeys.UserInterface.Engine.Instance.Renderer.CreateFont(font);
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
             Empty();

@@ -78,15 +78,16 @@ namespace MPTanks.Engine.Maps
             else BackgroundColor = _deserialized.BackgroundColor;
 
             //Process basic
-            foreach (var team in _deserialized.Spawns)
-            {
-                var ts = new TeamSpawn();
-                ts.TeamIndex = team.TeamIndex;
-                foreach (var pos in team.SpawnPositions)
-                    ts.Positions.Add(new TeamSpawn.SpawnPosition(pos));
+            if (_deserialized.Spawns != null)
+                foreach (var team in _deserialized.Spawns)
+                {
+                    var ts = new TeamSpawn();
+                    ts.TeamIndex = team.TeamIndex;
+                    foreach (var pos in team.SpawnPositions)
+                        ts.Positions.Add(new TeamSpawn.SpawnPosition(pos));
 
-                _spawnsByTeam.Add(team.TeamIndex, ts);
-            }
+                    _spawnsByTeam.Add(team.TeamIndex, ts);
+                }
         }
 
         public override string ToString()
@@ -99,16 +100,17 @@ namespace MPTanks.Engine.Maps
         /// </summary>
         public void CreateObjects()
         {
-            foreach (var mapObj in _deserialized.Objects)
-            {
-                MapObject obj = MapObject.ReflectiveInitialize(mapObj.ReflectionName, _game, true, mapObj.Position, mapObj.Rotation);
-                if (mapObj.ConfiguredSettings != null)
-                    obj.ProcessInstanceSettings(mapObj.ConfiguredSettings);
-                obj.ColorMask = mapObj.Mask;
-                obj.Size = mapObj.DesiredSize;
+            if (_deserialized.Objects != null)
+                foreach (var mapObj in _deserialized.Objects)
+                {
+                    MapObject obj = MapObject.ReflectiveInitialize(mapObj.ReflectionName, _game, true, mapObj.Position, mapObj.Rotation);
+                    if (mapObj.ConfiguredSettings != null)
+                        obj.ProcessInstanceSettings(mapObj.ConfiguredSettings);
+                    obj.ColorMask = mapObj.Mask;
+                    obj.Size = mapObj.DesiredSize;
 
-                _game.AddGameObject(obj, null, true);
-            }
+                    _game.AddGameObject(obj, null, true);
+                }
         }
 
         private Random random = new Random();

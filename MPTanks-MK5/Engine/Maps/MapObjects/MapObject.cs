@@ -90,12 +90,13 @@ namespace MPTanks.Engine.Maps.MapObjects
         protected override void SetTypeStateHeader(ByteArrayReader reader)
         {
             var settings = new Dictionary<string, string>();
-            InstanceSettings = settings;
 
             var ct = reader.ReadUShort();
             if (ct == 0) return;
             for (var i = 0; i < ct; i++)
                 settings.Add(reader.ReadString(), reader.ReadString());
+
+            InstanceSettings = settings;
         }
 
         #region Static initialization

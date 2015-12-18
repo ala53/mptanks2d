@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.Renderer;
+using MPTanks.Client.Backend.UI;
 using MPTanks.Client.GameSandbox;
 using MPTanks.Client.GameSandbox.Mods;
 using MPTanks.Engine;
+using MPTanks.Engine.Core;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Logging;
 using System;
@@ -11,28 +14,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace MPTanks.Clients.MapMaker
 {
-    class GameBuilder : Game
+    public partial class GameBuilder : Game
     {
-        private MenuForm _menus;
         private MapData.MapData _map;
+        private GraphicsDeviceManager _graphics;
         private GameCore _game;
         private GameCoreRenderer _renderer;
         private SpriteBatch _sb;
+        private UserInterface _ui;
+
+        private Vector2 _cameraPosition;
+        private float _cameraZoom = 1;
+
+        private bool __active = true;
+        private bool _active
+        {
+            get { return __active && IsActive; }
+            set { __active = value; }
+        }
+
+        public GameBuilder()
+        {
+            Content.RootDirectory = "assets/mgcontent";
+            _graphics = new GraphicsDeviceManager(this);
+        }
+
         protected override void Initialize()
         {
-            _menus = new MenuForm(this);
             CoreModLoader.LoadTrustedMods(GameSettings.Instance);
+            Components.Add(new Starbound.Input.KeyboardEvents(this));
+            Components.Add(new Starbound.Input.MouseEvents(this));
+
+            Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
+            Starbound.Input.KeyboardEvents.KeyReleased += KeyboardEvents_KeyReleased;
+
             base.Initialize();
+        }
+
+        private void KeyboardEvents_KeyReleased(object sender, Starbound.Input.KeyboardEventArgs e)
+        {
+        }
+
+        private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
+        {
         }
 
         private void CreateMap()
         {
             _map = new MapData.MapData();
             UpdateModsList();
+            OnMapChanged();
         }
 
         private void UpdateModsList()
@@ -43,8 +77,8 @@ namespace MPTanks.Clients.MapMaker
 
         public void Restart()
         {
-            Application.Restart();
-            Application.Exit();
+            System.Windows.Forms.Application.Restart();
+            System.Windows.Forms.Application.Exit();
             Exit();
         }
 
@@ -58,32 +92,99 @@ namespace MPTanks.Clients.MapMaker
 
         protected override void LoadContent()
         {
+            _sb = new SpriteBatch(GraphicsDevice);
             _renderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 }, new NullLogger());
             _renderer.Game = _game;
+            _ui = new UserInterface(this);
+            UI_ShowPrimaryMenu();
+            CreateMap();
             base.LoadContent();
         }
         protected override void Update(GameTime gameTime)
         {
+            if (_active)
+            {
+                var keyState = Keyboard.GetState();
+                float spd = 0.75f * _cameraZoom;
+                if (keyState.IsKeyDown(Keys.LeftShift))
+                    spd = 0.15f * _cameraZoom;
+                //Handle WASD
+                if (keyState.IsKeyDown(Keys.W))
+                    _cameraPosition.Y -= spd;
+                if (keyState.IsKeyDown(Keys.S))
+                    _cameraPosition.Y += spd;
+                if (keyState.IsKeyDown(Keys.A))
+                    _cameraPosition.X -= spd;
+                if (keyState.IsKeyDown(Keys.D))
+                    _cameraPosition.X += spd;
+
+                float zoomSpeed = 0.05f;
+                if (keyState.IsKeyDown(Keys.LeftShift))
+                    zoomSpeed = 0.015f;
+                //And Q/E for zoom
+                if (_cameraZoom < 10 && keyState.IsKeyDown(Keys.Q))
+                    _cameraZoom += zoomSpeed * _cameraZoom;
+
+                if (_cameraZoom > 0.05 && keyState.IsKeyDown(Keys.E))
+                    _cameraZoom -= zoomSpeed * _cameraZoom;
+            }
+
+            _ui.Update(gameTime);
             _game.Update(gameTime);
             base.Update(gameTime);
         }
         private RenderTarget2D _worldTarget;
         protected override void Draw(GameTime gameTime)
         {
+            EnsureRenderTargetSizing();
             _renderer.Target = _worldTarget;
+
             //And draw the world
             _renderer.Draw(gameTime);
+
+            _renderer.View = ComputeDrawRectangle();
 
             GraphicsDevice.SetRenderTarget(null);
             _sb.Begin();
             _sb.Draw(_worldTarget,
                 new Rectangle(0, 0,
                 GraphicsDevice.Viewport.Width,
-                GraphicsDevice.Viewport.Height), 
+                GraphicsDevice.Viewport.Height),
                 Color.White);
             _sb.End();
 
+            DrawGridLines();
+
+            _ui.Draw(gameTime);
+
+            UI_DrawXYPositionAndZoom();
+
             base.Draw(gameTime);
+        }
+
+        private RectangleF ComputeDrawRectangle()
+        {
+            var rectSizeX = 60 * _cameraZoom;
+            var halfRectSizeX = rectSizeX / 2;
+            var heightToWidth = (float)GraphicsDevice.Viewport.Height / GraphicsDevice.Viewport.Width;
+            var rectSizeY = rectSizeX * heightToWidth;
+            var halfRectSizeY = halfRectSizeX * heightToWidth;
+            return new RectangleF(
+                _cameraPosition.X - halfRectSizeX,
+                _cameraPosition.Y - halfRectSizeY,
+                rectSizeX, rectSizeY);
+        }
+        private void EnsureRenderTargetSizing()
+        {
+            if (_worldTarget == null || _worldTarget.Width != GraphicsDevice.Viewport.Width ||
+                _worldTarget.Height != GraphicsDevice.Viewport.Height)
+            {
+                _worldTarget?.Dispose();
+                _worldTarget = new RenderTarget2D(
+                    GraphicsDevice,
+                    GraphicsDevice.Viewport.Width,
+                    GraphicsDevice.Viewport.Height);
+            }
         }
         protected override void UnloadContent()
         {

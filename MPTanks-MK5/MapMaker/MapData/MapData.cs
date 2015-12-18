@@ -12,7 +12,7 @@ namespace MPTanks.Clients.MapMaker.MapData
 
         public string GenerateMap()
         {
-            return null;
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new Engine.Maps.Serialization.MapJSON());
         }
     }
 }

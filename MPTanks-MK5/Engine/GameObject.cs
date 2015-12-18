@@ -59,6 +59,11 @@ namespace MPTanks.Engine
         public bool IsDestructionCompleted { get; protected set; }
         #endregion
 
+        /// <summary>
+        /// A non duplicated tag, mostly used for the designer / map maker. Not for internal/API use.
+        /// </summary>
+        public object Tag { get; set; }
+
         #region Wrappers for Farseer Body
         //Since farseer is at a much smaller scale, we normalize to world space
         public Vector2 Position

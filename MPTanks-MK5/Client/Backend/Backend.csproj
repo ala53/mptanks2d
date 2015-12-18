@@ -142,6 +142,8 @@
     <Compile Include="UI\LoginForm.xaml.cs" />
     <Compile Include="UI\MainMenu.xaml.cs" />
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
+    <Compile Include="UI\MapMaker\MapMakerEditObject.xaml.cs" />
+    <Compile Include="UI\MapMaker\MapMakerMainMenu.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />
@@ -282,6 +284,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="assets\ui\xaml\MainMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="assets\ui\xaml\MapMaker\MapMakerEditObject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="assets\ui\xaml\MapMaker\MapMakerMainMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
