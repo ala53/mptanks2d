@@ -30,10 +30,8 @@ namespace MPTanks.Modding
 
         public ModHeader Header { get; internal set; }
         public bool UsesWhitelist { get; internal set; }
-        public Dictionary<string, string> AssetMappings
-        { get; internal set; }
-        =
-            new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+        public Dictionary<string, string> AssetMappings { get; internal set; }
+        = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         public string PackedFile { get; internal set; }
         public ModuleDeclarationAttribute.ModuleVersion Version { get; internal set; }
         public Assembly[] Assemblies { get; internal set; }
@@ -98,14 +96,14 @@ namespace MPTanks.Modding
         public int MinPlayersCount { get; set; }
         public bool HotJoinAllowed { get; set; }
 
-        public GamemodeType(Type t)
+        public GamemodeType(Type t, Module module)
         {
             var attrib = t.GetCustomAttribute<GamemodeAttribute>(true);
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [GamemodeAttribute]");
 
             Type = t;
-            ReflectionTypeName = attrib.ReflectionTypeName;
+            ReflectionTypeName = module.Name + "+" + t.Name;
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
             MinPlayersCount = attrib.MinPlayersCount;
@@ -125,14 +123,14 @@ namespace MPTanks.Modding
         public string DisplayName { get; internal set; }
         public string DisplayDescription { get; internal set; }
 
-        public TankType(Type t)
+        public TankType(Type t, Module module)
         {
             var attrib = t.GetCustomAttribute<TankAttribute>(true);
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [TankAttribute]");
 
             Type = t;
-            ReflectionTypeName = attrib.ReflectionTypeName;
+            ReflectionTypeName = module.Name + "+" + t.Name;
             DisplayName = attrib.DisplayName;
             DisplayDescription = attrib.Description;
         }
@@ -147,27 +145,18 @@ namespace MPTanks.Modding
     public class ProjectileType
     {
         public Type Type { get; internal set; }
-        public TankType OwnerType { get; internal set; }
         public string DisplayName { get; internal set; }
         public string ReflectionTypeName { get; internal set; }
 
-        public ProjectileType(Type t, TankType[] tankTypes)
+        public ProjectileType(Type t, Module module)
         {
             var attrib = t.GetCustomAttribute<ProjectileAttribute>(true);
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [ProjectileAttribute]");
 
             Type = t;
-            ReflectionTypeName = attrib.ReflectionTypeName;
+            ReflectionTypeName = module.Name + "+" + t.Name;
             DisplayName = attrib.DisplayName;
-
-            foreach (var tk in tankTypes)
-                if (tk.ReflectionTypeName == attrib.OwnerReflectionName)
-                    OwnerType = tk;
-
-            if (OwnerType == null)
-                throw new Exception(attrib.DisplayName + "'s owner \"" + attrib.OwnerReflectionName
-                    + "\" does not exist in this module");
         }
 
         internal static bool IsProjectileType(Type t)
@@ -186,14 +175,14 @@ namespace MPTanks.Modding
         public float MinWidth { get; internal set; }
         public float MinHeight { get; internal set; }
 
-        public MapObjectType(Type t)
+        public MapObjectType(Type t, Module module)
         {
             var attrib = t.GetCustomAttribute<MapObjectAttribute>(true);
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [MapObjectAttribute]");
 
             Type = t;
-            ReflectionTypeName = attrib.ReflectionTypeName;
+            ReflectionTypeName = module.Name + "+" + t.Name;
             DisplayName = attrib.DisplayName;
 
         }
@@ -211,14 +200,14 @@ namespace MPTanks.Modding
         public Type Type { get; set; }
         public string ReflectionTypeName { get; set; }
         public string DisplayName { get; set; }
-        public GameObjectType(Type t)
+        public GameObjectType(Type t, Module module)
         {
             var attrib = t.GetCustomAttribute<GameObjectAttribute>(true);
             if (attrib == null)
                 throw new Exception(t.FullName + " is missing [GameObjectAttribute]");
 
             Type = t;
-            ReflectionTypeName = attrib.ReflectionTypeName;
+            ReflectionTypeName = module.Name + "+" + t.Name;
             DisplayName = attrib.DisplayName;
 
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [MapObject("LargeHouseMultiLevel", "largehouse.json", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
+    [MapObject("largehouse.json", IsStatic = true, MinHeightBlocks = 3, MinWidthBlocks = 3,
         DisplayName = "Multi level house")]
     public class MultilevelHouse : MapObject
     {

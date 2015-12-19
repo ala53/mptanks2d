@@ -245,7 +245,7 @@ namespace MPTanks.DedicatedServer
         static string ChooseGamemode()
         {
             var gamemodes = new List<GamemodeType>();
-            foreach (var mod in ModDatabase.LoadedModules)
+            foreach (var mod in ModDatabase.LoadedModulesList)
                 gamemodes.AddRange(mod.Gamemodes);
 
             _logger.Info($"Choose the gamemode (1-{gamemodes.Count})");
@@ -307,7 +307,7 @@ namespace MPTanks.DedicatedServer
         static ModAssetInfo ChooseMap()
         {
             var maps = new List<ModAssetInfo>();
-            foreach (var mod in ModDatabase.LoadedModules)
+            foreach (var mod in ModDatabase.LoadedModulesList)
                 maps.AddRange(mod.Header.MapFiles
                     .Select(a => new ModAssetInfo { AssetName = a, ModInfo = mod.ModInfo }));
 

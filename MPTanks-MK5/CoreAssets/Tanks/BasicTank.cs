@@ -14,7 +14,7 @@ using MPTanks.Modding;
 
 namespace MPTanks.CoreAssets.Tanks
 {
-    [Tank("BasicTankMP", "basictank.json",
+    [Tank("basictank.json",
         DisplayName = "Basic Tank", Description = "The ephermeral \"Basic Tank\". Well rounded, but nothing special. A jack of all trades, but a master of none.")]
     public class BasicTank : Tank
     {
@@ -48,7 +48,7 @@ namespace MPTanks.CoreAssets.Tanks
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
                 ProjectileVelocity = new Vector2(0, -60),
-                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                ProjectileType = typeof(Projectiles.BasicTank.MainGunProjectile),
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "120mm cannon",
@@ -69,7 +69,7 @@ namespace MPTanks.CoreAssets.Tanks
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
                 ProjectileVelocity = new Vector2(0, -60),
-                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                ProjectileType = typeof(Projectiles.BasicTank.MainGunProjectile),
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Duct Tape and Magical Caterpillars",
@@ -86,7 +86,7 @@ namespace MPTanks.CoreAssets.Tanks
                 MaxDistance = 50,
                 ProjectileOffset = new Vector2(1.5f, -1.1f),
                 ProjectileVelocity = new Vector2(0, -60),
-                ProjectileReflectionName = "BasicTankMPMainProjectile",
+                ProjectileType = typeof(Projectiles.BasicTank.MainGunProjectile),
                 TargetingType = Weapon.WeaponTargetingType.Directional,
                 TransformPositionAndVelocityByRotation = true,
                 WeaponName = "Quantum Teleporter With Space Monkeys",

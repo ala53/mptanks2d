@@ -9,7 +9,9 @@ namespace MPTanks.CoreAssets
 {
     public static class Assets
     {
-        public const string ModuleName = "MPTanks Core Assets";
+        //DO NOT CHANGE...LIKE,EVER.
+        //Directly referenced from GamemodeAttribute.DefaultTankReflectionName
+        public const string ModuleName = "CoreAssets";
         public static string[] GetSongNames()
         {
             return new[] {

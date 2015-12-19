@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [MapObject("SpawnPointGlobal", "spawnpoint",
+    [MapObject("spawnpoint",
         InstanceSettingNames = new[] { "TeamNumber" },
         InstanceSettingDefaults = new[] { "1" })]
     public class SpawnPoint : MapObject

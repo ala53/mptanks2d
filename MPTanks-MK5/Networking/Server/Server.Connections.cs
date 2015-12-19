@@ -36,8 +36,8 @@ namespace MPTanks.Networking.Server
 
             message.Write(Server.Game.Map.Name);
 
-            message.Write(Modding.ModDatabase.LoadedModules.Count);
-            foreach (var mod in Modding.ModDatabase.LoadedModules)
+            message.Write(Modding.ModDatabase.LoadedModulesList.Count);
+            foreach (var mod in Modding.ModDatabase.LoadedModulesList)
             {
                 message.Write(mod.Name);
                 message.Write(mod.Version.Major);

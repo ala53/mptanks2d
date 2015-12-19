@@ -14,7 +14,7 @@ using MPTanks.Modding;
 
 namespace MPTanks.CoreAssets.Projectiles.BasicTank
 {
-    [Projectile("BasicTankMPMainProjectile", "basictankmainprojectile.json", "BasicTankMP", DisplayName = "Main gun projectile for Basic Tank")]
+    [Projectile("basictankmainprojectile.json", DisplayName = "Main gun projectile for Basic Tank")]
     public class MainGunProjectile : Projectile
     {
         /// <summary>

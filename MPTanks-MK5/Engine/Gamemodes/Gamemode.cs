@@ -34,20 +34,8 @@ namespace MPTanks.Engine.Gamemodes
         }
 
         #region Reflection helper
-        //We cache the info for performance. Multiple calls only create one instance
-        private string _cachedReflectionName;
-        public string ReflectionName
-        {
-            get
-            {
-                if (_cachedReflectionName == null)
-                    _cachedReflectionName = ((GameObjectAttribute[])(GetType()
-                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
-                          .ReflectionTypeName;
+        public string ReflectionName => ContainingModule.Name + "+" + GetType().Name;
 
-                return _cachedReflectionName;
-            }
-        }
         private string _cachedDisplayName;
         public string DisplayName
         {
@@ -85,7 +73,7 @@ namespace MPTanks.Engine.Gamemodes
             get
             {
                 if (_cachedModule == null)
-                    _cachedModule = ModDatabase.ReverseTypeTable[GetType().FullName];
+                    _cachedModule = ModDatabase.TypeToModuleTable[GetType()];
 
                 return _cachedModule;
             }
@@ -110,9 +98,17 @@ namespace MPTanks.Engine.Gamemodes
             get
             {
                 if (_defaultTankReflectionName == null)
+                {
                     _defaultTankReflectionName = ((Modding.GamemodeAttribute)(GetType().
                          GetCustomAttributes(typeof(Modding.GamemodeAttribute), true))[0]).DefaultTankTypeReflectionName;
 
+                    if (_defaultTankReflectionName.Split('+').Length == 1)
+                    {
+                        //Preface it with module name
+                        _defaultTankReflectionName = ContainingModule.Name + "+" + _defaultTankReflectionName;
+                    }
+
+                }
                 return _defaultTankReflectionName;
             }
         }
@@ -378,11 +374,10 @@ namespace MPTanks.Engine.Gamemodes
             return (T)ReflectiveInitialize(gamemodeName, game, state);
         }
 
-        private static void RegisterType<T>() where T : Gamemode
+        private static void RegisterType<T>(Module module) where T : Gamemode
         {
             //get the name
-            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
-                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+            var name = module.Name + "+" + typeof(T).Name;
             if (_gamemodeTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _gamemodeTypes.Add(name.ToLower(), typeof(T));

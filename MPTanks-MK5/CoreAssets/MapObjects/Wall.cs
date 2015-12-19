@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [MapObject("WallGeneric", "wall_generic.json", IsStatic = true, DisplayName = "Generic Wall",
+    [MapObject("wall_generic.json", IsStatic = true, DisplayName = "Generic Wall",
         Description = "A generic, bland wall type.")]
     public class Wall : MapObject
     {

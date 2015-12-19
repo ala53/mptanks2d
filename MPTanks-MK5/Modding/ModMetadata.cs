@@ -98,9 +98,9 @@ namespace MPTanks.Modding
             FileInfo fi = new FileInfo(modFile);
 
             if (fi.Extension.ToLower().EndsWith("dll"))
-                modData = ModLoader.Load(modFile, verifySafe, out errors);
+                modData = ModLoader.LoadPrecompiled(modFile, verifySafe, out errors);
             else
-                modData = ModLoader.LoadMod(modFile, ModSettings.MetadataModUnpackDir, ModSettings.MetadataModUnpackDir,
+                modData = ModLoader.LoadCompressedModFile(modFile, ModSettings.MetadataModUnpackDir, ModSettings.MetadataModUnpackDir,
                ModSettings.MetadataModUnpackDir, out errors, verifySafe);
 
             result.ModPackedFile = modFile;

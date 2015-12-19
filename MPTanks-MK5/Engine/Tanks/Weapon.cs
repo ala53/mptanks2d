@@ -19,7 +19,7 @@ namespace MPTanks.Engine.Tanks
         {
             MaxActiveProjectileCount = 0,
             MaxDistance = 0,
-            ProjectileReflectionName = "NULL",
+            ProjectileType = null,
             TargetingType = WeaponTargetingType.Directional,
             WeaponName = "NO WEAPONS AVAILABLE",
             WeaponRechargeTime = TimeSpan.FromSeconds(9999999),
@@ -46,9 +46,9 @@ namespace MPTanks.Engine.Tanks
         /// </summary>
         public float MaxDistance { get; set; }
         /// <summary>
-        /// The reflection name of the projectile / the name to pass to GameCore::AddProjectile()
+        /// The type of projectile
         /// </summary>
-        public string ProjectileReflectionName { get; set; }
+        public Type ProjectileType { get; set; }
         /// <summary>
         /// The velocity to fire the projectile at.
         /// </summary>
@@ -179,7 +179,7 @@ namespace MPTanks.Engine.Tanks
                 writer.Write(true);
                 writer.Write((byte)TargetingType);
                 writer.Write(MaxDistance);
-                writer.Write(ProjectileReflectionName);
+                writer.Write(ProjectileType);
                 writer.Write(new HalfVector2(ProjectileVelocity));
                 writer.Write(new HalfVector2(ProjectileOffset));
                 writer.Write((Half)ProjectileRotation);
@@ -196,6 +196,26 @@ namespace MPTanks.Engine.Tanks
             }
         }
 
+        private Type ResolveTypeFromString(string type)
+        {
+            if (type == "NULL")
+                return null;
+
+            return Modding.ModDatabase.ReflectionNameToTypeTable[type];
+        }
+
+        private string GetProjectileString()
+        {
+            if (ProjectileType == null)
+                return "NULL";
+
+            if (!ProjectileType.IsSubclassOf(typeof(Projectiles.Projectile)))
+                throw new Exception("Projectile does not inherit from Engine.Projectiles.Projectile");
+
+            var module = Modding.ModDatabase.TypeToModuleTable[ProjectileType];
+            return module.Name + "+" + ProjectileType.Name;
+        }
+
         private byte[] _projectileArray;
         public void SetFullState(ByteArrayReader reader)
         {
@@ -208,7 +228,7 @@ namespace MPTanks.Engine.Tanks
             else _isNullWeapon = false;
             TargetingType = (WeaponTargetingType)reader.ReadByte();
             MaxDistance = reader.ReadFloat();
-            ProjectileReflectionName = reader.ReadString();
+            ProjectileType = ResolveTypeFromString(reader.ReadString());
             ProjectileVelocity = reader.ReadHalfVector();
             ProjectileOffset = reader.ReadHalfVector();
             ProjectileRotation = reader.ReadHalf();
@@ -287,7 +307,7 @@ namespace MPTanks.Engine.Tanks
             if (!TransformPositionAndVelocityByRotation)
                 exactVelocity = velocity ?? ProjectileVelocity;
 
-            var prj = Game.AddProjectile(ProjectileReflectionName, Owner, Game.Authoritative);
+            var prj = Game.AddProjectile(GetProjectileString(), Owner, Game.Authoritative);
             prj.Position = exactPosition;
             prj.LinearVelocity = exactVelocity;
             prj.Rotation = ProjectileRotation;

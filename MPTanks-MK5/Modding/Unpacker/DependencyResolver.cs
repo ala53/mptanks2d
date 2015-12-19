@@ -46,7 +46,7 @@ namespace MPTanks.Modding.Unpacker
 
             //Resolve and load the dependency
             string errors;
-            var module = ModLoader.LoadMod(dbItem.File, dllDir, mapDir, assetDir, out errors,
+            var module = ModLoader.LoadCompressedModFile(dbItem.File, dllDir, mapDir, assetDir, out errors,
                 dbItem.UsesWhitelist, overwriteExisting);
 
             if (errors != null)

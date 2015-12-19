@@ -71,7 +71,7 @@ namespace MPTanks.Clients.MapMaker
 
         private void UpdateModsList()
         {
-            _map.Mods.AddRange(Modding.ModDatabase.LoadedModules.Select(a => a.ModInfo));
+            _map.Mods.AddRange(Modding.ModDatabase.LoadedModulesList.Select(a => a.ModInfo));
             _map.Mods = _map.Mods.Distinct().ToList();
         }
 
@@ -105,7 +105,7 @@ namespace MPTanks.Clients.MapMaker
             if (_active)
             {
                 var keyState = Keyboard.GetState();
-                float spd = 0.75f * _cameraZoom;
+                float spd = 0.5f * _cameraZoom;
                 if (keyState.IsKeyDown(Keys.LeftShift))
                     spd = 0.15f * _cameraZoom;
                 //Handle WASD
@@ -122,10 +122,10 @@ namespace MPTanks.Clients.MapMaker
                 if (keyState.IsKeyDown(Keys.LeftShift))
                     zoomSpeed = 0.015f;
                 //And Q/E for zoom
-                if (_cameraZoom < 10 && keyState.IsKeyDown(Keys.Q))
+                if (_cameraZoom < 10 && keyState.IsKeyDown(Keys.E))
                     _cameraZoom += zoomSpeed * _cameraZoom;
 
-                if (_cameraZoom > 0.05 && keyState.IsKeyDown(Keys.E))
+                if (_cameraZoom > 0.05 && keyState.IsKeyDown(Keys.Q))
                     _cameraZoom -= zoomSpeed * _cameraZoom;
             }
 

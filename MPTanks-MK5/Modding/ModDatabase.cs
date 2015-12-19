@@ -12,15 +12,22 @@ namespace MPTanks.Modding
     {
         static List<ModDatabaseItem> _items { get; set; } = new List<ModDatabaseItem>();
 
-        public static IReadOnlyList<ModDatabaseItem> Mods { get { return _items; } }
+        public static IReadOnlyList<ModDatabaseItem> AllModsList { get { return _items; } }
 
         static List<Module> _loadedModules = new List<Module>();
 
-        public static IReadOnlyList<Module> LoadedModules { get { return _loadedModules; } }
+        public static IReadOnlyList<Module> LoadedModulesList { get { return _loadedModules; } }
 
-        public static Dictionary<string, Module> _reverseLookupTable = new Dictionary<string, Module>();
+        static Dictionary<string, Module> _loadedModulesByName = new Dictionary<string, Module>();
+        public static IReadOnlyDictionary<string, Module> ModuleNameToLoadedModuleTable { get { return _loadedModulesByName; } }
 
-        public static Dictionary<string, Module> ReverseTypeTable { get { return _reverseLookupTable; } }
+        public static Dictionary<Type, Module> _reverseLookupTable = new Dictionary<Type, Module>();
+
+        public static IReadOnlyDictionary<Type, Module> TypeToModuleTable { get { return _reverseLookupTable; } }
+
+        public static Dictionary<string, Type> _reflectionToTypeObjectTable = new Dictionary<string, Type>();
+
+        public static IReadOnlyDictionary<string, Type> ReflectionNameToTypeTable { get { return _reflectionToTypeObjectTable; } }
 
         static ModDatabase()
         {
@@ -39,7 +46,7 @@ namespace MPTanks.Modding
         public static ModDatabaseItem Get(string name, int major)
         {
             ModDatabaseItem result = null;
-            foreach (var mod in Mods)
+            foreach (var mod in AllModsList)
             {
                 if (mod.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && mod.Major == major)
                 {
@@ -61,7 +68,7 @@ namespace MPTanks.Modding
         {
             if (!Contains(name, major)) return null;
             var mod = Get(name, major);
-            foreach (var module in LoadedModules)
+            foreach (var module in LoadedModulesList)
                 if (mod.Name.Equals(
                     module.Name, StringComparison.InvariantCultureIgnoreCase) && module.Version.Major == major)
                     return module;
@@ -100,20 +107,35 @@ namespace MPTanks.Modding
             if (!Contains(module.Name, module.Version.Major))
                 Add(module.Name, module.Version.Major, module.Version.Minor, module.Version.Tag, module.PackedFile, module.UsesWhitelist);
 
-            if (!_loadedModules.Contains(module))
-                _loadedModules.Add(module);
+            if (_loadedModules.Contains(module))
+                return;
+
+            _loadedModulesByName.Add(module.Name, module);
+            _loadedModules.Add(module);
 
             foreach (var tank in module.Tanks)
-                _reverseLookupTable.Add(tank.Type.FullName, module);
+            {
+                _reflectionToTypeObjectTable.Add(tank.ReflectionTypeName, tank.Type);
+                _reverseLookupTable.Add(tank.Type, module);
+            }
 
             foreach (var prj in module.Projectiles)
-                _reverseLookupTable.Add(prj.Type.FullName, module);
+            {
+                _reflectionToTypeObjectTable.Add(prj.ReflectionTypeName, prj.Type);
+                _reverseLookupTable.Add(prj.Type, module);
+            }
 
             foreach (var mapObj in module.MapObjects)
-                _reverseLookupTable.Add(mapObj.Type.FullName, module);
+            {
+                _reflectionToTypeObjectTable.Add(mapObj.ReflectionTypeName, mapObj.Type);
+                _reverseLookupTable.Add(mapObj.Type, module);
+            }
 
             foreach (var mode in module.Gamemodes)
-                _reverseLookupTable.Add(mode.Type.FullName, module);
+            {
+                _reflectionToTypeObjectTable.Add(mode.ReflectionTypeName, mode.Type);
+                _reverseLookupTable.Add(mode.Type, module);
+            }
         }
 
         public static void Remove(string name, int major)

@@ -9,6 +9,7 @@ using MPTanks.Engine.Assets;
 using Newtonsoft.Json;
 using MPTanks.Engine.Helpers;
 using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 
 namespace MPTanks.Engine.Tanks
 {
@@ -181,11 +182,10 @@ namespace MPTanks.Engine.Tanks
             return (T)ReflectiveInitialize(tankName, player, game, authorized, state);
         }
 
-        private static void RegisterType<T>() where T : Tank
+        private static void RegisterType<T>(Module module) where T : Tank
         {
             //get the name
-            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
-                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+            var name = module.Name + "+" + typeof(T).Name;
             if (_tankTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _tankTypes.Add(name.ToLower(), typeof(T));

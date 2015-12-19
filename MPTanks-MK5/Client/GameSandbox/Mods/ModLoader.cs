@@ -29,7 +29,7 @@ namespace MPTanks.Client.GameSandbox.Mods
             }
             string errors;
             Logger.Info($"Mod {modFile} loaded.");
-            var mod = Modding.ModLoader.LoadMod(
+            var mod = Modding.ModLoader.LoadCompressedModFile(
                  modFile, settings.ModUnpackPath, settings.ModMapPath,
                  settings.ModAssetPath, out errors);
 

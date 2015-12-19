@@ -12,7 +12,7 @@ using MPTanks.Engine.Tanks;
 
 namespace MPTanks.CoreAssets.Gamemodes
 {
-    [Gamemode("DeathMatchGamemode", DisplayName = "Deathmatch (no teams)",
+    [Gamemode(DisplayName = "Deathmatch (no teams)",
         Description = "2 team deathmatch", MinPlayersCount = 2, HotJoinEnabled = true)]
     public class DeathMatchGamemode : Gamemode
     {

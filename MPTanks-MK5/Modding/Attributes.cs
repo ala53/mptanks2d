@@ -13,8 +13,8 @@ namespace MPTanks.Modding
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class TankAttribute : GameObjectAttribute
     {
-        public TankAttribute(string reflectionName, string componentsFile)
-            : base(reflectionName, componentsFile)
+        public TankAttribute(string componentsFile)
+            : base(componentsFile)
         {
 
         }
@@ -23,8 +23,8 @@ namespace MPTanks.Modding
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class MapObjectAttribute : GameObjectAttribute
     {
-        public MapObjectAttribute(string reflectionName, string componentsFile)
-            : base(reflectionName, componentsFile)
+        public MapObjectAttribute(string componentsFile)
+            : base(componentsFile)
         {
 
         }
@@ -41,23 +41,17 @@ namespace MPTanks.Modding
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class ProjectileAttribute : GameObjectAttribute
     {
-        /// <summary>
-        /// The reflection type name of the owner. So, the tank type this projectile is assigned to.
-        /// </summary>
-        public string OwnerReflectionName { get; set; }
-        public ProjectileAttribute(string reflectionName, string componentsFile, string ownerReflectionName)
-            : base(reflectionName, componentsFile)
+        public ProjectileAttribute(string componentsFile)
+            : base(componentsFile)
         {
-            OwnerReflectionName = ownerReflectionName;
         }
     }
 
     public sealed class GamemodeAttribute : GameObjectAttribute
     {
-        public GamemodeAttribute(string reflectionName)
-            : base(reflectionName, "Gamemodes do not have renderer components")
+        public GamemodeAttribute()
+            : base("Gamemodes do not have renderer components")
         {
-
         }
         /// <summary>
         /// The minimum number of players required to start a game.
@@ -65,9 +59,14 @@ namespace MPTanks.Modding
         public int MinPlayersCount { get; set; }
 
         /// <summary>
-        /// The default tank type to use when a player does not select their tank type after X milliseconds.
+        /// The default tank type to use when a player does not select their tank type by the time the game starts.
+        /// In the form of either "ModName+ClassName" (e.g. "CoreAssets+BasicTank") or "ClassName" (e.g. BasicTank), 
+        /// but only if it's from the same mod as this asset
+        /// 
+        /// Defaults to the first tank defined in the first loaded mod file.
         /// </summary>
-        public string DefaultTankTypeReflectionName { get; set; } = "BasicTankMP";
+        public string DefaultTankTypeReflectionName { get; set; } = 
+            ModLoader.LoadedMods.FirstOrDefault().Value?.Tanks?.FirstOrDefault()?.ReflectionTypeName ?? "CoreAssets+BasicTank";
 
         /// <summary>
         /// Whether a player can join an active game and get spawned in or if they will have to wait for the next one.
@@ -85,6 +84,8 @@ namespace MPTanks.Modding
 
         public ModuleDeclarationAttribute(string name, string description, string author, string version)
         {
+            if (name.Contains("+"))
+                throw new Exception($"{name} includes a \"+\" character, which is disallowed.");
             Name = name;
             Description = description;
             Author = author;
@@ -125,15 +126,10 @@ namespace MPTanks.Modding
         /// </summary>
         /// <param name="reflectionName">The reflection name of the object.</param>
         /// <param name="componentsFile">The .json file that contains the component lists for the mod</param>
-        public GameObjectAttribute(string reflectionName, string componentsFile)
+        public GameObjectAttribute(string componentsFile)
         {
-            ReflectionTypeName = reflectionName;
             ComponentFile = componentsFile;
         }
-        /// <summary>
-        /// The reflection type name for the object (from map.json files).
-        /// </summary>
-        public string ReflectionTypeName { get; private set; }
         public string ComponentFile { get; private set; }
         /// <summary>
         /// The display name of the object to be shown in error messages or the map editor.

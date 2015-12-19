@@ -56,7 +56,7 @@ namespace MPTanks.Clients.MapMaker
 
                 //Load the mod
                 string errors;
-                var module = Modding.ModLoader.LoadMod(file,
+                var module = Modding.ModLoader.LoadCompressedModFile(file,
                     GameSettings.Instance.ModUnpackPath,
                     GameSettings.Instance.ModMapPath,
                     GameSettings.Instance.ModAssetPath,

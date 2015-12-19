@@ -56,7 +56,7 @@
     <Compile Include="MapObjects\MultilevelHouse.cs" />
     <Compile Include="MapObjects\SatelliteDishLarge.cs" />
     <Compile Include="MapObjects\SpawnPoint.cs" />
-    <Compile Include="MapObjects\TankBlocks.cs" />
+    <Compile Include="MapObjects\TankBlock.cs" />
     <Compile Include="MapObjects\Wall.cs" />
     <Compile Include="ModuleInfo.cs" />
     <Compile Include="Projectiles\BasicTank\MainGunProjectile.cs" />

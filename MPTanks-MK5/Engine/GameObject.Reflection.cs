@@ -11,18 +11,7 @@ namespace MPTanks.Engine
         #region Reflection helper
         //We cache the info for performance. Multiple calls only create one instance
         private string _cachedReflectionName;
-        public string ReflectionName
-        {
-            get
-            {
-                if (_cachedReflectionName == null)
-                    _cachedReflectionName = ((GameObjectAttribute[])(GetType()
-                          .GetCustomAttributes(typeof(GameObjectAttribute), true)))[0]
-                          .ReflectionTypeName;
-
-                return _cachedReflectionName;
-            }
-        }
+        public string ReflectionName => ContainingModule.Name + "+" + GetType().Name;
         private string _cachedDisplayName;
         public string DisplayName
         {
@@ -60,7 +49,7 @@ namespace MPTanks.Engine
             get
             {
                 if (_cachedModule == null)
-                    _cachedModule = ModDatabase.ReverseTypeTable[GetType().FullName];
+                    _cachedModule = ModDatabase.TypeToModuleTable[GetType()];
 
                 return _cachedModule;
             }
@@ -69,11 +58,10 @@ namespace MPTanks.Engine
 
         private static Dictionary<string, Type> _types = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
         public static IReadOnlyDictionary<string, Type> AvailableTypes => _types;
-        private static void RegisterType<T>() where T : GameObject
+        private static void RegisterType<T>(Module module) where T : GameObject
         {
             //get the name
-            var name = ((GameObjectAttribute)(typeof(T).
-                GetCustomAttributes(typeof(GameObjectAttribute), true))[0]).ReflectionTypeName;
+            var name = module.Name + "+" + typeof(T).Name;
             if (_types.ContainsKey(name)) throw new Exception("Already registered!");
 
             _types.Add(name.ToLower(), typeof(T));

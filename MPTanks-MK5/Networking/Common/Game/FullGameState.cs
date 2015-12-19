@@ -175,7 +175,7 @@ namespace MPTanks.Networking.Common.Game
             }
             state.SetObjects(game);
 
-            foreach (var mod in ModDatabase.LoadedModules)
+            foreach (var mod in ModDatabase.LoadedModulesList)
                 state.GameLoadedMods.Add(new ModInfo
                 {
                     ModName = mod.Name,

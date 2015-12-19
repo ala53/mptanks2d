@@ -38,7 +38,7 @@ namespace MPTanks.Modding
                 if (!ModDatabase.Contains(ModName, ModMajor)) return false;
                 var mod = ModDatabase.Get(ModName, ModMajor);
                 if (mod.Major < ModMajor) return false;
-                foreach (var module in ModDatabase.LoadedModules)
+                foreach (var module in ModDatabase.LoadedModulesList)
                     if (mod.Name.Equals(
                         module.Name, StringComparison.InvariantCultureIgnoreCase) && module.Version.Major == ModMajor)
                         return true;
@@ -76,7 +76,7 @@ namespace MPTanks.Modding
             var mod = ModDatabase.Get(ModName, ModMajor);
             if (mod == null) return null;
             string errors;
-            return ModLoader.LoadMod(mod.File, dllUnpackDir, mapUnpackDir, assetUnpackDir,
+            return ModLoader.LoadCompressedModFile(mod.File, dllUnpackDir, mapUnpackDir, assetUnpackDir,
                  out errors, mod.UsesWhitelist, overwriteExisting);
         }
     }

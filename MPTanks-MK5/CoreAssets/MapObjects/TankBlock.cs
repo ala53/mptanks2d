@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [Modding.MapObject("TankBlock", "tankblocks.json", IsStatic = true)]
-    public class TankBlocks : MapObject
+    [Modding.MapObject("tankblocks.json", IsStatic = true)]
+    public class TankBlock : MapObject
     {
-        public TankBlocks(GameCore game, bool authorized, Vector2 position, float rotation)
+        public TankBlock(GameCore game, bool authorized, Vector2 position, float rotation)
             : base(game, authorized, position, rotation)
         {
-            
+
         }
 
         protected override void CreateInternal()
@@ -28,7 +28,7 @@ namespace MPTanks.CoreAssets.MapObjects
         {
             if (other.GetType().IsSubclassOf(typeof(Projectile))) return false; //let projectiles go through
             if (other.Flags.Contains("PassesThroughTankBlocks")) return false; //take advantage of flags so some tanks
-                                                                                //can go through, if explicitly allowed
+                                                                               //can go through, if explicitly allowed
             return base.CollideInternal(other, contact);
         }
     }

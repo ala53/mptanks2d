@@ -79,7 +79,7 @@ namespace MPTanks.Engine.Rendering
         {
             if (_cachedSearches.ContainsKey(name))
                 return _cachedSearches[name];
-            foreach (var mod in ModDatabase.LoadedModules)
+            foreach (var mod in ModDatabase.LoadedModulesList)
             {
                 if (mod.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
                 {

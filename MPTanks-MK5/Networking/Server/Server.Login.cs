@@ -134,7 +134,7 @@ namespace MPTanks.Networking.Server
         private void ApproveConnection(NetConnection conn, WebInterface.WebPlayerInfoResponse playerInfo = null)
         {
             //Send a mod listing
-            var modList = Modding.ModDatabase.LoadedModules.Select(a => new
+            var modList = Modding.ModDatabase.LoadedModulesList.Select(a => new
             {
                 Name = a.Name,
                 Major = a.Version.Major,

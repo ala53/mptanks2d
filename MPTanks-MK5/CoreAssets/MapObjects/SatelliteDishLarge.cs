@@ -10,7 +10,7 @@ using MPTanks.Modding;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [MapObject("SatelliteDishLarge", "satellitedish.json", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2, 
+    [MapObject("satellitedish.json", IsStatic = true, MinHeightBlocks = 2, MinWidthBlocks = 2,
         DisplayName = "Satellite Dish (large)")]
     public class SatelliteDishLarge : MapObject
     {
@@ -19,7 +19,7 @@ namespace MPTanks.CoreAssets.MapObjects
         {
             Size = new Vector2(4);
         }
-        
+
         protected override void UpdateInternal(GameTime time)
         {
         }

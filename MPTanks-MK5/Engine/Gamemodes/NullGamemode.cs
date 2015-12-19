@@ -8,8 +8,7 @@ using MPTanks.Modding;
 
 namespace MPTanks.Engine.Gamemodes
 {
-    [Gamemode("NullGamemode",
-        DefaultTankTypeReflectionName = "BasicTankMP", 
+    [Gamemode(DefaultTankTypeReflectionName = "BasicTankMP", 
         MinPlayersCount = 0, HotJoinEnabled = false)]
     public class NullGamemode : Gamemode
     {

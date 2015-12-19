@@ -129,11 +129,10 @@ namespace MPTanks.Engine.Maps.MapObjects
             return (T)ReflectiveInitialize(objName, game, authorized, position, rotation, state);
         }
 
-        private static void RegisterType<T>() where T : MapObject
+        private static void RegisterType<T>(Module module) where T : MapObject
         {
             //get the name
-            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
-                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+            var name = module.Name + "+" + typeof(T).Name;
             if (_objTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _objTypes.Add(name.ToLower(), typeof(T));

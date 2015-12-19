@@ -37,7 +37,7 @@ namespace MPTanks.Client.GameSandbox.Mods
             string err = "";
             Logger.Info($"Loading core (trusted) mod {modFile}");
 
-            var mod = Modding.ModLoader.LoadMod(modFile, settings.ModUnpackPath, settings.ModMapPath, 
+            var mod = Modding.ModLoader.LoadCompressedModFile(modFile, settings.ModUnpackPath, settings.ModMapPath, 
                 settings.ModAssetPath, out err, false, GlobalSettings.Debug);
             //In debug mode, we delete and recreate the cache
             errors += "\n\n\n" + err;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine.Settings;
+using MPTanks.Modding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -91,11 +92,10 @@ namespace MPTanks.Engine.Projectiles
             return inst;
         }
 
-        private static void RegisterType<T>() where T : Projectile
+        private static void RegisterType<T>(Module module) where T : Projectile
         {
             //get the reflection name from the attribute 
-            var name = ((MPTanks.Modding.GameObjectAttribute)(typeof(T).
-                GetCustomAttributes(typeof(MPTanks.Modding.GameObjectAttribute), true))[0]).ReflectionTypeName;
+            var name = module.Name + "+" + typeof(T).Name;
             if (_prjTypes.ContainsKey(name)) throw new Exception("Already registered!");
 
             _prjTypes.Add(name.ToLower(), typeof(T));

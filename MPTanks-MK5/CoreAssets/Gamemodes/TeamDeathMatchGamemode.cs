@@ -10,7 +10,7 @@ using MPTanks.Engine.Sound;
 
 namespace MPTanks.CoreAssets.Gamemodes
 {
-    [Gamemode("TeamDeathMatchGamemode", DisplayName = "Team Deathmatch",
+    [Gamemode(DisplayName = "Team Deathmatch",
         Description = "A free-for-all deathmatch", MinPlayersCount = 2)]
     public class TeamDeathMatchGamemode : Gamemode
     {

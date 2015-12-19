@@ -98,7 +98,7 @@ namespace MPTanks.Client.GameSandbox.Mods
             string err = "";
             Logger.Info($"Loading core (trusted) mod {modFile}");
 
-            var mod = Modding.ModLoader.LoadMod(modFile, settings.ModUnpackPath, settings.ModMapPath,
+            var mod = Modding.ModLoader.LoadCompressedModFile(modFile, settings.ModUnpackPath, settings.ModMapPath,
                 settings.ModAssetPath, out err, false, GlobalSettings.Debug);
 
             if (mod == null)
@@ -132,7 +132,7 @@ namespace MPTanks.Client.GameSandbox.Mods
             //Find the mod
             var modInfo = Modding.ModDatabase.Get(name, major);
 
-            var mod = Modding.ModLoader.LoadMod(modInfo.File, settings.ModUnpackPath, settings.ModMapPath,
+            var mod = Modding.ModLoader.LoadCompressedModFile(modInfo.File, settings.ModUnpackPath, settings.ModMapPath,
                 settings.ModAssetPath, out err, modInfo.UsesWhitelist, GlobalSettings.Debug);
 
             if (mod == null)
