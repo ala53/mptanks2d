@@ -93,6 +93,7 @@
     <Compile Include="GameBuilder.Menus.cs" />
     <Compile Include="MapData\MapData.cs" />
     <Compile Include="GameBuilder.cs" />
+    <Compile Include="MapData\MapObjectMetadata.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -128,7 +128,6 @@
     <Compile Include="Sound\SoundEvents.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Tanks\InputState.cs" />
-    <Compile Include="Tanks\SuperTank.cs" />
     <Compile Include="Tanks\Tank.cs" />
     <Compile Include="Tanks\TankHelper.cs" />
     <Compile Include="Tanks\Weapon.cs" />

@@ -176,33 +176,6 @@ namespace MPTanks.Engine
             get
             {
                 foreach (var obj in GameObjects)
-                    if (obj.GetType().IsSubclassOf(typeof(Tanks.Tank)) &&
-                        !obj.GetType().IsSubclassOf(typeof(Tanks.SuperTank)))
-                        yield return (Tanks.Tank)obj;
-            }
-        }
-
-        /// <summary>
-        /// The SuperTanks alive in the game
-        /// </summary>
-        public IEnumerable<Tanks.SuperTank> SuperTanks
-        {
-            get
-            {
-                foreach (var obj in GameObjects)
-                    if (obj.GetType().IsSubclassOf(typeof(Tanks.SuperTank)))
-                        yield return (Tanks.SuperTank)obj;
-            }
-        }
-
-        /// <summary>
-        /// All tanks alive in the game, both normal and super.
-        /// </summary>
-        public IEnumerable<Tanks.Tank> AllTanks
-        {
-            get
-            {
-                foreach (var obj in GameObjects)
                     if (obj.GetType().IsSubclassOf(typeof(Tanks.Tank)))
                         yield return (Tanks.Tank)obj;
             }
