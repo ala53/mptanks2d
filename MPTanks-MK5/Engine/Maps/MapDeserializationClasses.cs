@@ -17,6 +17,8 @@ namespace MPTanks.Engine.Maps.Serialization
         public string Type { get; set; } = "map";
         public string Name { get; set; }
         public string Author { get; set; }
+        public JSONVector TopLeft { get; set; }
+        public JSONVector BottomRight { get; set; }
         public JSONVector Size { get; set; }
         public bool FogOfWar { get; private set; }
         public int MaxPlayers { get; set; }

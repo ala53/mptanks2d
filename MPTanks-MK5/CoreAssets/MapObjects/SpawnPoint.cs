@@ -16,6 +16,7 @@ namespace MPTanks.CoreAssets.MapObjects
         Description = "A spawn point for a team number")]
     public class SpawnPoint : MapObject
     {
+        public short Team { get; private set; } = 0;
         public SpawnPoint(Engine.GameCore game, bool authorized, Vector2 position, float rotation)
             : base(game, authorized, position, rotation)
         {
@@ -27,10 +28,12 @@ namespace MPTanks.CoreAssets.MapObjects
             if (value == null) return false;
             if (setting == "Team Number")
             {
-                int asInt;
-                if (!int.TryParse(value, out asInt))
+                short asInt;
+                if (!short.TryParse(value, out asInt))
                     return false;
+
                 if (asInt < 0) return false; //Team must be greater than or equal to 0
+                Team = asInt;
             }
             return true;
         }

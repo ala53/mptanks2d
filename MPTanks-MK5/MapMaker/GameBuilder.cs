@@ -110,7 +110,7 @@ namespace MPTanks.Clients.MapMaker
 
         public void OnMapChanged()
         {
-            var map = _map.GenerateMap();
+            var map = MapData.MapData.Default;
             _game = new GameCore(null, new NullGamemode(), map);
             _game.Authoritative = true;
             _game.BeginGame(true);

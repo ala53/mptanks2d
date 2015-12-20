@@ -26,6 +26,11 @@ namespace MPTanks.ModCompiler
             return new Regex("^[a-zA-Z0-9-]*$").IsMatch(name) && name.Length >= 4 && name.Length <= 64;
         }
 
+        /// <summary>
+        /// Mod name is always NAME:VERSIONMAJOR.VERSIONMINOR-TAG
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static string GetModUrl(string name)
         {
             if (!IsNameValid(name))

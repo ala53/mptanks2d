@@ -28,7 +28,10 @@ namespace MPTanks.Clients.MapMaker
             {
                 page.Element<Button>("LoadMapBtn");
                 page.Element<Button>("SaveMapBtn");
-                page.Element<Button>("GenerateMapBtn");
+                page.Element<Button>("GenerateMapBtn").Click += (a, b) =>
+                {
+                    File.WriteAllText("mpa.json", _map.GenerateMap(_game));
+                };
                 page.Element<StackPanel>("ModsListPanel");
                 page.Element<Button>("LoadModBtn");
                 page.Element<CheckBox>("LockToGridChkBox");

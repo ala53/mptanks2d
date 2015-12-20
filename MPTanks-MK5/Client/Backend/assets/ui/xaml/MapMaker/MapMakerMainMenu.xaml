@@ -33,11 +33,12 @@
                 <TextBlock Padding="0,8,8,8" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Search:</TextBlock>
                 <TextBox x:Name="SearchBox" Width="150"></TextBox>
             </StackPanel>
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" Height="200" MaxHeight="200" VerticalScrollBarVisibility="Visible">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" Height="180" MaxHeight="180" VerticalScrollBarVisibility="Visible">
                 <StackPanel x:Name="MapObjectSelectorPanel"  Background="#90000000" Width="175">
 
                 </StackPanel>
             </ScrollViewer>
+            <Button Margin="5" FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="MoreSettingsBtn">Map Settings</Button>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

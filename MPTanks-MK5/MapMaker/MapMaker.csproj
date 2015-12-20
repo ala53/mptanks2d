@@ -66,6 +66,7 @@
       <HintPath>..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FarseerPhysics.Portable, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>

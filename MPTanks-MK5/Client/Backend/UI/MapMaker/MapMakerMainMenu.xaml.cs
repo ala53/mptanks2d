@@ -60,6 +60,8 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private StackPanel MapObjectSelectorPanel;
         
+        private Button MoreSettingsBtn;
+        
         public MapMakerMainMenu() : 
                 base() {
             this.Initialize();
@@ -197,8 +199,8 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_9 = new ScrollViewer();
             this.e_1.Children.Add(this.e_9);
             this.e_9.Name = "e_9";
-            this.e_9.Height = 200F;
-            this.e_9.MaxHeight = 200F;
+            this.e_9.Height = 180F;
+            this.e_9.MaxHeight = 180F;
             this.e_9.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
             this.e_9.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             // MapObjectSelectorPanel element
@@ -207,6 +209,15 @@ namespace EmptyKeys.UserInterface.Generated {
             this.MapObjectSelectorPanel.Name = "MapObjectSelectorPanel";
             this.MapObjectSelectorPanel.Width = 175F;
             this.MapObjectSelectorPanel.Background = new SolidColorBrush(new ColorW(0, 0, 0, 144));
+            // MoreSettingsBtn element
+            this.MoreSettingsBtn = new Button();
+            this.e_1.Children.Add(this.MoreSettingsBtn);
+            this.MoreSettingsBtn.Name = "MoreSettingsBtn";
+            this.MoreSettingsBtn.Margin = new Thickness(5F, 5F, 5F, 5F);
+            this.MoreSettingsBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.MoreSettingsBtn.FontFamily = new FontFamily("JHUF");
+            this.MoreSettingsBtn.FontSize = 12F;
+            this.MoreSettingsBtn.Content = "Map Settings";
             FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
             FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
             FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");
