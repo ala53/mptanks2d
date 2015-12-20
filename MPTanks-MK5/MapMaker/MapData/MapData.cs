@@ -1,7 +1,9 @@
 ﻿using FarseerPhysics.Collision;
 using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
+using MPTanks.Client.GameSandbox;
 using MPTanks.Engine;
+using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Maps.Serialization;
 using MPTanks.Engine.Serialization;
 using System;
@@ -16,6 +18,60 @@ namespace MPTanks.Clients.MapMaker.MapData
     {
         public List<Modding.ModInfo> Mods { get; set; } = new List<Modding.ModInfo>();
 
+        private GameCore CreateGameFromMapAndUpdateModsList(MapJSON map)
+        {
+            var game = new GameCore(null, new NullGamemode(), Newtonsoft.Json.JsonConvert.SerializeObject(map));
+
+            //Blow up the mod infos
+            var deps = map.ModDependencies.Select(a =>
+             {
+                 var name = a.Split(':')[0];
+                 var major = int.Parse(a.Split(':')[1].Split('.')[0]);
+                 var minor = int.Parse(a.Split(':')[1].Split('.')[1].Split('-')[0]);
+
+                 return new Modding.ModInfo()
+                 {
+                     ModName = name,
+                     ModMajor = major,
+                     ModMinor = minor
+                 };
+             });
+
+            //And make sure they're loaded
+            foreach (var itm in deps)
+            {
+                var db = Modding.ModDatabase.Get(itm.ModName, itm.ModMajor);
+                db = null;
+                if (db == null || db.Minor < itm.ModMinor)
+                {
+                    throw new Exception($"Mod {db.Name} v{db.Major}.{db.Minor} not found or is out of date.");
+                }
+
+                string err;
+                var mod = db.LoadIfNotLoaded(GameSettings.Instance.ModUnpackPath,
+                    GameSettings.Instance.ModMapPath,
+                    GameSettings.Instance.ModAssetPath, out err);
+                if (mod == null)
+                    throw new Exception($"Failed to load mod {db.Name} v{db.Major}.{db.Minor}", new Exception(err));
+            }
+
+            Mods = deps.ToList();
+
+            //Recreate the SpawnPoint objects from the map spawns list
+
+            var spawns = map.Spawns.SelectMany(a =>
+            {
+                return a.SpawnPositions.Select(b =>
+                {
+                    dynamic gObj = game.AddMapObject("CoreAssets+SpawnPoint", true);
+                    gObj.Team = (short)a.TeamIndex;
+                    gObj.Position = b;
+                    return (Engine.Maps.MapObjects.MapObject)gObj;
+                });
+            });
+
+            return game;
+        }
 
         private MapJSON CreateMapFromGame(GameCore game)
         {
@@ -27,7 +83,7 @@ namespace MPTanks.Clients.MapMaker.MapData
             var spawns = game.GameObjects.Where(a => a.GetType().FullName == "MPTanks.CoreAssets.MapObjects.SpawnPoint")
                 .Select(a => (dynamic)a); //Cast to dynamic because we *cannot* preload the CoreAssets assembly
 
-            //Remap the spawns from SpawnPoint objects to "spawns"
+            //Remap the spawns from SpawnPoint mapobjects to "spawns" in map terms
 
             //Find out how many teams
             var teams = spawns.Select(a => a.Team).Distinct()

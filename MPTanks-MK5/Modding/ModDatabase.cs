@@ -159,13 +159,18 @@ namespace MPTanks.Modding
         public int Minor { get; set; }
         public string Tag { get; set; }
         public string File { get; set; }
-        public bool UsesWhitelist { get; set; }
+        public bool UsesWhitelist { get; set; } = true;
         private Lazy<ModMetadata> _metadata;
         [JsonIgnore]
         public ModMetadata Metadata { get { return _metadata.Value; } }
 
         public async Task LoadMetadata() =>
             await Task.Run(() => { var tmp = Metadata; });
+
+        public Module LoadIfNotLoaded(string dllDir, string mapDir, string assetDir, out string errors)
+        {
+            return ModLoader.LoadCompressedModFile(File, dllDir, mapDir, assetDir, out errors, UsesWhitelist);
+        }
 
         public ModDatabaseItem()
         {

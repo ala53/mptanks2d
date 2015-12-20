@@ -20,7 +20,7 @@ namespace MPTanks.CoreAssets.MapObjects
         public SpawnPoint(Engine.GameCore game, bool authorized, Vector2 position, float rotation)
             : base(game, authorized, position, rotation)
         {
-
+            IsStatic = true;
         }
 
         public override bool ValidateInstanceSetting(string setting, string value)
