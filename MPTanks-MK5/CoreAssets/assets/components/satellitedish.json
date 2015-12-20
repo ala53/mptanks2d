@@ -16,8 +16,6 @@
       "size": { "x": 6, "y": 3.5 }
     }
   ],
-  "name": "Large Rotating Satellite Dish",
-  "reflectionName": "SatelliteDishLarge",
   "size": { "x": 4, "y": 4 },
   "sheet": {
     "file": "satellite_dish.png"

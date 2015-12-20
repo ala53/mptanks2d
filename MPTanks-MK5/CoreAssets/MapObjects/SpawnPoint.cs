@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [MapObject("spawnpoint",
+    [MapObject("spawnpoint.json",
         InstanceSettingNames = new[] { "TeamNumber" },
-        InstanceSettingDefaults = new[] { "1" })]
+        InstanceSettingDefaults = new[] { "1" },
+        DisplayName = "Spawn Point",
+        Description = "A spawn point for a team number")]
     public class SpawnPoint : MapObject
     {
         public SpawnPoint(Engine.GameCore game, bool authorized)

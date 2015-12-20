@@ -14,5 +14,9 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
+        <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
+            <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
+            
+        </StackPanel>
     </Grid>
 </ek:UIRoot>

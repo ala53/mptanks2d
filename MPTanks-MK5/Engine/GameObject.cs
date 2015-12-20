@@ -34,7 +34,7 @@ namespace MPTanks.Engine
         public bool CanBeDestroyed { get; protected set; } = true;
         private float _health;
         /// <summary>
-        /// The current health level for the tank.
+        /// The current health level for the game object.
         /// </summary>
         public float Health
         {

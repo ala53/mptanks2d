@@ -22,7 +22,7 @@ namespace MPTanks.Engine.Maps.MapObjects
         private static Dictionary<string, string> _staticSettingsDictionary = new Dictionary<string, string>();
         public IReadOnlyDictionary<string, string> InstanceSettings { get; private set; } = _staticSettingsDictionary;
 
-        internal void ProcessInstanceSettings(IDictionary<string, string> settings)
+        internal void ProcessInstanceSettings(IReadOnlyDictionary<string, string> settings)
         {
             SetInstanceSettings(settings);
         }
@@ -31,7 +31,7 @@ namespace MPTanks.Engine.Maps.MapObjects
         /// Allows you to handle design time instance settings (configured via the [GameObjectAttribute])
         /// </summary>
         /// <param name="settings"></param>
-        protected virtual void SetInstanceSettings(IDictionary<string, string> settings)
+        protected virtual void SetInstanceSettings(IReadOnlyDictionary<string, string> settings)
         {
 
         }
@@ -97,6 +97,7 @@ namespace MPTanks.Engine.Maps.MapObjects
                 settings.Add(reader.ReadString(), reader.ReadString());
 
             InstanceSettings = settings;
+            SetInstanceSettings(InstanceSettings);
         }
 
         #region Static initialization

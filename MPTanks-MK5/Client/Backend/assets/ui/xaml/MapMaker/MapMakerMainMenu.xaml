@@ -14,6 +14,23 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
-        <TextBlock FontFamily="JHUF" FontSize="36" Foreground="White">AAAAAAAAAAA</TextBlock>
+        <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
+            <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
+            <Button x:Name="LoadMapBtn">Load map</Button>
+            <Button x:Name="SaveMapBtn">Save (autosaves every 1 min)</Button>
+            <Button x:Name="GenerateMapBtn">Generate game map file</Button>
+            <StackPanel HorizontalAlignment="Left" Margin="5,5,0,5">
+                <CheckBox FontFamily="JHUF" FontSize="12" Foreground="White">Lock to grid</CheckBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Search:</TextBlock>
+                <TextBox x:Name="SearchBox" Width="157"></TextBox>
+            </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+                <StackPanel x:Name="MapObjectSelectorPanel" MinHeight="100" MaxHeight="400" Background="#90000000">
+
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
     </Grid>
 </ek:UIRoot>

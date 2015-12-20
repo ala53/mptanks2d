@@ -120,8 +120,6 @@
     }
   ],
   "health": 300,
-  "name": "Large House #1",
-  "reflectionName": "LargeHouseMultiLevel",
   "invincible": true,
   "size": {
     "x": 8,

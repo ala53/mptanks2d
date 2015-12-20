@@ -1,7 +1,10 @@
 ﻿{
-  "reflectionName": "SpawnPointGlobal",
+  "__NOTE": [
+    "This is a \"designer\" only object. When the MapMaker generates the map, it removes all",
+    "instances of SpawnPoint and creates the map spawn point metadata objects from it."
+  ],
   "size": {
-    "x": 0,
-    "y": 0
+    "x": 0.5,
+    "y": 0.5
   }
 }

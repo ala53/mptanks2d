@@ -12,10 +12,8 @@ namespace MPTanks.Engine.Serialization
 {
     public class GameObjectComponentsJSON
     {
-        public string Name { get; set; }
-        public string ReflectionName { get; set; }
         public double Lifespan { get; set; }
-        public int Health { get; set; }
+        public float Health { get; set; }
         /// <summary>
         /// The number of milliseconds to wait after death to remove the object from the game.
         /// </summary>

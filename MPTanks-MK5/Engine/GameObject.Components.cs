@@ -128,7 +128,7 @@ namespace MPTanks.Engine
                 if (GlobalSettings.Debug)
                 {
                     Game.Logger.Trace($"Components from {assetName} were not cached." +
-                        $"Took {sw.Elapsed.TotalMilliseconds.ToString("N1")}ms to parse");
+                        $"Took {sw.Elapsed.TotalMilliseconds.ToString("N2")}ms to parse");
                     sw.Stop();
                 }
             }
@@ -139,18 +139,15 @@ namespace MPTanks.Engine
             _otherComponentFiles.Add(deserialized);
 
             if (GlobalSettings.Debug)
-                Game.Logger.Trace("Begin load: " + deserialized.Name);
-
-            if (deserialized.ReflectionName != ReflectionName)
-                Game.Logger.Warning(
-                    $"GameObject-{ObjectId}.LoadComponentsFromFile():" +
-                    $"{deserialized.ReflectionName} does not match {ReflectionName}");
+                Game.Logger.Trace("Begin load: " + assetName);
 
             Lifespan = TimeSpan.FromMilliseconds(deserialized.Lifespan);
             PostDeathExistenceTime = TimeSpan.FromMilliseconds(deserialized.RemoveAfter);
             DefaultSize = deserialized.DefaultSize;
             DrawLayer = deserialized.DrawLayer;
             Health = deserialized.Health;
+            if (deserialized.Health == 0)
+                Health = float.PositiveInfinity;
             CanBeDestroyed = !deserialized.Invincible;
             foreach (var flag in deserialized.Flags)
                 _flags.Add(flag);

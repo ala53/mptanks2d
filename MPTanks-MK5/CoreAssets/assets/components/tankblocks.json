@@ -12,8 +12,6 @@
     }
   ],
   "__image__body": "../mapobjects/tank_blocks_physics_object.png",
-  "name": "Tank blocks",
-  "reflectionName": "TankBlock",
   "health": 2000,
   "sheet": {
     "file": "tank_blocks.png"

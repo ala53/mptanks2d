@@ -156,7 +156,6 @@
       "sheet": { "ref": "main_sheet" }
     }
   ],
-  "reflectionName": "BasicTankMP",
   "removeAfter": 300,
   "health": 150,
   "sheet": {
