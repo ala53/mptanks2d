@@ -34,7 +34,7 @@ namespace MPTanks.Engine.Maps
         public Color BackgroundColor { get; set; }
         public Color ShadowColor { get; set; }
         public Vector2 ShadowOffset { get; set; }
-
+        
         public static Map LoadMap(ModAssetInfo mapFile, GameCore game)
         {
             if (mapFile.AssetName == null)

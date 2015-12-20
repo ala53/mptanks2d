@@ -149,7 +149,7 @@ namespace MPTanks.ModCompiler
 
                     try
                     {
-                        Map.LoadMap(File.ReadAllText(m), null);
+                        Map.Load(File.ReadAllText(m), null);
                         maps.Add(m);
                     }
                     catch (Exception ex)
@@ -398,20 +398,13 @@ namespace MPTanks.ModCompiler
                     dynamic deserializedGeneric = JsonConvert.DeserializeObject(
                         File.ReadAllText(file));
 
-                    if (deserializedGeneric.reflectionName != null)
-                    {
-                        Console.WriteLine($"Assuming {info.Name} is a components file (reflectionName property found), not a map file.");
-                        mappings.Add(file, "components");
-                        //component file
-                        components.Add(file);
-                    }
-                    else
+                    if (deserializedGeneric.type == "map")
                     {
                         //map file
                         try
                         {
                             Console.WriteLine($"Assuming {info.Name} is a map file (reflectionName property not found), not a components file.");
-                            Map.LoadMap(File.ReadAllText(file), null);
+                            Map.Load(File.ReadAllText(file), null);
                             maps.Add(file);
                             mappings.Add(file, "map");
                         }
@@ -421,6 +414,13 @@ namespace MPTanks.ModCompiler
                             Console.WriteLine(ex.ToString());
                             Console.WriteLine();
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Assuming {info.Name} is a components file (no type: \"map\" property), not a map file.");
+                        mappings.Add(file, "components");
+                        //component file
+                        components.Add(file);
                     }
                 }
             }

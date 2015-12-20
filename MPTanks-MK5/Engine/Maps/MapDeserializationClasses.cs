@@ -11,6 +11,10 @@ namespace MPTanks.Engine.Maps.Serialization
 {
     public class MapJSON
     {
+        /// <summary>
+        /// For mod compiler type detection
+        /// </summary>
+        public string Type { get; set; } = "map";
         public string Name { get; set; }
         public string Author { get; set; }
         public JSONVector Size { get; set; }

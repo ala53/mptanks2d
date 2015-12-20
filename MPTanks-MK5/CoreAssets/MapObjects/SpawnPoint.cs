@@ -1,4 +1,5 @@
-﻿using MPTanks.Engine.Maps.MapObjects;
+﻿using Microsoft.Xna.Framework;
+using MPTanks.Engine.Maps.MapObjects;
 using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
@@ -9,16 +10,29 @@ using System.Threading.Tasks;
 namespace MPTanks.CoreAssets.MapObjects
 {
     [MapObject("spawnpoint.json",
-        InstanceSettingNames = new[] { "TeamNumber" },
+        InstanceSettingNames = new[] { "Team Number" },
         InstanceSettingDefaults = new[] { "1" },
         DisplayName = "Spawn Point",
         Description = "A spawn point for a team number")]
     public class SpawnPoint : MapObject
     {
-        public SpawnPoint(Engine.GameCore game, bool authorized)
-            : base(game, authorized)
+        public SpawnPoint(Engine.GameCore game, bool authorized, Vector2 position, float rotation)
+            : base(game, authorized, position, rotation)
         {
 
+        }
+
+        public override bool ValidateInstanceSetting(string setting, string value)
+        {
+            if (value == null) return false;
+            if (setting == "Team Number")
+            {
+                int asInt;
+                if (!int.TryParse(value, out asInt))
+                    return false;
+                if (asInt < 0) return false; //Team must be greater than or equal to 0
+            }
+            return true;
         }
     }
 }

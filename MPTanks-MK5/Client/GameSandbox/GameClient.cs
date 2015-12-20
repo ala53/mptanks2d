@@ -492,7 +492,7 @@ namespace MPTanks.Client.GameSandbox
                                 else
                                 {
                                     string reflectionName = opt; //Copy to avoid problems with closures
-                                    var info = Engine.Helpers.ReflectionHelper.GetTankInfo(reflectionName);
+                                    var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo(reflectionName);
                                     if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
                                     //not in there, so make it
                                     var btn = new Button();

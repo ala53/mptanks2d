@@ -51,6 +51,16 @@ namespace MPTanks.Client.Backend.UI
             PageTransitionTime = TimeSpan.FromMilliseconds(500);
             Empty();
         }
+
+        /// <summary>
+        /// Peeks at the previous page opened.
+        /// </summary>
+        /// <returns></returns>
+        public UserInterfacePage Peek()
+        {
+            return _pages.Peek();
+        }
+
         public void GoToPageIfNotThere(string page, Action<UserInterfacePage> generator, Action<UserInterfacePage, dynamic> stateChangeHandler = null, dynamic state = null)
         {
             if (!IsOnPage(page))
@@ -196,7 +206,14 @@ namespace MPTanks.Client.Backend.UI
             Yes,
             No
         }
-
+        /// <summary>
+        /// Asynchronously shows a message box to the user
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="content"></param>
+        /// <param name="type"></param>
+        /// <param name="buttons"></param>
+        /// <param name="callback"></param>
         public void ShowMessageBox(string header, string content,
             MessageBoxType type = MessageBoxType.OKMessageBox,
             MessageBoxButtons buttons = MessageBoxButtons.Ok,

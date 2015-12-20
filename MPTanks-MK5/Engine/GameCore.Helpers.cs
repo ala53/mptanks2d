@@ -10,7 +10,7 @@ namespace MPTanks.Engine
 {
     public partial class GameCore
     {
-        public IEnumerable GetNearbyGameObjects(Vector2 position, float radius, Func<GameObject, bool> match = null)
+        public IEnumerable<GameObject> GetNearbyGameObjects(Vector2 position, float radius, Func<GameObject, bool> match = null)
         {
             if (match == null)
                 return GameObjects
@@ -19,6 +19,11 @@ namespace MPTanks.Engine
                 return GameObjects
                     .Where(x => Vector2.DistanceSquared(position, x.Position) < radius * radius)
                     .Where(match);
+        }
+        public GameObject GetIntersectingGameObject(Vector2 position)
+        {
+            var fixture = World.TestPoint(position * Settings.PhysicsScale);
+            return fixture?.Body?.UserData as GameObject;
         }
     }
 }

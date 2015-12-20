@@ -36,6 +36,14 @@ namespace MPTanks.Engine.Maps.MapObjects
 
         }
 
+        /// <summary>
+        /// Allows you to provide design time validation to instance settings.
+        /// </summary>
+        /// <param name="setting"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual bool ValidateInstanceSetting(string setting, string value) => true;
+
         protected override void CreateInternal()
         {
             if (((Modding.MapObjectAttribute)(GetType().GetCustomAttributes(

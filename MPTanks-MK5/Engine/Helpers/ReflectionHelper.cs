@@ -14,21 +14,28 @@ namespace MPTanks.Engine.Helpers
             public string DisplayName { get; set; }
             public string DisplayDescription { get; set; }
         }
-        public static BasicGameObjectInfo GetTankInfo(string reflectionName)
+        public static BasicGameObjectInfo GetGameObjectInfo(string reflectionName)
         {
-            if (!Tanks.Tank.AvailableTypes.ContainsKey(reflectionName))
-            {
+            Type type = null;
+            if (Tanks.Tank.AvailableTypes.ContainsKey(reflectionName))
+                type = Tanks.Tank.AvailableTypes[reflectionName];
+            if (GameObject.AvailableTypes.ContainsKey(reflectionName))
+                type = GameObject.AvailableTypes[reflectionName];
+            if (Projectiles.Projectile.AvailableTypes.ContainsKey(reflectionName))
+                type = Projectiles.Projectile.AvailableTypes[reflectionName];
+            if (Maps.MapObjects.MapObject.AvailableTypes.ContainsKey(reflectionName))
+                type = Maps.MapObjects.MapObject.AvailableTypes[reflectionName];
+
+            if (type == null)
                 return new BasicGameObjectInfo
                 {
                     Exists = false,
-                    DisplayName = "ERR_TANK_TYPE_INVALID",
-                    DisplayDescription = "ERR_TANK_TYPE_INVALID"
+                    DisplayName = "ERR_TYPE_INVALID",
+                    DisplayDescription = "ERR_TYPE_INVALID"
                 };
-            }
 
-            var type = Tanks.Tank.AvailableTypes[reflectionName];
             //Get the attribute
-            var attrib = ((Modding.TankAttribute[])type.GetCustomAttributes(typeof(Modding.TankAttribute), true))[0];
+            var attrib = ((Modding.GameObjectAttribute[])type.GetCustomAttributes(typeof(Modding.GameObjectAttribute), true))[0];
 
             return new BasicGameObjectInfo
             {

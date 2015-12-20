@@ -1,14 +1,26 @@
 ﻿{
+  "type": "map",
   "allowedGamemodes": [
     "TeamDeathMatchGamemode",
     "DeathMatchGamemode"
   ],
   "author": "ZSB Games",
-  "baseColor": { "r": 0, "g": 0, "b": 0, "a": 255 },
+  "baseColor": {
+    "r": 0,
+    "g": 0,
+    "b": 0,
+    "a": 255
+  },
   "background": [
     {
-      "offset": { "x": 0, "y": 0 },
-      "size": { "x": 4, "y": 4 },
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "x": 4,
+        "y": 4
+      },
       "frame": "potato_base",
       "sheet": {
         "file": "assets/content/base_content.png",
@@ -16,7 +28,10 @@
         "modName": "engine_base"
       },
       "rotation": 3.141,
-      "rotationOrigin": { "x": 2, "y": 2 }
+      "rotationOrigin": {
+        "x": 2,
+        "y": 2
+      }
     }
   ],
   "dependencies": [
@@ -33,73 +48,183 @@
     {
       "reflectionName": "CoreAssets+SatelliteDishLarge",
       "rotation": 0,
-      "position": { "x": 5, "y": 4 },
-      "size": { "x": 6, "y": 6 },
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+      "position": {
+        "x": 5,
+        "y": 4
+      },
+      "size": {
+        "x": 6,
+        "y": 6
+      },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      }
     },
     {
       "reflectionName": "CoreAssets+TankBlock",
       "rotation": 0,
-      "position": { "x": 12, "y": 12 },
-      "size": { "x": 4, "y": 4 },
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+      "position": {
+        "x": 12,
+        "y": 12
+      },
+      "size": {
+        "x": 4,
+        "y": 4
+      },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      }
     },
     {
       "reflectionName": "CoreAssets+Wall",
       "rotation": 0,
-      "position": { "x": 0, "y": 0 },
-      "size": { "x": 6, "y": 100 },
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 }
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "x": 6,
+        "y": 100
+      },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      }
     },
     {
-      "mask": { "r": 255, "g": 255, "b": 225, "a": 255 },
-      "position": { "x": 60, "y": 30 },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 225,
+        "a": 255
+      },
+      "position": {
+        "x": 60,
+        "y": 30
+      },
       "rotation": 0,
-      "size": { "x": 8, "y": 8 },
+      "size": {
+        "x": 8,
+        "y": 8
+      },
       "reflectionName": "CoreAssets+MultilevelHouse"
     },
     {
-      "mask": { "r": 25, "g": 25, "b": 25, "a": 255 },
-      "position": { "x": 70, "y": 30 },
+      "mask": {
+        "r": 25,
+        "g": 25,
+        "b": 25,
+        "a": 255
+      },
+      "position": {
+        "x": 70,
+        "y": 30
+      },
       "rotation": 0.712,
-      "size": { "x": 8, "y": 8 },
+      "size": {
+        "x": 8,
+        "y": 8
+      },
       "reflectionName": "CoreAssets+MultilevelHouse"
     },
     {
-      "mask": { "r": 255, "g": 255, "b": 255, "a": 255 },
-      "position": { "x": 50, "y": 48 },
+      "mask": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 255
+      },
+      "position": {
+        "x": 50,
+        "y": 48
+      },
       "rotation": 0,
-      "size": { "x": 8, "y": 8 },
+      "size": {
+        "x": 8,
+        "y": 8
+      },
       "reflectionName": "CoreAssets+MultilevelHouse"
     },
     {
-      "mask": { "r": 200, "g": 200, "b": 200, "a": 255 },
-      "position": { "x": 50, "y": 42 },
+      "mask": {
+        "r": 200,
+        "g": 200,
+        "b": 200,
+        "a": 255
+      },
+      "position": {
+        "x": 50,
+        "y": 42
+      },
       "rotation": 0.712,
-      "size": { "x": 6, "y": 6 },
+      "size": {
+        "x": 6,
+        "y": 6
+      },
       "reflectionName": "CoreAssets+MultilevelHouse"
     }
   ],
-  "size": { "x": 5000, "y": 5000 },
+  "size": {
+    "x": 5000,
+    "y": 5000
+  },
   "spawns": [
     {
       "teamIndex": 0,
       "spawnPositions": [
-        { "x": 11, "y": 50 },
-        { "x": 15, "y": 25 },
-        { "x": 1, "y": 0 },
-        { "x": 21, "y": 33 },
-        { "x": 31, "y": 5 }
+        {
+          "x": 11,
+          "y": 50
+        },
+        {
+          "x": 15,
+          "y": 25
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 21,
+          "y": 33
+        },
+        {
+          "x": 31,
+          "y": 5
+        }
       ]
     },
     {
       "teamIndex": 1,
       "spawnPositions": [
-        { "x": 35, "y": 50 },
-        { "x": 40, "y": 25 },
-        { "x": 55, "y": 0 },
-        { "x": 55, "y": 33 },
-        { "x": 55, "y": 10 }
+        {
+          "x": 35,
+          "y": 50
+        },
+        {
+          "x": 40,
+          "y": 25
+        },
+        {
+          "x": 55,
+          "y": 0
+        },
+        {
+          "x": 55,
+          "y": 33
+        },
+        {
+          "x": 55,
+          "y": 10
+        }
       ]
     }
   ],

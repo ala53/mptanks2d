@@ -26,6 +26,8 @@ namespace MPTanks.Clients.MapMaker
         private SpriteBatch _sb;
         private UserInterface _ui;
 
+        public ILogger Logger { get; private set; } = new NullLogger();
+
         private Vector2 _cameraPosition;
         private float _cameraZoom = 1;
 
@@ -44,6 +46,8 @@ namespace MPTanks.Clients.MapMaker
 
         protected override void Initialize()
         {
+            IsMouseVisible = true;
+
             CoreModLoader.LoadTrustedMods(GameSettings.Instance);
             Components.Add(new Starbound.Input.KeyboardEvents(this));
             Components.Add(new Starbound.Input.MouseEvents(this));
@@ -51,7 +55,25 @@ namespace MPTanks.Clients.MapMaker
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
             Starbound.Input.KeyboardEvents.KeyReleased += KeyboardEvents_KeyReleased;
 
+            Starbound.Input.MouseEvents.ButtonDoubleClicked += MouseEvents_ButtonDoubleClicked;
+            Starbound.Input.MouseEvents.ButtonClicked += MouseEvents_ButtonClicked;
+            Starbound.Input.MouseEvents.ButtonReleased += MouseEvents_ButtonReleased; ;
+
             base.Initialize();
+        }
+
+        private void MouseEvents_ButtonReleased(object sender, Starbound.Input.MouseButtonEventArgs e)
+        {
+            UI_MouseReleased();
+        }
+
+        private void MouseEvents_ButtonClicked(object sender, Starbound.Input.MouseButtonEventArgs e)
+        {
+            UI_ProcessClickInGameArea(UI_MousePosition);
+        }
+
+        private void MouseEvents_ButtonDoubleClicked(object sender, Starbound.Input.MouseButtonEventArgs e)
+        {
         }
 
         private void KeyboardEvents_KeyReleased(object sender, Starbound.Input.KeyboardEventArgs e)
@@ -60,6 +82,8 @@ namespace MPTanks.Clients.MapMaker
 
         private void KeyboardEvents_KeyPressed(object sender, Starbound.Input.KeyboardEventArgs e)
         {
+            if (e.Key == Keys.Escape)
+                UI_EscapePressed();
         }
 
         private void CreateMap()
@@ -67,12 +91,14 @@ namespace MPTanks.Clients.MapMaker
             _map = new MapData.MapData();
             UpdateModsList();
             OnMapChanged();
+            _ui.UpdateState(new object());
         }
 
         private void UpdateModsList()
         {
             _map.Mods.AddRange(Modding.ModDatabase.LoadedModulesList.Select(a => a.ModInfo));
             _map.Mods = _map.Mods.Distinct().ToList();
+            _ui.UpdateState(new object());
         }
 
         public void Restart()
@@ -86,6 +112,7 @@ namespace MPTanks.Clients.MapMaker
         {
             var map = _map.GenerateMap();
             _game = new GameCore(null, new NullGamemode(), map);
+            _game.Authoritative = true;
             _game.BeginGame(true);
             _renderer.Game = _game;
         }
@@ -96,8 +123,8 @@ namespace MPTanks.Clients.MapMaker
             _renderer = new GameCoreRenderer(this, GameSettings.Instance.AssetSearchPaths, new[] { 0 }, new NullLogger());
             _renderer.Game = _game;
             _ui = new UserInterface(this);
-            UI_ShowPrimaryMenu();
             CreateMap();
+            UI_ShowPrimaryMenu();
             base.LoadContent();
         }
         protected override void Update(GameTime gameTime)
@@ -129,7 +156,11 @@ namespace MPTanks.Clients.MapMaker
                     _cameraZoom -= zoomSpeed * _cameraZoom;
             }
 
+            _ui.UpdateState(new object());
             _ui.Update(gameTime);
+
+            UI_Update(gameTime);
+
             _game.Update(gameTime);
             base.Update(gameTime);
         }
@@ -137,6 +168,10 @@ namespace MPTanks.Clients.MapMaker
         protected override void Draw(GameTime gameTime)
         {
             EnsureRenderTargetSizing();
+            //Clear the render target
+            GraphicsDevice.SetRenderTarget(_worldTarget);
+            GraphicsDevice.Clear(_game.Map.BackgroundColor);
+
             _renderer.Target = _worldTarget;
 
             //And draw the world
@@ -145,6 +180,7 @@ namespace MPTanks.Clients.MapMaker
             _renderer.View = ComputeDrawRectangle();
 
             GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
             _sb.Begin();
             _sb.Draw(_worldTarget,
                 new Rectangle(0, 0,
@@ -158,7 +194,7 @@ namespace MPTanks.Clients.MapMaker
             _ui.Draw(gameTime);
 
             UI_DrawXYPositionAndZoom();
-
+            
             base.Draw(gameTime);
         }
 

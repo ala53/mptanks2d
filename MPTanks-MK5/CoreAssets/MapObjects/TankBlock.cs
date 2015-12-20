@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 
 namespace MPTanks.CoreAssets.MapObjects
 {
-    [Modding.MapObject("tankblocks.json", IsStatic = true)]
+    [Modding.MapObject("tankblocks.json", IsStatic = true,
+        DisplayName = "Tank Block", 
+        Description = "A tank block, through which a projectile can pass but not a tank.")]
     public class TankBlock : MapObject
     {
         public TankBlock(GameCore game, bool authorized, Vector2 position, float rotation)

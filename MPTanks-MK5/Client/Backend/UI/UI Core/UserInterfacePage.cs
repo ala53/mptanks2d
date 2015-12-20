@@ -101,7 +101,25 @@ namespace MPTanks.Client.Backend.UI
             }
         }
 
-
+        /// <summary>
+        /// Lets you query an element and take a shortcut to avoid repeated calls to this by passing a scoped function in.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="processor"></param>
+        /// <returns></returns>
+        public T Element<T>(string name, Action<T> processor) where T : UIElement
+        {
+            var elem = Element<T>(name);
+            processor(elem);
+            return elem;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public virtual T Element<T>(string name) where T : UIElement
         {
             var field = Page.GetType().GetField(name,

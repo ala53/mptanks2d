@@ -16,18 +16,25 @@
     <Grid>
         <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
             <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
-            <Button x:Name="LoadMapBtn">Load map</Button>
-            <Button x:Name="SaveMapBtn">Save (autosaves every 1 min)</Button>
-            <Button x:Name="GenerateMapBtn">Generate game map file</Button>
+            <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="LoadMapBtn">Load map</Button>
+            <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="SaveMapBtn">Save (autosaves every 1 min)</Button>
+            <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="GenerateMapBtn">Generate game map file</Button>
+            <StackPanel>
+                <TextBlock Padding="5" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Mods this map depends on:</TextBlock>
+                <ScrollViewer MaxHeight="90" Height="90">
+                    <StackPanel x:Name="ModsListPanel"></StackPanel>
+                </ScrollViewer>
+                <Button Margin="5" FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="LoadModBtn">Load another mod</Button>
+            </StackPanel>
             <StackPanel HorizontalAlignment="Left" Margin="5,5,0,5">
-                <CheckBox FontFamily="JHUF" FontSize="12" Foreground="White">Lock to grid</CheckBox>
+                <CheckBox FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="LockToGridChkBox">Lock to grid</CheckBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Search:</TextBlock>
-                <TextBox x:Name="SearchBox" Width="157"></TextBox>
+                <TextBlock Padding="0,8,8,8" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Search:</TextBlock>
+                <TextBox x:Name="SearchBox" Width="150"></TextBox>
             </StackPanel>
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
-                <StackPanel x:Name="MapObjectSelectorPanel" MinHeight="100" MaxHeight="400" Background="#90000000">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" Height="200" MaxHeight="200" VerticalScrollBarVisibility="Visible">
+                <StackPanel x:Name="MapObjectSelectorPanel"  Background="#90000000" Width="175">
 
                 </StackPanel>
             </ScrollViewer>

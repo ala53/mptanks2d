@@ -221,6 +221,9 @@
     <None Include="assets\ui\imgs\JHUF_72_Regular.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\ui\imgs\JHUF_9_Regular.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\ui\imgs\star.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
