@@ -65,6 +65,8 @@ namespace MPTanks.Clients.MapMaker
 
         private float GridLineBlockSize()
         {
+            if (UI_LockToGrid)
+                return 1;
             if (_cameraZoom >= 10)
                 return 20;
             else if (_cameraZoom >= 5)

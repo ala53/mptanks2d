@@ -1,10 +1,12 @@
 ﻿using EmptyKeys.UserInterface.Controls;
+using EmptyKeys.UserInterface.Input;
 using EmptyKeys.UserInterface.Media;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.UI;
 using MPTanks.Client.GameSandbox;
 using MPTanks.Engine;
+using MPTanks.Engine.Maps.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +18,9 @@ namespace MPTanks.Clients.MapMaker
 {
     public partial class GameBuilder
     {
-        private bool UI_MousePressed => Mouse.GetState().LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed;
-        private Vector2 UI_MousePosition => new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+        private bool UI_LockToGrid;
+        private bool UI_MousePressed => Microsoft.Xna.Framework.Input.Mouse.GetState().LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed;
+        private Vector2 UI_MousePosition => new Vector2(Microsoft.Xna.Framework.Input.Mouse.GetState().X, Microsoft.Xna.Framework.Input.Mouse.GetState().Y);
         private bool UI_HasSelectedObject;
         private Vector2 UI_MouseDragOffset;
         private GameObject UI_SelectedObject;
@@ -26,17 +29,77 @@ namespace MPTanks.Clients.MapMaker
             _ui.UnwindAndEmpty();
             _ui.GoToPageIfNotThere("mapmakermainmenu", page =>
             {
-                page.Element<Button>("LoadMapBtn");
-                page.Element<Button>("SaveMapBtn");
-                page.Element<Button>("GenerateMapBtn").Click += (a, b) =>
+                page.Element<Button>("LoadMapBtn").Click += (a, b) =>
                 {
-                    File.WriteAllText("mpa.json", _map.GenerateMap(_game));
+                    var fd = new System.Windows.Forms.OpenFileDialog();
+                    fd.Filter = "MP Tanks 2D map files (*.json)|*.json";
+                    if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (!File.Exists(fd.FileName))
+                            return;
+                        //try
+                        //{
+                        _game = _map.CreateFromMap(MapJSON.Load(
+                            File.ReadAllText(fd.FileName)));
+                        OnMapChanged();
+                        //}
+                        // catch
+                        //  {
+                        _ui.ShowMessageBox("Load error",
+                            "An error occurred while loading that map.",
+                            UserInterface.MessageBoxType.ErrorMessageBox);
+                        //  }
+                    }
+                };
+                page.Element<Button>("SaveMapBtn").Click += (a, b) =>
+                {
+                    var fd = new System.Windows.Forms.SaveFileDialog();
+                    fd.Filter = "MP Tanks 2D map files (*.json)|*.json";
+                    if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (!Directory.Exists(new FileInfo(fd.FileName).Directory.FullName))
+                            return;
+                        try
+                        { File.WriteAllText(fd.FileName, _map.GenerateMap(_game)); }
+                        catch
+                        {
+                            _ui.ShowMessageBox("Save error!",
+                                "An error occurred while saving that map for you.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                        }
+                    }
                 };
                 page.Element<StackPanel>("ModsListPanel");
-                page.Element<Button>("LoadModBtn");
-                page.Element<CheckBox>("LockToGridChkBox");
-                page.Element<TextBox>("SearchBox");
+                page.Element<Button>("LoadModBtn").Click += (a, b) => UI_LoadMod();
+                page.Element<CheckBox>("LockToGridChkBox", elem =>
+                {
+                    elem.Checked += (a, b) => UI_LockToGrid = true;
+                    elem.Unchecked += (a, b) => UI_LockToGrid = false;
+                });
+                page.Element<TextBox>("SearchBox", elem =>
+                {
+                    elem.KeyUp += (a, b) =>
+                    {
+                        var selector = page.Element<StackPanel>("MapObjectSelectorPanel");
+                        foreach (var itm in selector.Children)
+                        {
+                            var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo((string)itm.Tag);
+                            if (info.DisplayName.ToLower().Contains(elem.Text.ToLower()) ||
+                            info.DisplayDescription.ToLower().Contains(elem.Text.ToLower()))
+                            {
+                                //Visible
+                                itm.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                            }
+                            else
+                            {
+                                itm.Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                            }
+                        }
+                    };
+                });
                 page.Element<StackPanel>("MapObjectSelectorPanel");
+
+                page.Element<Button>("MoreSettingsBtn").Click += (a, b) => UI_ShowMoreSettingsMenu();
             }, (page, state) =>
             {
                 //update types
@@ -122,9 +185,65 @@ namespace MPTanks.Clients.MapMaker
             _ui.UpdateState(new object());
         }
 
-        private void UI_PrimaryMenu_SpawnItem(string reflectionName)
+        private void UI_ShowMoreSettingsMenu()
         {
+            _ui.GoToPageIfNotThere("mapmakermoresettings", page =>
+            {
+                if (_map.MapName != null)
+                    page.Element<TextBox>("MapNameBox").Text = _map.MapName;
+                if (_map.MapAuthor != null)
+                    page.Element<TextBox>("MapAuthorBox").Text = _map.MapAuthor;
+                page.Element<TextBox>("MapNameBox").KeyUp += (a, b) =>
+                {
+                    _map.MapName = (a as TextBox).Text;
+                };
+                page.Element<TextBox>("MapAuthorBox").KeyUp += (a, b) =>
+                {
+                    _map.MapAuthor = (a as TextBox).Text;
+                };
 
+                page.Element<NumericTextBox>("BackgroundR").Text = _map.BackgroundColor.R.ToString();
+                page.Element<NumericTextBox>("BackgroundG").Text = _map.BackgroundColor.G.ToString();
+                page.Element<NumericTextBox>("BackgroundB").Text = _map.BackgroundColor.B.ToString();
+
+                page.RegisterUpdater(() =>
+                {
+
+                    _map.BackgroundColor.R = (byte)page.Element<NumericTextBox>("BackgroundR").Value;
+                    _map.BackgroundColor.G = (byte)page.Element<NumericTextBox>("BackgroundG").Value;
+                    _map.BackgroundColor.B = (byte)page.Element<NumericTextBox>("BackgroundB").Value;
+                    _game.Map.BackgroundColor = _map.BackgroundColor;
+
+                    var shadowX = page.Element<TextBox>("ShadowX").Text;
+                    var shadowY = page.Element<TextBox>("ShadowY").Text;
+                    if (!float.TryParse(shadowX, out _map.ShadowOffset.X))
+                        page.Element<TextBox>("ShadowX").Text = _map.ShadowOffset.X.ToString();
+                    if (!float.TryParse(shadowY, out _map.ShadowOffset.Y))
+                        page.Element<TextBox>("ShadowY").Text = _map.ShadowOffset.Y.ToString();
+                    _map.ShadowOffset.X = Math.Max(Math.Min(_map.ShadowOffset.X, 10), -10);
+                    _map.ShadowOffset.Y = Math.Max(Math.Min(_map.ShadowOffset.Y, 10), -10);
+
+                    _game.Map.ShadowOffset = _map.ShadowOffset;
+
+                    _map.ShadowColor.R = (byte)page.Element<NumericTextBox>("ShadowR").Value;
+                    _map.ShadowColor.G = (byte)page.Element<NumericTextBox>("ShadowG").Value;
+                    _map.ShadowColor.B = (byte)page.Element<NumericTextBox>("ShadowB").Value;
+                    _map.ShadowColor.A = (byte)page.Element<NumericTextBox>("ShadowA").Value;
+                    _game.Map.ShadowColor = _map.ShadowColor;
+                });
+
+                page.Element<TextBox>("ShadowX").Text = _map.ShadowOffset.X.ToString();
+                page.Element<TextBox>("ShadowY").Text = _map.ShadowOffset.Y.ToString();
+
+                page.Element<NumericTextBox>("ShadowR").Text = _map.ShadowColor.R.ToString();
+                page.Element<NumericTextBox>("ShadowG").Text = _map.ShadowColor.G.ToString();
+                page.Element<NumericTextBox>("ShadowB").Text = _map.ShadowColor.B.ToString();
+                page.Element<NumericTextBox>("ShadowA").Text = _map.ShadowColor.A.ToString();
+
+                page.Element<CheckBox>("UseWhitelistCheckBox");
+                page.Element<TextBlock>("WhitelistTextBox");
+                page.Element<Button>("GoBackBtn").Click += (a, b) => UI_ShowPrimaryMenu();
+            });
         }
 
         private void UI_ProcessClickInGameArea(Vector2 clickArea)
@@ -180,12 +299,32 @@ namespace MPTanks.Clients.MapMaker
 
         private void UI_EditExistingObject(GameObject obj)
         {
-            _ui.GoToPageIfNotThere("mapmakereditobject", page =>
+            _ui.GoToPage("mapmakereditobject", page =>
             {
-
+                page.Element<TextBox>("WidthBox").Text = obj.Size.X.ToString();
+                page.Element<TextBox>("HeightBox").Text = obj.Size.Y.ToString();
+                page.Element<TextBox>("WidthBox").KeyUp += (a, b) =>
+                {
+                    try
+                    {
+                        obj.Size = new Vector2(
+                            float.Parse(page.Element<TextBox>("WidthBox").Text),
+                            obj.Size.Y);
+                    }
+                    catch { }
+                };
+                page.Element<TextBox>("HeightBox").KeyUp += (a, b) =>
+                {
+                    try
+                    {
+                        obj.Size = new Vector2(
+                            obj.Size.X,
+                            float.Parse(page.Element<TextBox>("HeightBox").Text));
+                    }
+                    catch { }
+                };
             }, (page, state) =>
             {
-
             });
 
             _ui.UpdateState(obj);
@@ -215,13 +354,19 @@ namespace MPTanks.Clients.MapMaker
             if (!UI_MousePressed || //If the mouse was released
                 !UI_HasSelectedObject || //If no object is selected
                 !UI_IsDragging ||
-                Mouse.GetState().X < 200 ||//Or if we're in the side bar
+                Microsoft.Xna.Framework.Input.Mouse.GetState().X < 200 ||//Or if we're in the side bar
                 UI_SelectedObject == null //If someone was an idiot
                 )
                 return;
 
             //Move the object to the mouse center
             UI_SelectedObject.Position = UI_ComputeWorldSpaceFromMouse(UI_MousePosition - UI_MouseDragOffset);
+            if (UI_LockToGrid)
+            {
+                UI_SelectedObject.Position = new Vector2(
+                       (float)Math.Round(UI_SelectedObject.Position.X, MidpointRounding.AwayFromZero),
+                       (float)Math.Round(UI_SelectedObject.Position.Y, MidpointRounding.AwayFromZero));
+            }
         }
 
         private void UI_LoadMod()
@@ -230,11 +375,11 @@ namespace MPTanks.Clients.MapMaker
                 "Loading a mod is irreversible. Once you've added the mod to " +
                 "the map, the only way to restore is to reset to a previous save. " +
                 "Are you sure you want to continue?",
-                Client.Backend.UI.UserInterface.MessageBoxType.WarningMessageBox,
-                Client.Backend.UI.UserInterface.MessageBoxButtons.YesNo,
+                UserInterface.MessageBoxType.WarningMessageBox,
+                UserInterface.MessageBoxButtons.YesNo,
                 a =>
                 {
-                    if (a == Client.Backend.UI.UserInterface.MessageBoxResult.No)
+                    if (a == UserInterface.MessageBoxResult.No)
                         return;
                     var fileBrowser = new System.Windows.Forms.OpenFileDialog();
                     fileBrowser.Filter = "MP Tanks 2D mod files (*.mod)|*.mod";
@@ -248,10 +393,10 @@ namespace MPTanks.Clients.MapMaker
                             "Should this mod be loaded in a \"full trust\" context? " +
                             "This means the mod will have privileged access to your computer. " +
                             "It is recommended not to do this unless you're sure, for security purposes.",
-                            Client.Backend.UI.UserInterface.MessageBoxType.OKMessageBox,
-                            Client.Backend.UI.UserInterface.MessageBoxButtons.YesNo, b =>
+                            UserInterface.MessageBoxType.OKMessageBox,
+                            UserInterface.MessageBoxButtons.YesNo, b =>
                             {
-                                bool fullTrust = (b == Client.Backend.UI.UserInterface.MessageBoxResult.Yes);
+                                bool fullTrust = (b == UserInterface.MessageBoxResult.Yes);
                                 //Load the mod
                                 string errors;
                                 var module = Modding.ModLoader.LoadCompressedModFile(file,
@@ -266,7 +411,7 @@ namespace MPTanks.Clients.MapMaker
                                     Logger.Error(errors);
                                     _ui.ShowMessageBox("Mod loading error",
                                         "Some errors occurred while loading the mod you selected. The errors have been written to the log.",
-                                        Client.Backend.UI.UserInterface.MessageBoxType.ErrorMessageBox);
+                                        UserInterface.MessageBoxType.ErrorMessageBox);
                                     return;
                                 }
                                 //If successful:

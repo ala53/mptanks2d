@@ -144,6 +144,7 @@
     <Compile Include="UI\MainMenuPlayerIsInGamePage.xaml.cs" />
     <Compile Include="UI\MapMaker\MapMakerEditObject.xaml.cs" />
     <Compile Include="UI\MapMaker\MapMakerMainMenu.xaml.cs" />
+    <Compile Include="UI\MapMaker\MapMakerMoreSettings.xaml.cs" />
     <Compile Include="UI\MessageBoxes\ErrorMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\OKMessageBox.xaml.cs" />
     <Compile Include="UI\MessageBoxes\WarningMessageBox.xaml.cs" />

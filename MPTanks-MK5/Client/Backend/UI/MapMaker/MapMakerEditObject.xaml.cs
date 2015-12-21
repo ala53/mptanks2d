@@ -30,6 +30,10 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private TextBlock e_2;
         
+        private TextBox WidthBox;
+        
+        private TextBox HeightBox;
+        
         public MapMakerEditObject() : 
                 base() {
             this.Initialize();
@@ -72,6 +76,18 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_2.Padding = new Thickness(0F, 0F, 0F, 10F);
             this.e_2.FontFamily = new FontFamily("JHUF");
             this.e_2.FontSize = 12F;
+            // WidthBox element
+            this.WidthBox = new TextBox();
+            this.e_1.Children.Add(this.WidthBox);
+            this.WidthBox.Name = "WidthBox";
+            this.WidthBox.FontFamily = new FontFamily("JHUF");
+            this.WidthBox.FontSize = 12F;
+            // HeightBox element
+            this.HeightBox = new TextBox();
+            this.e_1.Children.Add(this.HeightBox);
+            this.HeightBox.Name = "HeightBox";
+            this.HeightBox.FontFamily = new FontFamily("JHUF");
+            this.HeightBox.FontSize = 12F;
             FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
             FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
             FontManager.Instance.AddFont("JHUF", 72F, FontStyle.Regular, "JHUF_54_Regular");

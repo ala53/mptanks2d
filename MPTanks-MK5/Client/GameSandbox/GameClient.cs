@@ -201,9 +201,11 @@ namespace MPTanks.Client.GameSandbox
             var game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("CoreAssets+DeathMatchGamemode"),
-                Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
+                Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("abetterplace.json"),
                 EngineSettings.GetInstance()
                 );
+
+            //game.Timescale = GameCore.TimescaleValue.OneSixteenth;
             game.Authoritative = true;
             game.FriendlyFireEnabled = true;
 
@@ -247,7 +249,7 @@ namespace MPTanks.Client.GameSandbox
                     Username = "RRRRR",
                     UniqueId = Guid.NewGuid(),
                     SelectedTankReflectionName = "BasicTankMPCopy",
-                    IsReady = false
+                    IsReady = true
                 }));
             }
             else
@@ -536,11 +538,12 @@ namespace MPTanks.Client.GameSandbox
                                 }
                             }
                     });
-                    _ui.UpdateState(new
-                    {
-                        TankOptions = Client.Player.AllowedTankTypes,
-                        RemainingCountdown = Client.RemainingCountdownTime.TotalSeconds
-                    });
+                    if (Client.Player != null)
+                        _ui.UpdateState(new
+                        {
+                            TankOptions = Client.Player.AllowedTankTypes,
+                            RemainingCountdown = Client.RemainingCountdownTime.TotalSeconds
+                        });
                 }
                 else
                 {

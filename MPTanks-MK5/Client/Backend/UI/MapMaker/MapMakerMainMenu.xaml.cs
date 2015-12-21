@@ -34,8 +34,6 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button SaveMapBtn;
         
-        private Button GenerateMapBtn;
-        
         private StackPanel e_3;
         
         private TextBlock e_4;
@@ -119,14 +117,6 @@ namespace EmptyKeys.UserInterface.Generated {
             this.SaveMapBtn.FontFamily = new FontFamily("JHUF");
             this.SaveMapBtn.FontSize = 12F;
             this.SaveMapBtn.Content = "Save (autosaves every 1 min)";
-            // GenerateMapBtn element
-            this.GenerateMapBtn = new Button();
-            this.e_1.Children.Add(this.GenerateMapBtn);
-            this.GenerateMapBtn.Name = "GenerateMapBtn";
-            this.GenerateMapBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
-            this.GenerateMapBtn.FontFamily = new FontFamily("JHUF");
-            this.GenerateMapBtn.FontSize = 12F;
-            this.GenerateMapBtn.Content = "Generate game map file";
             // e_3 element
             this.e_3 = new StackPanel();
             this.e_1.Children.Add(this.e_3);

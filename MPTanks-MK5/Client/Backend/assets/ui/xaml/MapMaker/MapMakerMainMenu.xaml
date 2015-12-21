@@ -18,7 +18,6 @@
             <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
             <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="LoadMapBtn">Load map</Button>
             <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="SaveMapBtn">Save (autosaves every 1 min)</Button>
-            <Button FontFamily="JHUF" FontSize="12" Foreground="White" x:Name="GenerateMapBtn">Generate game map file</Button>
             <StackPanel>
                 <TextBlock Padding="5" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Mods this map depends on:</TextBlock>
                 <ScrollViewer MaxHeight="90" Height="90">

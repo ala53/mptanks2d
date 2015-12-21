@@ -33,12 +33,14 @@ namespace MPTanks.Client
         private ClientCore _client;
         public LiveGame(ClientCore client, Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
+                var task_inited = false;
             _client = client;
             if (!ClientSettings.Instance.SandboxGames)
             {
                 //In debug mode, don't do domain wrapping
                 DomainProxy = CrossDomainObject.Instance;
                 DomainProxy.SandboxingEnabled = false;
+                task_inited = true;
             }
             else
             {
@@ -52,6 +54,7 @@ namespace MPTanks.Client
                             typeof(CrossDomainObject).Assembly.FullName,
                             typeof(CrossDomainObject).FullName);
                         DomainProxy.SandboxingEnabled = true;
+                        task_inited = true;
                         while (!_clearedToRun) Thread.Sleep(50);
                         SetStartWindowParams();
                         _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
@@ -65,9 +68,9 @@ namespace MPTanks.Client
                     Unload();
                 });
                 _mtTask.Start();
-                Thread.Sleep(100);
             }
 
+            while (!task_inited) Thread.Sleep(0);
             DomainProxy.Ip = connectionInfo.ServerAddress;
             DomainProxy.Port = connectionInfo.ServerPort;
             DomainProxy.Password = connectionInfo.Password;

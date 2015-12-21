@@ -16,7 +16,8 @@
     <Grid>
         <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
             <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
-            
+            <TextBox FontFamily="JHUF" FontSize="12" x:Name="WidthBox"></TextBox>
+            <TextBox FontFamily="JHUF" FontSize="12" x:Name="HeightBox"></TextBox>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

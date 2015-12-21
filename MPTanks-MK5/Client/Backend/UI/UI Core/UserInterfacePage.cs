@@ -26,6 +26,7 @@ namespace MPTanks.Client.Backend.UI
         public event EventHandler<GameTime> OnUpdate = delegate { };
         internal Action<UserInterfacePage> Generator { get; set; }
         internal Action<UserInterfacePage, dynamic> StateChangeHandler { get; set; }
+        private Action _updater = delegate { };
         public object StateObject { get; set; }
 
         public UserInterfacePage(string pageName)
@@ -39,8 +40,11 @@ namespace MPTanks.Client.Backend.UI
 
         private UserInterfacePage() { }
 
+        public void RegisterUpdater(Action updater) => _updater = updater ?? delegate { };
+
         public virtual void Update(GameTime gameTime, bool isActiveWindow)
         {
+            _updater();
             if (isActiveWindow)
                 Page.UpdateInput(gameTime.ElapsedGameTime.TotalMilliseconds);
 

@@ -14,9 +14,78 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
-        <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
-            <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
-            
-        </StackPanel>
+        <ScrollViewer VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+            <StackPanel  Background="#4F000000">
+                <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock FontFamily="JHUF" Height="18" FontSize="12" Foreground="White" Padding="0,0,8,0" HorizontalAlignment="Left">Map Name</TextBlock>
+                        <TextBlock FontFamily="JHUF" Height="18" FontSize="12" Foreground="White" Margin="0,8,0,0" Padding="0,0,8,0" HorizontalAlignment="Left">Author</TextBlock>
+                    </StackPanel>
+                    <StackPanel Width="110">
+                        <TextBox FontFamily="JHUF" FontSize="12" x:Name="MapNameBox" Height="18" HorizontalAlignment="Stretch">ZSB Unedited Map</TextBox>
+                        <TextBox FontFamily="JHUF" FontSize="12" x:Name="MapAuthorBox" Height="18" Margin="0,8,0,0" HorizontalAlignment="Stretch">Not ZSB Games</TextBox>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Margin="10" Foreground="White" HorizontalAlignment="Center">Background color</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Red">R:</TextBlock>
+                            <ek:NumericTextBox x:Name="BackgroundR" Width="80" Maximum="255" Minimum="0">0</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Green">G:</TextBlock>
+                            <ek:NumericTextBox x:Name="BackgroundG" Width="80" Maximum="255" Minimum="0">0</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Blue">B:</TextBlock>
+                            <ek:NumericTextBox x:Name="BackgroundB" Width="80" Maximum="255" Minimum="0">0</ek:NumericTextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Margin="10" Foreground="White" HorizontalAlignment="Center">Shadow offset</TextBlock>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White">X:</TextBlock>
+                            <TextBox x:Name="ShadowX" Width="80">1</TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White">Y:</TextBlock>
+                            <TextBox x:Name="ShadowY" Width="80">1</TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Margin="10" Foreground="White" HorizontalAlignment="Center">Shadow color</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Red">R:</TextBlock>
+                            <ek:NumericTextBox x:Name="ShadowR" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Green">G:</TextBlock>
+                            <ek:NumericTextBox x:Name="ShadowG" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Blue">B:</TextBlock>
+                            <ek:NumericTextBox x:Name="ShadowB" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Gray">A:</TextBlock>
+                            <ek:NumericTextBox x:Name="ShadowA" Width="80" Maximum="255" Minimum="0">100</ek:NumericTextBox>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="0,10,0,0">
+                    <CheckBox FontFamily="JHUF" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="12" Foreground="White" x:Name="UseWhitelistCheckBox">Whitelist gamemodes</CheckBox>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White">List of whitelisted gamemodes</TextBlock>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White">Separated with commas,</TextBlock>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White">in the form of,</TextBlock>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Foreground="White" HorizontalAlignment="Center">Mod name+gamemode name</TextBlock>
+                    <TextBox Margin="0,10,0,0" FontFamily="JHUF" Foreground="White" TextWrapping="Wrap" FontSize="12" x:Name="WhitelistTextBox">CoreAssets+DeathMatchGamemode</TextBox>
+                </StackPanel>
+                <Button FontFamily="JHUF" Padding="10" Margin="10" FontSize="12" Foreground="White" x:Name="GoBackBtn">Go back to menu</Button>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </ek:UIRoot>

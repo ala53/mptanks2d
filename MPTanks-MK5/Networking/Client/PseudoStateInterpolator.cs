@@ -38,6 +38,28 @@ namespace MPTanks.Networking.Client
                     var gameObj = _game.GameObjectsById[obj.Key];
                     if (!obj.Value.PositionChanged && !obj.Value.RotationChanged) continue;
 
+                    //Handle destroyed
+                    if (obj.Value.WasDestroyed)
+                    {
+                        game.ImmediatelyForceObjectDestruction(gameObj);
+                        continue;
+                    }
+
+                    //Apply the non interpolated updates
+                    gameObj.IsSensor = obj.Value.IsSensorObject;
+                    gameObj.IsStatic = obj.Value.IsStaticObject;
+
+                    if (obj.Value.RestitutionChanged)
+                        gameObj.Restitution = obj.Value.Restitution;
+                    if (obj.Value.RotationChanged)
+                        gameObj.Rotation = obj.Value.Rotation;
+                    if (obj.Value.RotationVelocityChanged)
+                        gameObj.AngularVelocity = obj.Value.RotationVelocity;
+                    if (obj.Value.SizeChanged)
+                        gameObj.Size = obj.Value.Size.ToVector2();
+                    if (obj.Value.VelocityChanged)
+                        gameObj.LinearVelocity = obj.Value.Velocity.ToVector2();
+
                     Vector2 dist;
                     if (obj.Value.PositionChanged)
                         dist = obj.Value.Position - gameObj.Position;
@@ -53,8 +75,8 @@ namespace MPTanks.Networking.Client
                         DistanceCorrectionLimit < Math.Abs(dist.Y) ||
                         RotationCorrectionLimit < rot)
                     {
-                        _game.GameObjectsById[obj.Key].Position = obj.Value.Position;
-                        _game.GameObjectsById[obj.Key].Rotation = obj.Value.Rotation;
+                        gameObj.Position = obj.Value.Position;
+                        gameObj.Rotation = obj.Value.Rotation;
                     }
                     else
                     {

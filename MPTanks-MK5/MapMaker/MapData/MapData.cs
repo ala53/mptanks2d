@@ -17,11 +17,17 @@ namespace MPTanks.Clients.MapMaker.MapData
     class MapData
     {
         public List<Modding.ModInfo> Mods { get; set; } = new List<Modding.ModInfo>();
+        public string MapName { get; set; }
+        public string MapAuthor { get; set; }
+        public Color BackgroundColor = Color.Black;
+        public Color ShadowColor = new Color(50, 50, 50, 100);
+        public Vector2 ShadowOffset = new Vector2(0.3f, -0.3f);
+
+        public GameCore CreateFromMap(MapJSON map) => CreateGameFromMapAndUpdateModsList(map);
 
         private GameCore CreateGameFromMapAndUpdateModsList(MapJSON map)
         {
             var game = new GameCore(null, new NullGamemode(), Newtonsoft.Json.JsonConvert.SerializeObject(map));
-
             //Blow up the mod infos
             var deps = map.ModDependencies.Select(a =>
              {

@@ -398,7 +398,7 @@ namespace MPTanks.ModCompiler
                     dynamic deserializedGeneric = JsonConvert.DeserializeObject(
                         File.ReadAllText(file));
 
-                    if (deserializedGeneric.type == "map")
+                    if (deserializedGeneric.type == "map" || deserializedGeneric.Type == "map")
                     {
                         //map file
                         try
