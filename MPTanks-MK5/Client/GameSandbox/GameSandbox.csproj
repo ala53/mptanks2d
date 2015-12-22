@@ -111,10 +111,9 @@
       <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FarseerPhysics.Portable, Version=3.5.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Lidgren.Network, Version=3.4.0.456, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dependencies\Lidgren\Lidgren.Network.dll</HintPath>
+      <HintPath>..\..\..\Build\3rd Party\Lidgren.Network\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
@@ -131,6 +130,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Starbound.Input">
+      <HintPath>..\..\..\Build\3rd Party\Starbound.Input\Starbound.Input.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -183,10 +185,6 @@
     <ProjectReference Include="..\..\Strings\Strings.csproj">
       <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
       <Name>Strings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ThirdParty\Starbound.Input-3.18.2015\Starbound.Input\Starbound.Input.csproj">
-      <Project>{44c828d4-02d6-413c-bfed-3bf72aa9322e}</Project>
-      <Name>Starbound.Input</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
