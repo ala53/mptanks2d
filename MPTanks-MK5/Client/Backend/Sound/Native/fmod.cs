@@ -7,10 +7,61 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 #pragma warning disable 1060
 namespace FMOD
 {
+    //Custom extension code. Copies the correct version of fmod.dll/fmod64.dll/libfmod.so/libfmod64.so from
+    //the /fmod directory to the base directory
+    public static class FMODPreInit
+    {
+        private static bool _inited = false;
+        public static void DoFMODCopy()
+        {
+            if (_inited) return;
+            _inited = true;
+
+            bool x64 = Environment.Is64BitProcess;
+            int p = (int)Environment.OSVersion.Platform;
+            bool isLinux = (p == 4) || (p == 6) || (p == 128);
+
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (!File.Exists(Path.Combine(appDir, "fmod", "fmod.dll")) ||
+                !File.Exists(Path.Combine(appDir, "fmod", "fmod64.dll")) ||
+                !File.Exists(Path.Combine(appDir, "fmod", "libfmod.so")) ||
+                !File.Exists(Path.Combine(appDir, "fmod", "libfmod64.so")))
+                throw new Exception("Missing cross platform FMod files! (in {AppDir}/fmod/*)");
+            //try
+            //{
+                //Then, we try to copy the correct file
+                if (isLinux && x64)
+                {
+                    //Linux64
+                    File.Copy(Path.Combine(appDir, "fmod", "libfmod64.so"), Path.Combine(appDir, "fmod.so"));
+                }
+                else if (isLinux)
+                {
+                    //Linux32
+                    File.Copy(Path.Combine(appDir, "fmod", "libfmod.so"), Path.Combine(appDir, "fmod.so"));
+                }
+                else if (x64)
+                {
+                    //Win64
+                    File.Copy(Path.Combine(appDir, "fmod", "fmod.so"), Path.Combine(appDir, "fmod.dll"));
+                }
+                else
+                {
+                    //Win32
+                    File.Copy(Path.Combine(appDir, "fmod", "fmod.dll"), Path.Combine(appDir, "fmod.dll"));
+                }
+            //}
+            //catch
+            //{
+
+            //}
+        }
+    }
     /*
         FMOD version number.  Check this against FMOD::System::getVersion / System_GetVersion
         0xaaaabbcc -> aaaa = major version number.  bb = minor version number.  cc = development version number.
@@ -18,11 +69,8 @@ namespace FMOD
     public class VERSION
     {
         public const int number = 0x00010607;
-#if WIN64
-        public const string dll    = "fmod64";
-#else
+        //public const string dll64 = "fmod64";
         public const string dll = "fmod";
-#endif
     }
 
     public class CONSTANTS
@@ -281,14 +329,14 @@ namespace FMOD
         - FMOD_OUTPUTTYPE_XBOX360       - extradriverdata is a pointer to a FMOD_360_EXTRADRIVERDATA struct. This can be found in fmodxbox360.h.
 
         Currently these are the only FMOD drivers that take extra information.  Other unknown plugins may have different requirements.
-    
+
         Note! If FMOD_OUTPUTTYPE_WAVWRITER_NRT or FMOD_OUTPUTTYPE_NOSOUND_NRT are used, and if the System::update function is being called
         very quickly (ie for a non realtime decode) it may be being called too quickly for the FMOD streamer thread to respond to.
         The result will be a skipping/stuttering output in the captured audio.
-    
+
         To remedy this, disable the FMOD streamer thread, and use FMOD_INIT_STREAM_FROM_UPDATE to avoid skipping in the output stream,
         as it will lock the mixer and the streamer together in the same thread.
-    
+
         [SEE_ALSO]
             System::setOutput
             System::getOutput

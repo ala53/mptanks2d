@@ -377,12 +377,15 @@ namespace MPTanks.Client.GameSandbox
 
             if (!_hasInitialized || _closing) return;
 
-            if (Client?.Player?.Tank != null && SoundPlayer != null)
+            if (CurrentViewedTank != null && SoundPlayer != null)
             {
-                SoundPlayer.PlayerPosition = Client.Player.Tank.Position;
-                SoundPlayer.PlayerVelocity = Client.Player.Tank.LinearVelocity;
+                SoundPlayer.PlayerPosition = CurrentViewedTank.Position;
+                SoundPlayer.PlayerVelocity = CurrentViewedTank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
+
+            if (Server?.Game != null)
+                Server.Game.Timescale = GameCore.TimescaleValue.OneSixteenth;
 
             Diagnostics.BeginMeasurement("Base.Update() & UI Update");
             base.Update(gameTime);

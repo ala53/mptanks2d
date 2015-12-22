@@ -190,6 +190,8 @@ namespace MPTanks.Client.Backend.Sound
         {
             MaxChannels = maxChannels;
 
+            FMOD.FMODPreInit.DoFMODCopy();
+
             FMOD.Error.Check(FMOD.Factory.System_Create(out _system));
             FMOD.Error.Check(_system.init(maxChannels,
                 FMOD.INITFLAGS.NORMAL, IntPtr.Zero));

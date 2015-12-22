@@ -35,7 +35,7 @@ namespace MPTanks.Client
             {
                 ClientSettings.Instance.GetAllSettings();
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Build\CoreAssets\Debug\</OutputPath>
+    <OutputPath>..\..\Build\Debug\Core Assets\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,10 +24,28 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Build\CoreAssets\Release\</OutputPath>
+    <OutputPath>..\..\Build\Release\Core Assets\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FarseerPhysics.Portable, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -137,7 +155,7 @@ if NOT EXIST "$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)..\Build\ModCompiler\Release\MPTanks.ModCompiler.exe  -nowl -rindir="$(ProjectDir)assets" -c="$(TargetDir)$(TargetFileName)" -name="Core-Assets" -author="ZSB Games" -version="0.0 DEV" -description="The core assets (tanks, map objects, gamemodes, and maps that make up MP Tanks. You can reference this from ANY mods without worrying about download overhead." -o="$(ProjectDir)core-assets.mod"
-xcopy /y $(ProjectDir)core-assets.mod $(ProjectDir)$(OutDir)</PostBuildEvent>
+xcopy /y $(ProjectDir)core-assets.mod "$(ProjectDir)$(OutDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
