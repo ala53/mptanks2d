@@ -48,7 +48,6 @@ namespace MPTanks.DedicatedServer
             _map = ChooseMap();
             _server = new Server(new Configuration
             {
-                StateSyncRate = TimeSpan.FromSeconds(0.01),
                 MaxPlayers = 16
             },
                 new GameCore(new NullLogger(), _gamemode, _map,
