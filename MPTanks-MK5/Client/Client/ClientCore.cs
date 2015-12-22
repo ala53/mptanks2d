@@ -126,6 +126,7 @@ namespace MPTanks.Client
         /// </summary>
         protected override void LoadContent()
         {
+
             IsMouseVisible = true;
 
             QueuePositionAndSizeSet(
@@ -411,7 +412,7 @@ namespace MPTanks.Client
                     Window.ClientBounds.Size);
 
             ui.Update(gameTime);
-            
+
             base.Update(gameTime);
         }
 
@@ -433,7 +434,7 @@ namespace MPTanks.Client
                 _backgroundTransitionStart = gameTime.TotalGameTime;
                 amountTransitioned = 0;
                 _beginBackgroundColor = _endBackgroundColor;
-                _endBackgroundColor = 
+                _endBackgroundColor =
                     _possibleBackgroundColors[_backgroundColorRng.Next(0, _possibleBackgroundColors.Length)];
             }
 
@@ -447,6 +448,7 @@ namespace MPTanks.Client
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (!IsActive) return;
             BlendBackgroundColor(gameTime);
             _glitch.BeginDraw();
             GraphicsDevice.Clear(new Color(15, 15, 15, 255));

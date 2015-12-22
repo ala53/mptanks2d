@@ -21,7 +21,6 @@ namespace MPTanks.Client.GameSandbox
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            CrossDomainObject.Instance.ConnectionFailureCause = "NOCOMMENT";
             //Write down some logging information so we know what happened.
             Logger.Trace("MonoGame Game Class: " + typeof(Microsoft.Xna.Framework.Game).ToString() + ", " +
                 typeof(Microsoft.Xna.Framework.Game).Assembly.ToString());
@@ -30,12 +29,18 @@ namespace MPTanks.Client.GameSandbox
                 dependencies += "[" + dep.ToString() + "], ";
             Logger.Info(dependencies);
 
-            StartGame();
+            if (args.Length <1)
+            {
+                Logger.Fatal("Missing info from main thread. Did you accidentally run this object directly?");
+                return;
+            }
+
+            StartGame(args);
         }
 
-        static void StartGame()
+        static void StartGame(string[] args)
         {
-            using (var game = new GameClient())
+            using (var game = new GameClient(Newtonsoft.Json.JsonConvert.DeserializeObject<CrossProcessStartData>(args[0])))
                 game.Run();
         }
 

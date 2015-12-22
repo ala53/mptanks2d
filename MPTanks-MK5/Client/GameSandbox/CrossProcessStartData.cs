@@ -1,31 +1,17 @@
-﻿using System;
+﻿using MPTanks.Engine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MPTanks.Client.GameSandbox
 {
-    public class CrossDomainObject : MarshalByRefObject
+    public class CrossProcessStartData 
     {
-        private static CrossDomainObject _inst;
-        public static CrossDomainObject Instance
-        {
-            get
-            {
-                if (_inst == null)
-                {
-                    _inst = new CrossDomainObject { };
-                }
-                return _inst;
-            }
-            set
-            {
-                _inst = value;
-            }
-        }
 
-        public CrossDomainObject()
+        public CrossProcessStartData()
         {
             Instance = this;
         }
@@ -37,11 +23,11 @@ namespace MPTanks.Client.GameSandbox
         public bool SandboxingEnabled { get; set; }
 
         public bool IsGameHost { get; set; }
-        
+
         public string ServerEngineSettingsJSON { get; set; }
 
         public string DrmEngineSerializedInfo { get; set; }
-        
+
         public string ConnectionFailureCause { get; set; }
 
         public string Ip { get; set; }

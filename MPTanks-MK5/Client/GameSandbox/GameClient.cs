@@ -48,7 +48,7 @@ namespace MPTanks.Client.GameSandbox
         /// <summary>
         /// The ahead of time configuration / Cross domain shared object
         /// </summary>
-        public CrossDomainObject AOTConfig => CrossDomainObject.Instance;
+        public CrossProcessStartData AOTConfig { get; private set; }
         private UserInterface _ui;
         private AsyncModLoader _modLoader;
         internal DebugDrawer DebugDrawer { get; private set; }
@@ -60,9 +60,11 @@ namespace MPTanks.Client.GameSandbox
         public Diagnostics Diagnostics => Client?.GameInstance?.Diagnostics ?? _tmpDiagnosticsInstance;
 
         #region Low level monogame and related initialization
-        public GameClient()
+        public GameClient(CrossProcessStartData aotConfig)
             : base()
         {
+            AOTConfig = aotConfig;
+
             _graphics = new GraphicsDeviceManager(this);
             _graphics.HardwareModeSwitch = false;
             Content.RootDirectory = "assets/mgcontent";
@@ -83,11 +85,11 @@ namespace MPTanks.Client.GameSandbox
         void graphics_DeviceCreated(object sender, EventArgs e)
         {
             //Set startup properties from the parent's crossdomainobject
-            _graphics.PreferredBackBufferWidth = CrossDomainObject.Instance.WindowWidth;
-            _graphics.PreferredBackBufferHeight = CrossDomainObject.Instance.WindowHeight;
+            _graphics.PreferredBackBufferWidth = AOTConfig.WindowWidth;
+            _graphics.PreferredBackBufferHeight = AOTConfig.WindowHeight;
             Window.Position = new Point(
-                CrossDomainObject.Instance.WindowPositionX,
-                CrossDomainObject.Instance.WindowPositionY);
+                AOTConfig.WindowPositionX,
+                AOTConfig.WindowPositionY);
 
             _graphics.SynchronizeWithVerticalRetrace = GameSettings.Instance.VSync;
             _ssaaRate = GameSettings.Instance.SSAARate;
@@ -282,13 +284,13 @@ namespace MPTanks.Client.GameSandbox
             // TODO: Unload any non ContentManager content here
 
             //On close, try to update the window position
-            if (CrossDomainObject.Instance.SandboxingEnabled)
+            if (AOTConfig.SandboxingEnabled)
                 try
                 {
-                    CrossDomainObject.Instance.WindowPositionX = Window.Position.X;
-                    CrossDomainObject.Instance.WindowPositionY = Window.Position.Y;
-                    CrossDomainObject.Instance.WindowWidth = _graphics.PreferredBackBufferWidth;
-                    CrossDomainObject.Instance.WindowHeight = _graphics.PreferredBackBufferHeight;
+                    AOTConfig.WindowPositionX = Window.Position.X;
+                    AOTConfig.WindowPositionY = Window.Position.Y;
+                    AOTConfig.WindowWidth = _graphics.PreferredBackBufferWidth;
+                    AOTConfig.WindowHeight = _graphics.PreferredBackBufferHeight;
                 }
                 catch { }
             else Environment.Exit(0); //Force a graceful failure
@@ -410,7 +412,7 @@ namespace MPTanks.Client.GameSandbox
                     Client.Input = state;
             }
 
-            if (CrossDomainObject.Instance.IsGameHost)
+            if (AOTConfig.IsGameHost)
             {
                 Server.Update(gameTime);
             }

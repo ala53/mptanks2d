@@ -1,11 +1,14 @@
 ﻿using EmptyKeys.UserInterface;
 using Microsoft.Xna.Framework;
 using MPTanks.Client.GameSandbox;
+using MPTanks.Engine;
 using MPTanks.Engine.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,8 +19,6 @@ namespace MPTanks.Client
     /// </summary>
     public class LiveGame
     {
-        public CrossDomainObject DomainProxy { get; private set; }
-
         /// <summary>
         /// Whether the game is trying to connect
         /// </summary>
@@ -26,95 +27,78 @@ namespace MPTanks.Client
         public bool ConnectionFailed { get; private set; }
         public string FailureReason { get; private set; }
 
-        private AppDomain _domain;
-        private Thread _mtTask;
-        private bool _clearedToRun;
+        private Process _prc;
         private Action<LiveGame> _exitCallback = (game) => { };
         private ClientCore _client;
+        private bool _sandboxed = ClientSettings.Instance.SandboxGames;
+        private string _serializedArgs;
         public LiveGame(ClientCore client, Networking.Common.Connection.ConnectionInfo connectionInfo, string[] modsToInject)
         {
-                var task_inited = false;
             _client = client;
-            if (!ClientSettings.Instance.SandboxGames)
-            {
-                //In debug mode, don't do domain wrapping
-                DomainProxy = CrossDomainObject.Instance;
-                DomainProxy.SandboxingEnabled = false;
-                task_inited = true;
-            }
-            else
-            {
-                _domain = AppDomain.CreateDomain("Live game: " + connectionInfo.FriendlyServerName, null);
-                _mtTask = new Thread(() =>
+
+            var dp = new CrossProcessStartData();
+            dp.SandboxingEnabled = _sandboxed;
+
+            dp.Ip = connectionInfo.ServerAddress;
+            dp.Port = connectionInfo.ServerPort;
+            dp.Password = connectionInfo.Password;
+            dp.IsGameHost = connectionInfo.IsHost;
+            dp.WindowPositionX = _client.Window.Position.X;
+            dp.WindowPositionY = _client.Window.Position.Y;
+            dp.WindowWidth = _client.WindowSize.X;
+            dp.WindowHeight = _client.WindowSize.Y;
+            dp.ServerEngineSettingsJSON = EngineSettings.GetInstance().Save();
+
+            _serializedArgs = Newtonsoft.Json.JsonConvert.SerializeObject(dp);
+
+            if (_sandboxed)
+                _prc = new Process
                 {
-                    try
-                    {
-                        _domain.Load(typeof(CrossDomainObject).Assembly.FullName);
-                        DomainProxy = (CrossDomainObject)_domain.CreateInstanceAndUnwrap(
-                            typeof(CrossDomainObject).Assembly.FullName,
-                            typeof(CrossDomainObject).FullName);
-                        DomainProxy.SandboxingEnabled = true;
-                        task_inited = true;
-                        while (!_clearedToRun) Thread.Sleep(50);
-                        SetStartWindowParams();
-                        _domain.ExecuteAssemblyByName(typeof(CrossDomainObject).Assembly.FullName);
-                    }
-                    catch (Exception ex)
-                    {
-                        ConnectionFailed = true;
-                        FailureReason = Strings.ClientMenus.GameCrashedUnknownCause(ex.Message);
-                        Logger.Error("Live game crashed!", ex);
-                    }
-                    Unload();
-                });
-                _mtTask.Start();
-            }
-
-            while (!task_inited) Thread.Sleep(0);
-            DomainProxy.Ip = connectionInfo.ServerAddress;
-            DomainProxy.Port = connectionInfo.ServerPort;
-            DomainProxy.Password = connectionInfo.Password;
-            DomainProxy.IsGameHost = connectionInfo.IsHost;
-            DomainProxy.ServerEngineSettingsJSON = EngineSettings.GetInstance().Save();
+                    StartInfo = new ProcessStartInfo(
+                        typeof(GameClient).Assembly.Location,
+                        EncodeParameterArgument(_serializedArgs))
+                };
         }
-
-        private void SetStartWindowParams()
+        /// <summary>
+        /// Encodes an argument for passing into a program
+        /// </summary>
+        /// <param name="original">The value that should be received by the program</param>
+        /// <returns>The value which needs to be passed to the program for the original value 
+        /// to come through</returns>
+        private static string EncodeParameterArgument(string original)
         {
-            DomainProxy.WindowPositionX = _client.Window.Position.X;
-            DomainProxy.WindowPositionY = _client.Window.Position.Y;
-            DomainProxy.WindowWidth = _client.WindowSize.X;
-            DomainProxy.WindowHeight = _client.WindowSize.Y;
+            if (string.IsNullOrEmpty(original))
+                return original;
+            string value = Regex.Replace(original, @"(\\*)" + "\"", @"$1\$0");
+            value = Regex.Replace(value, @"^(.*\s.*?)(\\*)$", "\"$1$2$2\"");
+            return value;
         }
-
-        private void SetReturnWindowParams()
-        {
-            try
-            {
-                _client.QueuePositionAndSizeSet(DomainProxy.WindowPositionX, DomainProxy.WindowPositionY,
-                DomainProxy.WindowWidth, DomainProxy.WindowHeight);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("SetReturnWindowParams() had an error.", ex);
-            }
-        }
-
         public void Run()
         {
-            if (!ClientSettings.Instance.SandboxGames)
+            if (!_sandboxed)
             {
-                SetStartWindowParams();
-                GameSandbox.Program.Main(new string[] { });
+                GameSandbox.Program.Main(new string[] { _serializedArgs });
                 Logger.Error("Closing program to prevent crashes (Debug mode without sandboxing causes severe issues when " +
                     "attempting to run multiple games through the same process)");
                 Environment.Exit(-2); //Force close because, well, it will die anyway and now, we can be graceful
             }
-            _clearedToRun = true;
+            else
+            {
+                _prc.Start();
+                //Exit polling
+                Task.Run(async () =>
+                {
+                    while (!_prc.HasExited)
+                        await Task.Delay(50);
+
+                    Unload();
+                });
+            }
         }
 
-        public void WaitForExit()
+        public void WaitForExit(int? ms = null)
         {
-            if (ClientSettings.Instance.SandboxGames) _mtTask.Join();
+            if (_sandboxed && !_prc.HasExited) _prc.WaitForExit(ms ?? -1);
             Close();
         }
 
@@ -129,8 +113,11 @@ namespace MPTanks.Client
             if (_closed) return;
             _closed = true;
 
-            if (ClientSettings.Instance.SandboxGames && _mtTask.IsAlive)
-                _mtTask.Abort();
+            if (_sandboxed && !_prc.HasExited)
+            {
+                _prc.CloseMainWindow();
+                WaitForExit();
+            }
 
             Unload(true);
         }
@@ -139,11 +126,6 @@ namespace MPTanks.Client
         {
             if (_closed && !force) return;
             _closed = true;
-
-            SetReturnWindowParams();
-            _clearedToRun = false;
-
-            if (ClientSettings.Instance.SandboxGames) AppDomain.Unload(_domain);
 
             Connected = false;
             ConnectionFailed = true;
