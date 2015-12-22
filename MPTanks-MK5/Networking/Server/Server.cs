@@ -88,7 +88,7 @@ namespace MPTanks.Networking.Server
 
         public void Update(GameTime gameTime)
         {
-            Game?.Update(gameTime);
+            GameInstance.Tick(gameTime);
             TickGameStartCountdown(gameTime);
 
             Timers.Update(gameTime);

@@ -79,7 +79,7 @@ namespace MPTanks.Engine
             writer.Write(IsSensor);
             writer.Write(IsStatic);
             writer.Write(ColorMask);
-            writer.Write(TimeAlive.TotalMilliseconds);
+            writer.Write(TimeAlive);
             writer.Write(Size);
             writer.Write(Position);
             writer.Write(LinearVelocity);
@@ -137,7 +137,7 @@ namespace MPTanks.Engine
             IsSensor = reader.ReadBool();
             IsStatic = reader.ReadBool();
             ColorMask = reader.ReadColor();
-            TimeAlive = TimeSpan.FromMilliseconds(reader.ReadDouble());
+            TimeAlive = reader.ReadTimeSpan();
             Size = reader.ReadVector();
             Position = reader.ReadVector();
             LinearVelocity = reader.ReadVector();

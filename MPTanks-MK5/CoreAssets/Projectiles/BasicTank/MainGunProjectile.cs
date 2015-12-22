@@ -11,6 +11,8 @@ using MPTanks.Engine;
 using MPTanks.Engine.Core;
 using MPTanks.Engine.Assets;
 using MPTanks.Modding;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 
 namespace MPTanks.CoreAssets.Projectiles.BasicTank
 {
@@ -24,9 +26,14 @@ namespace MPTanks.CoreAssets.Projectiles.BasicTank
         public override bool DamagesMapObjects => false;
         public MainGunProjectile(Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
-            : base(owner, game, authorized, 1, 1.2f, position, rotation)
+            : base(owner, game, authorized, 1, 1f, position, rotation)
         {
             ColorMask = owner.ColorMask;
+        }
+
+        protected override Body CreateBody(World world, Vector2 size, Vector2 position, float rotation)
+        {
+            return BodyFactory.CreateCircle(world, size.Length() / 2, 1, position, BodyType.Dynamic, this);
         }
 
         protected override bool DestroyInternal(GameObject destroyer = null)

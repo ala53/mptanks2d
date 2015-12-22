@@ -413,9 +413,7 @@ namespace MPTanks.Client.GameSandbox
             }
 
             if (AOTConfig.IsGameHost)
-            {
                 Server.Update(gameTime);
-            }
 
             Client.Update(gameTime);
 

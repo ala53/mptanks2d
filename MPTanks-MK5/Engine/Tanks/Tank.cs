@@ -120,19 +120,19 @@ namespace MPTanks.Engine.Tanks
 
         protected override void GetTypeStateHeader(ByteArrayWriter writer)
         {
+            writer.Write(PrimaryWeapon != null);
             if (PrimaryWeapon != null)
             {
-                writer.Write(PrimaryWeapon != null);
                 PrimaryWeapon.GetFullState(writer);
             }
+            writer.Write(SecondaryWeapon != null);
             if (SecondaryWeapon != null)
             {
-                writer.Write(SecondaryWeapon != null);
                 SecondaryWeapon.GetFullState(writer);
             }
+            writer.Write(SecondaryWeapon != null);
             if (SecondaryWeapon != null)
             {
-                writer.Write(SecondaryWeapon != null);
                 SecondaryWeapon.GetFullState(writer);
             }
         }

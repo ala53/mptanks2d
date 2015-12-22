@@ -181,7 +181,8 @@ namespace MPTanks.Engine
                     Body.OnCollision -= Body_OnCollision;
                     Body.Dispose();
                     //Build new shape
-                    Body = CreateBody(value * Game.Settings.PhysicsScale, pos, rot);
+                    Body = CreateBody(Game.World, value * Game.Settings.PhysicsScale, pos, rot);
+                    Body.UserData = this;
                     Position = pos;
                     Rotation = rot;
                     LinearVelocity = lin;
@@ -311,8 +312,9 @@ namespace MPTanks.Engine
                 Size = DefaultSize;
 
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
-            Body = CreateBody(Size * Game.Settings.PhysicsScale, _startPosition, _startRotation);
+            Body = CreateBody(Game.World, Size * Game.Settings.PhysicsScale, _startPosition, _startRotation);
             Body.Restitution = Restitution;
+            Body.UserData = this;
             Body.OnCollision += Body_OnCollision;
 
             _hasBeenCreated = true;
@@ -335,12 +337,12 @@ namespace MPTanks.Engine
             CreateInternal();
         }
 
-        protected virtual Body CreateBody(Vector2 size, Vector2 position, float rotation)
+        protected virtual Body CreateBody(World world, Vector2 size, Vector2 position, float rotation)
         {
             if (BaseComponents.Body != null)
             {
                 //Load from file
-                var b = BodyFactory.CreateCompoundPolygon(Game.World, BaseComponents.Body.GetFixtures(size),
+                var b = BodyFactory.CreateCompoundPolygon(world, BaseComponents.Body.GetFixtures(size),
                     _startDensity, position, rotation, BodyType.Dynamic, this);
                 b.UserData = this;
                 return b;
@@ -348,7 +350,7 @@ namespace MPTanks.Engine
             else
             {
                 //Load rectangle
-                var b = BodyFactory.CreateRectangle(Game.World, size.X,
+                var b = BodyFactory.CreateRectangle(world, size.X,
                  size.Y, _startDensity, position, rotation,
                  BodyType.Dynamic, this);
                 b.UserData = this;

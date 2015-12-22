@@ -44,7 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameSettings.cs" />
-    <Compile Include="CrossDomainObject.cs" />
+    <Compile Include="CrossProcessStartData.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Input\GamePadInputDriver.cs" />
     <Compile Include="Input\InputDriverBase.cs" />

@@ -202,7 +202,7 @@ namespace MPTanks.Networking.Client
             ProcessMessages();
             _interpolator.Apply(gameTime);
             TickCountdown(gameTime);
-            Game.Update(gameTime);
+            GameInstance.Tick(gameTime);
             if (MessageProcessor.MessageQueue.Count > 0 &&
                 NetworkClient.ConnectionStatus == Lidgren.Network.NetConnectionStatus.Connected)
             {

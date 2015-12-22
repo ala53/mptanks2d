@@ -5,6 +5,7 @@ using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Logging;
 using MPTanks.Engine.Settings;
 using MPTanks.Modding;
+using MPTanks.Networking.Common;
 using MPTanks.Networking.Server;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace MPTanks.DedicatedServer
         static ModAssetInfo _map;
         static void Main(string[] args)
         {
+            Console.Title = $"MP Tanks 2D Dedicated Server v{StaticSettings.VersionMajor}.{StaticSettings.VersionMinor}";
+
             _logger.Info("Server started, loading core mods...");
 
             Client.GameSandbox.Mods.CoreModLoader.LoadTrustedMods(GameSettings.Instance);
@@ -45,7 +48,7 @@ namespace MPTanks.DedicatedServer
             _map = ChooseMap();
             _server = new Server(new Configuration
             {
-                StateSyncRate = TimeSpan.FromSeconds(0.25),
+                StateSyncRate = TimeSpan.FromSeconds(0.01),
                 MaxPlayers = 16
             },
                 new GameCore(new NullLogger(), _gamemode, _map,
@@ -89,16 +92,16 @@ namespace MPTanks.DedicatedServer
                     Console.Write(">> ");
                 }
                 _server.Update(gt);
-                var elapsed = sw.Elapsed;
-                gt.TotalGameTime += elapsed;
                 Process();
-                if (16 - sw.ElapsedMilliseconds > 0)
+                if (16 - sw.Elapsed.TotalMilliseconds > 0)
                 {
-                    Thread.Sleep(16 - (int)sw.ElapsedMilliseconds);
+                    Thread.Sleep(16 - (int)sw.Elapsed.TotalMilliseconds);
 
                 }
 
-                gt.ElapsedGameTime = sw.Elapsed;
+                var elapsed = sw.Elapsed;
+                gt.TotalGameTime += elapsed;
+                gt.ElapsedGameTime = elapsed;
                 if (gt.ElapsedGameTime.TotalMilliseconds > 500)
                     gt.ElapsedGameTime = TimeSpan.FromMilliseconds(500);
                 sw.Restart();

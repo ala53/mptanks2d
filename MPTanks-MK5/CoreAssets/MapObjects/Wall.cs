@@ -18,7 +18,6 @@ namespace MPTanks.CoreAssets.MapObjects
             Vector2 position = default(Vector2), float rotation = 0) :
                 base(game, authorized, position, rotation)
         {
-
         }
     }
 }

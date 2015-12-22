@@ -16,6 +16,11 @@ namespace MPTanks.ModCompiler.Packer
         public static byte[] Pack()
         {
             var ms = new MemoryStream();
+            //We write in front of the header so that the zip can't be read
+            //or flagged by AV software
+            ms.WriteByte(7);
+            ms.WriteByte(0);
+            ms.WriteByte(7);
             var zipFile = new ZipOutputStream(ms);
             zipFile.IsStreamOwner = false;
             zipFile.SetLevel(9);

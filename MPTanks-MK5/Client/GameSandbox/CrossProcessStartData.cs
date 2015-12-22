@@ -13,7 +13,6 @@ namespace MPTanks.Client.GameSandbox
 
         public CrossProcessStartData()
         {
-            Instance = this;
         }
 
         public int WindowPositionX { get; set; }

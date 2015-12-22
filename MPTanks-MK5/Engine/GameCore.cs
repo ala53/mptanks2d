@@ -136,7 +136,7 @@ namespace MPTanks.Engine
         /// The physics world that the game runs in.
         /// </summary>
         [JsonIgnore]
-        internal FarseerPhysics.Dynamics.World World { get; private set; }
+        public FarseerPhysics.Dynamics.World World { get; private set; }
         private ushort _nextObjectId = 0;
         /// <summary>
         /// The next available object id to use

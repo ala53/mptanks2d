@@ -106,9 +106,7 @@ namespace MPTanks.Networking.Common
         private void TickGameState(GameTime gameTime)
         {
             Diagnostics.BeginMeasurement("TickGameState()", "Network Core");
-
-
-            _pseudoState = PseudoFullGameWorldState.Create(Game);
+            Game.Update(gameTime);
             Diagnostics.EndMeasurement("TickGameState()", "Network Core");
         }
         #endregion

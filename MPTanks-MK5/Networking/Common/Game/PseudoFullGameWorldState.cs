@@ -111,7 +111,7 @@ namespace MPTanks.Networking.Common.Game
                         obj.Position = objState.Position + (obj.LinearVelocity * latency);
                     }
                     if (objState.VelocityChanged)
-                        obj.LinearVelocity = objState.Velocity.ToVector2();
+                        obj.LinearVelocity = objState.Velocity;
                     if (objState.RestitutionChanged)
                         obj.Restitution = objState.Restitution;
                     if (objState.RotationVelocityChanged)
@@ -119,7 +119,7 @@ namespace MPTanks.Networking.Common.Game
                     if (objState.RotationChanged)
                         obj.Rotation = objState.Rotation + (obj.AngularVelocity * latency);
                     if (objState.SizeChanged)
-                        obj.Size = objState.Size.ToVector2();
+                        obj.Size = objState.Size;
                 }
             }
         }
@@ -153,22 +153,22 @@ namespace MPTanks.Networking.Common.Game
                 message.ReadPadBits();
 
                 if (objState.VelocityChanged)
-                    objState.Velocity = new HalfVector2 { PackedValue = message.ReadUInt32() };
+                    objState.Velocity = new Vector2(message.ReadFloat(), message.ReadFloat());
 
                 if (objState.PositionChanged)
                     objState.Position = new Vector2(message.ReadFloat(), message.ReadFloat());
 
                 if (objState.RotationChanged)
-                    objState.Rotation = new Half() { InternalValue = message.ReadUInt16() };
+                    objState.Rotation = message.ReadFloat();
 
                 if (objState.RotationVelocityChanged)
-                    objState.RotationVelocity = new Half() { InternalValue = message.ReadUInt16() };
+                    objState.RotationVelocity = message.ReadFloat();
 
                 if (objState.RestitutionChanged)
-                    objState.Restitution = new Half() { InternalValue = message.ReadUInt16() };
+                    objState.Restitution = message.ReadFloat();
 
                 if (objState.SizeChanged)
-                    objState.Size = new HalfVector2() { PackedValue = message.ReadUInt32() };
+                    objState.Size = new Vector2(message.ReadFloat(), message.ReadFloat());
 
                 state._objectStates.Add(objState.ObjectId, objState);
             }
@@ -205,7 +205,10 @@ namespace MPTanks.Networking.Common.Game
                 message.WritePadBits();
 
                 if (obj.VelocityChanged)
-                    message.Write(obj.Velocity.PackedValue);
+                {
+                    message.Write(obj.Velocity.X);
+                    message.Write(obj.Velocity.Y);
+                }
 
                 if (obj.PositionChanged)
                 {
@@ -214,16 +217,19 @@ namespace MPTanks.Networking.Common.Game
                 }
 
                 if (obj.RotationChanged)
-                    message.Write(obj.Rotation.InternalValue);
+                    message.Write(obj.Rotation);
 
                 if (obj.RotationVelocityChanged)
-                    message.Write(obj.RotationVelocity.InternalValue);
+                    message.Write(obj.RotationVelocity);
 
                 if (obj.RestitutionChanged)
-                    message.Write(obj.Restitution.InternalValue);
+                    message.Write(obj.Restitution);
 
                 if (obj.SizeChanged)
-                    message.Write(obj.Size.PackedValue);
+                {
+                    message.Write(obj.Size.X);
+                    message.Write(obj.Size.Y);
+                }
             }
         }
     }

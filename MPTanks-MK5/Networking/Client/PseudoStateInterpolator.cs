@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MPTanks.Engine;
+using MPTanks.Engine.Projectiles;
 using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace MPTanks.Networking.Client
         public TimeSpan ElapsedTime { get; set; }
         public TimeSpan InterpolationTime { get; set; } = TimeSpan.FromMilliseconds(500);
         public float DistanceCorrectionLimit { get; set; } = 3f;
+        public float VelocityLimit { get; set; } = 3f;
         public float RotationCorrectionLimit { get; set; } = MathHelper.PiOver4 / 2;
         public void Compute(GameCore game, PseudoFullGameWorldState state)
         {
@@ -56,9 +58,9 @@ namespace MPTanks.Networking.Client
                     if (obj.Value.RotationVelocityChanged)
                         gameObj.AngularVelocity = obj.Value.RotationVelocity;
                     if (obj.Value.SizeChanged)
-                        gameObj.Size = obj.Value.Size.ToVector2();
+                        gameObj.Size = obj.Value.Size;
                     if (obj.Value.VelocityChanged)
-                        gameObj.LinearVelocity = obj.Value.Velocity.ToVector2();
+                        gameObj.LinearVelocity = obj.Value.Velocity;
 
                     Vector2 dist;
                     if (obj.Value.PositionChanged)

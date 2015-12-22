@@ -36,7 +36,10 @@ namespace MPTanks.Modding.Unpacker
 
         private static ZipFile OpenZip(string fileName)
         {
-            var zf = new ZipFile(new FileStream(fileName, FileMode.Open, FileAccess.Read));
+            var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            fs.ReadByte(); fs.ReadByte(); fs.ReadByte();
+            var zf = new ZipFile(fs);
+            
             zf.IsStreamOwner = true;
             return zf;
         }

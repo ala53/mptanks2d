@@ -179,7 +179,7 @@ namespace MPTanks.Engine.Tanks
                 writer.Write(true);
                 writer.Write((byte)TargetingType);
                 writer.Write(MaxDistance);
-                writer.Write(ProjectileType);
+                writer.Write(GetProjectileString());
                 writer.Write(new HalfVector2(ProjectileVelocity));
                 writer.Write(new HalfVector2(ProjectileOffset));
                 writer.Write((Half)ProjectileRotation);
@@ -238,9 +238,9 @@ namespace MPTanks.Engine.Tanks
             FireRotationIsRelativeToTankLookDirection = reader.ReadBool();
             AddedRotation = reader.ReadHalf();
             TransformPositionAndVelocityByRotation = reader.ReadBool();
-            WeaponRechargeTime = TimeSpan.FromMilliseconds(reader.ReadFloat());
+            WeaponRechargeTime = reader.ReadTimeSpan();
             WeaponName = reader.ReadString();
-            TimeRecharged = TimeSpan.FromMilliseconds(reader.ReadFloat());
+            TimeRecharged = reader.ReadTimeSpan();
 
             _projectileArray = reader.ReadBytes();
         }
