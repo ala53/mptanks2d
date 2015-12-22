@@ -116,6 +116,13 @@ namespace MPTanks.Engine
 
         public void SetFullState(ByteArrayReader reader)
         {
+            reader.Offset = 0;
+
+            var objectId = reader.ReadUShort();
+            var reflectionName = reader.ReadString();
+            var type = (__SerializationGameObjectType)reader.ReadByte();
+            var playerUid = reader.ReadUShort();
+
             SetStateHeader(reader);
 
             if (GlobalSettings.Debug)

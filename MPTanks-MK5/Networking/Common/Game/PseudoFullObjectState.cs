@@ -28,12 +28,12 @@ namespace MPTanks.Networking.Common.Game
         public bool IsStaticObject { get; set; }
         public bool WasDestroyed { get; set; }
 
-        public Vector2 Velocity { get; set; }
-        public float Rotation { get; set; }
-        public float RotationVelocity { get; set; }
+        public HalfVector2 Velocity { get; set; }
+        public Half Rotation { get; set; }
+        public Half RotationVelocity { get; set; }
         public Vector2 Position { get; set; }
-        public float Restitution { get; set; }
-        public Vector2 Size { get; set; }
+        public Half Restitution { get; set; }
+        public HalfVector2 Size { get; set; }
 
         public bool HasChanges(PseudoFullObjectState last)
         {
@@ -62,10 +62,10 @@ namespace MPTanks.Networking.Common.Game
             Size = newState.Size;
 
             //Check if velocity changed
-            if (MathHelper.Distance(lastState.Velocity.X,
-                newState.Velocity.X) > _velocityThreshold ||
-                MathHelper.Distance(lastState.Velocity.Y,
-                newState.Velocity.Y) > _velocityThreshold)
+            if (MathHelper.Distance(lastState.Velocity.ToVector2().X,
+                newState.Velocity.ToVector2().X) > _velocityThreshold ||
+                MathHelper.Distance(lastState.Velocity.ToVector2().Y,
+                newState.Velocity.ToVector2().Y) > _velocityThreshold)
                 VelocityChanged = true;
 
 
@@ -90,8 +90,8 @@ namespace MPTanks.Networking.Common.Game
                 RestitutionChanged = true;
 
             //Check if size changed
-            if (MathHelper.Distance(lastState.Size.X, newState.Size.X) > _sizeThreshold ||
-                MathHelper.Distance(lastState.Size.Y, newState.Size.Y) > _sizeThreshold)
+            if (MathHelper.Distance(lastState.Size.ToVector2().X, newState.Size.ToVector2().X) > _sizeThreshold ||
+                MathHelper.Distance(lastState.Size.ToVector2().Y, newState.Size.ToVector2().Y) > _sizeThreshold)
                 SizeChanged = true;
         }
 
@@ -109,12 +109,12 @@ namespace MPTanks.Networking.Common.Game
             IsStaticObject = obj.IsStatic;
             WasDestroyed = destroyed;
 
-            Velocity = obj.LinearVelocity;
-            Rotation = obj.Rotation;
-            RotationVelocity = obj.AngularVelocity;
+            Velocity = new HalfVector2(obj.LinearVelocity);
+            Rotation = (Half)obj.Rotation;
+            RotationVelocity = (Half)obj.AngularVelocity;
             Position = obj.Position;
-            Restitution = obj.Restitution;
-            Size =obj.Size;
+            Restitution = (Half)obj.Restitution;
+            Size = new HalfVector2(obj.Size);
         }
 
         public PseudoFullObjectState(PseudoFullObjectState lastState, GameObject obj, bool destroyed = false)
@@ -135,12 +135,12 @@ namespace MPTanks.Networking.Common.Game
                 IsSensorObject = false;
                 IsStaticObject = false;
                 WasDestroyed = true;
-                Velocity = Vector2.Zero;
+                Velocity = new HalfVector2();
                 Rotation = 0;
                 RotationVelocity = 0;
                 Position = new Vector2();
                 Restitution = 0;
-                Size = Vector2.Zero;
+                Size = new HalfVector2();
             }
             else
             {

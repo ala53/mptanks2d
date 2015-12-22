@@ -31,7 +31,7 @@ namespace MPTanks.Client.GameSandbox
 
             if (args.Length <1)
             {
-                Logger.Fatal("Missing info from main thread. Did you accidentally run this object directly?");
+                Logger.Fatal("Missing info from main thread. Did you accidentally run the executable directly?");
                 return;
             }
 

@@ -58,9 +58,9 @@ namespace MPTanks.Networking.Client
                     if (obj.Value.RotationVelocityChanged)
                         gameObj.AngularVelocity = obj.Value.RotationVelocity;
                     if (obj.Value.SizeChanged)
-                        gameObj.Size = obj.Value.Size;
+                        gameObj.Size = obj.Value.Size.ToVector2();
                     if (obj.Value.VelocityChanged)
-                        gameObj.LinearVelocity = obj.Value.Velocity;
+                        gameObj.LinearVelocity = obj.Value.Velocity.ToVector2();
 
                     Vector2 dist;
                     if (obj.Value.PositionChanged)

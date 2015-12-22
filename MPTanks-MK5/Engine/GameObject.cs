@@ -313,7 +313,6 @@ namespace MPTanks.Engine
 
             //Create the body in physics space, which is smaller than world space, which is smaller than render space
             Body = CreateBody(Game.World, Size * Game.Settings.PhysicsScale, _startPosition, _startRotation);
-            Body.Restitution = Restitution;
             Body.UserData = this;
             Body.OnCollision += Body_OnCollision;
 
@@ -323,6 +322,7 @@ namespace MPTanks.Engine
             Position = _startPosition;
             LinearVelocity = _startVelocity;
             AngularVelocity = _startAngularVelocity;
+            Restitution = _startRestitution;
             IsSensor = _startIsSensor;
             IsStatic = _startIsStatic;
 
