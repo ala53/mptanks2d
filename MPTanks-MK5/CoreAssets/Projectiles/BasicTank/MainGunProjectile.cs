@@ -26,7 +26,7 @@ namespace MPTanks.CoreAssets.Projectiles.BasicTank
         public override bool DamagesMapObjects => false;
         public MainGunProjectile(Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
-            : base(owner, game, authorized, 1, 1f, position, rotation)
+            : base(owner, game, authorized, 1, 1.1f, position, rotation)
         {
             ColorMask = owner.ColorMask;
         }
@@ -34,6 +34,10 @@ namespace MPTanks.CoreAssets.Projectiles.BasicTank
         protected override Body CreateBody(World world, Vector2 size, Vector2 position, float rotation)
         {
             return BodyFactory.CreateCircle(world, size.Length() / 2, 1, position, BodyType.Dynamic, this);
+        }
+        protected override void CreateInternal()
+        {
+            base.CreateInternal();
         }
 
         protected override bool DestroyInternal(GameObject destroyer = null)
