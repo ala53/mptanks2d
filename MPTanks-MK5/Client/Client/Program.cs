@@ -30,6 +30,7 @@ namespace MPTanks.Client
             }
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 
             try
             {
@@ -76,6 +77,12 @@ namespace MPTanks.Client
                 System.Windows.Forms.MessageBox.Show("Your computer does not meet the minimum requirements for MP Tanks. Check that up-to-date graphics drivers are installed.",
                     "Below requirements", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
+        }
+
+        private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            Console.WriteLine(e.Exception);
+            Logger.Error("(Possibly caught) exception at AppDomain level.", e.Exception);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

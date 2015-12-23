@@ -90,8 +90,8 @@ namespace MPTanks.CoreAssets.Gamemodes
                 WinningTeam = Team.Indeterminate;
                 return;
             }
-            int pCountAliveOnTeamRed = Teams[0].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
-            int pCountAliveOnTeamBlue = Teams[1].Players.Count((p) => (p.Tank?.Alive).HasValue ? (p.Tank?.Alive).Value : false);
+            int pCountAliveOnTeamRed = Teams[0].LivingPlayersCount;
+            int pCountAliveOnTeamBlue = Teams[1].LivingPlayersCount;
 
             if (pCountAliveOnTeamRed > 0 && pCountAliveOnTeamBlue > 0)
                 return; //game still running

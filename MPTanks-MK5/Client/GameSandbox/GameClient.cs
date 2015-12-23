@@ -383,10 +383,7 @@ namespace MPTanks.Client.GameSandbox
                 SoundPlayer.PlayerVelocity = CurrentViewedTank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
-
-            if (Server?.Game != null)
-                Server.Game.Timescale = GameCore.TimescaleValue.OneSixteenth;
-
+            
             Diagnostics.BeginMeasurement("Base.Update() & UI Update");
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update() & UI Update");

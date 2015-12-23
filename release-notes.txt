@@ -1,0 +1,4 @@
+when running on mono, make sure to run "mozroots --import --sync" to sync certificates (otherwise we'll get TLS exceptions)
+Provide attribution + tell fmod guys we're using their software http://www.fmod.org/files/public/LICENSE.TXT
+
+Update MonoGame to 3.5 (desktop is unified into 1 platform: DesktopGL) -or- use FNA

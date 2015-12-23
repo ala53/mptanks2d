@@ -55,10 +55,9 @@ namespace MPTanks.Engine.Settings
 #else
                     ConfigDir = Environment.ExpandEnvironmentVariables(File.ReadAllLines("configpath.txt")[1]);
 #endif
+                Directory.CreateDirectory(ConfigDir);
             }
             catch { } //Ignore configuration issues
-            if (Path.IsPathRooted(ConfigDir))
-                Directory.CreateDirectory(ConfigDir);
         }
 
         //We only look one place for the setting for this: configpath.txt in the current directory

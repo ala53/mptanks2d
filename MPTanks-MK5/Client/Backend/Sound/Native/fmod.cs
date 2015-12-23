@@ -32,34 +32,52 @@ namespace FMOD
                 !File.Exists(Path.Combine(appDir, "fmod", "libfmod.so")) ||
                 !File.Exists(Path.Combine(appDir, "fmod", "libfmod64.so")))
                 throw new Exception("Missing cross platform FMod files! (in {AppDir}/fmod/*)");
-            //try
-            //{
-                //Then, we try to copy the correct file
-                if (isLinux && x64)
-                {
-                    //Linux64
-                    File.Copy(Path.Combine(appDir, "fmod", "libfmod64.so"), Path.Combine(appDir, "fmod.so"));
-                }
-                else if (isLinux)
-                {
-                    //Linux32
-                    File.Copy(Path.Combine(appDir, "fmod", "libfmod.so"), Path.Combine(appDir, "fmod.so"));
-                }
-                else if (x64)
-                {
-                    //Win64
-                    File.Copy(Path.Combine(appDir, "fmod", "fmod.so"), Path.Combine(appDir, "fmod.dll"));
-                }
-                else
-                {
-                    //Win32
-                    File.Copy(Path.Combine(appDir, "fmod", "fmod.dll"), Path.Combine(appDir, "fmod.dll"));
-                }
-            //}
-            //catch
-            //{
 
-            //}
+            string copyFrom = null, copyTo = null;
+            //Then, we try to copy the correct file
+            if (isLinux && x64)
+            {
+                //Linux64
+                copyFrom = Path.Combine(appDir, "fmod", "libfmod64.so");
+                copyTo = Path.Combine(appDir, "fmod.so");
+            }
+            else if (isLinux)
+            {
+                //Linux32
+                copyFrom = Path.Combine(appDir, "fmod", "libfmod.so");
+                copyTo = Path.Combine(appDir, "fmod.so");
+            }
+            else if (x64)
+            {
+                copyFrom = Path.Combine(appDir, "fmod", "fmod64.dll");
+                copyTo = Path.Combine(appDir, "fmod.dll");
+            }
+            else
+            {
+                copyFrom = Path.Combine(appDir, "fmod", "fmod.dll");
+                copyTo = Path.Combine(appDir, "fmod.dll");
+            }
+            try
+            {
+                //Check if the input and outputs are different
+                var inFile = new FileInfo(copyFrom);
+                var outFile = new FileInfo(copyFrom);
+
+                if (!inFile.Exists)
+                    throw new Exception("Missing FMOD dll/so file.");
+
+                //If the file is the same
+                if (outFile.Exists && outFile.Length == inFile.Length)
+                    return;
+
+                //Otherwise, delete if exists and copy
+                if (outFile.Exists)
+                    outFile.Delete();
+
+                inFile.CopyTo(copyTo);
+            }
+            catch
+            { }
         }
     }
     /*

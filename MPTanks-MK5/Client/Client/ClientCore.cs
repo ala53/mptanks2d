@@ -218,6 +218,7 @@ namespace MPTanks.Client
                 if (result.IsFaulted)
                 {
                     var ex = result.Exception.InnerException;
+                    Logger.Error("Login exception", ex);
                     if (ex is ZSB.Drm.Client.Exceptions.AccountDetailsIncorrectException)
                         ui.ShowMessageBox("Error", "The username or password you entered was incorrect.",
                             UserInterface.MessageBoxType.ErrorMessageBox, UserInterface.MessageBoxButtons.Ok);

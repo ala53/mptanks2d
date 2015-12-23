@@ -37,6 +37,20 @@ namespace MPTanks.Engine.Gamemodes
         /// </summary>
         public string Objective { get; set; }
 
+
+        public int LivingPlayersCount
+        {
+            get
+            {
+                int alive = 0;
+                foreach (var plr in Players)
+                {
+                    if (plr.Tank != null && plr.Tank.Alive)
+                        alive++;
+                }
+                return alive;
+            }
+        }
         public Team()
         {
             _players = new GamePlayer[0];

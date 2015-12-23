@@ -53,6 +53,7 @@ namespace MPTanks.Client.GameSandbox
             catch
             {
             }
+            System.Windows.Forms.MessageBox.Show("Fatal internal error!\n" + e.ExceptionObject.ToString(), "Fatal error");
         }
     }
 #endif
