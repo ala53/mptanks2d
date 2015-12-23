@@ -57,27 +57,25 @@ namespace FMOD
                 copyFrom = Path.Combine(appDir, "fmod", "fmod.dll");
                 copyTo = Path.Combine(appDir, "fmod.dll");
             }
-            try
-            {
-                //Check if the input and outputs are different
-                var inFile = new FileInfo(copyFrom);
-                var outFile = new FileInfo(copyFrom);
 
-                if (!inFile.Exists)
-                    throw new Exception("Missing FMOD dll/so file.");
+            //try
+            //{
+            //Check if the input and outputs are different
+            var inFile = new FileInfo(copyFrom);
+            var outFile = new FileInfo(copyTo);
 
-                //If the file is the same
-                if (outFile.Exists && outFile.Length == inFile.Length)
-                    return;
+            //If the file is the same
+            if (outFile.Exists && outFile.Length == inFile.Length)
+                return;
 
-                //Otherwise, delete if exists and copy
-                if (outFile.Exists)
-                    outFile.Delete();
+            //Otherwise, delete if exists and copy
+            if (outFile.Exists)
+                outFile.Delete();
 
-                inFile.CopyTo(copyTo);
-            }
-            catch
-            { }
+            inFile.CopyTo(copyTo);
+            //}
+            //catch
+            //{ }
         }
     }
     /*
