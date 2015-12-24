@@ -39,23 +39,23 @@ namespace FMOD
             {
                 //Linux64
                 copyFrom = Path.Combine(appDir, "fmod", "libfmod64.so");
-                copyTo = Path.Combine(appDir, "fmod.so");
+                copyTo = Path.Combine(appDir, VERSION.dll + ".so");
             }
             else if (isLinux)
             {
                 //Linux32
                 copyFrom = Path.Combine(appDir, "fmod", "libfmod.so");
-                copyTo = Path.Combine(appDir, "fmod.so");
+                copyTo = Path.Combine(appDir, VERSION.dll + ".so");
             }
             else if (x64)
             {
                 copyFrom = Path.Combine(appDir, "fmod", "fmod64.dll");
-                copyTo = Path.Combine(appDir, "fmod.dll");
+                copyTo = Path.Combine(appDir, VERSION.dll + ".dll");
             }
             else
             {
                 copyFrom = Path.Combine(appDir, "fmod", "fmod.dll");
-                copyTo = Path.Combine(appDir, "fmod.dll");
+                copyTo = Path.Combine(appDir, VERSION.dll + ".dll");
             }
 
             //try
@@ -86,7 +86,7 @@ namespace FMOD
     {
         public const int number = 0x00010607;
         //public const string dll64 = "fmod64";
-        public const string dll = "fmod";
+        public const string dll = "fmod_copy";
     }
 
     public class CONSTANTS
