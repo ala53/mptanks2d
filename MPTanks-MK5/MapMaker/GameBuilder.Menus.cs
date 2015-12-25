@@ -303,31 +303,74 @@ namespace MPTanks.Clients.MapMaker
             {
                 page.Element<TextBox>("WidthBox").Text = obj.Size.X.ToString();
                 page.Element<TextBox>("HeightBox").Text = obj.Size.Y.ToString();
+
+                page.Element<TextBox>("PosXBox").Text = obj.Position.X.ToString();
+                page.Element<TextBox>("PosYBox").Text = obj.Position.Y.ToString();
+
+                page.Element<TextBox>("RotationBox").Text = MathHelper.ToDegrees(obj.Rotation).ToString();
+                page.Element<TextBox>("DrawLayerBox").Text = obj.DrawLayer.ToString();
+
                 page.Element<TextBox>("WidthBox").KeyUp += (a, b) =>
                 {
-                    try
-                    {
-                        obj.Size = new Vector2(
-                            float.Parse(page.Element<TextBox>("WidthBox").Text),
-                            obj.Size.Y);
-                    }
-                    catch { }
+                    float size;
+                    if (float.TryParse(page.Element<TextBox>("WidthBox").Text, out size) && size > 0.01 && size < 10000)
+                        obj.Size = new Vector2(size, obj.Size.Y);
+                    else page.Element<TextBox>("WidthBox").Text = obj.Size.X.ToString();
                 };
                 page.Element<TextBox>("HeightBox").KeyUp += (a, b) =>
                 {
-                    try
-                    {
-                        obj.Size = new Vector2(
-                            obj.Size.X,
-                            float.Parse(page.Element<TextBox>("HeightBox").Text));
-                    }
-                    catch { }
+                    float size;
+                    if (float.TryParse(page.Element<TextBox>("HeightBox").Text, out size) && size > 0.01 && size < 10000)
+                        obj.Size = new Vector2(obj.Size.X, size);
+                    else page.Element<TextBox>("HeightBox").Text = obj.Size.Y.ToString();
                 };
-            }, (page, state) =>
-            {
-            });
 
-            _ui.UpdateState(obj);
+                page.Element<TextBox>("PosXBox").KeyUp += (a, b) =>
+                {
+                    float pos;
+                    if (float.TryParse(page.Element<TextBox>("PosXBox").Text, out pos))
+                        obj.Position = new Vector2(pos, obj.Position.Y);
+                    else page.Element<TextBox>("PosXBox").Text = obj.Position.X.ToString();
+                };
+                page.Element<TextBox>("PosYBox").KeyUp += (a, b) =>
+                {
+                    float pos;
+                    if (float.TryParse(page.Element<TextBox>("PosYBox").Text, out pos))
+                        obj.Position = new Vector2(obj.Position.X, pos);
+                    else page.Element<TextBox>("PosYBox").Text = obj.Position.Y.ToString();
+                };
+
+                page.Element<TextBox>("RotationBox").KeyUp += (a, b) =>
+                {
+                    float rotation;
+                    if (float.TryParse(page.Element<TextBox>("RotationBox").Text, out rotation))
+                        obj.Rotation = MathHelper.ToRadians(rotation);
+                    else page.Element<TextBox>("RotationBox").Text = MathHelper.ToDegrees(obj.Rotation).ToString();
+                };
+                page.Element<TextBox>("DrawLayerBox").KeyUp += (a, b) =>
+                {
+                    int layer;
+                    if (int.TryParse(page.Element<TextBox>("DrawLayerBox").Text, out layer) &&
+                        layer > -100000000 && layer < 100000000)
+                        obj.DrawLayer = layer;
+                    else page.Element<TextBox>("DrawLayerBox").Text = obj.DrawLayer.ToString();
+                };
+                page.RegisterUpdater(() =>
+                {
+                    obj.ColorMask = new Color(
+                        (byte)page.Element<NumericTextBox>("ColorR").Value,
+                        (byte)page.Element<NumericTextBox>("ColorG").Value,
+                        (byte)page.Element<NumericTextBox>("ColorB").Value,
+                        (byte)page.Element<NumericTextBox>("ColorA").Value);
+
+                });
+
+                page.Element<NumericTextBox>("ColorR").Text = obj.ColorMask.R.ToString();
+                page.Element<NumericTextBox>("ColorG").Text = obj.ColorMask.G.ToString();
+                page.Element<NumericTextBox>("ColorB").Text = obj.ColorMask.B.ToString();
+                page.Element<NumericTextBox>("ColorA").Text = obj.ColorMask.A.ToString();
+
+            });
         }
 
         private void UI_MouseReleased()

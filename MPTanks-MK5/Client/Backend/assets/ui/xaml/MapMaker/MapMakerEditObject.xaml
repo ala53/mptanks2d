@@ -14,10 +14,71 @@
         </ResourceDictionary>
     </ek:UIRoot.Resources>
     <Grid>
-        <StackPanel VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
-            <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
-            <TextBox FontFamily="JHUF" FontSize="12" x:Name="WidthBox"></TextBox>
-            <TextBox FontFamily="JHUF" FontSize="12" x:Name="HeightBox"></TextBox>
-        </StackPanel>
+        <Grid VerticalAlignment="Stretch" Width="200" HorizontalAlignment="Left" Background="#4F000000">
+            <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Padding="0,0,0,10" HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Press F8 to hide/show this menu</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Size</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">X:</TextBlock>
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="WidthBox"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Y:</TextBlock>
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="HeightBox"></TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Position</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">X:</TextBlock>
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="PosXBox"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Y:</TextBlock>
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="PosYBox"></TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Rotation (Degrees)</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="RotationBox"></TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" FontFamily="JHUF" FontSize="12" Foreground="White">Draw layer</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Width="80" FontFamily="JHUF" FontSize="12" x:Name="DrawLayerBox" ></TextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock FontFamily="JHUF" FontSize="12" Margin="10" Foreground="White" HorizontalAlignment="Center">Color mask</TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Red">R:</TextBlock>
+                            <ek:NumericTextBox x:Name="ColorR" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Green">G:</TextBlock>
+                            <ek:NumericTextBox x:Name="ColorG" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Blue">B:</TextBlock>
+                            <ek:NumericTextBox x:Name="ColorB" Width="80" Maximum="255" Minimum="0">50</ek:NumericTextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="JHUF" FontSize="12" Foreground="Gray">A:</TextBlock>
+                            <ek:NumericTextBox x:Name="ColorA" Width="80" Maximum="255" Minimum="0">100</ek:NumericTextBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Margin="0,20,0,0" FontFamily="JHUF" FontSize="12" Foreground="White" HorizontalAlignment="Center">Object Settings</TextBlock>
+                    <ScrollViewer Margin="0,0,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+                        <StackPanel Height="150" x:Name="SettingsPanel">
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </ek:UIRoot>

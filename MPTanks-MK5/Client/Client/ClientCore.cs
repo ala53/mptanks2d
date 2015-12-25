@@ -67,7 +67,6 @@ namespace MPTanks.Client
             Window.AllowUserResizing = true;
 
             Window.Title = "MP Tanks 2D: " + GameSandbox.TitleCard.Option();
-
         }
 
         public void Resize(int newWidth, int newHeight)
