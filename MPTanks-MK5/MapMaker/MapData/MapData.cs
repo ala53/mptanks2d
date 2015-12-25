@@ -27,7 +27,15 @@ namespace MPTanks.Clients.MapMaker.MapData
 
         private GameCore CreateGameFromMapAndUpdateModsList(MapJSON map)
         {
+            MapName = map.Name;
+            MapAuthor = map.Author;
+            BackgroundColor = map.BackgroundColor;
+            ShadowColor = map.ShadowColor;
+            ShadowOffset = map.ShadowOffset;
+
             var game = new GameCore(null, new NullGamemode(), Newtonsoft.Json.JsonConvert.SerializeObject(map));
+            game.Authoritative = true;
+            game.BeginGame(true);
             //Blow up the mod infos
             var deps = map.ModDependencies.Select(a =>
              {
@@ -47,7 +55,6 @@ namespace MPTanks.Clients.MapMaker.MapData
             foreach (var itm in deps)
             {
                 var db = Modding.ModDatabase.Get(itm.ModName, itm.ModMajor);
-                db = null;
                 if (db == null || db.Minor < itm.ModMinor)
                 {
                     throw new Exception($"Mod {db.Name} v{db.Major}.{db.Minor} not found or is out of date.");
@@ -164,6 +171,12 @@ namespace MPTanks.Clients.MapMaker.MapData
             mapJSON.TopLeft = min;
             mapJSON.BottomRight = max;
 
+            mapJSON.Author = MapAuthor;
+            mapJSON.Name = MapName;
+            mapJSON.ShadowColor = ShadowColor;
+            mapJSON.ShadowOffset = ShadowOffset;
+            mapJSON.BackgroundColor = BackgroundColor;
+
             return mapJSON;
         }
 
@@ -171,7 +184,7 @@ namespace MPTanks.Clients.MapMaker.MapData
 
         public string GenerateMap(GameCore game)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(CreateMapFromGame(game));
+            return Newtonsoft.Json.JsonConvert.SerializeObject(CreateMapFromGame(game), Newtonsoft.Json.Formatting.Indented);
         }
     }
 }

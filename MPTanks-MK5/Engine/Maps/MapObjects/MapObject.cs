@@ -22,7 +22,7 @@ namespace MPTanks.Engine.Maps.MapObjects
         private static Dictionary<string, string> _staticSettingsDictionary = new Dictionary<string, string>();
         public IReadOnlyDictionary<string, string> InstanceSettings { get; private set; } = _staticSettingsDictionary;
 
-        internal void ProcessInstanceSettings(IReadOnlyDictionary<string, string> settings)
+        public void ProcessInstanceSettings(IReadOnlyDictionary<string, string> settings)
         {
             SetInstanceSettings(settings);
         }

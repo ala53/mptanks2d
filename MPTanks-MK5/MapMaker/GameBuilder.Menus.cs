@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework.Input;
 using MPTanks.Client.Backend.UI;
 using MPTanks.Client.GameSandbox;
 using MPTanks.Engine;
+using MPTanks.Engine.Maps.MapObjects;
 using MPTanks.Engine.Maps.Serialization;
+using MPTanks.Modding;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,18 +39,18 @@ namespace MPTanks.Clients.MapMaker
                     {
                         if (!File.Exists(fd.FileName))
                             return;
-                        //try
-                        //{
-                        _game = _map.CreateFromMap(MapJSON.Load(
-                            File.ReadAllText(fd.FileName)));
-                        OnMapChanged();
-                        //}
-                        // catch
-                        //  {
-                        _ui.ShowMessageBox("Load error",
-                            "An error occurred while loading that map.",
-                            UserInterface.MessageBoxType.ErrorMessageBox);
-                        //  }
+                        try
+                        {
+                            _game = _map.CreateFromMap(MapJSON.Load(
+                                File.ReadAllText(fd.FileName)));
+                            _renderer.Game = _game;
+                        }
+                        catch
+                        {
+                            _ui.ShowMessageBox("Load error",
+                                "An error occurred while loading that map.",
+                                UserInterface.MessageBoxType.ErrorMessageBox);
+                        }
                     }
                 };
                 page.Element<Button>("SaveMapBtn").Click += (a, b) =>
@@ -370,6 +372,79 @@ namespace MPTanks.Clients.MapMaker
                 page.Element<NumericTextBox>("ColorB").Text = obj.ColorMask.B.ToString();
                 page.Element<NumericTextBox>("ColorA").Text = obj.ColorMask.A.ToString();
 
+                //And instance settings
+
+                var settingsPanel = page.Element<StackPanel>("SettingsPanel");
+                if (obj is MapObject)
+                {
+                    //Get instance settings
+                    var settings = ((MapObjectAttribute[])obj.GetType()
+                    .GetCustomAttributes(typeof(MapObjectAttribute), false))[0];
+
+                    if (settings.InstanceSettingNames != null)
+                    {
+                        Dictionary<string, string> settingsAndValues = new Dictionary<string, string>();
+                        for (var i = 0; i < settings.InstanceSettingNames.Length; i++)
+                        {
+                            var setting = settings.InstanceSettingNames[i];
+                            string def = "";
+                            if (settings.InstanceSettingDefaults != null && settings.InstanceSettingDefaults.Length > i)
+                                def = settings.InstanceSettingDefaults[i];
+
+                            settingsAndValues.Add(setting, def);
+
+                            if (settingsPanel.Children.FirstOrDefault(a => a.Name == "inst_" + setting) != null)
+                            {
+                                //'tis already in there
+                            }
+                            else
+                            {
+                                var stkPnl = new StackPanel();
+                                stkPnl.Width = 170;
+                                stkPnl.Padding = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 5);
+                                stkPnl.Name = "inst_" + setting;
+                                var lbl = new TextBlock();
+                                var warn = new TextBlock();
+                                var box = new TextBox();
+                                box.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
+                                box.Width = 150;
+
+                                lbl.FontFamily = new FontFamily("JHUF");
+                                lbl.FontSize = 12;
+                                lbl.Foreground = Brushes.White;
+                                lbl.Text = setting;
+                                lbl.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
+                                warn.FontFamily = new FontFamily("JHUF");
+                                warn.FontSize = 12;
+                                warn.Foreground = Brushes.Red;
+                                warn.Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                                warn.Text = "Invalid!";
+                                warn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
+
+                                stkPnl.Children.Add(lbl);
+                                stkPnl.Children.Add(box);
+                                stkPnl.Children.Add(warn);
+
+                                box.Text = def ?? "";
+                                box.KeyUp += (a, b) =>
+                                 {
+                                     if (!(obj as MapObject).ValidateInstanceSetting(setting, box.Text))
+                                         warn.Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                                     else
+                                     {
+                                         warn.Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                                         //And update the settings...
+                                         settingsAndValues[setting] = def;
+                                         (obj as MapObject).ProcessInstanceSettings(settingsAndValues);
+                                     }
+                                 };
+
+                                settingsPanel.Children.Add(stkPnl);
+                            }
+                        }
+                    }//Hide if none
+                    else page.Element<StackPanel>("SettingsContainer").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                }
             });
         }
 

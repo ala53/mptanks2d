@@ -110,6 +110,8 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private NumericTextBox ColorA;
         
+        private StackPanel SettingsContainer;
+        
         private TextBlock e_33;
         
         private ScrollViewer e_34;
@@ -437,9 +439,13 @@ namespace EmptyKeys.UserInterface.Generated {
             this.ColorA.Text = "100";
             this.ColorA.Minimum = 0F;
             this.ColorA.Maximum = 255F;
+            // SettingsContainer element
+            this.SettingsContainer = new StackPanel();
+            this.e_3.Children.Add(this.SettingsContainer);
+            this.SettingsContainer.Name = "SettingsContainer";
             // e_33 element
             this.e_33 = new TextBlock();
-            this.e_3.Children.Add(this.e_33);
+            this.SettingsContainer.Children.Add(this.e_33);
             this.e_33.Name = "e_33";
             this.e_33.Margin = new Thickness(0F, 20F, 0F, 0F);
             this.e_33.HorizontalAlignment = HorizontalAlignment.Center;
@@ -449,9 +455,9 @@ namespace EmptyKeys.UserInterface.Generated {
             this.e_33.FontSize = 12F;
             // e_34 element
             this.e_34 = new ScrollViewer();
-            this.e_3.Children.Add(this.e_34);
+            this.SettingsContainer.Children.Add(this.e_34);
             this.e_34.Name = "e_34";
-            this.e_34.Margin = new Thickness(0F, 0F, 0F, 0F);
+            this.e_34.Margin = new Thickness(0F, 10F, 0F, 0F);
             this.e_34.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
             this.e_34.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             // SettingsPanel element

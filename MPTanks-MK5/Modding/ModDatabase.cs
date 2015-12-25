@@ -147,7 +147,7 @@ namespace MPTanks.Modding
 
         private static void Save()
         {
-            File.WriteAllText(Path.Combine(ModSettings.ConfigDir, "Mod Database.json"),
+            File.WriteAllText(Path.Combine(ModSettings.ConfigDir, "moddatabase.json"),
                 JsonConvert.SerializeObject(_items, Formatting.Indented));
         }
     }

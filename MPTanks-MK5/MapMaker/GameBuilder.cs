@@ -90,7 +90,7 @@ namespace MPTanks.Clients.MapMaker
         {
             _map = new MapData.MapData();
             UpdateModsList();
-            OnMapChanged();
+            OpenNewMap();
             _ui.UpdateState(new object());
         }
 
@@ -108,7 +108,7 @@ namespace MPTanks.Clients.MapMaker
             Exit();
         }
 
-        public void OnMapChanged()
+        public void OpenNewMap()
         {
             var map = MapData.MapData.Default;
             _game = new GameCore(null, new NullGamemode(), map);
