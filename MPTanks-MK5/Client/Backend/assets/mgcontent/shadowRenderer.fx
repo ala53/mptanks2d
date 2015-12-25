@@ -41,7 +41,7 @@ float4 BelowDrawerFunction(VShader input) : SV_Target0
 float4 ShadowSamplerFunction(VShader input) : SV_Target0
 {
 	float4 color = tex2D(samp, input.TexCoord.xy + shadowOffset);
-	if (color.a > 0.25)	return shadowColor;
+	if (color.a > 0.15)	return float4(shadowColor.rgb, color.a);
 	else return tex2D(samp, input.TexCoord.xy);
 }
 
