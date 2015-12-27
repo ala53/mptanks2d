@@ -105,7 +105,7 @@ namespace MPTanks.Engine.Maps
                 {
                     MapObject obj = MapObject.ReflectiveInitialize(mapObj.ReflectionName, _game, true, mapObj.Position, mapObj.Rotation);
                     if (mapObj.ConfiguredSettings != null)
-                        obj.ProcessInstanceSettings(mapObj.ConfiguredSettings);
+                        obj.SetInstanceSettings(mapObj.ConfiguredSettings);
                     obj.ColorMask = mapObj.Mask;
                     obj.Size = mapObj.DesiredSize;
 
@@ -121,17 +121,29 @@ namespace MPTanks.Engine.Maps
         /// <returns></returns>
         public Vector2 GetSpawnPosition(int teamIndex)
         {
+            //Check if team exists
             if (SpawnsByTeam.ContainsKey(teamIndex))
             {
+                //Find unused spawnpoint
                 foreach (var spawn in SpawnsByTeam[teamIndex].Positions)
                     if (!spawn.InUse) //Loop through and find an unused spawn point
                     {
                         spawn.ToggleInUse(true);
                         return spawn.Position;
                     }
-                return SpawnsByTeam[teamIndex].Positions[random.Next(0, SpawnsByTeam[teamIndex].Positions.Count - 1)].Position;
             }
 
+            //If there are no spawns for that team or they are all in use
+            //Find an unused spawnpoint
+            foreach (var team in SpawnsByTeam.Values)
+                foreach (var pos in team.Positions)
+                    if (!pos.InUse)
+                    {
+                        pos.ToggleInUse(true);
+                        return pos.Position;
+                    }
+
+            //And if none, choose randomly
             var teamToSpawnOn = SpawnsByTeam[random.Next(0, SpawnsByTeam.Count - 1)];
             return teamToSpawnOn.Positions[random.Next(0, teamToSpawnOn.Positions.Count - 1)].Position;
         }

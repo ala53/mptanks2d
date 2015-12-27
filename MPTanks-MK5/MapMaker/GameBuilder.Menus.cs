@@ -435,7 +435,7 @@ namespace MPTanks.Clients.MapMaker
                                          warn.Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
                                          //And update the settings...
                                          settingsAndValues[setting] = def;
-                                         (obj as MapObject).ProcessInstanceSettings(settingsAndValues);
+                                         (obj as MapObject).SetInstanceSettings(settingsAndValues);
                                      }
                                  };
 
@@ -539,6 +539,28 @@ namespace MPTanks.Clients.MapMaker
 
                     }
                 });
+        }
+
+        private void UI_DrawCrosshair()
+        {
+            _sb.Begin();
+
+            //Vertical line
+            var rect = new Rectangle(
+                (GraphicsDevice.Viewport.Width / 2) - 1,
+                (GraphicsDevice.Viewport.Height / 2) - 6,
+                2,
+                12
+                );
+            _sb.Draw(_blankTx, rect, Color.Blue);
+            rect = new Rectangle(
+                 (GraphicsDevice.Viewport.Width / 2) - 6,
+                 (GraphicsDevice.Viewport.Height / 2) - 1,
+                 12,
+                 2
+                 );
+            _sb.Draw(_blankTx, rect, Color.Blue);
+            _sb.End();
         }
 
         private void UI_DrawXYPositionAndZoom()

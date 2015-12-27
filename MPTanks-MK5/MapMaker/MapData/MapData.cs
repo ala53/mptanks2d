@@ -72,17 +72,15 @@ namespace MPTanks.Clients.MapMaker.MapData
 
             //Recreate the SpawnPoint objects from the map spawns list
 
-            var spawns = map.Spawns.SelectMany(a =>
-            {
-                return a.SpawnPositions.Select(b =>
+            //TODO: Figure out why this doesn't work correctly
+            foreach (var teamSpawns in map.Spawns)
+                foreach (var pos in teamSpawns.SpawnPositions)
                 {
-                    dynamic gObj = game.AddMapObject("CoreAssets+SpawnPoint", true);
-                    gObj.Team = (short)a.TeamIndex;
-                    gObj.Position = b;
-                    return (Engine.Maps.MapObjects.MapObject)gObj;
-                });
-            });
-
+                    var gObj = game.AddMapObject("CoreAssets+SpawnPoint", true);
+                    gObj.SetInstanceSetting("Team Number", teamSpawns.TeamIndex.ToString());
+                    gObj.Position = pos;
+                }
+            
             return game;
         }
 

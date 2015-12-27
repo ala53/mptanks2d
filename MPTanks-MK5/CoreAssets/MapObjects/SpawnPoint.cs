@@ -34,6 +34,7 @@ namespace MPTanks.CoreAssets.MapObjects
 
                 if (asInt < 0) return false; //Team must be greater than or equal to 0
                 Team = asInt;
+                SetInstanceSetting(setting, value);
             }
             return true;
         }

@@ -19,7 +19,33 @@
   "WhitelistGamemodes": false,
   "AllowedGamemodes": null,
   "Background": null,
-  "Spawns": [],
+  "Spawns": [
+    {
+      "TeamIndex": 0,
+      "SpawnPositions": [
+        {
+          "x": -18.4500027,
+          "y": 45.9
+        },
+        {
+          "x": -28.8,
+          "y": 7.350001
+        },
+        {
+          "x": 26.4500027,
+          "y": 31.2000065
+        },
+        {
+          "x": 17.3250046,
+          "y": 55.8000031
+        },
+        {
+          "x": 24.1750031,
+          "y": 14.175
+        }
+      ]
+    }
+  ],
   "Objects": [
     {
       "reflectionName": "CoreAssets+Wall",
@@ -765,8 +791,8 @@
       "reflectionName": "CoreAssets+SatelliteDishLarge",
       "Rotation": 0.0,
       "Position": {
-        "x": -25.0,
-        "y": 46.0
+        "x": -29.2883224,
+        "y": 48.3306122
       },
       "size": {
         "x": 3.0,

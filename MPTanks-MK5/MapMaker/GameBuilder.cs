@@ -194,6 +194,7 @@ namespace MPTanks.Clients.MapMaker
             _ui.Draw(gameTime);
 
             UI_DrawXYPositionAndZoom();
+            UI_DrawCrosshair();
             
             base.Draw(gameTime);
         }
