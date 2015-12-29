@@ -8,6 +8,7 @@ namespace MPTanks.Engine.Logging
 {
     public class NullLogger : ILogger
     {
+        public LogLevel Level => LogLevel.Fatal;
         public void Debug(string message)
         {
         }

@@ -6,8 +6,18 @@ using System.Threading.Tasks;
 
 namespace MPTanks.Engine.Logging
 {
+    public enum LogLevel
+    {
+        Fatal,
+        Error,
+        Warn,
+        Info,
+        Debug,
+        Trace
+    }
     public interface ILogger
     {
+        LogLevel Level { get; }
         void Trace(string message);
         void Trace(object data);
         void Trace(Exception ex);

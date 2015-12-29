@@ -8,6 +8,21 @@ namespace MPTanks.Engine.Logging
 {
     public class MultiLogger : ILogger
     {
+        public LogLevel Level
+        {
+            get
+            {
+                //Find the lowest log level
+                int lowest = int.MaxValue;
+                _loggers.ForEach((a) =>
+                {
+                    if ((int)a.Level < lowest)
+                        lowest = (int)a.Level;
+                });
+
+                return (LogLevel)lowest;
+            }
+        }
         private List<ILogger> _loggers = new List<ILogger>();
         public IReadOnlyList<ILogger> Loggers => _loggers;
         public MultiLogger(params ILogger[] loggers)

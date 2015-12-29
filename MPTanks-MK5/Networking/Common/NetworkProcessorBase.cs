@@ -104,11 +104,14 @@ namespace MPTanks.Networking.Common
             var msgCount = messageBlock.ReadUInt16();
             var msgIds = messageBlock.ReadBytes(msgCount);
 
-            Logger.Trace("---FRAME---");
-            Logger.Trace("(Type=" + GetType().Name + ")");
-            foreach (var id in msgIds)
-                Logger.Trace(id + ": " + _allTypes[id].FullName + " sent");
-            Logger.Trace("---END FRAME---");
+            if (Logger.Level == LogLevel.Trace)
+            {
+                Logger.Trace("---FRAME---");
+                Logger.Trace("(Type=" + GetType().Name + ")");
+                foreach (var id in msgIds)
+                    Logger.Trace(id + ": " + _allTypes[id].FullName + " sent");
+                Logger.Trace("---END FRAME---");
+            }
 
             foreach (var msgId in msgIds)
                 if (_allTypes.ContainsKey(msgId))

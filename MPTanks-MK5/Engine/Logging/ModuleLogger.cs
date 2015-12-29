@@ -9,6 +9,7 @@ namespace MPTanks.Engine.Logging
 {
     public struct ModuleLogger : ILogger
     {
+        public LogLevel Level => WritesTo.Level;
         private ILogger _writes;
         public ILogger WritesTo { get { return _writes; } set { _writes = value; } }
         private string _moduleName;

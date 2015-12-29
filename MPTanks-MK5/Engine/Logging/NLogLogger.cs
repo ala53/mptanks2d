@@ -9,6 +9,24 @@ namespace MPTanks.Engine.Logging
 {
     public class NLogLogger : ILogger
     {
+        public LogLevel Level
+        {
+            get
+            {
+                if (LoggerInstance.IsTraceEnabled)
+                    return LogLevel.Trace;
+                if (LoggerInstance.IsDebugEnabled)
+                    return LogLevel.Debug;
+                if (LoggerInstance.IsInfoEnabled)
+                    return LogLevel.Info;
+                if (LoggerInstance.IsWarnEnabled)
+                    return LogLevel.Warn;
+                if (LoggerInstance.IsErrorEnabled)
+                    return LogLevel.Error;
+
+                return LogLevel.Fatal;
+            }
+        }
         public NLog.Logger LoggerInstance { get; private set; }
         public NLogLogger(NLog.Logger instance)
         {

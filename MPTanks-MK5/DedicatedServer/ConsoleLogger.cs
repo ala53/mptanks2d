@@ -10,6 +10,7 @@ namespace MPTanks.DedicatedServer
 {
     class ConsoleLogger : ILogger
     {
+        public LogLevel Level { get; set; } = LogLevel.Trace;
         private string Prefix => $"[{DateTime.Now.ToShortTimeString()}]";
         public void Debug(string message)
         {
