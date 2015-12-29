@@ -28,5 +28,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         {
             message.Write(WinningTeamId);
         }
+
+        public override string ToString()
+        {
+            return "(GameEnded)";
+        }
     }
 }

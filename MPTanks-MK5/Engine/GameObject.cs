@@ -326,15 +326,14 @@ namespace MPTanks.Engine
             IsSensor = _startIsSensor;
             IsStatic = _startIsStatic;
 
+            //And call the internal function
+            CreateInternal();
+
             UnsafeEnableEvents();
             //Call the event
             RaiseOnCreated();
 
             InvokeTrigger("create");
-
-
-            //And call the internal function
-            CreateInternal();
         }
 
         protected virtual Body CreateBody(World world, Vector2 size, Vector2 position, float rotation)

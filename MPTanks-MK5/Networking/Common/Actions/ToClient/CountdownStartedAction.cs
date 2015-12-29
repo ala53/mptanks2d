@@ -26,5 +26,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         {
             message.Write((float)CountdownTime.TotalMilliseconds);
         }
+
+        public override string ToString()
+        {
+            return $"CountdownStarted: {CountdownTime} remaining";
+        }
     }
 }

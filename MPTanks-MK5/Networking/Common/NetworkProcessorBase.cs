@@ -15,11 +15,11 @@ namespace MPTanks.Networking.Common
     public abstract class NetworkProcessorBase
     {
         public virtual NetPeer Peer { get; protected set; }
-        public virtual ILogger Logger { get; set; }
+        public abstract ILogger Logger { get; }
         public NetworkProcessorDiagnostics Diagnostics { get; private set; } = new NetworkProcessorDiagnostics();
 
         #region Message Processing
-        private static byte _currentMessageTypeId = 0;
+        private static byte _currentMessageTypeId = unchecked((byte)-1);
         private static Dictionary<byte, Type> _toServerMessageTypes = new Dictionary<byte, Type>();
         private static Dictionary<byte, Type> _toClientMessageTypes = new Dictionary<byte, Type>();
         private static Dictionary<byte, Type> _toServerActionTypes = new Dictionary<byte, Type>();
@@ -103,6 +103,12 @@ namespace MPTanks.Networking.Common
 
             var msgCount = messageBlock.ReadUInt16();
             var msgIds = messageBlock.ReadBytes(msgCount);
+
+            Logger.Trace("---FRAME---");
+            Logger.Trace("(Type=" + GetType().Name + ")");
+            foreach (var id in msgIds)
+                Logger.Trace(id + ": " + _allTypes[id].FullName + " sent");
+            Logger.Trace("---END FRAME---");
 
             foreach (var msgId in msgIds)
                 if (_allTypes.ContainsKey(msgId))
@@ -188,12 +194,12 @@ namespace MPTanks.Networking.Common
         {
             OnMessageSentOrDiscarded(this, msg);
         }
-        public void SendMessage(MessageBase message)
+        public virtual void SendMessage(MessageBase message)
         {
             _messages.Add(message);
         }
 
-        public void WriteMessages(NetOutgoingMessage message)
+        public virtual void WriteMessages(NetOutgoingMessage message)
         {
             message.Write((ushort)_messages.Count);
             foreach (var msg in _messages)

@@ -34,7 +34,7 @@ namespace MPTanks.Engine.Maps
         public Color BackgroundColor { get; set; }
         public Color ShadowColor { get; set; }
         public Vector2 ShadowOffset { get; set; }
-        
+
         public static Map LoadMap(ModAssetInfo mapFile, GameCore game)
         {
             if (mapFile.AssetName == null)
@@ -124,17 +124,21 @@ namespace MPTanks.Engine.Maps
             //Check if team exists
             if (SpawnsByTeam.ContainsKey(teamIndex))
             {
-                //Find unused spawnpoint
+                //Find unused spawnpoint for that team
                 foreach (var spawn in SpawnsByTeam[teamIndex].Positions)
                     if (!spawn.InUse) //Loop through and find an unused spawn point
                     {
                         spawn.ToggleInUse(true);
                         return spawn.Position;
                     }
+
+                //Otherwise, choose randomly for that team
+                return SpawnsByTeam[teamIndex]
+                    .Positions[random.Next(0, SpawnsByTeam[teamIndex].Positions.Count - 1)].Position;
             }
 
-            //If there are no spawns for that team or they are all in use
-            //Find an unused spawnpoint
+            //If there are no spawns for that team,
+            //Find an unused spawnpoint from any team
             foreach (var team in SpawnsByTeam.Values)
                 foreach (var pos in team.Positions)
                     if (!pos.InUse)

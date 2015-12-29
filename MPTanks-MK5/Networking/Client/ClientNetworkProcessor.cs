@@ -11,12 +11,14 @@ using MPTanks.Engine;
 using MPTanks.Engine.Gamemodes;
 using MPTanks.Engine.Tanks;
 using MPTanks.Engine.Helpers;
+using MPTanks.Engine.Logging;
 
 namespace MPTanks.Networking.Client
 {
     public class ClientNetworkProcessor : NetworkProcessorBase
     {
         public NetClient Client { get; private set; }
+        public override ILogger Logger => Client.Logger;
         public ClientNetworkProcessor(NetClient client)
         {
             Client = client;
@@ -165,6 +167,7 @@ namespace MPTanks.Networking.Client
             }
             else if (action is PlayerUpdateAction)
             {
+                return;
                 var act = action as PlayerUpdateAction;
                 if (Client.Game.FindPlayer(act.Player.Id) != null)
                 {

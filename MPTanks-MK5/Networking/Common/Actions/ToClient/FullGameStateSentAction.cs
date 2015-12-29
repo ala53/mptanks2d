@@ -32,5 +32,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         {
             return State.CreateGameFromState(logger, EngineSettings);
         }
+
+        public override string ToString()
+        {
+            return "(FullGameState)" + Newtonsoft.Json.JsonConvert.SerializeObject(State);
+        }
     }
 }

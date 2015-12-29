@@ -116,7 +116,7 @@ namespace EmptyKeys.UserInterface.Generated {
             this.SaveMapBtn.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
             this.SaveMapBtn.FontFamily = new FontFamily("JHUF");
             this.SaveMapBtn.FontSize = 12F;
-            this.SaveMapBtn.Content = "Save (autosaves every 1 min)";
+            this.SaveMapBtn.Content = "Save map";
             // e_3 element
             this.e_3 = new StackPanel();
             this.e_1.Children.Add(this.e_3);

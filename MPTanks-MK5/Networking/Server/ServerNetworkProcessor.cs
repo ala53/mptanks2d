@@ -9,12 +9,14 @@ using MPTanks.Networking.Common.Actions;
 using MPTanks.Networking.Common.Actions.ToServer;
 using MPTanks.Networking.Common.Actions.ToClient;
 using Microsoft.Xna.Framework;
+using MPTanks.Engine.Logging;
 
 namespace MPTanks.Networking.Server
 {
     public class ServerNetworkProcessor : NetworkProcessorBase
     {
         public Server Server { get; private set; }
+        public override ILogger Logger => Server.Logger;
 
         public ServerNetworkProcessor(Server server)
         {
@@ -80,12 +82,23 @@ namespace MPTanks.Networking.Server
             new Dictionary<ServerPlayer, List<MessageBase>>();
         public IReadOnlyDictionary<ServerPlayer, List<MessageBase>> PrivateMessageQueues => _privateQueue;
 
+
+        //Set this flag to send every message in its own network packet. Useful for tracking cascading issues
+        //caused by packet concentation
+        //#define SEND_MESSAGES_INDIVIDUALLY
         public void SendPrivateMessage(ServerPlayer player, MessageBase message)
         {
             if (!_privateQueue.ContainsKey(player))
                 _privateQueue.Add(player, new List<MessageBase>());
 
             _privateQueue[player].Add(message);
+#if SEND_MESSAGES_INDIVIDUALLY
+            if (player.Connection == null) return;
+            var snp = Server.NetworkServer.CreateMessage();
+            WritePrivateMessages(player, snp);
+            player.Connection.SendMessage(snp, NetDeliveryMethod.ReliableOrdered, Channels.GameplayData);
+            Server.NetworkServer.FlushSendQueue();
+#endif
         }
 
         public void WritePrivateMessages(ServerPlayer player, NetOutgoingMessage message)
@@ -113,6 +126,14 @@ namespace MPTanks.Networking.Server
 
             return _privateQueue[player].Count > 0;
         }
+
+#if SEND_MESSAGES_INDIVIDUALLY
+        public override void SendMessage(MessageBase message)
+        {
+            foreach (var plr in Server.Players) SendPrivateMessage(plr, message);
+            base.SendMessage(message);
+        }
+#endif
 
         public void ClearPrivateQueues()
         {

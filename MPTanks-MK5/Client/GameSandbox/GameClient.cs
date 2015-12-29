@@ -114,8 +114,18 @@ namespace MPTanks.Client.GameSandbox
             Components.Add(new Starbound.Input.GamePadEvents(PlayerIndex.One, this));
 
             Starbound.Input.KeyboardEvents.KeyPressed += KeyboardEvents_KeyPressed;
+            Starbound.Input.MouseEvents.ButtonClicked += MouseEvents_ButtonClicked;
 
             base.Initialize();
+        }
+
+        private void MouseEvents_ButtonClicked(object sender, Starbound.Input.MouseButtonEventArgs e)
+        {
+            //if (CurrentViewedTank != null && !CurrentViewedTank.Alive && e.Button == Starbound.Input.MouseButton.Left)
+            //{
+            //    var players = Client.Game.Players;
+            //    CurrentViewedTank = players.ElementAt(new Random().Next(0, players.Count())).Tank;
+            //}
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -253,6 +263,13 @@ namespace MPTanks.Client.GameSandbox
                     SelectedTankReflectionName = "BasicTankMPCopy",
                     IsReady = true
                 }));
+                Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
+                {
+                    Username = "RRRRXR",
+                    UniqueId = Guid.NewGuid(),
+                    SelectedTankReflectionName = "BasicTankMPCopy",
+                    IsReady = true
+                }));
             }
             else
             {
@@ -317,6 +334,11 @@ namespace MPTanks.Client.GameSandbox
             }
             if (e.Key == Keys.F7)
                 if (Debugger.IsAttached) Debugger.Break();
+
+            if (e.Key == Keys.Y)
+            {
+                Server.Game.PlayersById[CurrentViewedTank.Player.Id].Tank.Kill();
+            }
 
             if (e.Key == Keys.Escape)
             {
@@ -383,7 +405,7 @@ namespace MPTanks.Client.GameSandbox
                 SoundPlayer.PlayerVelocity = CurrentViewedTank.LinearVelocity;
             }
             SoundPlayer?.Update(gameTime);
-            
+
             Diagnostics.BeginMeasurement("Base.Update() & UI Update");
             base.Update(gameTime);
             Diagnostics.EndMeasurement("Base.Update() & UI Update");
@@ -416,6 +438,8 @@ namespace MPTanks.Client.GameSandbox
                 Server.Update(gameTime);
 
             Client.Update(gameTime);
+            //if (Client?.Player?.Tank != null && Client.Player.Tank.Alive)
+            //    CurrentViewedTank = Client.Player.Tank;
 
             if (_isInPauseMenu)
                 return; //Don't mess with the pause menu

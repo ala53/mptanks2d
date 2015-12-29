@@ -23,5 +23,10 @@ namespace MPTanks.Networking.Common.Actions.ToClient
         public override void Serialize(NetOutgoingMessage message)
         {
         }
+
+        public override string ToString()
+        {
+            return "(GameCreated)";
+        }
     }
 }
