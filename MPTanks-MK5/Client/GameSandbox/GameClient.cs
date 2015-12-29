@@ -123,11 +123,16 @@ namespace MPTanks.Client.GameSandbox
         {
             if (Client?.Player?.Tank != null && !Client.Player.Tank.Alive && e.Button == Starbound.Input.MouseButton.Left)
             {
-                var players = Client.Game.Players;
-                CurrentViewedTank = players
-                    .Where(a => a.Tank.Alive)
-                    .ElementAt(new Random().Next(0, players.Count())).Tank;
+                SpectateRandomTank();
             }
+        }
+
+        private void SpectateRandomTank()
+        {
+            var players = Client.Game.Players.Where(a => a.Tank != null && a.Tank.Alive);
+            if (players.Count() == 0) return;
+            CurrentViewedTank = players
+                .ElementAt(new Random().Next(0, players.Count())).Tank;
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -330,12 +335,7 @@ namespace MPTanks.Client.GameSandbox
             }
             if (e.Key == Keys.F7)
                 if (Debugger.IsAttached) Debugger.Break();
-
-            if (e.Key == Keys.Y)
-            {
-                Server.Game.PlayersById[CurrentViewedTank.Player.Id].Tank.Kill();
-            }
-
+            
             if (e.Key == Keys.Escape)
             {
                 if (_isInPauseMenu) HideMenu();
@@ -382,6 +382,8 @@ namespace MPTanks.Client.GameSandbox
             IsMouseVisible = false;
         }
 
+
+        private bool _spectateHasSwitchedTank;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -447,6 +449,18 @@ namespace MPTanks.Client.GameSandbox
             else if (Client.IsInGame)
             {
                 ActivateGameInput();
+
+                //Handle spectating
+                if (!_spectateHasSwitchedTank && CurrentViewedTank != null && !CurrentViewedTank.Alive)
+                {
+                    Client.Game.TimerFactory.CreateTimer((t) =>
+                    {
+                        SpectateRandomTank();
+                        _spectateHasSwitchedTank = false;
+                    },
+                        TimeSpan.FromSeconds(3));
+                    _spectateHasSwitchedTank = true;
+                }
                 if (Client.Game.Ended)
                 {
                     _ui.GoToPageIfNotThere("gameendedpage", page => { }, (page, state) =>
