@@ -52,7 +52,7 @@ namespace MPTanks.Client.GameSandbox
         private UserInterface _ui;
         private AsyncModLoader _modLoader;
         internal DebugDrawer DebugDrawer { get; private set; }
-        public Tank CurrentViewedTank => Client?.Player?.Tank;
+        public Tank CurrentViewedTank { get; private set; }
 
         const string _settingUpPageName = "SettingUpPrompt";
 
@@ -121,11 +121,13 @@ namespace MPTanks.Client.GameSandbox
 
         private void MouseEvents_ButtonClicked(object sender, Starbound.Input.MouseButtonEventArgs e)
         {
-            //if (CurrentViewedTank != null && !CurrentViewedTank.Alive && e.Button == Starbound.Input.MouseButton.Left)
-            //{
-            //    var players = Client.Game.Players;
-            //    CurrentViewedTank = players.ElementAt(new Random().Next(0, players.Count())).Tank;
-            //}
+            if (Client?.Player?.Tank != null && !Client.Player.Tank.Alive && e.Button == Starbound.Input.MouseButton.Left)
+            {
+                var players = Client.Game.Players;
+                CurrentViewedTank = players
+                    .Where(a => a.Tank.Alive)
+                    .ElementAt(new Random().Next(0, players.Count())).Tank;
+            }
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -256,20 +258,14 @@ namespace MPTanks.Client.GameSandbox
 
 
                 */
-                Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
-                {
-                    Username = "RRRRR",
-                    UniqueId = Guid.NewGuid(),
-                    SelectedTankReflectionName = "BasicTankMPCopy",
-                    IsReady = true
-                }));
-                Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
-                {
-                    Username = "RRRRXR",
-                    UniqueId = Guid.NewGuid(),
-                    SelectedTankReflectionName = "BasicTankMPCopy",
-                    IsReady = true
-                }));
+                for (var i = 0; i < 10; i++)
+                    Server.AddPlayer(new ServerPlayer(Server, new NetworkPlayer
+                    {
+                        Username = "RRRRR",
+                        UniqueId = Guid.NewGuid(),
+                        SelectedTankReflectionName = "BasicTankMPCopy",
+                        IsReady = true
+                    }));
             }
             else
             {
@@ -438,8 +434,8 @@ namespace MPTanks.Client.GameSandbox
                 Server.Update(gameTime);
 
             Client.Update(gameTime);
-            //if (Client?.Player?.Tank != null && Client.Player.Tank.Alive)
-            //    CurrentViewedTank = Client.Player.Tank;
+            if (Client?.Player?.Tank != null && Client.Player.Tank.Alive)
+                CurrentViewedTank = Client.Player.Tank;
 
             if (_isInPauseMenu)
                 return; //Don't mess with the pause menu
@@ -792,7 +788,7 @@ namespace MPTanks.Client.GameSandbox
 
         private void DrawPointingDirectionTriangle()
         {
-            if (CurrentViewedTank == null) return;
+            if (CurrentViewedTank == null || !CurrentViewedTank.Alive) return;
             //This code does exactly what it sounds like.
             //It draws an arrow to show which direction the cursor is pointing.
             //It's here because turning has a delayed rection (intentional) so we wanna
@@ -807,6 +803,10 @@ namespace MPTanks.Client.GameSandbox
 
             var tankPos = CurrentViewedTank.Position;
             var lookPoint = InputDriver.GetInputState().LookDirection - MathHelper.PiOver2;
+            //Check if we're spectating
+            if (CurrentViewedTank != Client?.Player?.Tank)
+                lookPoint = CurrentViewedTank.InputState.LookDirection - MathHelper.PiOver2;
+
             //Radius of circle = 5
             //And solve the triangle
             var cursorPos = new Vector2(
