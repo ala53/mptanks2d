@@ -81,7 +81,6 @@
     <Compile Include="Extensions\Included\ExtensionLoader.cs" />
     <Compile Include="Extensions\ServerExtensionBase.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.GameManagement.cs" />

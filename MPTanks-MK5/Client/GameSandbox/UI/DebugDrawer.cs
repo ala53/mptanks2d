@@ -46,16 +46,25 @@ namespace MPTanks.Client.GameSandbox.UI
         }
 
         #region Data Logging
-        private float[] _debugFrameTimes;
+        struct DebugFrameTime
+        {
+            public float Time;
+            public DateTime Measured;
+        }
+        private DebugFrameTime[] _debugFrameTimes;
         private DebugMemoryUsageTick[] _debugMemoryUsages;
         private Stopwatch _frameTimesTimer = Stopwatch.StartNew();
         private void LogDebugInfo(GameTime gameTime)
         {
             if (_debugFrameTimes == null)
             {
-                _debugFrameTimes = new float[graphWidth];
+                _debugFrameTimes = new DebugFrameTime[graphWidth];
                 for (var i = 0; i < _debugFrameTimes.Length; i++)
-                    _debugFrameTimes[i] = 16.666666666666f;
+                    _debugFrameTimes[i] = new DebugFrameTime
+                    {
+                        Time = 16.666666666666f,
+                        Measured = DateTime.Now
+                    };
             }
 
             if (_debugMemoryUsages == null)
@@ -81,7 +90,11 @@ namespace MPTanks.Client.GameSandbox.UI
             for (var i = 1; i < _debugFrameTimes.Length; i++)
                 _debugFrameTimes[i - 1] = _debugFrameTimes[i];
 
-            _debugFrameTimes[_debugFrameTimes.Length - 1] = (float)_frameTimesTimer.Elapsed.TotalMilliseconds;
+            _debugFrameTimes[_debugFrameTimes.Length - 1] = new DebugFrameTime
+            {
+                Time = (float)_frameTimesTimer.Elapsed.TotalMilliseconds,
+                Measured = DateTime.Now
+            };
             _frameTimesTimer.Restart();
         }
         private struct DebugMemoryUsageTick
@@ -128,8 +141,14 @@ namespace MPTanks.Client.GameSandbox.UI
         #region Text Debug
         private Process _prc;
         private StringBuilder _bldr = new StringBuilder(2000);
-        private int[] _kbsSent = new int[240];
-        private int[] _kbsReceived = new int[240];
+
+        struct NetworkTime
+        {
+            public int Amount;
+            public DateTime Measured;
+        }
+        private NetworkTime[] _kbsSent = new NetworkTime[240];
+        private NetworkTime[] _kbsReceived = new NetworkTime[240];
         private void DrawTextDebugInfo(GameTime gameTime)
         {
             _bldr.Clear();
@@ -167,7 +186,7 @@ namespace MPTanks.Client.GameSandbox.UI
             else
                 _bldr.Append(", FPS: ").Append((CalculateAverageFPS().ToString("N1"))).Append(" avg, ");
 
-            _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1]).ToString("N1")).Append(" now")
+            _bldr.Append((1000 / _debugFrameTimes[_debugFrameTimes.Length - 1].Time).ToString("N1")).Append(" now")
             .Append("\nMouse: ").Append(Mouse.GetState().Position.ToString());
 
             //Timers, animations, and particles
@@ -196,20 +215,32 @@ namespace MPTanks.Client.GameSandbox.UI
                 _kbsSent[i] = _kbsSent[i + 1];
                 _kbsReceived[i] = _kbsReceived[i + 1];
             }
-            _kbsSent[_kbsSent.Length - 1] = _netClient.NetworkClient.Statistics.SentBytes;
-            _kbsReceived[_kbsReceived.Length - 1] = _netClient.NetworkClient.Statistics.ReceivedBytes;
+            _kbsSent[_kbsSent.Length - 1] = new NetworkTime
+            {
+                Amount = _netClient.NetworkClient.Statistics.SentBytes,
+                Measured = DateTime.Now
+            };
+            _kbsReceived[_kbsReceived.Length - 1] = new NetworkTime
+            {
+                Amount = _netClient.NetworkClient.Statistics.ReceivedBytes,
+                Measured = DateTime.Now
+            };
             _bldr.Append("\n");
             if (_netClient?.NetworkClient?.ServerConnection != null)
             {
                 _bldr.Append("Ping: ")
                     .Append((_netClient.NetworkClient.ServerConnection.AverageRoundtripTime * 1000d).ToString("N1"));
             }
+
+            var oneSecAgoSent = _kbsSent.Reverse().First(a => (DateTime.Now - a.Measured).TotalSeconds > 1).Amount;
+            var oneSecAgoRecV = _kbsReceived.Reverse().First(a => (DateTime.Now - a.Measured).TotalSeconds > 1).Amount;
+
             _bldr.Append("ms, ").Append("Received: ")
                         .Append((_netClient.NetworkClient.Statistics.ReceivedBytes / 1024d).ToString("N1")).Append("kb total, ")
-                        .Append(((_kbsReceived.Last() - _kbsReceived[_kbsReceived.Length - 60]) / 1024d).ToString("N3")).Append("kb/s")
+                        .Append(((_kbsReceived.Last().Amount - oneSecAgoRecV) / 1024d).ToString("N3")).Append("kb/s")
                         .Append(", Sent: ")
                         .Append((_netClient.NetworkClient.Statistics.SentBytes / 1024d).ToString("N1")).Append("kb total, ")
-                        .Append(((_kbsSent.Last() - _kbsSent[_kbsSent.Length - 60]) / 1024d).ToString("N3")).Append("kb/s");
+                        .Append(((_kbsSent.Last().Amount - oneSecAgoSent) / 1024d).ToString("N3")).Append("kb/s");
             //   }
 
             _bldr.Append("\nMost used: ");
@@ -265,7 +296,10 @@ namespace MPTanks.Client.GameSandbox.UI
         #region FPS Calculations
         private float CalculateAverageFPS()
         {
-            return _debugFrameTimes.Select(a => 1000 / a).Average();
+            //Last 2 sec
+            return _debugFrameTimes
+                .Where(a => (DateTime.Now - a.Measured).TotalSeconds < 2)
+                .Select(a => 1000 / a.Time).Average();
         }
 
         #endregion
@@ -381,7 +415,7 @@ namespace MPTanks.Client.GameSandbox.UI
             int pixelsUsed = 0;
             for (var i = 0; i < _debugFrameTimes.Length; i++)
             {
-                var value = 1000 / _debugFrameTimes[i];
+                var value = 1000 / _debugFrameTimes[i].Time;
                 var maxPixels = pixelsPerDataPointWidth * i;
                 var width = (int)maxPixels - pixelsUsed;
                 if (pixelsUsed < (int)maxPixels)
