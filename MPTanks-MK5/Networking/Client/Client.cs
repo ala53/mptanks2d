@@ -63,6 +63,23 @@ namespace MPTanks.Networking.Client
         }
         public bool NeedsToSelectTank { get; internal set; }
         public bool IsInCountdown { get; internal set; }
+        public bool IsInTankSelection
+        {
+            get
+            {
+                if (IsInCountdown) return true;
+                if (Player == null) return false;
+                if (PlayerIsReady) return false;
+                if (Player.HasTank) return false;
+                if (Player.IsSpectator) return false;
+                if (Player.AllowedTankTypes == null) return false;
+                if (Game.Ended) return false;
+                if (!Connected) return false;
+                if (Game.HasStarted && !Game.Gamemode.HotJoinEnabled) return false;
+
+                return true;
+            }
+        }
         public TimeSpan RemainingCountdownTime { get; internal set; }
 
         public string Host { get; private set; }

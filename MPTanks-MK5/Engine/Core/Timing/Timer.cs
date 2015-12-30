@@ -40,6 +40,11 @@ namespace MPTanks.Engine.Core.Timing
             return this;
         }
 
+        public void Remove()
+        {
+            Creator.RemoveTimer(this);
+        }
+
         public class Factory
         {
             public int ActiveTimersCount { get { return timers.Count; } }

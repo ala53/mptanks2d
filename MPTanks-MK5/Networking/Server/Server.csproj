@@ -92,12 +92,7 @@
     <Compile Include="ServerSettings.cs" />
     <Compile Include="WebInterface\WebPlayerInfoResponse.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Action\" />
-    <Folder Include="Gamestate\" />
-    <Folder Include="Networking\" />
-    <Folder Include="Players\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Engine.csproj">
       <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>

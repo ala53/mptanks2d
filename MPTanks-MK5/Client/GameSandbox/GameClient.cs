@@ -335,7 +335,7 @@ namespace MPTanks.Client.GameSandbox
             }
             if (e.Key == Keys.F7)
                 if (Debugger.IsAttached) Debugger.Break();
-            
+
             if (e.Key == Keys.Escape)
             {
                 if (_isInPauseMenu) HideMenu();
@@ -442,7 +442,98 @@ namespace MPTanks.Client.GameSandbox
             if (_isInPauseMenu)
                 return; //Don't mess with the pause menu
 
-            if (Client.IsInGame && !Client.Game.Ended && !_ui.IsOnEmpty())
+            if (Client.IsInTankSelection)
+            {
+                DeactivateGameInput();
+                _ui.GoToPageIfNotThere("tankselectionpromptwithcountdown", page =>
+                {
+                    page.Element<Button>("UnReadyButton").Click += (a, b) =>
+                    {
+                        page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                        page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+                        page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                        Client.PlayerIsReady = false;
+                    };
+                    page.Element<Button>("ConfirmButton").Click += (a, b) =>
+                    {
+                        page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                        page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
+                        page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
+
+                        Client.PlayerIsReady = true;
+                    };
+                }, (page, state) =>
+                {
+                    page.Element<TextBlock>("Subscript").Text =
+                        page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining " +
+                        (Client.PlayerIsReady ? "until start" : "to choose");
+
+                        //And update tank options
+                        var options = page.Element<StackPanel>("tankoptions");
+                    if (page.State<string[]>("TankOptions") != null)
+                        foreach (var opt in page.State<string[]>("TankOptions"))
+                        {
+                            if (options.Children.FirstOrDefault(a => a.Name == "opt_" + opt) != null)
+                            {
+                                    //already in there
+                                    //so we do nothing
+                                }
+                            else
+                            {
+                                string reflectionName = opt; //Copy to avoid problems with closures
+                                    var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo(reflectionName);
+                                if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
+                                                            //not in there, so make it
+                                    var btn = new Button();
+                                    //Content is a stack panel
+                                    var stackPnl = new StackPanel();
+                                stackPnl.Orientation = EmptyKeys.UserInterface.Orientation.Vertical;
+                                stackPnl.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
+                                stackPnl.Children.Add(new TextBlock
+                                {
+                                    FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
+                                    FontSize = 20,
+                                    Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
+                                    Text = info.DisplayName,
+                                    Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 0),
+                                    Width = 350,
+                                    HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch
+                                });
+                                stackPnl.Children.Add(new TextBlock
+                                {
+                                    FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
+                                    FontSize = 16,
+                                    Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
+                                    Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 5),
+                                    Text = UserInterface.SplitStringIntoLines(info.DisplayDescription, 40),
+                                    HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center
+                                });
+
+                                btn.Background = EmptyKeys.UserInterface.Media.Brushes.Gray;
+                                btn.Content = stackPnl;
+                                btn.Name = "opt_" + reflectionName;
+                                btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
+                                btn.Width = 400;
+                                btn.Click += (a, b) =>
+                                {
+                                    options.Children.Select(c => (c as Button).Background = EmptyKeys.UserInterface.Media.Brushes.Transparent);
+                                    btn.Background = EmptyKeys.UserInterface.Media.Brushes.Green;
+
+                                    Client.SelectTank(reflectionName);
+                                };
+                                options.Children.Add(btn);
+                            }
+                        }
+                });
+                if (Client.Player != null)
+                    _ui.UpdateState(new
+                    {
+                        TankOptions = Client.Player.AllowedTankTypes,
+                        RemainingCountdown = Client.RemainingCountdownTime.TotalSeconds
+                    });
+
+            }
+            else if (Client.IsInGame && !Client.Game.Ended && !_ui.IsOnEmpty())
             {
                 _ui.UnwindAndEmpty();
             }
@@ -489,156 +580,63 @@ namespace MPTanks.Client.GameSandbox
             else
             {
                 DeactivateGameInput();
-
-                if (Client.IsInCountdown)
+                if (!_ui.IsOnPage("settingupprompt"))
+                    ShowSetupPrompt();
+                switch (Client.Status)
                 {
-                    _ui.GoToPageIfNotThere("tankselectionpromptwithcountdown", page =>
-                    {
-                        page.Element<Button>("UnReadyButton").Click += (a, b) =>
-                        {
-                            page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-                            page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-                            page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
-                            Client.PlayerIsReady = false;
-                        };
-                        page.Element<Button>("ConfirmButton").Click += (a, b) =>
-                        {
-                            page.Element<Button>("ConfirmButton").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
-                            page.Element<StackPanel>("tankselectionarea").Visibility = EmptyKeys.UserInterface.Visibility.Collapsed;
-                            page.Element<StackPanel>("readyarea").Visibility = EmptyKeys.UserInterface.Visibility.Visible;
-
-                            Client.PlayerIsReady = true;
-                        };
-                    }, (page, state) =>
-                    {
-                        page.Element<TextBlock>("Subscript").Text =
-                            page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining " +
-                            (Client.PlayerIsReady ? "until start" : "to choose");
-
-                        //And update tank options
-                        var options = page.Element<StackPanel>("tankoptions");
-                        if (page.State<string[]>("TankOptions") != null)
-                            foreach (var opt in page.State<string[]>("TankOptions"))
-                            {
-                                if (options.Children.FirstOrDefault(a => a.Name == "opt_" + opt) != null)
-                                {
-                                    //already in there
-                                    //so we do nothing
-                                }
-                                else
-                                {
-                                    string reflectionName = opt; //Copy to avoid problems with closures
-                                    var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo(reflectionName);
-                                    if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
-                                    //not in there, so make it
-                                    var btn = new Button();
-                                    //Content is a stack panel
-                                    var stackPnl = new StackPanel();
-                                    stackPnl.Orientation = EmptyKeys.UserInterface.Orientation.Vertical;
-                                    stackPnl.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
-                                    stackPnl.Children.Add(new TextBlock
-                                    {
-                                        FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
-                                        FontSize = 20,
-                                        Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
-                                        Text = info.DisplayName,
-                                        Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 0),
-                                        Width = 350,
-                                        HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch
-                                    });
-                                    stackPnl.Children.Add(new TextBlock
-                                    {
-                                        FontFamily = new EmptyKeys.UserInterface.Media.FontFamily("JHUF"),
-                                        FontSize = 16,
-                                        Foreground = EmptyKeys.UserInterface.Media.Brushes.White,
-                                        Margin = new EmptyKeys.UserInterface.Thickness(0, 5, 0, 5),
-                                        Text = UserInterface.SplitStringIntoLines(info.DisplayDescription, 40),
-                                        HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center
-                                    });
-
-                                    btn.Background = EmptyKeys.UserInterface.Media.Brushes.Gray;
-                                    btn.Content = stackPnl;
-                                    btn.Name = "opt_" + reflectionName;
-                                    btn.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Center;
-                                    btn.Width = 400;
-                                    btn.Click += (a, b) =>
-                                    {
-                                        options.Children.Select(c => (c as Button).Background = EmptyKeys.UserInterface.Media.Brushes.Transparent);
-                                        btn.Background = EmptyKeys.UserInterface.Media.Brushes.Green;
-
-                                        Client.SelectTank(reflectionName);
-                                    };
-                                    options.Children.Add(btn);
-                                }
-                            }
-                    });
-                    if (Client.Player != null)
+                    case NetClient.ClientStatus.Authenticating:
                         _ui.UpdateState(new
                         {
-                            TankOptions = Client.Player.AllowedTankTypes,
-                            RemainingCountdown = Client.RemainingCountdownTime.TotalSeconds
+                            Header = "Logging in...",
+                            Content = "Authenticating with the ZSB servers",
+                            Button = "Cancel"
                         });
-                }
-                else
-                {
-                    if (!_ui.IsOnPage("settingupprompt"))
-                        ShowSetupPrompt();
-                    switch (Client.Status)
-                    {
-                        case NetClient.ClientStatus.Authenticating:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Logging in...",
-                                Content = "Authenticating with the ZSB servers",
-                                Button = "Cancel"
-                            });
-                            break;
-                        case NetClient.ClientStatus.Connected:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Connected...",
-                                Content = "Waiting for the server to respond",
-                                Button = "Leave server"
-                            });
-                            break;
-                        case NetClient.ClientStatus.Connecting:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Connecting to the server...",
-                                Content = Client.Message,
-                                Button = "Abort"
-                            });
-                            break;
-                        case NetClient.ClientStatus.Disconnected:
-                            _closing = true;
-                            _ui.ShowMessageBox("Disconnected", Client.Message, UserInterface.MessageBoxType.ErrorMessageBox,
-                                UserInterface.MessageBoxButtons.Ok, a => Exit());
-                            break;
-                        case NetClient.ClientStatus.DownloadingMods:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Downloading mods...",
-                                Content = "This may take a a while",
-                                Button = "Leave server"
-                            });
-                            break;
-                        case NetClient.ClientStatus.Errored:
-                            _ui.UpdateState(new
-                            {
-                                Header = "A fatal error has occured",
-                                Content = "",
-                                Button = "Set my hair on fire and leave"
-                            });
-                            break;
-                        case NetClient.ClientStatus.NotStarted:
-                            _ui.UpdateState(new
-                            {
-                                Header = "Waiting to connect...",
-                                Content = "This shouldn't usually happen",
-                                Button = "Stare with contempt"
-                            });
-                            break;
-                    }
+                        break;
+                    case NetClient.ClientStatus.Connected:
+                        _ui.UpdateState(new
+                        {
+                            Header = "Connected...",
+                            Content = "Waiting for the server to respond",
+                            Button = "Leave server"
+                        });
+                        break;
+                    case NetClient.ClientStatus.Connecting:
+                        _ui.UpdateState(new
+                        {
+                            Header = "Connecting to the server...",
+                            Content = Client.Message,
+                            Button = "Abort"
+                        });
+                        break;
+                    case NetClient.ClientStatus.Disconnected:
+                        _closing = true;
+                        _ui.ShowMessageBox("Disconnected", Client.Message, UserInterface.MessageBoxType.ErrorMessageBox,
+                            UserInterface.MessageBoxButtons.Ok, a => Exit());
+                        break;
+                    case NetClient.ClientStatus.DownloadingMods:
+                        _ui.UpdateState(new
+                        {
+                            Header = "Downloading mods...",
+                            Content = "This may take a a while",
+                            Button = "Leave server"
+                        });
+                        break;
+                    case NetClient.ClientStatus.Errored:
+                        _ui.UpdateState(new
+                        {
+                            Header = "A fatal error has occured",
+                            Content = "",
+                            Button = "Set my hair on fire and leave"
+                        });
+                        break;
+                    case NetClient.ClientStatus.NotStarted:
+                        _ui.UpdateState(new
+                        {
+                            Header = "Waiting to connect...",
+                            Content = "This shouldn't usually happen",
+                            Button = "Stare with contempt"
+                        });
+                        break;
                 }
             }
 
@@ -659,92 +657,71 @@ namespace MPTanks.Client.GameSandbox
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            try
+            //Check for GD changes 
+            //It's done here because applychanges can cause issues
+            //when called repeatedly - Window Resize causes a stack overflow
+            if (_graphicsDeviceIsDirty)
             {
+                if (Window.ClientBounds.Width < 800)
+                    _graphics.PreferredBackBufferWidth = 800;
+                if (Window.ClientBounds.Height < 480)
+                    _graphics.PreferredBackBufferHeight = 480;
+                _graphics.ApplyChanges();
+                _graphicsDeviceIsDirty = false;
+            }
 
-                //Check for GD changes 
-                //It's done here because applychanges can cause issues
-                //when called repeatedly - Window Resize causes a stack overflow
-                if (_graphicsDeviceIsDirty)
+            if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
+            Diagnostics.BeginMeasurement("Rendering");
+
+            EnsureRenderTargetSizing();
+
+            //set the render target
+            GraphicsDevice.SetRenderTarget(_worldRenderTarget);
+            GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
+
+            if (Client?.Game != null)
+            {
+                //Update the draw rectangle
+                RectangleF computedDrawRectangle = new RectangleF();
+                if (CurrentViewedTank != null)
                 {
-                    if (Window.ClientBounds.Width < 800)
-                        _graphics.PreferredBackBufferWidth = 800;
-                    if (Window.ClientBounds.Height < 480)
-                        _graphics.PreferredBackBufferHeight = 480;
-                    _graphics.ApplyChanges();
-                    _graphicsDeviceIsDirty = false;
+                    UpdateCameraSwingAndMotionZoom(CurrentViewedTank, gameTime);
+                    computedDrawRectangle = ComputeDrawRectangle(CurrentViewedTank);
                 }
 
-                if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
-                Diagnostics.BeginMeasurement("Rendering");
+                Diagnostics.BeginMeasurement("World rendering", "Rendering");
 
-                EnsureRenderTargetSizing();
+                //Tell the game world renderer what to do
+                GameRenderer.Game = Client.Game;
+                GameRenderer.View = computedDrawRectangle;
+                GameRenderer.Target = _worldRenderTarget;
+                GameRenderer.Draw(gameTime);
 
-                //set the render target
-                GraphicsDevice.SetRenderTarget(_worldRenderTarget);
-                GraphicsDevice.Clear(Client?.Game?.Map?.BackgroundColor ?? Color.Black);
+                Diagnostics.EndMeasurement("World rendering", "Rendering");
+                //And draw to screen
+                Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
 
-                if (Client?.Game != null)
-                {
-                    //Update the draw rectangle
-                    RectangleF computedDrawRectangle = new RectangleF();
-                    if (CurrentViewedTank != null)
-                    {
-                        UpdateCameraSwingAndMotionZoom(CurrentViewedTank, gameTime);
-                        computedDrawRectangle = ComputeDrawRectangle(CurrentViewedTank);
-                    }
-
-                    Diagnostics.BeginMeasurement("World rendering", "Rendering");
-
-                    //Tell the game world renderer what to do
-                    GameRenderer.Game = Client.Game;
-                    GameRenderer.View = computedDrawRectangle;
-                    GameRenderer.Target = _worldRenderTarget;
-                    GameRenderer.Draw(gameTime);
-
-                    Diagnostics.EndMeasurement("World rendering", "Rendering");
-                    //And draw to screen
-                    Diagnostics.BeginMeasurement("Copy to screen", "Rendering");
-
-                    //Blit to screen
-                    GraphicsDevice.SetRenderTarget(null);
-                    _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
-                        SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
-                    _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
-                    _spriteBatch.End();
-
-                    Diagnostics.EndMeasurement("Copy to screen", "Rendering");
-                    DrawPointingDirectionTriangle();
-                }
-                //And draw to the screen
+                //Blit to screen
                 GraphicsDevice.SetRenderTarget(null);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied,
+                    SamplerState.AnisotropicWrap, DepthStencilState.Default, RasterizerState.CullNone);
+                _spriteBatch.Draw(_worldRenderTarget, GraphicsDevice.Viewport.Bounds, Color.White);
+                _spriteBatch.End();
 
-                Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
-                DebugDrawer?.DrawDebugInfo(gameTime);
-                Diagnostics.EndMeasurement("Draw debug text", "Rendering");
-                //And render the draw
-                _ui.Draw(gameTime);
-
-                base.Draw(gameTime);
-                Diagnostics.EndMeasurement("Rendering");
+                Diagnostics.EndMeasurement("Copy to screen", "Rendering");
+                DrawPointingDirectionTriangle();
             }
-            catch (Exception ex) when (ex.GetType().FullName.Equals("SharpDX.SharpDXException"))
-            {
-                Logger.Error("Rendering error (SharpDX.SharpDXException)", ex);
+            //And draw to the screen
+            GraphicsDevice.SetRenderTarget(null);
 
-                //We're trying to catch a special kind of error
-                //Windows 10 (randomly?) suspends the GPU when you alt-tab for a while
-                //and (short of patching monogame) I cannot fix the issue. So, for now,
-                //we gracefully crash.
+            Diagnostics.BeginMeasurement("Draw debug text", "Rendering");
+            DebugDrawer?.DrawDebugInfo(gameTime);
+            Diagnostics.EndMeasurement("Draw debug text", "Rendering");
+            //And render the draw
+            _ui.Draw(gameTime);
 
-                //This should work. IDK why it doesn't
-                //_graphics.CreateDevice();
-                //So, we error out
-                System.Windows.Forms.MessageBox.Show("Windows suspended the GPU and we were unable to recover.", "FATAL ERROR!",
-                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-
-                Exit();
-            }
+            base.Draw(gameTime);
+            Diagnostics.EndMeasurement("Rendering");
         }
         private void EnsureRenderTargetSizing()
         {

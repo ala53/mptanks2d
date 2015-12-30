@@ -79,7 +79,8 @@ namespace MPTanks.Networking.Server
                 bool allPlayersReady = true;
                 foreach (var plr in Players)
                     if (!plr.Player.IsReady) allPlayersReady = false;
-                if (allPlayersReady) GameStartRemainingTimeout = TimeSpan.Zero;
+                if (allPlayersReady)
+                    GameStartRemainingTimeout = TimeSpan.Zero;
 
                 if (!GameStartTimeoutHasEnded)
                 {

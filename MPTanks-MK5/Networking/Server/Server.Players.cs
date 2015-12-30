@@ -1,6 +1,7 @@
 ﻿using MPTanks.Engine;
 using MPTanks.Engine.Core.Timing;
 using MPTanks.Networking.Common;
+using MPTanks.Networking.Common.Actions.ToClient;
 using MPTanks.Networking.Common.Game;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,9 @@ namespace MPTanks.Networking.Server
             Timers.CreateTimer(a =>
             {
                 MessageProcessor.SendPrivateMessage(player,
-                    new Common.Actions.ToClient.GameCreatedAction());
+                    new GameCreatedAction());
                 MessageProcessor.SendPrivateMessage(player,
-                    new Common.Actions.ToClient.FullGameStateSentAction(Game));
+                    new FullGameStateSentAction(Game));
             }, TimeSpan.FromSeconds(1));
             //Announce that they joined
             ChatHandler.SendMessage($"{player.Player.Username} joined the server");
@@ -34,15 +35,15 @@ namespace MPTanks.Networking.Server
             player.LastSentState = PseudoFullGameWorldState.Create(Game);
             player.Player.OnPropertyChanged -= Player_PropertyChanged;
             player.Player.OnPropertyChanged += Player_PropertyChanged;
-            
-            MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerUpdateAction(player.Player, Game));
+
+            MessageProcessor.SendMessage(new PlayerUpdateAction(player.Player, Game));
 
             //Create a state sync loop
             Timers.CreateReccuringTimer(t =>
             {
                 if (Players.Contains(player))
                 {
-                    var message = new Common.Actions.ToClient.PartialGameStateUpdateAction(Game, player.LastSentState);
+                    var message = new PartialGameStateUpdateAction(Game, player.LastSentState);
                     player.LastSentState = message.StatePartial;
                     //do state sync
                     MessageProcessor.SendPrivateMessage(player, message);
@@ -54,6 +55,28 @@ namespace MPTanks.Networking.Server
                 }
 
             }, Configuration.StateSyncRate);
+
+            //Special case for hotjoin
+
+            if (Game.HasStarted && Game.Gamemode.HotJoinEnabled)
+            {
+                var time = ServerSettings.Instance.TimeToWaitForPlayersReady.Value;
+                Timers.CreateReccuringTimer((t) =>
+                {
+                    if (!Game.Running || !Game.Gamemode.HotJoinEnabled) t.Remove();
+
+                    MessageProcessor.SendPrivateMessage(player, new CountdownStartedAction(time));
+                    time -= TimeSpan.FromMilliseconds(16.666);
+
+                    if (time < TimeSpan.Zero) t.Remove();
+                    if (player.IsReady)
+                    {
+                        t.Remove();
+                        MessageProcessor.SendPrivateMessage(player, new CountdownStartedAction(TimeSpan.FromSeconds(-1)));
+                    }
+
+                }, TimeSpan.FromSeconds(0.01));
+            }
 
             return player;
         }
@@ -69,7 +92,7 @@ namespace MPTanks.Networking.Server
 
             //Try to disconnect them
             player?.Connection?.Disconnect(reason);
-            
+
             MessageProcessor.SendMessage(new Common.Actions.ToClient.PlayerLeftAction(player.Player, Game));
         }
 
