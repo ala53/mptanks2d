@@ -14,8 +14,7 @@ Welp, just about everything is a TODO.
  - The UI code is A MESS
  - Needs more content
  
- 
- ### License
+### License
  
  The __game__ code is released under the MIT License. So, you can freely modify the game code, build your own games off of it, and more. This includes almost ALL code: renderer, engine, networking, and more.
  
@@ -25,5 +24,5 @@ Welp, just about everything is a TODO.
  
  Within 30 days of this game being released commercially, you must own a copy of the game to continue using said assets. As this game has not yet been released, this stipulation does not yet apply.
  
- ####### TLDR License
+#### TLDR License
  All the code is free to use. Third party stuff is controlled by the third parties. Assets can only be used in this game and in mods for it but not in your derivative works/derivative games. Once this game is released, you must own it to continue using the assets.
