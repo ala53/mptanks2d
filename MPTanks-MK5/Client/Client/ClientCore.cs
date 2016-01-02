@@ -10,6 +10,7 @@ using MPTanks.Client.Backend.UI;
 using MPTanks.Engine.Settings;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Dynamic;
 
 namespace MPTanks.Client
@@ -137,6 +138,13 @@ namespace MPTanks.Client
             ui = new UserInterface(this);
 
             _glitch = new GlitchShader(this);
+
+            if (GlobalSettings.Instance.NoLoginMode)
+            {
+                ShowMainMenu();
+                return;
+            }
+
             //Init
             try
             { ZSB.DrmClient.Initialize(GlobalSettings.Instance.StoredAccountInfo); }
@@ -144,7 +152,7 @@ namespace MPTanks.Client
             { ZSB.DrmClient.Initialize(); } //If an error occurs, clear info and restart
             ZSB.DrmClient.OnPersistentStorageChanged +=
                 (a, b) => GlobalSettings.Instance.StoredAccountInfo.Value = ZSB.DrmClient.PersistentData;
-
+            
             if (ZSB.DrmClient.LoggedIn)
                 ShowMainMenu();
             else ShowLoginPage();
@@ -294,6 +302,96 @@ namespace MPTanks.Client
                     ui.GoToPage("connecttoserverpage", connectPage =>
                     {
                         connectPage.Element<TextBox>("ServerAddress").Text = ClientSettings.Instance.StoredServerAddress.Value ?? "";
+
+                        var discoveryHeader = connectPage.Element<TextBlock>("DiscoveryHeader");
+                        var discoveryPanel = connectPage.Element<StackPanel>("DiscoveryPanel");
+
+                        Action<System.Threading.Tasks.Task<Networking.Client.DiscoveryHelper.DiscoveryResponse[]>>
+                        discoveryContinuation = null;
+                        discoveryContinuation = a =>
+                        {//Handle errors
+                            if (!a.IsCompleted)
+                            {
+                                discoveryHeader.Text = "Error looking for hosts!";
+                                discoveryPanel.Children.Clear();
+                                return;
+                            }
+                            //Handle if we're no longer the active page
+                            if (ui.CurrentPage != connectPage)
+                                return;
+
+                            //Do the UI update
+                            discoveryPanel.Children.Clear();
+                            foreach (var resp in a.Result)
+                            {
+                                var panel = new StackPanel();
+                                var moreInfoPanel = new StackPanel();
+                                bool expanded = false;
+                                var expandBtn = new Button
+                                {
+                                    FontFamily = new FontFamily("JHUF"),
+                                    FontSize = 12,
+                                    Content = "More",
+                                    Padding = new Thickness(10, 5, 10, 5),
+                                    Margin = new Thickness(5, 0, 5, 0)
+                                };
+
+                                expandBtn.Click += (m, q) =>
+                                {
+                                    if (expanded)
+                                    {
+                                        moreInfoPanel.Visibility = Visibility.Collapsed;
+                                        expandBtn.Content = "More";
+                                        expanded = false;
+                                    }
+                                    else
+                                    {
+                                        moreInfoPanel.Visibility = Visibility.Visible;
+                                        expandBtn.Content = "Less";
+                                        expanded = true;
+                                    }
+                                };
+
+                                var joinBtn = new Button
+                                {
+                                    FontFamily = new FontFamily("JHUF"),
+                                    FontSize = 12,
+                                    Content = "Join",
+                                    Padding = new Thickness(10, 5, 10, 5),
+                                    Margin = new Thickness(5, 0, 5, 0)
+                                };
+
+                                var buttonsPanel = new StackPanel();
+                                buttonsPanel.Orientation = Orientation.Horizontal;
+                                buttonsPanel.Children.Add(expandBtn);
+                                buttonsPanel.Children.Add(joinBtn);
+
+                                panel.Children.Add(new TextBlock
+                                {
+                                    FontFamily = new FontFamily("JHUF"),
+                                    Text = resp.ServerName,
+                                    FontSize = 16,
+                                    Foreground = Brushes.White
+                                });
+
+                                panel.Children.Add(new TextBlock
+                                {
+                                    FontFamily = new FontFamily("JHUF"),
+                                    Text = resp.Address + ":" + resp.Port,
+                                    FontSize = 12,
+                                    Foreground = Brushes.Gray
+                                });
+
+                                panel.Children.Add(buttonsPanel);
+
+                                discoveryPanel.Children.Add(panel);
+                            }
+
+                            //Otherwise, update and do another round of discovery
+                            Networking.Client.DiscoveryHelper.DoDiscoveryAsync().ContinueWith(discoveryContinuation);
+                        };
+
+                        Networking.Client.DiscoveryHelper.DoDiscoveryAsync().ContinueWith(discoveryContinuation);
 
                         connectPage.Element<Button>("GoBackBtn").Click += (e, f) => ui.GoBack();
                         connectPage.Element<Button>("ConnectBtn").Click += (e, f) =>

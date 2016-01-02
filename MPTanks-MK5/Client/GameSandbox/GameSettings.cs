@@ -143,7 +143,8 @@ namespace MPTanks.Client.GameSandbox
 
             UserTankImageDownloadCache = Setting.Path(this, "Custom Tank Image Download Path")
             .SetDescription("The path in which to download custom images that users make for their tanks")
-            .SetDefault(Path.Combine(ConfigDir, "tankimages"));
+            .SetDefault(Path.Combine(
+                ConfigDir, "tankimages"));
 
             InputDriverName = Setting.String(this, "Input driver name")
             .SetDescription("The name of the driver to use for in game input.")

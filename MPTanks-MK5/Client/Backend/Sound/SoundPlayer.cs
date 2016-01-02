@@ -203,6 +203,10 @@ namespace MPTanks.Client.Backend.Sound
             Cache = new SoundCache(this);
             ActiveSounds = new ActiveGameEffectContainer(this);
             MusicPlayer = new MusicHelper(this);
+
+            BackgroundVolume = 0f;
+            EffectVolume = .35f;
+            VoiceVolume = .35f;
         }
 
 

@@ -15,6 +15,7 @@ namespace MPTanks.Engine.Settings
 
         public Setting<bool> DebugMode { get; private set; }
         public Setting<bool> TraceMode { get; private set; }
+        public Setting<bool> NoLoginMode { get; private set; }
         public Setting<string> LogLevel { get; private set; }
         public Setting<string> StoredAccountInfo { get; private set; }
         
@@ -42,6 +43,13 @@ namespace MPTanks.Engine.Settings
             StoredAccountInfo = Setting.Hidden<string>(this, "DRM Stored Data")
             .SetDescription("The stored data from the online authentication system.")
             .SetDefault(null);
+
+            NoLoginMode = Setting.Hidden<bool>(this, "Disable DRM")
+#if DEBUG
+            .SetDefault(true);
+#else
+            .SetDefault(false);
+#endif
         }
 
         private static string AssemblyProductVersion

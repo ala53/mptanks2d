@@ -59,7 +59,7 @@ namespace MPTanks.Networking.Server
                     return;
                 }
 
-                if (Server.Configuration.Offline)
+                if (Server.Configuration.Offline || GlobalSettings.Instance.NoLoginMode)
                 {
                     //Directly connect, regardless of whether they are who they say they are
                     ApproveConnection(connection, new WebInterface.WebPlayerInfoResponse

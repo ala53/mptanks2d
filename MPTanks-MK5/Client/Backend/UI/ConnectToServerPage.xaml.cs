@@ -46,6 +46,12 @@ namespace EmptyKeys.UserInterface.Generated {
         
         private Button GoBackBtn;
         
+        private TextBlock DiscoveryHeader;
+        
+        private ScrollViewer e_7;
+        
+        private StackPanel DiscoveryPanel;
+        
         public ConnectToServerPage() : 
                 base() {
             this.Initialize();
@@ -160,8 +166,31 @@ namespace EmptyKeys.UserInterface.Generated {
             this.GoBackBtn.FontSize = 36F;
             this.GoBackBtn.Content = "Go back";
             this.GoBackBtn.SetResourceReference(Button.StyleProperty, "PrimaryButton");
+            // DiscoveryHeader element
+            this.DiscoveryHeader = new TextBlock();
+            this.e_1.Children.Add(this.DiscoveryHeader);
+            this.DiscoveryHeader.Name = "DiscoveryHeader";
+            this.DiscoveryHeader.Margin = new Thickness(0F, 10F, 0F, 0F);
+            this.DiscoveryHeader.HorizontalAlignment = HorizontalAlignment.Center;
+            this.DiscoveryHeader.Foreground = new SolidColorBrush(new ColorW(255, 255, 255, 255));
+            this.DiscoveryHeader.Text = "LAN Hosts";
+            this.DiscoveryHeader.FontFamily = new FontFamily("JHUF");
+            this.DiscoveryHeader.FontSize = 24F;
+            // e_7 element
+            this.e_7 = new ScrollViewer();
+            this.e_1.Children.Add(this.e_7);
+            this.e_7.Name = "e_7";
+            this.e_7.Height = 125F;
+            this.e_7.Margin = new Thickness(0F, 10F, 0F, 0F);
+            this.e_7.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            this.e_7.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+            // DiscoveryPanel element
+            this.DiscoveryPanel = new StackPanel();
+            this.e_7.Content = this.DiscoveryPanel;
+            this.DiscoveryPanel.Name = "DiscoveryPanel";
             FontManager.Instance.AddFont("JHUF", 36F, FontStyle.Regular, "JHUF_27_Regular");
             FontManager.Instance.AddFont("JHUF", 18F, FontStyle.Regular, "JHUF_13.5_Regular");
+            FontManager.Instance.AddFont("JHUF", 24F, FontStyle.Regular, "JHUF_18_Regular");
         }
         
         private static void InitializeElementResources(UIElement elem) {

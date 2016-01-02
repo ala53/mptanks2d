@@ -46,7 +46,7 @@ namespace MPTanks.CoreAssets.Tanks
                 FireRotationIsRelativeToTankRotation = false,
                 MaxActiveProjectileCount = 5,
                 MaxDistance = 50,
-                ProjectileOffset = new Vector2(1.5f, -1.1f),
+                ProjectileOffset = new Vector2(0f, -0f),
                 ProjectileVelocity = new Vector2(0, -60),
                 ProjectileType = typeof(Projectiles.BasicTank.MainGunProjectile),
                 TargetingType = Weapon.WeaponTargetingType.Directional,

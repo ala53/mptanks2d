@@ -26,7 +26,7 @@ namespace MPTanks.CoreAssets.Projectiles.BasicTank
         public override bool DamagesMapObjects => false;
         public MainGunProjectile(Tank owner, GameCore game, bool authorized = false,
             Vector2 position = default(Vector2), float rotation = 0)
-            : base(owner, game, authorized, 1, 1.1f, position, rotation)
+            : base(owner, game, authorized, 1, 0.95f, position, rotation)
         {
             ColorMask = owner.ColorMask;
         }

@@ -294,8 +294,8 @@ namespace MPTanks.Engine.Tanks
             var centered = ProjectileOffset - Owner.Size / 2;
 
             var exactPosition = spawnPosition ?? Owner.Position +
-                new Vector2(centered.X * cos + centered.Y * -sin,
-                centered.X * -sin + centered.Y * cos);
+                new Vector2((centered.X * cos + centered.Y * -sin) * ProjectileOffset.X,
+                (centered.X * -sin + centered.Y * cos) * ProjectileOffset.Y);
 
             if (!TransformPositionAndVelocityByRotation)
                 exactPosition = spawnPosition ?? Owner.Position + ProjectileOffset;

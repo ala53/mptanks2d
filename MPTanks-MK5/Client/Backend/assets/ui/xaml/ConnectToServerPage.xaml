@@ -26,6 +26,11 @@
             </DockPanel>
             <Button Background="Transparent" Margin="10,10,10,0" Style="{DynamicResource PrimaryButton}" Foreground="White" FontFamily="JHUF" FontSize="36" x:Name="ConnectBtn">Connect</Button>
             <Button Background="Transparent" Margin="10,10,10,0" Style="{DynamicResource PrimaryButton}" Foreground="Gray" FontFamily="JHUF" FontSize="36" x:Name="GoBackBtn">Go back</Button>
+            <TextBlock x:Name="DiscoveryHeader" Margin="0,10,0,0" FontSize="24" FontFamily="JHUF" Foreground="White" HorizontalAlignment="Center">LAN Hosts</TextBlock>
+            <ScrollViewer Margin="0,10,0,0" Height="125" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+                <StackPanel x:Name="DiscoveryPanel">
+                </StackPanel>
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </ek:UIRoot>

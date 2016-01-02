@@ -11,7 +11,7 @@ namespace MPTanks.Networking.Client
     {
         public class DiscoveryResponse
         {
-            public string Connection;
+            public string Address;
             public ushort Port;
             public bool AllowsHotJoin;
             public bool HasPassword;
@@ -40,13 +40,33 @@ namespace MPTanks.Networking.Client
 
                 client.DiscoverLocalPeers(33132); //DEFAULT PORT
 
-                await Task.Delay(1000); // 1 second timeout
+                await Task.Delay(1000); // 5 second timeout
 
                 NetIncomingMessage msg;
                 while ((msg = client.ReadMessage()) != null)
                     if (msg.MessageType == NetIncomingMessageType.DiscoveryResponse)
                         try { responses.Add(Read(msg)); } catch { }
 
+                responses.Add(new DiscoveryResponse
+                {
+                    Address = "HELP",
+                    Port = 555,
+                    AllowsHotJoin = false,
+                    GamemodeDescription = "BEEP",
+                    GamemodeName = "JEEP",
+                    HasPassword = false,
+                    MapName = "MEEP",
+                    MaxPlayers = 44,
+                    Mods = new Modding.ModInfo[]
+                    {
+                        new Modding.ModInfo()
+                        {
+                            ModName = "COREASSETS"
+                        }
+                    },
+                    PlayerCount = 5,
+                    ServerName = "RIP"
+                });
                 return responses.ToArray();
             });
         }
@@ -81,7 +101,7 @@ namespace MPTanks.Networking.Client
         private static DiscoveryResponse Read(NetIncomingMessage msg)
         {
             var resp = new DiscoveryResponse();
-            resp.Connection = msg.SenderEndPoint.Address.ToString();
+            resp.Address = msg.SenderEndPoint.Address.ToString();
             resp.Port = (ushort)msg.SenderEndPoint.Port;
 
             resp.AllowsHotJoin = msg.ReadBoolean();

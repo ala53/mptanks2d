@@ -92,9 +92,10 @@ namespace MPTanks.DedicatedServer
                 }
                 _server.Update(gt);
                 Process();
-                if (16 - sw.Elapsed.TotalMilliseconds > 0)
+                var el = (int)sw.Elapsed.TotalMilliseconds;
+                if (16 - el > 0)
                 {
-                    Thread.Sleep(16 - (int)sw.Elapsed.TotalMilliseconds);
+                    Thread.Sleep(16 - el);
 
                 }
 

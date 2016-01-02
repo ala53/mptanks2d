@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FarseerPhysics.Dynamics;
 
 namespace MPTanks.Engine.Projectiles
 {
@@ -29,8 +30,14 @@ namespace MPTanks.Engine.Projectiles
 
         protected override void CreateInternal()
         {
-            Body.IsBullet = true;
             base.CreateInternal();
+        }
+
+        protected override Body CreateBody(World world, Vector2 size, Vector2 position, float rotation)
+        {
+            var body =  base.CreateBody(world, size, position, rotation);
+            body.IsBullet = true;
+            return body;
         }
 
         public virtual void CollidedWithTank(Tanks.Tank tank)
