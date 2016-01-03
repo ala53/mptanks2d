@@ -6,7 +6,7 @@ A multiplayer 2D game I am working on. Also known as a playground for ideas I've
 Building is Windows only. To build, run `prebuild.cmd` after check out (needs to be run only once). Then, just build in Visual Studio (requires VS 2015 for C# 6 features).
 
 ### Mod support
-The game has built in mod support. It's controlled with 
+The game has built in mod support. It's controlled by the code in the `Modding` subproject.
 
 ### TODOS
 
