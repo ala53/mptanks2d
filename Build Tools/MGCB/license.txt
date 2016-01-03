@@ -1,0 +1,1 @@
+MGCB is under the Ms-Pl. See https://github.com/mono/MonoGame
