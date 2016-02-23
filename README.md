@@ -21,4 +21,4 @@ Welp, just about everything is a TODO.
  Any dependencies (under `/3rd_Party` as well as the two song assets) is under its own license. Lidgren.Network is MIT, I believe. EmptyKeys is also MIT. MonoGame/MGCB is Ms-PL, etc. FXAA follows NVidia's license. The two songs are under Machinima's old "royalty free" license.
  
 #### TLDR License
- All the code is free to use. Third party stuff is controlled by the third parties. Assets can't be used commercially and you need to attribute the original sources.
+ All the code is free to use for pretty much...whatever you want (although, please don't build nuclear weaponry using my game engine - it would be much appreciated). Third party stuff is controlled by the third parties.
