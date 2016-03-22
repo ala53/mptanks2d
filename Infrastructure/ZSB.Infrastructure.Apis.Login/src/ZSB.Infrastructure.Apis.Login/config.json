@@ -1,0 +1,10 @@
+{
+  "AppSettings": {
+    "SiteTitle": "ZSB Login Server"
+  },
+  "Data": {
+    "ConnectionString": "<DB CONNECTION STRING HERE>",
+    "SendGridAPIKey": "<SENDGRID API KEY HERE>",
+    "TableStorageConnectionString": "<PRODUCT KEY DATABASE HERE>"
+  }
+}

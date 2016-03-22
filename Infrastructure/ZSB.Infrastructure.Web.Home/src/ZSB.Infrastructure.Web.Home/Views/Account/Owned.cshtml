@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = "My Owned Products";
+}
+
+<script>
+    function explodeGiftMenu(element) {
+        var key = element.id;
+        element.style.display = "none";
+        document.getElementById("giftMenu_" + key).style.display = "inline";
+    }
+
+    function cancelGift(key) {
+        document.getElementById(key).style.display = "inline";
+        document.getElementById("giftMenu_" + key).style.display = "none";
+        document.getElementById("giftEmail_" + key).value = "";
+        document.getElementById("confirmGiftBtn_" + key).href = "/";
+    }
+
+    function updateGiftMenu(key) {
+        var email = document.getElementById("giftEmail_" + key).value;
+        var link = document.getElementById("confirmGiftBtn_" + key);
+        if (validateEmail(email) ) {
+            link.href = "/Product/Gift/" + key + "/" + email;
+            link.style.opacity = 1;
+        }
+        else {
+            link.href = "#";
+            link.style.opacity = 0.25;
+
+        }
+    }
+
+    function validateEmail(email) {
+        var re = /^([\w-]+(?:\.[\w-]+)*)@@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        return re.test(email);
+    }
+</script>
+
+<h1>Products Owned by Me</h1>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Redeemed On</th>
+                <th>Name</th>
+                <th>Product Key</th>
+                <th />
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in ViewBag.Products)
+            {
+                <tr>
+                    <td>@product.RedemptionDate.ToString("MMMM dd, yyyy")</td>
+                    <td>@product.DisplayName</td>
+                    <td>@product.ProductKey</td>
+                    <td>
+                        <a href="#" class="btn btn-default" id="@(product.ProductKey)" onclick="explodeGiftMenu(this)">Gift it</a>
+                        <div style="display:none" id="giftMenu_@(product.ProductKey)">
+                            <input class="form-control" type="email" id="giftEmail_@(product.ProductKey)"
+                                   onkeyup="updateGiftMenu('@(product.ProductKey)')"
+                                   placeholder="Email address of recepient" />
+                            <a href="#" 
+                               style="width:45%; opacity:0.25; padding-top:5px" class="btn btn-primary" 
+                               id="confirmGiftBtn_@(product.ProductKey)">Send gift</a>&nbsp;
+                            <a href="#" style="width:45%; padding-top:5px" class="btn btn-default" onclick="cancelGift('@(product.ProductKey)')"
+                               id="confirmGiftBtn_@(product.ProductKey)">Cancel</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

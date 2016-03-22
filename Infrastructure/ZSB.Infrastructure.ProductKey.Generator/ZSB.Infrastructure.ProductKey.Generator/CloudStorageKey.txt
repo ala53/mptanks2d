@@ -1,0 +1,1 @@
+﻿DefaultEndpointsProtocol=https;AccountName=zsbstorage;AccountKey=Szr83kIE2xgO+5hbH9j2Z5HK17q62TM6l+NhTLfOfCwbi8Cj1OQgNutteUpr9uc6Ggm6Bya/3o1V1GWIJ9hyAA==;BlobEndpoint=https://zsbstorage.blob.core.windows.net/;TableEndpoint=https://zsbstorage.table.core.windows.net/;QueueEndpoint=https://zsbstorage.queue.core.windows.net/;FileEndpoint=https://zsbstorage.file.core.windows.net/
