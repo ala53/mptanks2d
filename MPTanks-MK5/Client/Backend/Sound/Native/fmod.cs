@@ -25,7 +25,6 @@ namespace FMOD
             bool x64 = Environment.Is64BitProcess;
             int p = (int)Environment.OSVersion.Platform;
             bool isLinux = (p == 4) || (p == 6) || (p == 128);
-
             string appDir = AppDomain.CurrentDomain.BaseDirectory;
             if (!File.Exists(Path.Combine(appDir, "fmod", "fmod.dll")) ||
                 !File.Exists(Path.Combine(appDir, "fmod", "fmod64.dll")) ||
