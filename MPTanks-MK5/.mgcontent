@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>HiDef</Profile>
+  <Platform>WindowsGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/componentRenderer.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/fxaa3.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/lightMaskPreCompositor.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/lightMaskRenderer.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/menushader.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/mgcontent/shadowRenderer.fx</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_12_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_13.5_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_15_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_18_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_22.5_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_24_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_27_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_30_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_36_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_54_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_72_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/JHUF_9_Regular.spritefont</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/star.png</File>
+    <File>C:/Users/Alastair/Documents/mptanks2d-develop/MPTanks-MK5/Client/Backend/assets/ui/imgs/assets/ui/imgs/star.png</File>
+  </SourceFiles>
+</SourceFileCollection>

@@ -168,7 +168,7 @@ namespace MPTanks.Client.GameSandbox
             ZSB.DrmClient.OnPersistentStorageChanged +=
                 (a, b) => GlobalSettings.Instance.StoredAccountInfo.Value = ZSB.DrmClient.PersistentData;
             //Handle fatal login errors
-            if (!ZSB.DrmClient.LoggedIn)
+            if (!ZSB.DrmClient.LoggedIn && !GlobalSettings.Instance.NoLoginMode)
             {
                 Logger.Fatal("Not logged in. Panicking at the disco. Did you launch the game executable by accident?");
                 Exit();
@@ -468,25 +468,25 @@ namespace MPTanks.Client.GameSandbox
                         page.State<double>("RemainingCountdown").ToString("N0") + " seconds remaining " +
                         (Client.PlayerIsReady ? "until start" : "to choose");
 
-                        //And update tank options
-                        var options = page.Element<StackPanel>("tankoptions");
+                    //And update tank options
+                    var options = page.Element<StackPanel>("tankoptions");
                     if (page.State<string[]>("TankOptions") != null)
                         foreach (var opt in page.State<string[]>("TankOptions"))
                         {
                             if (options.Children.FirstOrDefault(a => a.Name == "opt_" + opt) != null)
                             {
-                                    //already in there
-                                    //so we do nothing
-                                }
+                                //already in there
+                                //so we do nothing
+                            }
                             else
                             {
                                 string reflectionName = opt; //Copy to avoid problems with closures
-                                    var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo(reflectionName);
+                                var info = Engine.Helpers.ReflectionHelper.GetGameObjectInfo(reflectionName);
                                 if (!info.Exists) continue; //If the type doesn't exist, continue without showing it
                                                             //not in there, so make it
-                                    var btn = new Button();
-                                    //Content is a stack panel
-                                    var stackPnl = new StackPanel();
+                                var btn = new Button();
+                                //Content is a stack panel
+                                var stackPnl = new StackPanel();
                                 stackPnl.Orientation = EmptyKeys.UserInterface.Orientation.Vertical;
                                 stackPnl.HorizontalAlignment = EmptyKeys.UserInterface.HorizontalAlignment.Stretch;
                                 stackPnl.Children.Add(new TextBlock

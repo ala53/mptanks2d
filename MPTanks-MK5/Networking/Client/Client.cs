@@ -58,7 +58,7 @@ namespace MPTanks.Networking.Client
             {
                 return
                     GameInstance.Game.Players.FirstOrDefault(
-                        a => (a as NetworkPlayer)?.UniqueId == ZSB.DrmClient.User?.UniqueId);
+                        a => (a as NetworkPlayer)?.UniqueId == _playerId);
             }
         }
         public bool NeedsToSelectTank { get; internal set; }
@@ -87,7 +87,7 @@ namespace MPTanks.Networking.Client
         public string Password { get; private set; }
 
         public ILogger Logger { get; set; }
-        
+
         /// <summary>
         /// Whether the player has chosen their tank and is ready to play the game
         /// </summary>
@@ -97,16 +97,19 @@ namespace MPTanks.Networking.Client
             {
                 if (Player as NetworkPlayer == null)
                     return false;
-                return (Player as NetworkPlayer).IsReady;    
+                return (Player as NetworkPlayer).IsReady;
             }
             set
             {
                 if (Player as NetworkPlayer == null)
-                    return ;
+                    return;
                 (Player as NetworkPlayer).IsReady = value;
                 MessageProcessor.SendMessage(new Common.Actions.ToServer.PlayerReadyChangedAction(value));
             }
         }
+
+        private Guid _playerId;
+        private string _playerName;
         public bool IsInGame => GameInstance != null && Game.HasStarted && Connected;
         public NetClient(string connection, ushort port, ILogger logger = null,
             string password = null, bool connectOnInit = true)
@@ -159,7 +162,8 @@ namespace MPTanks.Networking.Client
                     string token = "OFFLINE";
                     try
                     {
-                        token = await ZSB.DrmClient.Multiplayer.GetServerTokenAsync();
+                        if (!GlobalSettings.Instance.NoLoginMode)
+                            token = await ZSB.DrmClient.Multiplayer.GetServerTokenAsync();
                     }
                     //Catch issues that force us offline
                     catch (UnableToAccessAccountServerException)
@@ -168,19 +172,23 @@ namespace MPTanks.Networking.Client
                     { if (GlobalSettings.Trace) throw; }
                     catch (InvalidAccountServerResponseException)
                     { if (GlobalSettings.Trace) throw; }
+                    //Get the username and UID
+                    _playerName = GlobalSettings.Instance.NoLoginMode ? GenerateOfflineUsername() : ZSB.DrmClient.User.Username;
+                    _playerId = GlobalSettings.Instance.NoLoginMode ? Guid.NewGuid() : ZSB.DrmClient.User.UniqueId;
+
                     //And send connection message
 
                     Status = ClientStatus.Connecting;
 
                     Logger.Info($"Connecting to {Host}:{Port} (DRM Status: (" + (ZSB.DrmClient.Offline ? "Offline" : "Online") + ")");
                     Logger.Info($"Client version {StaticSettings.VersionMajor}.{StaticSettings.VersionMinor}");
-                    Logger.Info($"Name: {ZSB.DrmClient.User.Username}, Owns premium: {ZSB.DrmClient.User.Owns(StaticSettings.MPTanksPremiumProductId)}.");
+                    Logger.Info($"Name: {_playerName}.");
 
                     Message = $"Connecting to {Host}:{Port} in " + (ZSB.DrmClient.Offline ? "Offline" : "Online") + " mode...";
 
                     var msg = NetworkClient.CreateMessage();
-                    msg.Write(ZSB.DrmClient.User.UniqueId.ToByteArray());
-                    msg.Write(ZSB.DrmClient.User.Username);
+                    msg.Write(_playerId.ToByteArray());
+                    msg.Write(_playerName);
                     msg.Write(token);
                     msg.Write(Password ?? ""); //Write an empty password just in case
                     msg.Write(StaticSettings.VersionMajor);
@@ -191,6 +199,12 @@ namespace MPTanks.Networking.Client
                 });
 
             }
+        }
+
+        private static Random _random = new Random();
+        private string GenerateOfflineUsername()
+        {
+            return "_OFFLINEUSER_" + _random.Next();
         }
 
         /// <summary>

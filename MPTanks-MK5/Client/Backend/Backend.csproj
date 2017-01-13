@@ -53,10 +53,6 @@
       <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EmptyKeys.UserInterface.CocosSharp, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\CocosSharp\AnyCPU\EmptyKeys.UserInterface.CocosSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EmptyKeys.UserInterface.Core, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
       <Private>True</Private>
@@ -66,22 +62,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="EmptyKeys.UserInterface.Designer">
-      <HintPath>..\..\..\..\..\Visual Studio 2015\Projects\another_test_project\packages\EmptyKeysUI.1.9.0.0\tools\EmptyKeys.UserInterface.Designer.dll</HintPath>
-    </Reference>
-    <Reference Include="EmptyKeys.UserInterface.FNA, Version=1.11.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>.\EmptyKeys.UserInterface.Designer.dll</HintPath>
     </Reference>
     <Reference Include="EmptyKeys.UserInterface.MonoGame, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EmptyKeys.UserInterface.Paradox, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Paradox\AnyCPU\EmptyKeys.UserInterface.Paradox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EmptyKeys.UserInterface.SunBurn, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EmptyKeysUI.1.11.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Sunburn\AnyCPU\EmptyKeys.UserInterface.SunBurn.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
@@ -90,6 +74,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -186,6 +174,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="assets\mgcontent\componentRenderer.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -251,6 +240,7 @@
     <None Include="fmod\libfmod64.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -358,11 +348,7 @@
 	</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-"$(ProjectDir)ekUiGen.exe" --input="$(ProjectDir)assets\ui\xaml" --output="$(ProjectDir)UI" --oa="$(ProjectDir)assets\ui\imgs" --rm=MonoGame
-
-"$(SolutionDir)..\Build\Tools\AssetCompileHelper\AssetCompileHelper.exe" "" "$(SolutionDir)..\Build Tools\MGCB\Windows\MGCB.exe" "$(ProjectDir)\" "WindowsGL"
-</PreBuildEvent>
+    <PreBuildEvent>$(SolutionDir)..\asset_build.cmd $(SolutionDir) $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

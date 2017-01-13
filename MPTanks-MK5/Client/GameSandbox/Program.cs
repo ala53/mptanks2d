@@ -29,7 +29,7 @@ namespace MPTanks.Client.GameSandbox
                 dependencies += "[" + dep.ToString() + "], ";
             Logger.Info(dependencies);
 
-            if (args.Length <1)
+            if (args.Length < 1)
             {
                 Logger.Fatal("Missing info from main thread. Did you accidentally run the executable directly?");
                 return;
