@@ -167,7 +167,7 @@ namespace MPTanks.Networking.Client
             }
             else if (action is PlayerUpdateAction)
             {
-                return;
+                //return;
                 var act = action as PlayerUpdateAction;
                 if (Client.Game.FindPlayer(act.Player.Id) != null)
                 {
