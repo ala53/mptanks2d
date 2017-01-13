@@ -14,3 +14,6 @@ nuget restore %~dp0\Infrastructure\ZSB.Drm.Client\ZSB.Drm.Client.sln
 %msbuildpath% %~dp0\3rd_Party\Lidgren.Network-8.31.2015\Lidgren.Network.sln /t:Rebuild /p:Configuration=Release
 %msbuildpath% %~dp0\Tools\MPTanks.ModCompiler\MPTanks.ModCompiler.sln /t:Rebuild /p:Configuration=Release
 %msbuildpath% %~dp0\Infrastructure\ZSB.Drm.Client\ZSB.Drm.Client.sln /t:Rebuild /p:Configuration=Release
+
+REM Building assets
+asset_build.cmd %~dp0\MPTanks-MK5\ %~dp0\MPTanks-MK5\Client\Backend\

@@ -11,22 +11,30 @@ namespace AssetCompileHelper
 {
     class Program
     {
+        private static string AppDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        private static string AssetLogFile = Path.Combine(AppDir, "asset_log.json");
+        private static string AssetMD5sFile = Path.Combine(AppDir, "asset_md5s.json");
 
         private static Dictionary<string, string> _filesAndMD5s = new Dictionary<string, string>();
+
+        private static string _logFileData = "";
         static int Main(string[] args)
         {
-            string output = "";
+            Directory.SetCurrentDirectory(AppDir);
 
             Console.WriteLine("Started!");
 
             var mono = args[0] == "mono";
             var mgcbPath = args[1];
-			var inDir = args[2];
+            var inDir = args[2];
             var platform = (args.Length >= 4) ? args[3] : "Windows";
-            Console.WriteLine(inDir);
+            Console.WriteLine("Input Directory: " + inDir);
+            Console.WriteLine("MGCB Path: " + mgcbPath);
+            Console.WriteLine("Platform: " + platform);
+            Console.WriteLine("Mono: " + mono);
 
-            output += $"Searching folder {inDir}\n";
-            output += $"CWD: {Directory.GetCurrentDirectory()}";
+            Write($"Searching folder {inDir}");
+            Write($"CWD: {Directory.GetCurrentDirectory()}");
 
             bool ok = true;
 
@@ -41,15 +49,15 @@ namespace AssetCompileHelper
                     fi.Extension.Contains("tif") || fi.Extension.Contains("gif") ||
                     fi.Extension.Contains("wav") || fi.Extension.Contains("ogg") || fi.Extension.EndsWith("fx"))
                 {
-                    output += $"File found: {file}\n";
+                    Write($"File found: {file}");
                     files.Add(file);
                 }
             }
 
             if (files.Count == 0)
             {
-                output += "No files found \n";
-                File.WriteAllText("asset_compile_helper_log.log", output);
+                Write("FATAL: No files found.");
+                File.WriteAllText(AssetLogFile, _logFileData);
                 return -2;
             }
 
@@ -57,26 +65,26 @@ namespace AssetCompileHelper
             var needingRecompile = GetAssetsNeedingRecompile(files, platform);
             if (needingRecompile.Length == 0)
             {
-                output += "No files need recompile.\n";
-                File.WriteAllText("asset_compile_helper_log.log", output);
+                Write("No files need recompile.");
+                File.WriteAllText(AssetLogFile, _logFileData);
                 return 0;
             }
-			
-			Console.WriteLine($"{needingRecompile} files require recompile.");
+
+            Write($"{needingRecompile} files require recompile.");
             cmdArgs += $"/incremental /platform:{platform} ";
             foreach (var file in needingRecompile)
             {
-                output += $"Recompiling {file}\n";
+                Write($"Recompiling {file}\n");
                 cmdArgs += String.Format("/build:\"{0}\" ", file);
                 _filesAndMD5s[file] = CalculateMD5Hash(System.IO.File.ReadAllText(file));
             }
 
-			Console.WriteLine("Executing mgcb.exe " + cmdArgs);
+            Write("Executing mgcb.exe " + cmdArgs);
             Process prc;
             ProcessStartInfo inf;
 
             if (mono)
-                inf =new  ProcessStartInfo ("mono", $"\"{mgcbPath}\" {cmdArgs}");
+                inf = new ProcessStartInfo("mono", $"\"{mgcbPath}\" {cmdArgs}");
             else
                 inf = new ProcessStartInfo(mgcbPath,
                    cmdArgs);
@@ -88,18 +96,24 @@ namespace AssetCompileHelper
             if (prc.ExitCode != 0) ok = false;
             WriteDictionary(platform);
 
-            output += $"Finished (ok: {ok})";
-            File.WriteAllText("asset_compile_helper_log.log", output);
+            Write($"Finished compiling (ok: {ok})");
+            File.WriteAllText(AssetLogFile, _logFileData);
             if (!ok)
-                File.Delete("asset_md5s.json");
+                File.Delete(AssetMD5sFile);
             return ok ? 0 : -2;
+        }
+
+        private static void Write(string s)
+        {
+            _logFileData += s + "\n";
+            Console.WriteLine(s);
         }
 
         private static string[] GetAssetsNeedingRecompile(IEnumerable<string> inputFiles, string platform)
         {
-            if (System.IO.File.Exists("asset_md5s.json"))
+            if (System.IO.File.Exists(AssetMD5sFile))
                 _filesAndMD5s = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                     System.IO.File.ReadAllText("asset_md5s.json"));
+                     System.IO.File.ReadAllText(AssetMD5sFile));
 
             List<string> _outFiles = new List<string>();
             foreach (var file in inputFiles)
@@ -121,10 +135,10 @@ namespace AssetCompileHelper
             return _outFiles.ToArray();
         }
 
-        private static void WriteDictionary( string platform)
+        private static void WriteDictionary(string platform)
         {
             _filesAndMD5s["__internalPlatformID"] = platform;
-            System.IO.File.WriteAllText("asset_md5s.json", Newtonsoft.Json.JsonConvert.SerializeObject(_filesAndMD5s));
+            System.IO.File.WriteAllText(AssetMD5sFile, Newtonsoft.Json.JsonConvert.SerializeObject(_filesAndMD5s));
         }
         private static string CalculateMD5Hash(string input)
         {
