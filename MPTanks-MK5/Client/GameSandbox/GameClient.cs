@@ -651,6 +651,7 @@ namespace MPTanks.Client.GameSandbox
         private static readonly Vector2 _viewRectangle = new Vector2(70, 70);
         private static readonly Vector2 _halfViewRectangleSize = _viewRectangle / 2f;
         private static readonly Vector2 _quarterViewRectangleSize = _viewRectangle / 4f;
+        int _debugDiagnosticsCounter = 0;
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -660,6 +661,7 @@ namespace MPTanks.Client.GameSandbox
             //Check for GD changes 
             //It's done here because applychanges can cause issues
             //when called repeatedly - Window Resize causes a stack overflow
+            //Monogame is dumb :'(
             if (_graphicsDeviceIsDirty)
             {
                 if (Window.ClientBounds.Width < 800)
@@ -672,6 +674,14 @@ namespace MPTanks.Client.GameSandbox
 
             if (!IsActive || !_hasInitialized) return; //No need to draw if we are not in focus or haven't initialized
             Diagnostics.BeginMeasurement("Rendering");
+
+            //Write diagnostics to file every 300 frames in debug mode (for perf monitoring)
+            _debugDiagnosticsCounter++;
+            if (_debugDiagnosticsCounter == 300 && GlobalSettings.Debug) 
+            {
+                _debugDiagnosticsCounter = 0;
+                Logger.Error(Diagnostics.ToString());
+            }
 
             EnsureRenderTargetSizing();
 
