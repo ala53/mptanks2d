@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EF7D12D4-A2B8-47C6-B93D-5264191892C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MPTanks.Networking.Common</RootNamespace>
+    <AssemblyName>MPTanks.Networking.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Build\Debug\Networking\Common\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Build\Release\Networking\Common\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lidgren.Network, Version=3.4.0.456, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Build\3rd Party\Lidgren.Network\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\ActionBase.cs" />
+    <Compile Include="Actions\ToClient\CountdownStartedAction.cs" />
+    <Compile Include="Actions\ToClient\FullGameStateSentAction.cs" />
+    <Compile Include="Actions\ToClient\GameStartedAction.cs" />
+    <Compile Include="Actions\ToClient\GameCreatedAction.cs" />
+    <Compile Include="Actions\ToClient\GameEndedAction.cs" />
+    <Compile Include="Actions\ToClient\GameObjectCreatedAction.cs" />
+    <Compile Include="Actions\ToClient\GameObjectDestroyedAction.cs" />
+    <Compile Include="Actions\ToClient\GameObjectDestructionEndedAction.cs" />
+    <Compile Include="Actions\ToClient\ObjectBasicPropertyChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PartialGameStateUpdateAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerReadyToStartChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerSelectedTankAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerAllowedTankTypesSentAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerInputChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerTankSelectionAcknowledgedAction.cs" />
+    <Compile Include="Actions\ToClient\ReceivedChatMessageAction.cs" />
+    <Compile Include="Actions\ToClient\TimescaleChangedAction.cs" />
+    <Compile Include="Actions\ToServer\InputChangedAction.cs" />
+    <Compile Include="Actions\ToClient\ObjectStateChangedAction.cs" />
+    <Compile Include="Actions\ToClient\GamemodeStateChangedAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerUpdateAction.cs" />
+    <Compile Include="Actions\ToClient\PlayerLeftAction.cs" />
+    <Compile Include="Actions\ToServer\PlayerReadyChangedAction.cs" />
+    <Compile Include="Actions\ToServer\PlayerTankTypeSelectedAction.cs" />
+    <Compile Include="Actions\ToServer\RequestFullGameStateAction.cs" />
+    <Compile Include="Actions\ToServer\SentChatMessageAction.cs" />
+    <Compile Include="Channels.cs" />
+    <Compile Include="Connection\ConnectionInfo.cs" />
+    <Compile Include="Game\PseudoFullGameWorldState.cs" />
+    <Compile Include="Game\FullObjectState.cs" />
+    <Compile Include="Game\FullGameState.cs" />
+    <Compile Include="Game\FullStatePlayer.cs" />
+    <Compile Include="Game\PseudoFullObjectState.cs" />
+    <Compile Include="MessageBase.cs" />
+    <Compile Include="NetworkedGame.cs" />
+    <Compile Include="NetworkProcessorBase.cs" />
+    <Compile Include="NetworkPlayer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Engine\Engine.csproj">
+      <Project>{3d9a65bd-cc42-4a73-8816-3e01e0c4b09f}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modding\Modding.csproj">
+      <Project>{3a8512c9-59e4-4312-a718-f47f40a5f494}</Project>
+      <Name>Modding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Strings\Strings.csproj">
+      <Project>{65a6037c-a629-4884-a94e-e91b4591aa45}</Project>
+      <Name>Strings</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
