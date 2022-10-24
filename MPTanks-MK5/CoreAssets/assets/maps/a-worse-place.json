@@ -1,0 +1,870 @@
+{
+  "Type": "map",
+  "Name": "A Better Place",
+  "Author": "ZSB Games",
+  "TopLeft": {
+    "x": -35.6,
+    "y": -0.6
+  },
+  "BottomRight": {
+    "x": 35.6,
+    "y": 71.6000061
+  },
+  "Size": {
+    "x": 71.2,
+    "y": 72.2000046
+  },
+  "FogOfWar": false,
+  "MaxPlayers": 0,
+  "WhitelistGamemodes": false,
+  "AllowedGamemodes": null,
+  "Background": null,
+  "Spawns": [
+    {
+      "TeamIndex": 0,
+      "SpawnPositions": [
+        {
+          "x": -18.4500027,
+          "y": 45.9
+        },
+        {
+          "x": -28.8,
+          "y": 7.350001
+        },
+        {
+          "x": 26.4500027,
+          "y": 31.2000065
+        },
+        {
+          "x": 17.3250046,
+          "y": 55.8000031
+        },
+        {
+          "x": 24.1750031,
+          "y": 14.175
+        }
+      ]
+    }
+  ],
+  "Objects": [
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "size": {
+        "x": 71.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 35.0,
+        "y": 36.0
+      },
+      "size": {
+        "x": 1.0,
+        "y": 71.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 0.0,
+        "y": 71.0
+      },
+      "size": {
+        "x": 71.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -35.0,
+        "y": 36.0
+      },
+      "size": {
+        "x": 1.0,
+        "y": 71.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 3.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 7.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 15.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 11.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 23.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 19.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 32.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 36.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 40.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 44.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 0.0,
+        "y": 44.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 0.0,
+        "y": 56.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 56.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 60.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 64.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+TankBlock",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -4.0,
+        "y": 68.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 25.0,
+        "y": 25.0
+      },
+      "size": {
+        "x": 20.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 16.0,
+        "y": 33.0
+      },
+      "size": {
+        "x": 2.0,
+        "y": 14.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -21.0000019,
+        "y": 13.000001
+      },
+      "size": {
+        "x": 4.0,
+        "y": 25.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -26.0000019,
+        "y": 16.0
+      },
+      "size": {
+        "x": 6.0,
+        "y": 2.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -17.0,
+        "y": 24.0
+      },
+      "size": {
+        "x": 5.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -20.0,
+        "y": 42.0000038
+      },
+      "size": {
+        "x": 14.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -20.0,
+        "y": 50.0
+      },
+      "size": {
+        "x": 14.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -31.0000019,
+        "y": 46.0
+      },
+      "size": {
+        "x": 7.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -27.0,
+        "y": 46.0
+      },
+      "size": {
+        "x": 1.0,
+        "y": 9.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 29.0,
+        "y": 65.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -12.0,
+        "y": 6.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.6457718,
+      "Position": {
+        "x": 13.000001,
+        "y": 7.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 20.0,
+        "y": 65.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 11.0,
+        "y": 65.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -29.0,
+        "y": 65.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -20.0,
+        "y": 65.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+MultilevelHouse",
+      "Rotation": 0.34906584,
+      "Position": {
+        "x": 28.3250027,
+        "y": 43.0
+      },
+      "size": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 253,
+        "R": 149,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+SatelliteDishLarge",
+      "Rotation": 0.0,
+      "Position": {
+        "x": -16.0,
+        "y": 35.0
+      },
+      "size": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 5.0,
+        "y": 18.0
+      },
+      "size": {
+        "x": 1.0,
+        "y": 12.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    },
+    {
+      "reflectionName": "CoreAssets+Wall",
+      "Rotation": 0.0,
+      "Position": {
+        "x": 9.0,
+        "y": 50.0
+      },
+      "size": {
+        "x": 20.0,
+        "y": 1.0
+      },
+      "settings": {},
+      "Mask": {
+        "B": 255,
+        "G": 255,
+        "R": 255,
+        "A": 255
+      },
+      "DrawLayer": 0
+    }
+  ],
+  "ModDependencies": [
+    "CoreAssets:0.0"
+  ],
+  "ShadowOffset": {
+    "x": 0.15,
+    "y": -0.17
+  },
+  "ShadowColor": {
+    "r": 50,
+    "g": 50,
+    "b": 50,
+    "a": 255
+  },
+  "BackgroundColor": {
+    "r": 250,
+    "g": 100,
+    "b": 100,
+    "a": 255
+  }
+}

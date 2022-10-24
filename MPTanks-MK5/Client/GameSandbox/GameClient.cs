@@ -220,7 +220,7 @@ namespace MPTanks.Client.GameSandbox
             var game = new GameCore(
                 new NLogLogger(Logger.Instance),
                 Engine.Gamemodes.Gamemode.ReflectiveInitialize("CoreAssets+DeathMatchGamemode"),
-                Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("abetterplace.json"),
+                Modding.ModLoader.LoadedMods["core-assets.mod"].GetAsset("testmap.json"),
                 EngineSettings.GetInstance()
                 );
 
